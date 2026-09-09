@@ -1,3 +1,5 @@
 node_modules/
 .env
 *.log
+php/config.php
+php/data/*.json
