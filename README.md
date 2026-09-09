@@ -40,38 +40,87 @@ ready, instead of holding things up mid-call.
 
 ## Step 1 — Deploy to Hostinger
 
-Hostinger's Node.js app hosting works with this project as-is.
+This only works on a Hostinger plan that includes **Node.js app hosting**
+(Business/Premium shared hosting, Cloud, or VPS). If you're not sure your
+plan has it, search "Node.js" in hPanel's search bar — if nothing shows up,
+tell me your exact plan name and I'll adjust these steps.
 
-1. In **hPanel**, go to **Advanced → Node.js**.
-2. Click **Create Application**.
-   - **Node.js version**: 18 or newer.
-   - **Application root**: any folder, e.g. `callgear-zenoti`.
-   - **Application URL**: pick the domain/subdomain you want this to live on,
-     e.g. `screenpop.yourbusiness.com`.
-   - **Application startup file**: `server.js`.
-3. Get the code onto the server — two options:
-   - **Git (recommended)**: if this repository is pushed to GitHub, use
-     Hostinger's Git deployment option under the Node.js app settings and
-     point it at this repo/branch.
-   - **Manual upload**: zip this project folder (excluding `node_modules`)
-     and upload it via **File Manager**, then extract it into the
-     application root.
-4. In the Node.js app screen, open **NPM install** (or run `npm install` from
-   the built-in terminal) to install dependencies.
-5. Add environment variables (there's a dedicated section for this in the
-   Node.js app screen) — copy every key from `.env.example` and fill in real
-   values (Zenoti values come later, in Step 3):
-   - `WEBHOOK_TOKEN` — make up a long random string now, e.g. by mashing the
-     keyboard. Save it somewhere; you'll need it again in Step 4.
-   - `PORT` — leave as Hostinger sets it, or `3000`.
-   - Leave `ZENOTI_API_KEY` blank for now.
-6. Start (or restart) the application. Hostinger will show you the live
-   **Application URL** — this is your app's address, e.g.
-   `https://screenpop.yourbusiness.com`.
+**1. Point a domain or subdomain at this app.**
+You need a web address for it — either a subdomain of a domain you already
+own (e.g. `screenpop.yourbusiness.com`) or a small standalone domain. Set
+this up first under hPanel → **Domains** if you haven't already (a
+subdomain is free and takes a minute to create).
 
-Once this loads `https://screenpop.yourbusiness.com/dashboard.html` in a
-browser and shows the "Incoming call screen-pop" page, the deployment is
-done.
+**2. Create the Node.js application.**
+In hPanel, go to **Advanced → Node.js** → **Create Application**, and fill in:
+- **Node.js version**: 18 or newer (pick the highest offered).
+- **Application mode**: Production.
+- **Application root**: a folder name, e.g. `callgear-zenoti`.
+- **Application URL**: the domain/subdomain from step 1.
+- **Application startup file**: `server.js`.
+
+Click Create. Hostinger now shows you a management screen for this app —
+you'll come back to it for every remaining step.
+
+**3. Get the code onto the server.** Two ways:
+- **Git (recommended, since the code already lives on GitHub)**: on the
+  Node.js app management screen, look for a **Git** section/tab. Enter this
+  repository's URL and branch:
+  - Repository: `https://github.com/Nayan4321/Laghavi-Tech.git`
+  - Branch: `claude/zenoti-api-key-setup-q62p11`
+  - Deploy path: the **Application root** folder you set in step 2.
+
+  If hPanel's Node.js screen doesn't have a Git option on your plan, use
+  hPanel → **Advanced → Git** instead (a separate feature on some plans),
+  pointed at the same repo/branch/folder.
+- **Manual upload (fallback)**: on GitHub, open this repo, switch to the
+  `claude/zenoti-api-key-setup-q62p11` branch, click **Code → Download ZIP**.
+  Then in hPanel → **File Manager**, upload the zip into the Application
+  root folder and extract it there.
+
+**4. Install dependencies.**
+Back on the Node.js app screen, there's a button like **Run NPM Install** —
+click it. (If it's not visible, open the app's built-in **Terminal**/SSH
+button and run `npm install` in the application root folder.)
+
+**5. Set environment variables.**
+The Node.js app screen has an **Environment Variables** section. Add these
+now (copy the key names exactly from `.env.example`):
+- `WEBHOOK_TOKEN` → make up a long random string right now (mash the
+  keyboard, 20+ characters). Save it somewhere — you'll reuse it later when
+  configuring CallGear.
+- `PORT` → leave whatever Hostinger pre-fills, or `3000` if it's empty.
+- `ZENOTI_API_KEY`, `ZENOTI_API_URL`, `ZENOTI_CENTER_ID`,
+  `ZENOTI_GUEST_URL_TEMPLATE` → leave blank for now, you don't have these yet.
+
+**6. Start the app.**
+Click **Restart** (or **Start**) on the Node.js app screen. Hostinger shows
+the live **Application URL** — this is your app's address, e.g.
+`https://screenpop.yourbusiness.com`.
+
+**7. Confirm it's live.**
+Open `https://screenpop.yourbusiness.com/dashboard.html` in a browser. If
+you see the "Incoming call screen-pop" page, the deployment worked.
+
+### The URLs you now have, ready to send out
+
+- **Send to the Zenoti team** (for the "URI" field, see Step 2 below):
+  `https://screenpop.yourbusiness.com`
+- **Keep for yourself**, to use once you configure CallGear (Step 4 below):
+  `https://screenpop.yourbusiness.com/webhooks/callgear?token=YOUR_WEBHOOK_TOKEN`
+- **Send to each agent**, to open once on their own computer (Step 5 below):
+  `https://screenpop.yourbusiness.com/dashboard.html`
+
+### One thing to watch for during testing
+
+This app pushes live updates to the agent's browser tab using a technique
+called SSE (a long-held connection). Most hosting works fine with this, but
+some shared-hosting reverse proxies buffer or time out long connections. If,
+during Step 6 (testing), the dashboard doesn't update within a couple of
+seconds of a real call, tell me — that's the symptom, and the fix is
+switching the dashboard to check for updates every few seconds instead of
+holding a connection open, which works on any host. Not needed unless you
+actually hit that problem.
 
 ## Step 2 — What to bring to the Zenoti app-creation call
 
