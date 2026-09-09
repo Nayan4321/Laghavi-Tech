@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Call Screen-Pop</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 480px; margin: 48px auto; padding: 0 16px; color: #222; }
+  #setup { display: flex; gap: 8px; }
+  input { flex: 1; padding: 8px; font-size: 14px; }
+  button { padding: 8px 14px; font-size: 14px; cursor: pointer; }
+  #status { margin-top: 12px; color: #666; font-size: 14px; }
+  #call-banner {
+    display: none; margin-top: 24px; padding: 16px; border-radius: 8px;
+    background: #eef6ff; border: 1px solid #b6dcff;
+  }
+  #call-banner h2 { margin: 0 0 8px; font-size: 18px; }
+  #call-banner button { background: #2563eb; color: white; border: none; border-radius: 6px; }
+</style>
+</head>
+<body>
+  <h1>Incoming call screen-pop</h1>
+
+  <div id="setup">
+    <input id="agentId" placeholder="Your agent / extension ID from CallGear">
+    <button id="save">Save</button>
+  </div>
+  <div id="status">Not connected yet.</div>
+
+  <div id="call-banner">
+    <h2 id="call-name">Incoming call</h2>
+    <div id="call-phone"></div>
+    <p><button id="open-btn">Open client profile ↗</button></p>
+  </div>
+
+<script>
+  const agentInput = document.getElementById('agentId');
+  const statusEl = document.getElementById('status');
+  const banner = document.getElementById('call-banner');
+  const callName = document.getElementById('call-name');
+  const callPhone = document.getElementById('call-phone');
+  const openBtn = document.getElementById('open-btn');
+  let currentUrl = null;
+  let source = null;
+
+  agentInput.value = localStorage.getItem('agentId') || '';
+
+  function connect(agentId) {
+    if (source) source.close();
+    statusEl.textContent = 'Connecting as "' + agentId + '"...';
+    source = new EventSource('/events/' + encodeURIComponent(agentId));
+    source.onopen = () => { statusEl.textContent = 'Connected. Waiting for calls as "' + agentId + '".'; };
+    source.onerror = () => { statusEl.textContent = 'Connection lost, retrying...'; };
+    source.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      const guest = data.guest;
+      callPhone.textContent = 'Caller: ' + data.phone;
+      if (guest) {
+        callName.textContent = [guest.firstName, guest.lastName].filter(Boolean).join(' ') || 'Client found';
+        currentUrl = guest.profileUrl || ('/guest/' + guest.id);
+      } else {
+        callName.textContent = 'No matching client found';
+        currentUrl = null;
+      }
+      banner.style.display = 'block';
+      if (Notification.permission === 'granted') {
+        const n = new Notification(callName.textContent, { body: 'Caller: ' + data.phone });
+        n.onclick = () => { window.focus(); if (currentUrl) window.open(currentUrl, '_blank'); };
+      }
+    };
+  }
+
+  openBtn.onclick = () => { if (currentUrl) window.open(currentUrl, '_blank'); };
+
+  document.getElementById('save').onclick = () => {
+    const id = agentInput.value.trim();
+    if (!id) return;
+    localStorage.setItem('agentId', id);
+    connect(id);
+  };
+
+  if (Notification.permission === 'default') Notification.requestPermission();
+  if (agentInput.value) connect(agentInput.value);
+</script>
+</body>
+</html>

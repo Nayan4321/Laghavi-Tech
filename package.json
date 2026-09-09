@@ -1,0 +1,16 @@
+{
+  "name": "callgear-zenoti-screenpop",
+  "version": "1.0.0",
+  "description": "When a call comes in on CallGear, look up the caller in Zenoti and pop their profile open on the agent's screen.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2"
+  }
+}
