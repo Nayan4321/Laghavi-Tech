@@ -5,26 +5,18 @@
 <title>Call Screen-Pop</title>
 <style>
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 48px auto; padding: 0 16px; color: #222; }
-  #setup { display: flex; gap: 8px; }
-  input { flex: 1; padding: 8px; font-size: 14px; }
-  button { padding: 8px 14px; font-size: 14px; cursor: pointer; }
   #status { margin-top: 12px; color: #666; font-size: 14px; }
   #call-banner {
     display: none; margin-top: 24px; padding: 16px; border-radius: 8px;
     background: #eef6ff; border: 1px solid #b6dcff;
   }
   #call-banner h2 { margin: 0 0 8px; font-size: 18px; }
-  #call-banner button { background: #2563eb; color: white; border: none; border-radius: 6px; }
+  #call-banner button { background: #2563eb; color: white; border: none; border-radius: 6px; padding: 8px 14px; font-size: 14px; cursor: pointer; }
 </style>
 </head>
 <body>
   <h1>Incoming call screen-pop</h1>
-
-  <div id="setup">
-    <input id="agentId" placeholder="Your agent / extension ID from CallGear">
-    <button id="save">Save</button>
-  </div>
-  <div id="status">Not connected yet.</div>
+  <div id="status">Connecting...</div>
 
   <div id="call-banner">
     <h2 id="call-name">Incoming call</h2>
@@ -33,7 +25,6 @@
   </div>
 
 <script>
-  const agentInput = document.getElementById('agentId');
   const statusEl = document.getElementById('status');
   const banner = document.getElementById('call-banner');
   const callName = document.getElementById('call-name');
@@ -41,9 +32,6 @@
   const openBtn = document.getElementById('open-btn');
   let currentUrl = null;
   let lastSeen = 0;
-  let pollTimer = null;
-
-  agentInput.value = localStorage.getItem('agentId') || '';
 
   function showEvent(data) {
     const guest = data.guest;
@@ -62,11 +50,11 @@
     }
   }
 
-  async function poll(agentId) {
+  async function poll() {
     try {
-      const resp = await fetch('poll.php?agent=' + encodeURIComponent(agentId) + '&since=' + lastSeen);
+      const resp = await fetch('poll.php?since=' + lastSeen);
       const data = await resp.json();
-      statusEl.textContent = 'Connected. Waiting for calls as "' + agentId + '".';
+      statusEl.textContent = 'Connected. Waiting for calls.';
       if (data.event) {
         lastSeen = data.event.receivedAt;
         showEvent(data.event);
@@ -76,24 +64,11 @@
     }
   }
 
-  function connect(agentId) {
-    if (pollTimer) clearInterval(pollTimer);
-    statusEl.textContent = 'Connecting as "' + agentId + '"...';
-    poll(agentId);
-    pollTimer = setInterval(() => poll(agentId), 2500);
-  }
-
   openBtn.onclick = () => { if (currentUrl) window.open(currentUrl, '_blank'); };
 
-  document.getElementById('save').onclick = () => {
-    const id = agentInput.value.trim();
-    if (!id) return;
-    localStorage.setItem('agentId', id);
-    connect(id);
-  };
-
   if (Notification.permission === 'default') Notification.requestPermission();
-  if (agentInput.value) connect(agentInput.value);
+  poll();
+  setInterval(poll, 2500);
 </script>
 </body>
 </html>

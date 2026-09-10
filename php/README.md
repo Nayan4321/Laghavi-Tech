@@ -10,25 +10,38 @@ any Hostinger shared hosting plan with PHP (which is all of them).
 Incoming call on CallGear
         │
         ▼
-CallGear calls webhook.php on this app
+CallGear's Interactive Call Processing calls webhook.php, and waits for
+a reply before continuing to route the call
         │
         ▼
 webhook.php asks Zenoti: "who has this phone number?" (Search Guest API)
         │
         ▼
-webhook.php saves the answer to a small file, one per agent
+webhook.php immediately replies {"returned_code": 1} so the call keeps
+routing normally, and separately saves the answer for the dashboards
         │
         ▼
-Each agent's open dashboard.html tab checks poll.php every ~2.5 seconds
+Every open dashboard.html tab checks poll.php every ~2.5 seconds
         │
         ▼
-New answer found → banner + desktop notification → agent clicks →
-client profile opens in a new tab
+New answer found → banner + desktop notification on every agent's screen
+→ whoever picks up the call clicks → client profile opens in a new tab
 ```
 
 This checks-in-every-few-seconds approach (instead of a permanently open
 connection) is deliberate — it's what reliably works on ordinary shared
 hosting, where long-held connections often get cut off by the server.
+
+**Important:** CallGear doesn't tell us which agent will actually take the
+call — so this pops up on *every* agent's open dashboard tab, not just one.
+Whoever answers sees it. There's no "enter your agent ID" step anymore.
+
+**Also important:** this webhook is part of CallGear's live call routing —
+it must always reply within a couple of seconds with valid instructions, or
+the call itself could be affected. See Step 4 below; this is handled
+carefully in the code (always replies successfully, Zenoti lookups time out
+after 3 seconds), but the CallGear scenario side still needs to be
+configured correctly by whoever sets that up.
 
 ## Step 1 — Upload the files
 
@@ -80,16 +93,33 @@ No restart needed — PHP picks up the change on the next request.
 
 ## Step 4 — Point CallGear at your webhook
 
-Same as the Node version's Step 4: find CallGear's notification/scenario
-feature for triggering an HTTP request on an incoming call, and point it at
-the webhook URL above. See the top-level README for details on the field
-names this app understands.
+This uses CallGear's **Interactive Call Processing** feature (in the Virtual
+PBX scenario builder), not a simple notification webhook — it actively waits
+for a reply before continuing the call. Whoever manages your CallGear
+scenario needs to:
+
+1. In the scenario where incoming calls are handled, add an **Interactive
+   call handling** step at the point where you want the lookup to happen.
+2. Set:
+   - **Method**: GET or POST (either works — this app accepts both)
+   - **Authorization URL**: `https://yourdomain.com/screenpop/webhook.php?token=YOUR_WEBHOOK_TOKEN`
+3. Under **Return code 1** (or whichever number is already set in
+   `config.php`'s `callgear_returned_code`), set its linked operation to
+   whatever the call should normally do next — e.g. the same forwarding/
+   distribution step that handles it today. This makes the webhook a
+   "tap" that never changes how calls are actually routed.
+4. Set up CallGear's fallback for "no answer from outside system" (they
+   recommend this) to also continue to that same normal step — so even if
+   this app is ever slow or down, calls still go through unaffected.
+
+**Test this on a non-critical scenario/number first**, not your main call
+queue, until you've confirmed a real call still routes normally end to end.
 
 ## Step 5 — Agents open their dashboard
 
-Each agent opens `https://yourdomain.com/screenpop/dashboard.html` once,
-types in their CallGear agent/extension ID, clicks Save, and allows the
-notification permission prompt.
+Each agent opens `https://yourdomain.com/screenpop/dashboard.html` once (no
+sign-in or ID needed) and allows the notification permission prompt. That's
+it — every incoming call will show on every open dashboard.
 
 ## About the profile link
 
@@ -104,8 +134,8 @@ straight from Zenoti's API) unless you set `zenoti_guest_url_template` in
 - `poll.php` — the dashboard asks this "anything new?" every ~2.5s.
 - `guest.php` — fallback profile page.
 - `zenoti.php` — talks to the Zenoti API.
-- `store.php` — tiny per-agent file storage (no database needed).
-- `dashboard.html` — the page each agent keeps open.
+- `store.php` — tiny file-based storage (no database needed).
+- `dashboard.html` — the page every agent keeps open.
 - `config.example.php` — copy to `config.php` and fill in your values.
-- `data/` — where the latest call per agent is stored; protected by
-  `.htaccess` so it can't be browsed directly.
+- `data/` — where the latest call is stored; protected by `.htaccess` so it
+  can't be browsed directly.

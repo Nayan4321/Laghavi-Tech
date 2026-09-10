@@ -25,4 +25,13 @@ return [
     // webhook URL you give CallGear, so random internet traffic can't trigger
     // lookups.
     'webhook_token' => 'change_me_to_a_random_string',
+
+    // CallGear's Interactive Call Processing waits for us to reply with a
+    // "returned_code" telling it which branch of the call scenario to
+    // continue on. In CallGear's scenario editor, set this same number's
+    // linked operation to whatever the call should normally do next (so this
+    // webhook never changes how calls are actually routed — it just taps in
+    // to trigger the screen-pop). Ask whoever configures the CallGear
+    // scenario which number to use here; 1 is CallGear's default example.
+    'callgear_returned_code' => 1,
 ];

@@ -35,7 +35,10 @@ function zenoti_request($path, $query = []) {
     curl_setopt($ch, CURLOPT_HTTPHEADER, [
         'Authorization: apikey ' . $config['zenoti_api_key'],
     ]);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 15);
+    // Kept short: CallGear holds the live call waiting on our reply, so a
+    // slow or unreachable Zenoti API must not stall a real phone call.
+    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 2);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 3);
     $body = curl_exec($ch);
     if ($body === false) {
         $err = curl_error($ch);
