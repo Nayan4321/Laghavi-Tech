@@ -104,3 +104,24 @@ function zenoti_get_guest_details($guestId) {
         'centerId' => $data['center_id'] ?? null,
     ];
 }
+
+function zenoti_get_guest_appointments($guestId, $limit = 10) {
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/appointments', [
+        'page' => 1,
+        'size' => $limit,
+    ]);
+    $rows = $data['appointments'] ?? [];
+    $out = [];
+    foreach ($rows as $row) {
+        $services = $row['appointment_services'] ?? [];
+        $serviceNames = array_map(fn($s) => $s['service']['name'] ?? '', $services);
+        $start = $services[0]['start_time'] ?? null;
+        $out[] = [
+            'date' => $start,
+            'services' => implode(', ', array_filter($serviceNames)) ?: '—',
+            'status' => $row['invoice_status'] ?? null,
+            'notes' => $row['notes'] ?? '',
+        ];
+    }
+    return $out;
+}
