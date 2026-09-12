@@ -105,6 +105,48 @@ function zenoti_get_guest_details($guestId) {
     ];
 }
 
+// Full raw guest record — used to show every field Zenoti has, not just the
+// short summary above.
+function zenoti_get_guest_raw($guestId) {
+    return zenoti_request('/v1/guests/' . rawurlencode($guestId));
+}
+
+function zenoti_get_guest_memberships($guestId, $centerId) {
+    $query = [];
+    if ($centerId) $query['center_id'] = $centerId;
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/memberships', $query);
+    return $data['guest_memberships'] ?? [];
+}
+
+function zenoti_get_guest_packages($guestId, $centerId) {
+    $query = [];
+    if ($centerId) $query['center_id'] = $centerId;
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/Packages', $query);
+    return $data['user_packages'] ?? $data['packages'] ?? [];
+}
+
+function zenoti_get_guest_products($guestId) {
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/products');
+    return $data['products'] ?? [];
+}
+
+function zenoti_get_guest_giftcards($guestId) {
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/gift_cards');
+    return $data['gift_cards'] ?? [];
+}
+
+function zenoti_get_guest_prepaidcards($guestId) {
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/prepaidcards');
+    return $data['guest_prepaid_cards'] ?? [];
+}
+
+function zenoti_get_guest_loyalty($guestId) {
+    // Note: this is a different endpoint from /points/{type} (earned vs.
+    // redeemed breakdown) — this one returns the overall points balance.
+    $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/points');
+    return $data['guest_points'] ?? null;
+}
+
 function zenoti_get_guest_appointments($guestId, $limit = 10) {
     $data = zenoti_request('/v1/guests/' . rawurlencode($guestId) . '/appointments', [
         'page' => 1,

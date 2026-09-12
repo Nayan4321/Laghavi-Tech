@@ -21,6 +21,14 @@ return [
     // Leave blank to use this app's own guest.php page instead (always works).
     'zenoti_guest_url_template' => '',
 
+    // Optional: the base web address of your Zenoti staff dashboard (where
+    // you log in day to day), e.g. 'https://yourbusiness.zenoti.com'. Used
+    // for the "Open in Zenoti Dashboard" button on guest.php — until
+    // zenoti_guest_url_template above is set, this just opens the general
+    // dashboard (agent finds the guest manually) rather than their exact
+    // profile page.
+    'zenoti_webapp_url' => '',
+
     // Make up any random long string. You'll add it as ?token=... on the
     // webhook URL you give CallGear, so random internet traffic can't trigger
     // lookups.
