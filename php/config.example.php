@@ -15,6 +15,13 @@ return [
     // across the whole org (needs "Search Guest Across Centers" enabled in Zenoti).
     'zenoti_center_id' => '',
 
+    // CallGear sends the caller's number with the country code attached
+    // (e.g. 971558442764), but Zenoti guest records are often saved in local
+    // format without it (e.g. 558442764). If a search for the full number
+    // finds nothing, this prefix is stripped and searched again. Set to your
+    // country's calling code, or leave blank to disable this fallback.
+    'zenoti_strip_country_code' => '971',
+
     // Optional: once you know the real URL pattern for an open guest profile in
     // your Zenoti web app, put a template here using {guest_id} and {center_id}.
     // Example: 'https://yourbusiness.zenoti.com/Home/Guest/{guest_id}'

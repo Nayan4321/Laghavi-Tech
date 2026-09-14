@@ -69,14 +69,29 @@ function zenoti_build_profile_url($guest) {
     );
 }
 
-function zenoti_search_guest_by_phone($phone) {
+function zenoti_search_guest_raw($phone) {
     $config = zenoti_config();
     $query = ['phone' => $phone];
     if (!empty($config['zenoti_center_id'])) {
         $query['center_id'] = $config['zenoti_center_id'];
     }
     $data = zenoti_request('/v1/guests/search', $query);
-    $raw = $data['guests'][0] ?? null;
+    return $data['guests'][0] ?? null;
+}
+
+function zenoti_search_guest_by_phone($phone) {
+    $config = zenoti_config();
+    $raw = zenoti_search_guest_raw($phone);
+
+    // CallGear sends the caller's number with the country code attached
+    // (e.g. 971558442764), but Zenoti guest records are often stored in
+    // local format without it (e.g. 558442764). If the direct match fails,
+    // retry with that prefix stripped.
+    $countryCode = $config['zenoti_strip_country_code'] ?? '';
+    if (!$raw && $countryCode && str_starts_with($phone, $countryCode)) {
+        $raw = zenoti_search_guest_raw(substr($phone, strlen($countryCode)));
+    }
+
     if (!$raw) return null;
 
     $personal = $raw['personal_info'] ?? [];
