@@ -6,36 +6,58 @@
 <style>
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 48px auto; padding: 0 16px; color: #222; }
   #status { margin-top: 12px; color: #666; font-size: 14px; }
+  #arm-box {
+    margin-top: 20px; padding: 16px; border-radius: 8px;
+    background: #fff8e6; border: 1px solid #f0d998;
+  }
+  #arm-box p { margin: 0 0 10px; font-size: 14px; }
   button { padding: 10px 16px; font-size: 14px; cursor: pointer; border: none; border-radius: 6px; background: #2563eb; color: white; }
+  button:disabled { background: #16a34a; cursor: default; }
   #call-banner {
     display: none; margin-top: 24px; padding: 16px; border-radius: 8px;
     background: #eef6ff; border: 1px solid #b6dcff;
   }
   #call-banner h2 { margin: 0 0 8px; font-size: 18px; }
-  #hint { margin-top: 8px; font-size: 13px; color: #888; }
 </style>
 </head>
 <body>
   <h1>Incoming call screen-pop</h1>
-  <div id="status">Waiting for calls...</div>
+  <div id="status">Connecting...</div>
+
+  <div id="arm-box">
+    <p><strong>One-time step, once per day:</strong> click below to turn on
+    automatic popups. Browsers won't allow a page to open windows on its own
+    without this — after clicking once, every call for the rest of your
+    session opens automatically, with no further clicks.</p>
+    <button id="arm-btn">Enable Auto Popup</button>
+  </div>
 
   <div id="call-banner">
     <h2 id="call-name">Incoming call</h2>
     <div id="call-phone"></div>
     <p><button id="open-btn">Open client profile ↗</button></p>
-    <div id="hint"></div>
   </div>
 
 <script>
   const statusEl = document.getElementById('status');
+  const armBtn = document.getElementById('arm-btn');
   const banner = document.getElementById('call-banner');
   const callName = document.getElementById('call-name');
   const callPhone = document.getElementById('call-phone');
   const openBtn = document.getElementById('open-btn');
-  const hintEl = document.getElementById('hint');
   let currentUrl = null;
   let lastSeen = 0;
   let popupWin = null;
+
+  armBtn.onclick = () => {
+    popupWin = window.open('about:blank', 'zenotiProfilePop');
+    if (popupWin) {
+      armBtn.textContent = 'Auto Popup Enabled ✓';
+      armBtn.disabled = true;
+    } else {
+      alert('Your browser blocked this. Please allow pop-ups for this site and try again.');
+    }
+  };
 
   function showEvent(data) {
     const guest = data.guest;
@@ -48,28 +70,20 @@
       currentUrl = null;
     }
     banner.style.display = 'block';
-    if (!currentUrl) return;
 
-    if (popupWin && !popupWin.closed) {
-      // Already opened once this session: navigate that same window automatically, no click needed.
-      popupWin.location.href = currentUrl;
-      popupWin.focus();
-      hintEl.textContent = '';
-    } else {
-      // First call this session: needs one click to open (browsers won't let a page open a
-      // window with no click at all). That same click arms it for every call after this.
-      hintEl.textContent = 'Click below to view — after this first click, future calls open automatically.';
-      if (Notification.permission === 'granted') {
-        const n = new Notification(callName.textContent, { body: 'Caller: ' + data.phone });
-        n.onclick = () => { window.focus(); openProfile(); };
+    if (currentUrl) {
+      if (popupWin && !popupWin.closed) {
+        // Already armed: navigate the existing window automatically, no click needed.
+        popupWin.location.href = currentUrl;
+        popupWin.focus();
+      } else {
+        // Not armed yet (or the window got closed): fall back to a notification/manual click.
+        if (Notification.permission === 'granted') {
+          const n = new Notification(callName.textContent, { body: 'Caller: ' + data.phone });
+          n.onclick = () => { window.focus(); window.open(currentUrl, '_blank'); };
+        }
       }
     }
-  }
-
-  function openProfile() {
-    if (!currentUrl) return;
-    popupWin = window.open(currentUrl, 'zenotiProfilePop');
-    if (popupWin) hintEl.textContent = '';
   }
 
   async function poll() {
@@ -86,7 +100,7 @@
     }
   }
 
-  openBtn.onclick = openProfile;
+  openBtn.onclick = () => { if (currentUrl) window.open(currentUrl, '_blank'); };
 
   if (Notification.permission === 'default') Notification.requestPermission();
   poll();
