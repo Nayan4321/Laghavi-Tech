@@ -117,22 +117,27 @@ scenario needs to:
 **Test this on a non-critical scenario/number first**, not your main call
 queue, until you've confirmed a real call still routes normally end to end.
 
-## Step 5 — Agents open their dashboard
+## Step 5 — Agents just start work as usual
 
-Each agent opens `https://yourdomain.com/screenpop/` once (no sign-in or ID
-needed) and allows the notification permission prompt.
-
-To avoid this being an extra daily step, have each agent add that URL as a
-**browser startup page** so it opens automatically every time they open
-their browser, alongside whatever else they normally use:
+Add `https://yourdomain.com/screenpop/` as a **browser startup page**, so
+it's already open every time an agent opens their browser — nothing to
+search for, nothing to type, no daily instruction to give anyone:
 
 - **Chrome/Edge**: Settings → On startup → "Open a specific page or set of
   pages" → Add the URL above.
 
-One click still can't be removed: browsers block a page from popping open
-new windows with zero interaction, so agents click **"Enable Auto Popup"**
-once per browser session (see the dashboard page) — after that, every call
-that session pops up automatically with no further clicks.
+From there, the flow is exactly this:
+1. Agent opens their browser like any other day. The tab is just there.
+2. First call of the session comes in → a banner appears with **"Open
+   client profile"** — one click to view it (browsers require at least one
+   click before a page can open a window; there's no way around that for
+   the very first one).
+3. That same click is all that's needed — every call after that in the
+   same session opens the profile automatically, no further clicks.
+
+There's no separate "enable" step to explain — the first click to view a
+profile *is* the one-time thing, and it happens naturally as part of
+answering that first call.
 
 ## About the profile link
 
