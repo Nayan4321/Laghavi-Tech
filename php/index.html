@@ -7,7 +7,7 @@
   body { font-family: system-ui, sans-serif; max-width: 480px; margin: 48px auto; padding: 0 16px; color: #222; }
   #status { margin-top: 12px; color: #666; font-size: 14px; }
   #arm-box {
-    margin-top: 20px; padding: 16px; border-radius: 8px;
+    display: none; margin-top: 20px; padding: 16px; border-radius: 8px;
     background: #fff8e6; border: 1px solid #f0d998;
   }
   #arm-box p { margin: 0 0 10px; font-size: 14px; }
@@ -40,6 +40,7 @@
 
 <script>
   const statusEl = document.getElementById('status');
+  const armBox = document.getElementById('arm-box');
   const armBtn = document.getElementById('arm-btn');
   const banner = document.getElementById('call-banner');
   const callName = document.getElementById('call-name');
@@ -77,7 +78,9 @@
         popupWin.location.href = currentUrl;
         popupWin.focus();
       } else {
-        // Not armed yet (or the window got closed): fall back to a notification/manual click.
+        // Not armed yet: this is the first call of the session, so this is
+        // exactly when the "Enable Auto Popup" prompt should appear.
+        armBox.style.display = 'block';
         if (Notification.permission === 'granted') {
           const n = new Notification(callName.textContent, { body: 'Caller: ' + data.phone });
           n.onclick = () => { window.focus(); window.open(currentUrl, '_blank'); };
