@@ -80,16 +80,16 @@ function zenoti_search_guest_raw($phone) {
 }
 
 function zenoti_search_guest_by_phone($phone) {
-    $config = zenoti_config();
     $raw = zenoti_search_guest_raw($phone);
 
-    // CallGear sends the caller's number with the country code attached
-    // (e.g. 971558442764), but Zenoti guest records are often stored in
-    // local format without it (e.g. 558442764). If the direct match fails,
-    // retry with that prefix stripped.
-    $countryCode = $config['zenoti_strip_country_code'] ?? '';
-    if (!$raw && $countryCode && str_starts_with($phone, $countryCode)) {
-        $raw = zenoti_search_guest_raw(substr($phone, strlen($countryCode)));
+    // CallGear's caller ID includes a country code prefix, but Zenoti guest
+    // records are often stored in local format without one — and callers can
+    // be from any country, so there's no single prefix to hardcode. Instead,
+    // if the direct match fails, retry with 1, then 2, then 3 leading digits
+    // stripped (covers virtually every real-world country code length) until
+    // a match is found.
+    for ($stripLen = 1; !$raw && $stripLen <= 3 && strlen($phone) > $stripLen + 5; $stripLen++) {
+        $raw = zenoti_search_guest_raw(substr($phone, $stripLen));
     }
 
     if (!$raw) return null;
