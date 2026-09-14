@@ -21,7 +21,7 @@ webhook.php immediately replies {"returned_code": 1} so the call keeps
 routing normally, and separately saves the answer for the dashboards
         │
         ▼
-Every open dashboard.html tab checks poll.php every ~2.5 seconds
+Every open index.html tab checks poll.php every ~2.5 seconds
         │
         ▼
 New answer found → banner + desktop notification on every agent's screen
@@ -51,7 +51,7 @@ configured correctly by whoever sets that up.
 2. Create a folder there, e.g. `screenpop`.
 3. Upload every file from this `php/` folder into it — `webhook.php`,
    `poll.php`, `guest.php`, `zenoti.php`, `store.php`,
-   `config.example.php`, `dashboard.html`, and the `data/` folder (with its
+   `config.example.php`, `index.html`, and the `data/` folder (with its
    `.htaccess` inside).
    - Easiest way to get them there: on GitHub, open this repo, switch to
      branch `claude/zenoti-api-key-setup-q62p11`, click **Code → Download
@@ -69,9 +69,10 @@ configured correctly by whoever sets that up.
 
 ## Step 2 — Confirm it's live
 
-Visit `https://yourdomain.com/screenpop/dashboard.html` (adjust the path to
-match where you uploaded it). You should see the "Incoming call screen-pop"
-page.
+Visit `https://yourdomain.com/screenpop/` (adjust the path to match where
+you uploaded it). Since the dashboard is named `index.html`, that bare
+folder address loads it directly — no filename needed. You should see the
+"Incoming call screen-pop" page.
 
 ### The URLs you now have, ready to send out
 
@@ -79,8 +80,9 @@ page.
   `https://yourdomain.com/screenpop`
 - **Keep for yourself**, to use once you configure CallGear:
   `https://yourdomain.com/screenpop/webhook.php?token=YOUR_WEBHOOK_TOKEN`
-- **Send to each agent**, to open once on their own computer:
-  `https://yourdomain.com/screenpop/dashboard.html`
+- **Send to each agent**, to open once on their own computer (and ideally
+  add as a browser startup page — see Step 5):
+  `https://yourdomain.com/screenpop/`
 
 ## Step 3 — After the Zenoti app-creation call
 
@@ -117,9 +119,20 @@ queue, until you've confirmed a real call still routes normally end to end.
 
 ## Step 5 — Agents open their dashboard
 
-Each agent opens `https://yourdomain.com/screenpop/dashboard.html` once (no
-sign-in or ID needed) and allows the notification permission prompt. That's
-it — every incoming call will show on every open dashboard.
+Each agent opens `https://yourdomain.com/screenpop/` once (no sign-in or ID
+needed) and allows the notification permission prompt.
+
+To avoid this being an extra daily step, have each agent add that URL as a
+**browser startup page** so it opens automatically every time they open
+their browser, alongside whatever else they normally use:
+
+- **Chrome/Edge**: Settings → On startup → "Open a specific page or set of
+  pages" → Add the URL above.
+
+One click still can't be removed: browsers block a page from popping open
+new windows with zero interaction, so agents click **"Enable Auto Popup"**
+once per browser session (see the dashboard page) — after that, every call
+that session pops up automatically with no further clicks.
 
 ## About the profile link
 
@@ -135,7 +148,7 @@ straight from Zenoti's API) unless you set `zenoti_guest_url_template` in
 - `guest.php` — fallback profile page.
 - `zenoti.php` — talks to the Zenoti API.
 - `store.php` — tiny file-based storage (no database needed).
-- `dashboard.html` — the page every agent keeps open.
+- `index.html` — the page every agent keeps open.
 - `config.example.php` — copy to `config.php` and fill in your values.
 - `data/` — where the latest call is stored; protected by `.htaccess` so it
   can't be browsed directly.
