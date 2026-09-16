@@ -16,3 +16,12 @@ same thing; pick whichever matches your hosting:
 
 Start with `php/README.md` — it has the full click-by-click setup,
 including exactly what to send the Zenoti team and how to wire up CallGear.
+
+## For fully automatic popups (no tab, no click)
+
+`php/` alone requires one click per browser session to open the profile
+(a hard browser security rule, not a limitation of this code). For true
+zero-click automation — the profile just opens the instant a call rings,
+with nothing open beforehand — see **[`extension/`](extension/README.md)**,
+a small browser extension installed once on each agent's computer. It
+reuses the same `php/` backend; only the delivery mechanism changes.
