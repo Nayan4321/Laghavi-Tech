@@ -60,7 +60,7 @@ try {
         'guest' => $guest,
         'receivedAt' => round(microtime(true) * 1000),
     ]);
-    respond(['matched' => $guest !== null]);
+    respond(['matched' => $guest !== null, 'guest' => $guest]);
 } catch (Exception $e) {
     respond(['error' => 'zenoti lookup failed', 'detail' => $e->getMessage()]);
 }
