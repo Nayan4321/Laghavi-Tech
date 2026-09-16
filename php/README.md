@@ -140,9 +140,11 @@ start working."
 
 ## About the profile link
 
-Same as the Node version: it opens this app's own `guest.php` page (built
-straight from Zenoti's API) unless you set `zenoti_guest_url_template` in
-`config.php` to the real Zenoti web-app URL pattern.
+The popup opens the **real Zenoti guest profile page** directly (confirmed
+pattern: `https://grandflorauae.zenoti.com/Guests/GuestProfileV2/GuestProfileV2.aspx?UserId={guest_id}`,
+set as `zenoti_guest_url_template` in `config.php`) — not this app's own
+page. `guest.php` (with full details and history) still exists as a fallback
+for if that template ever needs to change or stops resolving.
 
 ## Files
 

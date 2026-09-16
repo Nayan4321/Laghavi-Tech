@@ -15,19 +15,16 @@ return [
     // across the whole org (needs "Search Guest Across Centers" enabled in Zenoti).
     'zenoti_center_id' => '',
 
-    // Optional: once you know the real URL pattern for an open guest profile in
-    // your Zenoti web app, put a template here using {guest_id} and {center_id}.
-    // Example: 'https://yourbusiness.zenoti.com/Home/Guest/{guest_id}'
-    // Leave blank to use this app's own guest.php page instead (always works).
-    'zenoti_guest_url_template' => '',
+    // The real URL pattern for an open guest profile in your Zenoti web app,
+    // confirmed from an actual profile page's address bar. {guest_id} is
+    // replaced with the matched guest's ID. Leave blank to use this app's
+    // own guest.php page instead (always works, just not Zenoti's own page).
+    'zenoti_guest_url_template' => 'https://grandflorauae.zenoti.com/Guests/GuestProfileV2/GuestProfileV2.aspx?UserId={guest_id}',
 
-    // Optional: the base web address of your Zenoti staff dashboard (where
-    // you log in day to day), e.g. 'https://yourbusiness.zenoti.com'. Used
-    // for the "Open in Zenoti Dashboard" button on guest.php — until
-    // zenoti_guest_url_template above is set, this just opens the general
-    // dashboard (agent finds the guest manually) rather than their exact
-    // profile page.
-    'zenoti_webapp_url' => '',
+    // Optional: the base web address of your Zenoti staff dashboard. Only
+    // used as a fallback "Open in Zenoti Dashboard" button on guest.php for
+    // when zenoti_guest_url_template above ever fails to resolve.
+    'zenoti_webapp_url' => 'https://grandflorauae.zenoti.com',
 
     // Make up any random long string. You'll add it as ?token=... on the
     // webhook URL you give CallGear, so random internet traffic can't trigger
