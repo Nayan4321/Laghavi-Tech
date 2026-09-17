@@ -1,7 +1,7 @@
-// Runs in the background with no visible tab. Checks the same poll.php
-// endpoint the web dashboard used, and opens the call's Zenoti profile
-// automatically the instant one is found — extensions are allowed to open
-// tabs without a click, unlike a regular webpage.
+// Runs in the background with no visible tab. Checks poll.php for this
+// specific agent's own calls (set once via the popup) and opens the call's
+// Zenoti profile automatically the instant one is found — extensions are
+// allowed to open tabs without a click, unlike a regular webpage.
 
 const BASE_URL = 'https://grandflora.laghavi.com/php';
 const ALARM_NAME = 'pollForCalls';
@@ -42,11 +42,14 @@ async function openInNormalWindow(url) {
 }
 
 async function checkForCalls() {
-  const stored = await chrome.storage.local.get(['lastSeen']);
+  const stored = await chrome.storage.local.get(['lastSeen', 'agentName']);
   const lastSeen = stored.lastSeen || 0;
 
+  // Not set up yet - nothing to check for. Set via the extension's popup.
+  if (!stored.agentName) return;
+
   try {
-    const resp = await fetch(`${BASE_URL}/poll.php?since=${lastSeen}`);
+    const resp = await fetch(`${BASE_URL}/poll.php?since=${lastSeen}&agent=${encodeURIComponent(stored.agentName)}`);
     const data = await resp.json();
     await chrome.storage.local.set({ lastChecked: Date.now(), lastError: null });
 

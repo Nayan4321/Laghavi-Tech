@@ -32,9 +32,19 @@ This checks-in-every-few-seconds approach (instead of a permanently open
 connection) is deliberate — it's what reliably works on ordinary shared
 hosting, where long-held connections often get cut off by the server.
 
-**Important:** CallGear doesn't tell us which agent will actually take the
-call — so this pops up on *every* agent's open dashboard tab, not just one.
-Whoever answers sees it. There's no "enter your agent ID" step anymore.
+**About per-agent targeting:** CallGear's Interactive Call Handling doesn't
+tell us which employee a call is ringing — that's decided later, inside
+whatever redirect/hunt-group logic follows it. Two ways this is handled:
+
+- **`index.html` (this dashboard)** always shows the shared feed — every
+  call, for everyone who has it open. Useful for a supervisor view or
+  testing, not for individual agents.
+- **The browser extension** (see `../extension/README.md`) can show only
+  one specific agent's own calls, but only if the CallGear scenario is
+  rebuilt so each employee has their own dedicated Interactive Call
+  Handling branch with their name baked into that branch's URL (e.g.
+  `&agent=ryhem`) — see "Per-agent CallGear setup" below. Without that
+  rebuild, the extension also just sees the shared feed.
 
 **Also important:** this webhook is part of CallGear's live call routing —
 it must always reply within a couple of seconds with valid instructions, or
@@ -116,6 +126,40 @@ scenario needs to:
 
 **Test this on a non-critical scenario/number first**, not your main call
 queue, until you've confirmed a real call still routes normally end to end.
+
+## Per-agent CallGear setup (for the browser extension)
+
+Skip this if you're fine with everyone seeing every call (Step 4 above is
+enough for that). To have each agent's screen only pop for calls actually
+ringing them, the scenario needs rebuilding so each employee has their own
+branch, since CallGear doesn't report which employee a call is ringing —
+we have to already know it, by building one branch per employee ourselves:
+
+1. Open your hunt-group scenario (e.g. "Main All") and note the **order,
+   timing, and phone number/extension for each employee** in the group —
+   you'll rebuild this manually as separate steps.
+2. Remove (or stop using) the single "Redirect → Group" step.
+3. For **each employee**, add a pair of steps in their existing order:
+   - An **Interactive call handling** step, Authorization URL:
+     ```
+     https://yourdomain.com/screenpop/webhook.php?token=YOUR_WEBHOOK_TOKEN&agent=EMPLOYEE_NAME
+     ```
+     (replace `EMPLOYEE_NAME` with a short lowercase name for that person,
+     e.g. `ryhem` — this is what they'll type into the extension's popup,
+     so keep a note of exactly what you used for each person.)
+   - A **Redirect** step to that one employee's number only, with the same
+     dialing duration they had in the original group.
+   - Chain "no answer" on that Redirect to the next employee's pair of
+     steps, continuing the same order as before.
+4. Make sure **Return code 1** on every one of these new Interactive Call
+   Handling steps still points to its own Redirect step (each branch is
+   self-contained, not shared).
+5. Save, and test the same way as Step 4 above — a non-critical test first,
+   watching that calls still ring in the same order as before.
+
+Each agent then opens the extension's popup (its toolbar icon) and types in
+their exact `EMPLOYEE_NAME` from step 3 — a one-time setup per person. From
+then on, that agent's screen only reacts to calls actually ringing them.
 
 ## Step 5 — Agents just start work as usual
 

@@ -29,9 +29,13 @@ the same way developers test their own extensions:
 2. Open Chrome, go to `chrome://extensions`.
 3. Turn on **Developer mode** (top-right toggle).
 4. Click **Load unpacked**, and select the `extension` folder.
-5. Done — no further setup. Chrome may show a small puzzle-piece icon in
-   the toolbar; clicking it shows whether it's connected and the last call
-   it saw, useful for confirming it's working.
+5. Click the extension's icon (toolbar puzzle-piece → pin it for easy
+   access), type the agent's exact **agent name** into the box (must match
+   what's set in that employee's own CallGear scenario branch — see
+   `../php/README.md`'s "Per-agent CallGear setup"), and click **Save**.
+   Without this, the extension won't react to any calls at all.
+6. Done. The popup also shows connection status and the last call it saw,
+   useful for confirming it's working.
 
 Chrome will label it a "Developer mode extension" — this is expected and
 safe for an internal tool like this; it's not published because Zenoti/
@@ -41,10 +45,16 @@ general public tool.
 ## Troubleshooting
 
 - Click the extension's icon (toolbar puzzle-piece → pin it for easy
-  access) — it shows "Active — last checked Ns ago" if working, or
-  "Connection trouble" if it can't reach the server. It also shows the
-  exact URL it last tried to open (`Opened: ...`) — useful for confirming
-  whether it computed the right link.
+  access) — it shows "Active — last checked Ns ago" if working,
+  "Connection trouble" if it can't reach the server, or "Not set up yet"
+  if no agent name has been saved (the extension does nothing until one
+  is). It also shows the exact URL it last tried to open (`Opened: ...`) —
+  useful for confirming whether it computed the right link.
+- **Wrong person's calls showing up, or none at all**: the agent name typed
+  into the popup must exactly match the `&agent=...` value configured on
+  that specific employee's branch in the CallGear scenario. A typo or
+  mismatch (case doesn't matter, it's lowercased automatically, but
+  spelling does) means it'll never see their calls.
 - If nothing happens on a real call: confirm CallGear's Interactive Call
   Handling step and scenario setup are still correct (see `../php/README.md`
   Step 4) — this extension only reacts to events that `webhook.php` already

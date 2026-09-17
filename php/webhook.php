@@ -51,16 +51,22 @@ if (!$phone) {
     respond(['error' => 'no phone number found in webhook payload', 'received' => $data]);
 }
 
+// Which employee this specific branch of the CallGear scenario is about to
+// ring. Set per-branch in each Interactive Call Handling node's Authorization
+// URL (e.g. "&agent=ryhem") - CallGear doesn't tell us this dynamically, but
+// since each branch only rings one specific employee, we already know it
+// from which URL was configured on that branch. Falls back to a shared feed
+// (everyone sees it) if not set, e.g. for manual testing.
+$agentId = $data['agent'] ?? 'shared';
+
 try {
     $guest = zenoti_search_guest_by_phone($phone);
-    // No agent identifier comes from CallGear at this stage, so every open
-    // dashboard tab sees every call — whoever picks up sees the popup.
-    store_save_event('shared', [
+    store_save_event($agentId, [
         'phone' => $phone,
         'guest' => $guest,
         'receivedAt' => round(microtime(true) * 1000),
     ]);
-    respond(['matched' => $guest !== null, 'guest' => $guest]);
+    respond(['matched' => $guest !== null, 'guest' => $guest, 'agent' => $agentId]);
 } catch (Exception $e) {
     respond(['error' => 'zenoti lookup failed', 'detail' => $e->getMessage()]);
 }
