@@ -1,27 +1,34 @@
-// Runs in the background with no visible tab. Checks poll.php for this
-// specific agent's own calls (set once via the popup) and opens the call's
-// Zenoti profile automatically the instant one is found — extensions are
-// allowed to open tabs without a click, unlike a regular webpage.
+// Runs in the background with no visible tab. The actual "check for calls"
+// loop lives in offscreen.js (a persistent offscreen document), not here -
+// see that file for why. This script's job is just to keep that offscreen
+// document alive and open the caller's Zenoti profile whenever it reports a
+// call - extensions are allowed to open tabs without a click, unlike a
+// regular webpage.
 
 const BASE_URL = 'https://grandflora.laghavi.com/php';
-const ALARM_NAME = 'pollForCalls';
+const OFFSCREEN_URL = 'offscreen.html';
+const WATCHDOG_ALARM = 'offscreenWatchdog';
 
-// ~every 3 seconds. Chrome only allows sub-minute alarm periods for
-// extensions loaded unpacked (developer mode) - if this extension is ever
-// packaged/published differently, Chrome will clamp this to once per
-// minute instead, which still works, just slower to notice a call.
-const POLL_PERIOD_MINUTES = 0.05;
-
-function setupAlarm() {
-  chrome.alarms.create(ALARM_NAME, { periodInMinutes: POLL_PERIOD_MINUTES });
+async function ensureOffscreenDocument() {
+  const has = await chrome.offscreen.hasDocument();
+  if (has) return;
+  await chrome.offscreen.createDocument({
+    url: OFFSCREEN_URL,
+    reasons: ['LOCAL_STORAGE'],
+    justification: 'Keeps a persistent page alive to poll for incoming calls every few seconds, which a Manifest V3 service worker cannot reliably do on its own.',
+  });
 }
 
-chrome.runtime.onInstalled.addListener(setupAlarm);
-chrome.runtime.onStartup.addListener(setupAlarm);
-setupAlarm();
+chrome.runtime.onInstalled.addListener(ensureOffscreenDocument);
+chrome.runtime.onStartup.addListener(ensureOffscreenDocument);
+ensureOffscreenDocument();
 
+// Not used for call-checking itself (that's offscreen.js, every 3s) - this
+// is just a once-a-minute safety net that recreates the offscreen document
+// if Chrome ever closes it. Chrome allows alarms this infrequent everywhere.
+chrome.alarms.create(WATCHDOG_ALARM, { periodInMinutes: 1 });
 chrome.alarms.onAlarm.addListener((alarm) => {
-  if (alarm.name === ALARM_NAME) checkForCalls();
+  if (alarm.name === WATCHDOG_ALARM) ensureOffscreenDocument();
 });
 
 // chrome.tabs.create() opens inside whichever window currently has focus -
@@ -41,35 +48,19 @@ async function openInNormalWindow(url) {
   return chrome.windows.create({ url, type: 'normal', focused: true });
 }
 
-async function checkForCalls() {
-  const stored = await chrome.storage.local.get(['lastSeen', 'agentName']);
-  const lastSeen = stored.lastSeen || 0;
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type !== 'callEvent') return;
+  const guest = message.event?.guest;
+  if (!guest) return;
 
-  // Not set up yet - nothing to check for. Set via the extension's popup.
-  if (!stored.agentName) return;
-
-  try {
-    const resp = await fetch(`${BASE_URL}/poll.php?since=${lastSeen}&agent=${encodeURIComponent(stored.agentName)}`);
-    const data = await resp.json();
-    await chrome.storage.local.set({ lastChecked: Date.now(), lastError: null });
-
-    if (data.event) {
-      await chrome.storage.local.set({ lastSeen: data.event.receivedAt, lastEvent: data.event });
-      const guest = data.event.guest;
-      if (guest) {
-        const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
-        // Route through our own redirect.php instead of opening the Zenoti
-        // URL directly - a tab created from nothing (no originating page)
-        // has no "referrer", and Zenoti's own app bounces those to its
-        // dashboard. Bouncing through our own page first, then navigating
-        // onward via a real page redirect, gives it one - the same reason
-        // clicking a link on index.html works but a raw pasted URL doesn't.
-        const openUrl = `${BASE_URL}/redirect.php?url=${encodeURIComponent(url)}`;
-        await chrome.storage.local.set({ lastUrl: url });
-        openInNormalWindow(openUrl);
-      }
-    }
-  } catch (e) {
-    await chrome.storage.local.set({ lastError: String(e), lastChecked: Date.now() });
-  }
-}
+  const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
+  // Route through our own redirect.php instead of opening the Zenoti
+  // URL directly - a tab created from nothing (no originating page)
+  // has no "referrer", and Zenoti's own app bounces those to its
+  // dashboard. Bouncing through our own page first, then navigating
+  // onward via a real page redirect, gives it one - the same reason
+  // clicking a link on index.html works but a raw pasted URL doesn't.
+  const openUrl = `${BASE_URL}/redirect.php?url=${encodeURIComponent(url)}`;
+  chrome.storage.local.set({ lastUrl: url });
+  openInNormalWindow(openUrl);
+});

@@ -16,8 +16,34 @@ true zero-click automation possible.
 Reuses the same backend as the dashboard — `webhook.php` still receives
 CallGear's call event and looks up the caller in Zenoti; nothing there
 changes. This extension replaces the dashboard tab: instead of a person
-watching a webpage, a background script checks `poll.php` every few
+watching a webpage, a hidden background page checks `poll.php` every few
 seconds and opens the profile automatically the instant it finds one.
+
+That hidden background page (`offscreen.js`) is deliberately not the
+extension's main background script — Chrome freezes a Manifest V3
+extension's main background script after ~30 seconds of no activity, and
+separately won't let it check anything more often than once a minute. Both
+would make a plain "check every 3 seconds" timer silently unreliable.
+Instead, this extension opens an invisible page (an "offscreen document")
+that Chrome keeps alive in the background, and the checking loop runs there
+instead — behaving exactly like an ordinary open browser tab would, just
+invisible. If you installed version 1.1.0 or earlier, update to the latest
+files (see Install below) — that's the fix for "extension is set up
+correctly but nothing pops up."
+
+## Already installed an earlier version? Update it like this
+
+1. Download this `extension` folder again (same repo, same branch) so you
+   have the newest files, including two new ones: `offscreen.html` and
+   `offscreen.js`.
+2. Replace the old `extension` folder on the agent's computer with the new
+   one (or copy the new files into it, overwriting `manifest.json` and
+   `background.js`, and adding the two new files).
+3. Go to `chrome://extensions`, find "Grandflora Call Screen-Pop", and click
+   its **reload icon** (a circular arrow on the extension's card). If that
+   doesn't pick up the change, remove it and **Load unpacked** again instead.
+4. No need to re-enter the agent name — it's remembered. Confirm by clicking
+   the extension's icon; it should still show "Active as ...".
 
 ## Install (one-time, per agent's computer)
 

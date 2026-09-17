@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "Grandflora Call Screen-Pop",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Opens the caller's Zenoti profile automatically when a call comes in on CallGear. No tab or click needed.",
-  "permissions": ["alarms", "tabs", "storage", "windows"],
+  "permissions": ["alarms", "tabs", "storage", "windows", "offscreen"],
   "host_permissions": ["https://grandflora.laghavi.com/*"],
   "background": {
     "service_worker": "background.js"
