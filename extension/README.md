@@ -42,10 +42,26 @@ general public tool.
 
 - Click the extension's icon (toolbar puzzle-piece → pin it for easy
   access) — it shows "Active — last checked Ns ago" if working, or
-  "Connection trouble" if it can't reach the server.
+  "Connection trouble" if it can't reach the server. It also shows the
+  exact URL it last tried to open (`Opened: ...`) — useful for confirming
+  whether it computed the right link.
 - If nothing happens on a real call: confirm CallGear's Interactive Call
   Handling step and scenario setup are still correct (see `../php/README.md`
   Step 4) — this extension only reacts to events that `webhook.php` already
   received and stored; it doesn't talk to CallGear directly.
+- **If the wrong page opens (e.g. Zenoti's general dashboard instead of the
+  specific guest)**: this is almost always a login-session issue, not a bug
+  in the link itself. Chrome extensions are scoped to one specific browser
+  **profile** — if it was installed ("Load unpacked") in a different Chrome
+  profile than the one the agent normally uses to stay logged into Zenoti,
+  the new window it opens won't have that login, and Zenoti will bounce an
+  unauthenticated deep link to its dashboard/login instead. Fix: remove the
+  extension and reload it from the same Chrome profile/window where the
+  agent is actually logged into Zenoti day to day.
+- The extension always opens the profile in its own dedicated browser
+  window (not inside whatever window currently has focus) — this matters
+  if agents use a separate small popup-style window (e.g. a CallGear
+  softphone/workspace panel) to handle calls, since that kind of window
+  isn't built to host arbitrary pages.
 - Uninstall any time from `chrome://extensions` — this doesn't affect the
   server side at all.

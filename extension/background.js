@@ -24,6 +24,23 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === ALARM_NAME) checkForCalls();
 });
 
+// chrome.tabs.create() opens inside whichever window currently has focus -
+// if that's a small popup-style window (like a CallGear softphone/workspace
+// panel, which isn't built to host arbitrary pages as tabs), the result can
+// come out broken or redirected. Opening a dedicated normal window instead
+// avoids that entirely and always pops clearly into view.
+async function openInNormalWindow(url) {
+  const windows = await chrome.windows.getAll({ windowTypes: ['normal'] });
+  const target = windows.find((w) => w.focused) || windows[0];
+
+  if (target) {
+    const tab = await chrome.tabs.create({ url, windowId: target.id });
+    chrome.windows.update(target.id, { focused: true });
+    return tab;
+  }
+  return chrome.windows.create({ url, type: 'normal', focused: true });
+}
+
 async function checkForCalls() {
   const stored = await chrome.storage.local.get(['lastSeen']);
   const lastSeen = stored.lastSeen || 0;
@@ -39,7 +56,7 @@ async function checkForCalls() {
       if (guest) {
         const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
         await chrome.storage.local.set({ lastUrl: url });
-        chrome.tabs.create({ url });
+        openInNormalWindow(url);
       }
     }
   } catch (e) {
