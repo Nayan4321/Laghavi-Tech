@@ -38,6 +38,7 @@ async function checkForCalls() {
       const guest = data.event.guest;
       if (guest) {
         const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
+        await chrome.storage.local.set({ lastUrl: url });
         chrome.tabs.create({ url });
       }
     }

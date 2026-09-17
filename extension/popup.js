@@ -1,7 +1,8 @@
 const statusEl = document.getElementById('status');
 const lastCallEl = document.getElementById('last-call');
+const lastUrlEl = document.getElementById('last-url');
 
-chrome.storage.local.get(['lastChecked', 'lastError', 'lastEvent'], (data) => {
+chrome.storage.local.get(['lastChecked', 'lastError', 'lastEvent', 'lastUrl'], (data) => {
   if (data.lastError) {
     statusEl.textContent = 'Connection trouble';
     statusEl.className = 'err';
@@ -17,5 +18,9 @@ chrome.storage.local.get(['lastChecked', 'lastError', 'lastEvent'], (data) => {
     const guest = data.lastEvent.guest;
     const name = guest ? [guest.firstName, guest.lastName].filter(Boolean).join(' ') : null;
     lastCallEl.textContent = `Last call: ${data.lastEvent.phone}` + (name ? ` (${name})` : ' (no match)');
+  }
+
+  if (data.lastUrl) {
+    lastUrlEl.textContent = `Opened: ${data.lastUrl}`;
   }
 });
