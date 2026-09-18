@@ -6,6 +6,11 @@
 require __DIR__ . '/store.php';
 
 header('Content-Type: application/json');
+// Never let a browser/proxy cache this response - it's polled every few
+// seconds expecting a fresh answer each time, and a cached "no event" or
+// cached stale event would look exactly like a missed or wrong call.
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Pragma: no-cache');
 
 $agentId = $_GET['agent'] ?? 'shared';
 $since = (float) ($_GET['since'] ?? 0);
