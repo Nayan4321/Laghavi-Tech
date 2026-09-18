@@ -37,6 +37,19 @@ if ($rawBody) {
     }
 }
 
+// Temporary diagnostic log: records every single webhook hit CallGear
+// actually makes, with a precise timestamp, so we can see directly whether
+// one real call triggers exactly one request (expected) or several with
+// different &agent= values (would mean CallGear itself is firing multiple
+// scenario branches for one call - not something fixable by adjusting the
+// matching logic here). Protected by data/.htaccess like everything else
+// in that folder. Safe to remove once the multi-popup issue is understood.
+file_put_contents(
+    __DIR__ . '/data/webhook_log.txt',
+    date('Y-m-d H:i:s') . '.' . substr(microtime(), 2, 3) . ' ' . json_encode($data) . "\n",
+    FILE_APPEND | LOCK_EX
+);
+
 if (!empty($config['webhook_token']) && ($data['token'] ?? null) !== $config['webhook_token']) {
     respond(['error' => 'invalid or missing token']);
 }
