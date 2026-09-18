@@ -10,14 +10,20 @@ function store_dir() {
     return $dir;
 }
 
-// Normalizes case and surrounding whitespace before sanitizing, so
-// "Ryhem", "ryhem ", and "RYHEM" all resolve to the same stored agent -
-// CallGear's Authorization URLs got typed by hand across many duplicated
-// scenarios, so small case/whitespace differences from copy-pasting are
-// expected and shouldn't cause a mismatch with what's saved in the
-// extension (which already lowercases/trims what's typed there).
+// Normalizes case, whitespace, and anything past the first name before
+// sanitizing. Employees only ever type their first name into the extension
+// (e.g. "hadeer") - but the &agent=... value in CallGear's Authorization
+// URLs was typed by hand across many duplicated scenarios, so it might
+// carry a last name, a stray character, or other extra text tacked on
+// ("hadeer_gaber", "hadeer.g", "HadeerG" ...). Keeping only the leading
+// run of letters means all of those still resolve to the same stored
+// agent as the plain first name, as long as that first name itself is
+// spelled the same.
 function store_safe_agent_id($agentId) {
     $normalized = strtolower(trim((string) $agentId));
+    if (preg_match('/^[a-z]+/', $normalized, $match)) {
+        $normalized = $match[0];
+    }
     return preg_replace('/[^a-z0-9_.-]/', '_', $normalized);
 }
 
