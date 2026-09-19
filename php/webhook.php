@@ -74,11 +74,13 @@ $agentId = $data['agent'] ?? 'shared';
 
 try {
     $guest = zenoti_search_guest_by_phone($phone);
+    $receivedAt = round(microtime(true) * 1000);
     store_save_event($agentId, [
         'phone' => $phone,
         'guest' => $guest,
-        'receivedAt' => round(microtime(true) * 1000),
+        'receivedAt' => $receivedAt,
     ]);
+    store_log_timeline($phone, $agentId, $receivedAt);
     respond(['matched' => $guest !== null, 'guest' => $guest, 'agent' => $agentId]);
 } catch (Exception $e) {
     respond(['error' => 'zenoti lookup failed', 'detail' => $e->getMessage()]);

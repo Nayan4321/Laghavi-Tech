@@ -27,7 +27,19 @@ $maxAgeMs = 60 * 1000;
 $now = round(microtime(true) * 1000);
 $isFresh = $event && ($now - ($event['receivedAt'] ?? 0)) <= $maxAgeMs;
 
-if ($isFresh && ($event['receivedAt'] ?? 0) > $since) {
+// CallGear fires this employee's webhook the instant their branch is
+// tried, before it knows whether they're actually free - if they're busy/
+// on break/unavailable, CallGear moves on to the next employee within a
+// few seconds; a genuine ring takes much longer (the "Dialing duration").
+// So an event is held back for a few seconds before it's ever shown, to
+// give a possible "skip" time to happen - if a different agent's event
+// for the same phone number shows up in that window, this employee was
+// skipped, not actually rung, and the popup never appears at all.
+$skipDetectDelayMs = 5000;
+$oldEnoughToTrust = $event && ($now - ($event['receivedAt'] ?? 0)) >= $skipDetectDelayMs;
+$wasSkipped = $oldEnoughToTrust && store_was_skipped($event['phone'], $agentId, $event['receivedAt']);
+
+if ($isFresh && $oldEnoughToTrust && !$wasSkipped && ($event['receivedAt'] ?? 0) > $since) {
     echo json_encode(['event' => $event]);
 } else {
     echo json_encode(['event' => null]);
