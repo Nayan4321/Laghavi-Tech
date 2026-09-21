@@ -3,8 +3,30 @@ const lastCallEl = document.getElementById('last-call');
 const lastUrlEl = document.getElementById('last-url');
 const agentInput = document.getElementById('agent-input');
 const agentSave = document.getElementById('agent-save');
+const busyToggle = document.getElementById('busy-toggle');
+const busyHint = document.getElementById('busy-hint');
 
-chrome.storage.local.get(['lastChecked', 'lastError', 'lastEvent', 'lastUrl', 'agentName'], (data) => {
+function renderBusyToggle(isBusy) {
+  if (isBusy) {
+    busyToggle.textContent = 'On a call — click when done';
+    busyToggle.className = 'busy';
+    busyHint.textContent = 'Popups are paused right now.';
+  } else {
+    busyToggle.textContent = 'Mark: On a call (pause popups)';
+    busyToggle.className = 'available';
+    busyHint.textContent = 'Click this before making an outgoing call.';
+  }
+}
+
+busyToggle.onclick = () => {
+  chrome.storage.local.get(['busy'], (data) => {
+    const next = !data.busy;
+    chrome.storage.local.set({ busy: next }, () => renderBusyToggle(next));
+  });
+};
+
+chrome.storage.local.get(['lastChecked', 'lastError', 'lastEvent', 'lastUrl', 'agentName', 'busy'], (data) => {
+  renderBusyToggle(!!data.busy);
   if (!data.agentName) {
     statusEl.textContent = 'Not set up yet — enter your agent name below';
     statusEl.className = 'warn';

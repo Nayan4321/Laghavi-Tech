@@ -14,6 +14,11 @@
   #agent-box label { display: block; font-size: 12px; color: #555; margin-bottom: 4px; }
   #agent-input { width: 100%; box-sizing: border-box; padding: 6px 8px; font-size: 13px; }
   #agent-save { margin-top: 6px; padding: 6px 12px; font-size: 13px; cursor: pointer; }
+  #busy-box { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; }
+  #busy-toggle { width: 100%; box-sizing: border-box; padding: 10px 12px; font-size: 13px; cursor: pointer; font-weight: 600; border-radius: 6px; border: none; }
+  #busy-toggle.available { background: #16a34a; color: #fff; }
+  #busy-toggle.busy { background: #dc2626; color: #fff; }
+  #busy-hint { font-size: 11px; color: #888; margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -21,6 +26,11 @@
   <p id="status">Checking...</p>
   <p id="last-call"></p>
   <p id="last-url"></p>
+
+  <div id="busy-box">
+    <button id="busy-toggle">Loading...</button>
+    <p id="busy-hint"></p>
+  </div>
 
   <div id="agent-box">
     <label for="agent-input">Your agent name (must match CallGear scenario exactly, e.g. "ryhem")</label>

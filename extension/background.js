@@ -87,15 +87,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     const guest = event?.guest;
     if (!guest) return;
 
-    const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
-    // Route through our own redirect.php instead of opening the Zenoti
-    // URL directly - a tab created from nothing (no originating page)
-    // has no "referrer", and Zenoti's own app bounces those to its
-    // dashboard. Bouncing through our own page first, then navigating
-    // onward via a real page redirect, gives it one - the same reason
-    // clicking a link on index.html works but a raw pasted URL doesn't.
-    const openUrl = `${BASE_URL}/redirect.php?url=${encodeURIComponent(url)}`;
-    chrome.storage.local.set({ lastUrl: url });
-    openInNormalWindow(openUrl);
+    // The agent's own manual "On a call" toggle (see popup.js) - CallGear
+    // has no way to tell us an employee is mid-outgoing-call, so this is
+    // the only reliable signal for that case. lastSeen above is still
+    // updated either way, so this call never pops late once they switch
+    // back to available.
+    chrome.storage.local.get(['busy'], (stored) => {
+      if (stored.busy) return;
+
+      const url = guest.profileUrl || `${BASE_URL}/guest.php?id=${encodeURIComponent(guest.id)}`;
+      // Route through our own redirect.php instead of opening the Zenoti
+      // URL directly - a tab created from nothing (no originating page)
+      // has no "referrer", and Zenoti's own app bounces those to its
+      // dashboard. Bouncing through our own page first, then navigating
+      // onward via a real page redirect, gives it one - the same reason
+      // clicking a link on index.html works but a raw pasted URL doesn't.
+      const openUrl = `${BASE_URL}/redirect.php?url=${encodeURIComponent(url)}`;
+      chrome.storage.local.set({ lastUrl: url });
+      openInNormalWindow(openUrl);
+    });
   }
 });

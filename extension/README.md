@@ -31,6 +31,16 @@ invisible. If you installed version 1.1.0 or earlier, update to the latest
 files (see Install below) — that's the fix for "extension is set up
 correctly but nothing pops up."
 
+## "On a call" toggle
+
+CallGear has no way to tell us an employee is busy with an *outgoing* call,
+so their screen would otherwise still pop for an unrelated incoming call
+routed past them. The popup's own window now has a button for this: click
+**"Mark: On a call"** right before dialing out, and popups are paused
+completely until you click it again to switch back to "Available." Anything
+that would have popped while marked busy is simply skipped for good — it
+won't show up late once you switch back.
+
 ## Already installed an earlier version? Update it like this
 
 1. Download this `extension` folder again (same repo, same branch) so you
