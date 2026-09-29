@@ -1,0 +1,51 @@
+<script>
+/*
+  KAIZEN form repair: makes the multi-step form work without changing any option text.
+
+  Some radio options end in "<small>" instead of "</small>". The browser then nests
+  the rest of the form inside step 1, so Elementor finds only one step.
+  This puts every field and option back where Elementor expects it.
+
+  Paste into an Elementor HTML widget placed DIRECTLY BELOW the form widget.
+  It must run before Elementor starts (which happens when the page finishes loading).
+*/
+(function () {
+  function repair(form) {
+    var wrapper = form.querySelector('.elementor-form-fields-wrapper');
+    if (!wrapper) return;
+
+    var stray = [].filter.call(form.querySelectorAll('small'), function (s) {
+      return !s.closest('label');
+    });
+    if (!stray.length) return; // form is healthy, nothing to do
+
+    if (form.querySelector('.e-form__indicators')) {
+      console.warn('KAIZEN form repair ran after Elementor; move the HTML widget directly below the form.');
+    }
+
+    // 1. put every option back into its own field's option list
+    [].forEach.call(wrapper.querySelectorAll('.elementor-field-subgroup'), function (sub) {
+      var first = sub.querySelector('input');
+      if (!first) return;
+      [].forEach.call(form.querySelectorAll('input[name="' + first.name + '"]'), function (input) {
+        var opt = input.closest('.elementor-field-option');
+        if (opt) sub.appendChild(opt);
+      });
+    });
+
+    // 2. make every field (steps included) a direct child of the fields wrapper, in order
+    [].forEach.call(wrapper.querySelectorAll('.elementor-column'), function (col) {
+      wrapper.appendChild(col);
+    });
+
+    // 3. remove the stray <small> wrappers (the descriptions inside labels are kept)
+    [].forEach.call(form.querySelectorAll('small'), function (s) {
+      if (s.closest('label') || !s.parentNode) return;
+      while (s.firstChild) s.parentNode.insertBefore(s.firstChild, s);
+      s.parentNode.removeChild(s);
+    });
+  }
+
+  [].forEach.call(document.querySelectorAll('.elementor-widget-form form.elementor-form'), repair);
+})();
+</script>

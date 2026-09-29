@@ -9,29 +9,14 @@ progress bar, clickable option tiles, two-column rows, and Back/Continue buttons
 CSS cannot fix these. They are why the form currently shows everything on one
 page, with a single "1" indicator and small text.
 
-1. **Remove the HTML from the radio options.** This is what breaks the steps.
-   In **Which best describes you?** and **When do you need a manager appointed?**,
-   the options end in `<small>` when they should end in `</small>`. The unclosed tags
-   wrap the rest of the form, so Elementor sees only one step. Replace the options
-   with plain text. The CSS adds the grey descriptions back, matched by option position.
-
-   Which best describes you?
-   ```
-   Developer or master developer
-   Family office
-   Portfolio owner or investor
-   Commercial / retail asset owner
-   Owners committee or association
-   ```
-   When do you need a manager appointed?
-   ```
-   Immediately
-   Within 1 – 3 months
-   Within 3 – 6 months
-   More than 6 months away
-   Just researching options
-   ```
-   If you reorder these options, update the matching `#form-field-..-N` rules at the end of the CSS.
+1. **Add the repair script. This is what fixes the steps.** Some radio options end in
+   `<small>` instead of `</small>`. The browser then nests the rest of the form inside
+   step 1, so Elementor finds only one step. The option text has to stay as it is, so
+   [`kaizen-form-repair.html`](kaizen-form-repair.html) repairs the page in the browser instead.
+   Add an **HTML** widget **directly below the Form widget** (same container) and paste the
+   file's contents into it. Submitted values are not changed.
+   If a caching/optimisation plugin "delays JavaScript" (WP Rocket, LiteSpeed, etc.), exclude
+   this script from it, because it must run before Elementor starts.
 
 2. **Step buttons are swapped.** On the 2nd, 3rd and 4th **Step** fields, set
    *Previous Button* = `Back` and *Next Button* = `Continue`.
