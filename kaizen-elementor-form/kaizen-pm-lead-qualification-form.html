@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Property Management Enquiry | KAIZEN</title>
+<!--
+  KAIZEN AMS — Google Ads lead qualification form
+  Audience: commercial / portfolio owners + developers
+  Self-contained. No dependencies except Google Fonts.
+
+  DEV INTEGRATION (3 things only):
+  1. Set ENDPOINT below to your CRM / form handler URL (HubSpot, Zapier, or your own).
+  2. Set CONVERSION_ID / CONVERSION_LABEL for the Google Ads conversion fire.
+  3. Hidden UTM + gclid capture is automatic — nothing to configure.
+
+  The lead score is computed client-side for instant routing, but ALWAYS
+  recompute server-side before trusting it (see SCORING block at bottom).
+-->
+<link href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --red:#8C1D24;
+    --red-dark:#6E161C;
+    --ink:#1C1C1C;
+    --grey:#5A5C5B;
+    --line:#D6D8D6;
+    --bg:#EAEBEA;
+    --white:#FFFFFF;
+    --ok:#1F7A4D;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;padding:40px 20px;background:var(--bg);
+    font-family:'Montserrat',system-ui,sans-serif;color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto}
+  .card{background:var(--white);border-radius:4px;padding:40px 44px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+  .eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--red);font-weight:600;margin:0 0 10px}
+  h1{font-family:'Marcellus',Georgia,serif;font-size:31px;line-height:1.22;margin:0 0 12px;font-weight:400}
+  .sub{font-size:15px;line-height:1.6;color:var(--grey);margin:0 0 4px}
+
+  /* progress */
+  .prog{display:flex;gap:6px;margin:30px 0 34px}
+  .prog span{flex:1;height:3px;background:var(--line);border-radius:2px;transition:background .25s}
+  .prog span.on{background:var(--red)}
+
+  fieldset{border:0;margin:0;padding:0}
+  .step{display:none}
+  .step.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .steplabel{font-family:'Marcellus',serif;font-size:21px;margin:0 0 6px}
+  .stephint{font-size:13px;color:var(--grey);margin:0 0 26px}
+
+  .q{margin-bottom:26px}
+  .q > label,.qlabel{display:block;font-size:14px;font-weight:600;margin-bottom:9px}
+  .opt{font-weight:400;color:var(--grey);font-size:12px}
+
+  /* choice tiles */
+  .tiles{display:grid;gap:9px}
+  .tiles.two{grid-template-columns:1fr 1fr}
+  @media(max-width:560px){.tiles.two{grid-template-columns:1fr}}
+  .tile{position:relative;display:block;border:1px solid var(--line);border-radius:3px;padding:14px 16px 14px 44px;cursor:pointer;transition:border-color .15s,background .15s;font-size:14px;line-height:1.4}
+  .tile:hover{border-color:var(--grey)}
+  .tile input{position:absolute;left:16px;top:16px;accent-color:var(--red);margin:0}
+  .tile .t{font-weight:600;display:block}
+  .tile .d{display:block;font-size:12px;color:var(--grey);margin-top:3px}
+  .tile:has(input:checked){border-color:var(--red);background:#FCF6F6}
+
+  input[type=text],input[type=email],input[type=tel],input[type=number],input[type=date],select,textarea{
+    width:100%;padding:12px 13px;border:1px solid var(--line);border-radius:3px;
+    font-family:inherit;font-size:14px;color:var(--ink);background:var(--white)
+  }
+  textarea{min-height:88px;resize:vertical}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(140,29,36,.09)}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:560px){.row{grid-template-columns:1fr}}
+  .phone{display:grid;grid-template-columns:120px 1fr;gap:8px}
+
+  .cond{display:none}
+  .cond.show{display:block}
+
+  .consent{display:flex;gap:10px;align-items:flex-start;font-size:12px;color:var(--grey);line-height:1.55;margin-top:4px}
+  .consent input{accent-color:var(--red);margin-top:2px;flex:0 0 auto}
+
+  .nav{display:flex;justify-content:space-between;align-items:center;margin-top:34px;padding-top:24px;border-top:1px solid var(--line)}
+  button{font-family:inherit;font-size:14px;font-weight:600;border-radius:3px;cursor:pointer;transition:background .15s}
+  .next,.submit{background:var(--red);color:#fff;border:0;padding:14px 30px;letter-spacing:.02em}
+  .next:hover,.submit:hover{background:var(--red-dark)}
+  .back{background:none;border:0;color:var(--grey);padding:14px 4px;text-decoration:underline}
+  .back:hover{color:var(--ink)}
+  .err{color:var(--red);font-size:12px;margin-top:7px;display:none}
+  .err.show{display:block}
+  .trust{font-size:11px;color:var(--grey);text-align:center;margin:18px 0 0;line-height:1.6}
+
+  /* thank you */
+  #done{display:none;text-align:center;padding:14px 0}
+  #done h2{font-family:'Marcellus',serif;font-size:26px;margin:0 0 12px;font-weight:400}
+  #done p{font-size:15px;color:var(--grey);line-height:1.65;margin:0 auto 10px;max-width:460px}
+  .tick{width:52px;height:52px;border-radius:50%;background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;font-size:26px;margin:0 auto 22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="card">
+
+  <p class="eyebrow">Property &amp; Asset Management</p>
+  <h1>Tell us about your property or portfolio</h1>
+  <p class="sub">Four short steps. A KAIZEN manager reviews every enquiry and responds within one business day.</p>
+
+  <div class="prog" id="prog">
+    <span class="on"></span><span></span><span></span><span></span>
+  </div>
+
+  <form id="f" novalidate>
+
+    <!-- ============ STEP 1 — WHO ============ -->
+    <fieldset class="step active" data-step="1">
+      <p class="steplabel">Which best describes you?</p>
+      <p class="stephint">This decides who picks up your enquiry.</p>
+
+      <div class="q">
+        <div class="tiles">
+          <label class="tile"><input type="radio" name="client_type" value="developer" required>
+            <span class="t">Developer or master developer</span>
+            <span class="d">Handing over a project, or appointing a manager for a new build</span></label>
+          <label class="tile"><input type="radio" name="client_type" value="family_office">
+            <span class="t">Family office</span>
+            <span class="d">Managing real estate assets on behalf of a family or private group</span></label>
+          <label class="tile"><input type="radio" name="client_type" value="portfolio_owner">
+            <span class="t">Portfolio owner or investor</span>
+            <span class="d">Multiple units or buildings held for income</span></label>
+          <label class="tile"><input type="radio" name="client_type" value="commercial_owner">
+            <span class="t">Commercial / retail asset owner</span>
+            <span class="d">Office, retail, mixed-use or industrial asset</span></label>
+          <label class="tile"><input type="radio" name="client_type" value="oa_board">
+            <span class="t">Owners committee or association</span>
+            <span class="d">Acting for owners in an existing building or community</span></label>
+        </div>
+        <p class="err" data-for="client_type">Please choose one.</p>
+      </div>
+
+      <div class="q">
+        <span class="qlabel">What do you need help with? <span class="opt">Select all that apply</span></span>
+        <div class="tiles two">
+          <label class="tile"><input type="checkbox" name="service[]" value="oa_management"><span class="t">Owner Association management</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="property_management"><span class="t">Property management</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="master_community"><span class="t">Master community management</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="unit_management"><span class="t">Unit management &amp; leasing</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="advisory"><span class="t">Advisory &amp; consultancy</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="sales_management"><span class="t">Sales management</span></label>
+          <label class="tile"><input type="checkbox" name="service[]" value="unsure"><span class="t">Not sure yet</span><span class="d">Happy to be advised</span></label>
+        </div>
+        <p class="err" data-for="service">Please select at least one.</p>
+      </div>
+
+      <div class="nav"><span></span><button type="button" class="next">Continue</button></div>
+    </fieldset>
+
+    <!-- ============ STEP 2 — THE ASSET ============ -->
+    <fieldset class="step" data-step="2">
+      <p class="steplabel">The asset</p>
+      <p class="stephint">Rough figures are fine — we just need the shape of it.</p>
+
+      <div class="q">
+        <label for="asset_type">Asset type</label>
+        <select name="asset_type" id="asset_type" required>
+          <option value="">Select…</option>
+          <option>Residential tower / apartment building</option>
+          <option>Mixed-use development</option>
+          <option>Office / commercial building</option>
+          <option>Retail or mall</option>
+          <option>Villa or townhouse community</option>
+          <option>Industrial / warehouse / labour accommodation</option>
+          <option>Hotel apartments / serviced residences</option>
+          <option>Mixed portfolio across types</option>
+        </select>
+        <p class="err" data-for="asset_type">Please select an asset type.</p>
+      </div>
+
+      <div class="q">
+        <label for="asset_condition">Condition of the asset</label>
+        <select name="asset_condition" id="asset_condition" required>
+          <option value="">Select…</option>
+          <option value="brand_new">Brand new — not yet occupied</option>
+          <option value="recently_completed">Recently completed and occupied</option>
+          <option value="well_maintained">Existing and well maintained</option>
+          <option value="ageing">Ageing — needs refurbishment</option>
+          <option value="under_refurbishment">Currently under refurbishment</option>
+          <option value="distressed">Distressed — significant defects or deferred maintenance</option>
+        </select>
+        <p class="err" data-for="asset_condition">Required.</p>
+      </div>
+
+      <div class="row">
+        <div class="q">
+          <label for="units">Total number of units</label>
+          <select name="units" id="units" required>
+            <option value="">Select…</option>
+            <option value="100-200">100 – 200</option>
+            <option value="201-500">201 – 500</option>
+            <option value="501-1000">501 – 1,000</option>
+            <option value="1001-2500">1,001 – 2,500</option>
+            <option value="2500+">More than 2,500</option>
+          </select>
+          <p class="err" data-for="units">Required.</p>
+        </div>
+        <div class="q">
+          <label for="buildings">Number of buildings / communities</label>
+          <select name="buildings" id="buildings" required>
+            <option value="">Select…</option>
+            <option value="1">1</option>
+            <option value="2-5">2 – 5</option>
+            <option value="6-15">6 – 15</option>
+            <option value="15+">More than 15</option>
+          </select>
+          <p class="err" data-for="buildings">Required.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="q">
+          <label for="emirate">Emirate</label>
+          <select name="emirate" id="emirate" required>
+            <option value="">Select…</option>
+            <option>Dubai</option>
+            <option>Abu Dhabi</option>
+          </select>
+          <p class="err" data-for="emirate">Required.</p>
+        </div>
+        <div class="q">
+          <label for="community">Community or area <span class="opt">optional</span></label>
+          <input type="text" name="community" id="community" placeholder="e.g. Business Bay, JVC, Al Reem Island">
+        </div>
+      </div>
+
+      <!-- DEVELOPER BRANCH -->
+      <div class="cond" id="branch_dev">
+        <div class="q">
+          <span class="qlabel">Project stage</span>
+          <div class="tiles two">
+            <label class="tile"><input type="radio" name="project_stage" value="design"><span class="t">Design / pre-construction</span></label>
+            <label class="tile"><input type="radio" name="project_stage" value="under_construction"><span class="t">Under construction</span></label>
+            <label class="tile"><input type="radio" name="project_stage" value="pre_handover"><span class="t">Handover within 6 months</span></label>
+            <label class="tile"><input type="radio" name="project_stage" value="handed_over"><span class="t">Recently handed over</span></label>
+            <label class="tile"><input type="radio" name="project_stage" value="existing"><span class="t">Existing building, already occupied</span></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="q">
+            <label for="handover_date">Expected handover date <span class="opt">optional</span></label>
+            <input type="date" name="handover_date" id="handover_date">
+          </div>
+          <div class="q">
+            <label for="mollak">Is the OA registered on Mollak / a JOP declaration in place?</label>
+            <select name="mollak_status" id="mollak">
+              <option value="">Select…</option>
+              <option value="registered">Yes, registered</option>
+              <option value="in_progress">In progress</option>
+              <option value="not_started">Not started</option>
+              <option value="unsure">Not sure</option>
+              <option value="na">Not applicable</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- OWNER BRANCH -->
+      <div class="cond" id="branch_owner">
+        <div class="q">
+          <span class="qlabel">How is the asset managed today?</span>
+          <div class="tiles two">
+            <label class="tile"><input type="radio" name="current_mgmt" value="self"><span class="t">I manage it myself</span></label>
+            <label class="tile"><input type="radio" name="current_mgmt" value="inhouse"><span class="t">In-house team</span></label>
+            <label class="tile"><input type="radio" name="current_mgmt" value="incumbent"><span class="t">Another management company</span></label>
+            <label class="tile"><input type="radio" name="current_mgmt" value="none"><span class="t">Not managed / newly acquired</span></label>
+          </div>
+        </div>
+        <div class="row">
+          <div class="q cond" id="q_contract">
+            <label for="contract_end">When does the current contract end? <span class="opt">optional</span></label>
+            <select name="contract_end" id="contract_end">
+              <option value="">Select…</option>
+              <option value="expired">Already expired / notice served</option>
+              <option value="lt3">Within 3 months</option>
+              <option value="3-6">3 – 6 months</option>
+              <option value="6-12">6 – 12 months</option>
+              <option value="gt12">More than 12 months</option>
+              <option value="unsure">Not sure</option>
+            </select>
+          </div>
+          <div class="q">
+            <label for="occupancy">Current occupancy <span class="opt">optional</span></label>
+            <select name="occupancy" id="occupancy">
+              <option value="">Select…</option>
+              <option value="90+">Above 90%</option>
+              <option value="70-90">70 – 90%</option>
+              <option value="50-70">50 – 70%</option>
+              <option value="lt50">Below 50%</option>
+              <option value="vacant">Vacant / not yet leased</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav"><button type="button" class="back">Back</button><button type="button" class="next">Continue</button></div>
+    </fieldset>
+
+    <!-- ============ STEP 3 — INTENT ============ -->
+    <fieldset class="step" data-step="3">
+      <p class="steplabel">Timing and decision</p>
+      <p class="stephint">So we send the right person, at the right moment.</p>
+
+      <div class="q">
+        <span class="qlabel">When do you need a manager appointed?</span>
+        <div class="tiles">
+          <label class="tile"><input type="radio" name="timeline" value="immediate" required><span class="t">Immediately</span><span class="d">Handover, expiry or a problem to solve now</span></label>
+          <label class="tile"><input type="radio" name="timeline" value="1-3m"><span class="t">Within 1 – 3 months</span></label>
+          <label class="tile"><input type="radio" name="timeline" value="3-6m"><span class="t">Within 3 – 6 months</span></label>
+          <label class="tile"><input type="radio" name="timeline" value="6m+"><span class="t">More than 6 months away</span></label>
+          <label class="tile"><input type="radio" name="timeline" value="researching"><span class="t">Just researching options</span></label>
+        </div>
+        <p class="err" data-for="timeline">Please choose one.</p>
+      </div>
+
+      <div class="q">
+        <span class="qlabel">Your role in the decision</span>
+        <div class="tiles">
+          <label class="tile"><input type="radio" name="authority" value="decision_maker" required><span class="t">I make the decision</span></label>
+          <label class="tile"><input type="radio" name="authority" value="committee"><span class="t">I sit on the board or committee that decides</span></label>
+          <label class="tile"><input type="radio" name="authority" value="recommender"><span class="t">I recommend, someone else signs</span></label>
+          <label class="tile"><input type="radio" name="authority" value="researcher"><span class="t">Gathering information for others</span></label>
+        </div>
+        <p class="err" data-for="authority">Please choose one.</p>
+      </div>
+
+      <div class="row">
+        <div class="q">
+          <label for="procurement">Is there a tender or RFP process?</label>
+          <select name="procurement" id="procurement">
+            <option value="">Select…</option>
+            <option value="rfp_live">Yes — RFP is live now</option>
+            <option value="rfp_planned">Yes — planned soon</option>
+            <option value="direct">No — direct appointment</option>
+            <option value="unsure">Not sure yet</option>
+          </select>
+        </div>
+        <div class="q">
+          <label for="trigger">What prompted you to look? <span class="opt">optional</span></label>
+          <select name="trigger" id="trigger">
+            <option value="">Select…</option>
+            <option value="new_handover">New project handover</option>
+            <option value="unhappy">Unhappy with current manager</option>
+            <option value="service_charge">Service charge or budget concerns</option>
+            <option value="compliance">Compliance, RERA or audit pressure</option>
+            <option value="acquisition">Just acquired the asset</option>
+            <option value="maintenance">Maintenance or FM problems</option>
+            <option value="expansion">Portfolio growing</option>
+            <option value="other">Something else</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="q">
+        <label for="notes">Anything else we should know? <span class="opt">optional</span></label>
+        <textarea name="notes" id="notes" placeholder="Current pain points, specific requirements, key dates…"></textarea>
+      </div>
+
+      <div class="nav"><button type="button" class="back">Back</button><button type="button" class="next">Continue</button></div>
+    </fieldset>
+
+    <!-- ============ STEP 4 — CONTACT ============ -->
+    <fieldset class="step" data-step="4">
+      <p class="steplabel">Where should we send our response?</p>
+      <p class="stephint">No call centre. A named manager, within one business day.</p>
+
+      <div class="row">
+        <div class="q">
+          <label for="first_name">First name</label>
+          <input type="text" name="first_name" id="first_name" autocomplete="given-name" required>
+          <p class="err" data-for="first_name">Required.</p>
+        </div>
+        <div class="q">
+          <label for="last_name">Last name</label>
+          <input type="text" name="last_name" id="last_name" autocomplete="family-name" required>
+          <p class="err" data-for="last_name">Required.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="q">
+          <label for="company">Company or association name</label>
+          <input type="text" name="company" id="company" autocomplete="organization" required>
+          <p class="err" data-for="company">Required.</p>
+        </div>
+        <div class="q">
+          <label for="job_title">Job title <span class="opt">optional</span></label>
+          <input type="text" name="job_title" id="job_title" autocomplete="organization-title">
+        </div>
+      </div>
+
+      <div class="q">
+        <label for="email">Work email</label>
+        <input type="email" name="email" id="email" autocomplete="email" required placeholder="name@company.com">
+        <p class="err" data-for="email">Please enter a valid email address.</p>
+      </div>
+
+      <div class="q">
+        <label for="phone">Phone</label>
+        <div class="phone">
+          <select name="dial_code" id="dial_code" aria-label="Country code">
+            <option value="+971" selected>+971 UAE</option>
+            <option value="+966">+966 KSA</option>
+            <option value="+974">+974 QAT</option>
+            <option value="+973">+973 BHR</option>
+            <option value="+965">+965 KWT</option>
+            <option value="+968">+968 OMN</option>
+            <option value="+44">+44 UK</option>
+            <option value="+91">+91 IND</option>
+            <option value="+1">+1 US</option>
+            <option value="other">Other</option>
+          </select>
+          <input type="tel" name="phone" id="phone" autocomplete="tel" required placeholder="50 123 4567">
+        </div>
+        <p class="err" data-for="phone">Please enter a valid phone number.</p>
+      </div>
+
+      <div class="q">
+        <label for="contact_pref">Preferred way to be contacted</label>
+        <select name="contact_pref" id="contact_pref">
+          <option value="call">Phone call</option>
+          <option value="whatsapp">WhatsApp</option>
+          <option value="email">Email</option>
+          <option value="meeting">Site visit or meeting</option>
+        </select>
+      </div>
+
+      <div class="q">
+        <label class="consent"><input type="checkbox" name="consent" required>
+          <span>I agree that KAIZEN Asset Management Services may contact me about this enquiry and store my details in line with its privacy policy.</span></label>
+        <p class="err" data-for="consent">Please confirm to continue.</p>
+        <label class="consent" style="margin-top:10px"><input type="checkbox" name="marketing_optin" value="yes">
+          <span>Send me KAIZEN's market updates and regulatory briefings. <span class="opt">optional</span></span></label>
+      </div>
+
+      <!-- hidden tracking -->
+      <input type="hidden" name="gclid"><input type="hidden" name="wbraid"><input type="hidden" name="gbraid">
+      <input type="hidden" name="utm_source"><input type="hidden" name="utm_medium"><input type="hidden" name="utm_campaign">
+      <input type="hidden" name="utm_term"><input type="hidden" name="utm_content"><input type="hidden" name="keyword">
+      <input type="hidden" name="matchtype"><input type="hidden" name="device"><input type="hidden" name="campaignid">
+      <input type="hidden" name="adgroupid"><input type="hidden" name="landing_page"><input type="hidden" name="referrer">
+      <input type="hidden" name="lead_score"><input type="hidden" name="lead_tier"><input type="hidden" name="routing">
+      <input type="hidden" name="time_on_form"><input type="hidden" name="hp_field" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+      <div class="nav"><button type="button" class="back">Back</button><button type="submit" class="submit">Send my enquiry</button></div>
+      <p class="trust">Your details are used only to respond to this enquiry. We do not sell or share data with third parties.</p>
+    </fieldset>
+
+  </form>
+
+  <!-- thank you -->
+  <div id="done">
+    <div class="tick">&#10003;</div>
+    <h2 id="done_h">Thank you — we have your enquiry</h2>
+    <p id="done_p">A KAIZEN manager will review the details and come back to you within one business day.</p>
+  </div>
+
+</div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ 1. CONFIG — DEV: SET THESE ============ */
+  var ENDPOINT         = "";              // e.g. "https://hooks.zapier.com/..." or your CRM endpoint
+  var CONVERSION_ID    = "AW-XXXXXXXXX";  // Google Ads conversion ID
+  var CONVERSION_LABEL = "xxxxxxxxxxxxx"; // Google Ads conversion label
+  var MIN_SECONDS      = 4;               // bot guard: reject submissions faster than this
+
+  /* ============ 2. STATE ============ */
+  var form = document.getElementById("f"),
+      steps = [].slice.call(form.querySelectorAll(".step")),
+      bars  = [].slice.call(document.querySelectorAll("#prog span")),
+      cur = 0, started = Date.now();
+
+  /* ============ 3. HIDDEN FIELD CAPTURE ============ */
+  (function capture(){
+    var p = new URLSearchParams(location.search);
+    var map = {gclid:"gclid",wbraid:"wbraid",gbraid:"gbraid",utm_source:"utm_source",
+      utm_medium:"utm_medium",utm_campaign:"utm_campaign",utm_term:"utm_term",
+      utm_content:"utm_content",keyword:"keyword",matchtype:"matchtype",device:"device",
+      campaignid:"campaignid",adgroupid:"adgroupid"};
+    Object.keys(map).forEach(function(k){
+      var el = form.elements[k];
+      if(el) el.value = p.get(map[k]) || sessionStorage.getItem("kz_"+k) || "";
+      if(el && el.value) { try{ sessionStorage.setItem("kz_"+k, el.value); }catch(e){} }
+    });
+    form.elements.landing_page.value = location.href.split("#")[0];
+    form.elements.referrer.value = document.referrer || "direct";
+  })();
+
+  /* ============ 4. CONDITIONAL BRANCHING ============ */
+  function branch(){
+    var t = (form.querySelector('[name=client_type]:checked')||{}).value;
+    var dev = t === "developer";
+    var owner = t === "family_office" || t === "portfolio_owner" || t === "commercial_owner" || t === "oa_board";
+    document.getElementById("branch_dev").classList.toggle("show", dev);
+    document.getElementById("branch_owner").classList.toggle("show", owner);
+  }
+  form.addEventListener("change", function(e){
+    if(e.target.name === "client_type") branch();
+    if(e.target.name === "current_mgmt"){
+      document.getElementById("q_contract").classList.toggle("show", e.target.value === "incumbent");
+    }
+  });
+
+  /* ============ 5. VALIDATION ============ */
+  function showErr(name, on){
+    var p = form.querySelector('.err[data-for="'+name+'"]');
+    if(p) p.classList.toggle("show", !!on);
+  }
+  function validate(stepEl){
+    var ok = true, seen = {};
+    // required radios / selects / inputs inside visible containers only
+    [].slice.call(stepEl.querySelectorAll("[required]")).forEach(function(el){
+      var hiddenParent = el.closest(".cond:not(.show)");
+      if(hiddenParent) return;
+      var n = el.name.replace("[]","");
+      if(seen[n]) return;
+      var bad = false;
+      if(el.type === "radio"){ bad = !stepEl.querySelector('[name="'+el.name+'"]:checked'); seen[n]=1; }
+      else if(el.type === "checkbox"){ bad = !el.checked; }
+      else if(el.type === "email"){ bad = !/^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(el.value.trim()); }
+      else if(el.type === "tel"){ bad = el.value.replace(/\D/g,"").length < 7; }
+      else { bad = !el.value.trim(); }
+      showErr(n, bad);
+      if(bad && ok){ ok = false; (el.type==="radio"?stepEl.querySelector('[name="'+el.name+'"]'):el).scrollIntoView({behavior:"smooth",block:"center"}); }
+    });
+    // step 1 service checkboxes
+    if(stepEl.dataset.step === "1"){
+      var anyService = !!stepEl.querySelector('[name="service[]"]:checked');
+      showErr("service", !anyService);
+      if(!anyService) ok = false;
+    }
+    return ok;
+  }
+
+  /* ============ 6. NAVIGATION ============ */
+  function go(i){
+    steps[cur].classList.remove("active");
+    cur = i;
+    steps[cur].classList.add("active");
+    bars.forEach(function(b,n){ b.classList.toggle("on", n <= cur); });
+    document.querySelector(".card").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+  form.addEventListener("click", function(e){
+    if(e.target.classList.contains("next")){
+      if(validate(steps[cur]) && cur < steps.length-1) go(cur+1);
+    }
+    if(e.target.classList.contains("back") && cur > 0) go(cur-1);
+  });
+
+  /* ============ 7. SCORING ============
+     Max 100. Server MUST recompute — client values are advisory only.
+     Weights: fit 30 / scale 25 / timing 25 / condition 6 / authority 14
+  =====================================================*/
+  function val(n){ var e = form.querySelector('[name="'+n+'"]:checked') || form.elements[n]; return e ? e.value : ""; }
+  function score(){
+    var s = 0, ct = val("client_type");
+
+    // -- FIT: client type (max 18)
+    s += ({developer:18, family_office:17, portfolio_owner:16, commercial_owner:15, oa_board:14})[ct] || 0;
+
+    // -- FIT: service alignment (max 12)
+    var svc = [].slice.call(form.querySelectorAll('[name="service[]"]:checked')).map(function(c){return c.value;});
+    var core = ["oa_management","property_management","master_community"];
+    if(svc.some(function(v){return core.indexOf(v) > -1;})) s += 9;
+    if(svc.indexOf("advisory") > -1) s += 2;
+    if(svc.length > 1) s += 1;
+
+    // -- SCALE: units (max 17) — form floor is 100 units
+    s += ({"100-200":8,"201-500":12,"501-1000":15,"1001-2500":17,"2500+":17})[val("units")] || 0;
+    // -- SCALE: buildings (max 8)
+    s += ({"1":2,"2-5":5,"6-15":7,"15+":8})[val("buildings")] || 0;
+
+    // -- TIMING (max 25)
+    s += ({immediate:18, "1-3m":15, "3-6m":9, "6m+":4, researching:1})[val("timeline")] || 0;
+    var stage = val("project_stage");
+    if(stage === "pre_handover" || stage === "handed_over") s += 5;
+    else if(stage === "under_construction") s += 3;
+    var ce = val("contract_end");
+    if(ce === "expired" || ce === "lt3") s += 5;
+    else if(ce === "3-6") s += 3;
+    if(val("procurement") === "rfp_live") s += 2;
+
+    // -- CONDITION (max 6) — a problem asset means a real, urgent mandate
+    s += ({distressed:6, ageing:5, under_refurbishment:4, brand_new:4,
+           recently_completed:3, well_maintained:2})[val("asset_condition")] || 0;
+
+    // -- AUTHORITY (max 14)
+    s += ({decision_maker:14, committee:12, recommender:7, researcher:2})[val("authority")] || 0;
+
+    s = Math.max(0, Math.min(100, s));
+
+    // -- TIER
+    var tier;
+    if(s >= 70) tier = "priority";
+    else if(s >= 45) tier = "qualified";
+    else if(s >= 25) tier = "nurture";
+    else tier = "review";
+
+    // -- ROUTING
+    var route = "general_enquiries";
+    if(tier === "priority" || tier === "qualified"){
+      if(ct === "developer") route = "business_development_developers";
+      else if(ct === "family_office") route = "private_client_team";
+      else if(svc.indexOf("oa_management") > -1 || svc.indexOf("master_community") > -1) route = "oa_management_team";
+      else if(ct === "commercial_owner") route = "commercial_asset_team";
+      else route = "property_management_team";
+    } else if(tier === "nurture"){ route = "marketing_nurture"; }
+
+    return {score:s, tier:tier, route:route};
+  }
+
+  /* ============ 8. SUBMIT ============ */
+  form.addEventListener("submit", function(e){
+    e.preventDefault();
+    if(!validate(steps[cur])) return;
+    if(form.elements.hp_field.value) return;                        // honeypot
+    var secs = (Date.now() - started)/1000;
+    if(secs < MIN_SECONDS) return;                                  // speed guard
+
+    var r = score();
+    form.elements.lead_score.value = r.score;
+    form.elements.lead_tier.value  = r.tier;
+    form.elements.routing.value    = r.route;
+    form.elements.time_on_form.value = Math.round(secs);
+
+    var data = {};
+    new FormData(form).forEach(function(v,k){
+      if(k === "hp_field") return;
+      if(k.slice(-2) === "[]"){ var key = k.slice(0,-2); (data[key] = data[key] || []).push(v); }
+      else data[k] = v;
+    });
+    data.submitted_at = new Date().toISOString();
+
+    // Google Ads conversion
+    if(typeof gtag === "function"){
+      gtag("event","conversion",{
+        send_to: CONVERSION_ID + "/" + CONVERSION_LABEL,
+        value: r.score, currency: "AED",
+        transaction_id: data.submitted_at + "-" + (data.email||"")
+      });
+    }
+    if(window.dataLayer) window.dataLayer.push({event:"pm_lead_submit", lead_tier:r.tier, lead_score:r.score, routing:r.route});
+
+    var btn = form.querySelector(".submit");
+    btn.disabled = true; btn.textContent = "Sending…";
+
+    function finish(){
+      form.style.display = "none";
+      document.getElementById("prog").style.display = "none";
+      var d = document.getElementById("done");
+      if(r.tier === "priority"){
+        document.getElementById("done_h").textContent = "Thank you — you're a priority enquiry";
+        document.getElementById("done_p").textContent = "A senior KAIZEN manager will call you today. Keep an eye on " + (data.email || "your inbox") + " for a confirmation.";
+      }
+      d.style.display = "block";
+      d.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+
+    if(!ENDPOINT){ console.log("[KAIZEN form payload]", data); finish(); return; }
+    fetch(ENDPOINT, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(data)})
+      .then(finish)
+      .catch(function(){
+        btn.disabled = false; btn.textContent = "Send my enquiry";
+        alert("Something went wrong sending your enquiry. Please call +971 4 XXX XXXX or email us directly.");
+      });
+  });
+})();
+</script>
+</body>
+</html>
