@@ -9,26 +9,29 @@ progress bar, clickable option tiles, two-column rows, and Back/Continue buttons
 CSS cannot fix these. They are why the form currently shows everything on one
 page, with a single "1" indicator and small text.
 
-1. **Broken `<small>` tags in the radio options.** In **Which best describes you?**
-   and **When do you need a manager appointed?**, the options end in `<small>`
-   when they should end in `</small>`. Each unclosed tag wraps the rest of the
-   form. That breaks the steps and makes the text smaller and smaller. Rewrite each
-   option as `label|value`, so the submitted value is also clean:
+1. **Remove the HTML from the radio options.** This is what breaks the steps.
+   In **Which best describes you?** and **When do you need a manager appointed?**,
+   the options end in `<small>` when they should end in `</small>`. The unclosed tags
+   wrap the rest of the form, so Elementor sees only one step. Replace the options
+   with plain text. The CSS adds the grey descriptions back, matched by option position.
 
+   Which best describes you?
    ```
-   Developer or master developer<br><small>Handing over a project, or appointing a manager for a new build</small>|Developer or master developer
-   Family office<br><small>Managing real estate assets on behalf of a family or private group</small>|Family office
-   Portfolio owner or investor<br><small>Multiple units or buildings held for income</small>|Portfolio owner or investor
-   Commercial / retail asset owner<br><small>Office, retail, mixed-use or industrial asset</small>|Commercial / retail asset owner
-   Owners committee or association<br><small>Acting for owners in an existing building or community</small>|Owners committee or association
+   Developer or master developer
+   Family office
+   Portfolio owner or investor
+   Commercial / retail asset owner
+   Owners committee or association
    ```
+   When do you need a manager appointed?
    ```
-   Immediately<br><small>Handover, expiry or a problem to solve now</small>|Immediately
+   Immediately
    Within 1 – 3 months
    Within 3 – 6 months
    More than 6 months away
    Just researching options
    ```
+   If you reorder these options, update the matching `#form-field-..-N` rules at the end of the CSS.
 
 2. **Step buttons are swapped.** On the 2nd, 3rd and 4th **Step** fields, set
    *Previous Button* = `Back` and *Next Button* = `Continue`.

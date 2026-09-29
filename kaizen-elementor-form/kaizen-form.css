@@ -470,3 +470,12 @@ body .elementor-element.elementor-element-e67e0ee .elementor-message-success {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---------- option descriptions (option text stays plain, no HTML) ---------- */
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-0 + label::after, body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-1 + label::after, body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-2 + label::after, body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-3 + label::after, body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-4 + label::after, body .elementor-element.elementor-element-e67e0ee #form-field-field_17bc3b1-0 + label::after{display:block;margin-top:3px;font-size:12px;font-weight:400;line-height:1.4;color:var(--kz-grey)}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-0 + label::after{content:"Handing over a project, or appointing a manager for a new build"}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-1 + label::after{content:"Managing real estate assets on behalf of a family or private group"}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-2 + label::after{content:"Multiple units or buildings held for income"}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-3 + label::after{content:"Office, retail, mixed-use or industrial asset"}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_61dfd02-4 + label::after{content:"Acting for owners in an existing building or community"}
+body .elementor-element.elementor-element-e67e0ee #form-field-field_17bc3b1-0 + label::after{content:"Handover, expiry or a problem to solve now"}

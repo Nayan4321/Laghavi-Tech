@@ -64,3 +64,10 @@ selector .elementor-message-success{margin-top:20px !important;padding:18px 20px
 selector .elementor-form{padding:28px 20px}
 selector .elementor-field-group-field_70176f8, selector .elementor-field-group-field_bd2e9ad, selector .elementor-field-group-field_a224a04, selector .elementor-field-group-field_189db7c, selector .elementor-field-group-field_5918daf, selector .elementor-field-group-field_bd176b1, selector .elementor-field-group-name_free_consultaion, selector .elementor-field-group-last_name_free_consultaion, selector .elementor-field-group-field_1257435, selector .elementor-field-group-field_4581266{width:100% !important;flex:0 0 100% !important;max-width:100% !important}
 selector .elementor-field-group-field_14dde17 .elementor-field-subgroup, selector .elementor-field-group-field_1587932 .elementor-field-subgroup{grid-template-columns:1fr}}
+selector #form-field-field_61dfd02-0 + label::after, selector #form-field-field_61dfd02-1 + label::after, selector #form-field-field_61dfd02-2 + label::after, selector #form-field-field_61dfd02-3 + label::after, selector #form-field-field_61dfd02-4 + label::after, selector #form-field-field_17bc3b1-0 + label::after{display:block;margin-top:3px;font-size:12px;font-weight:400;line-height:1.4;color:var(--kz-grey)}
+selector #form-field-field_61dfd02-0 + label::after{content:"Handing over a project, or appointing a manager for a new build"}
+selector #form-field-field_61dfd02-1 + label::after{content:"Managing real estate assets on behalf of a family or private group"}
+selector #form-field-field_61dfd02-2 + label::after{content:"Multiple units or buildings held for income"}
+selector #form-field-field_61dfd02-3 + label::after{content:"Office, retail, mixed-use or industrial asset"}
+selector #form-field-field_61dfd02-4 + label::after{content:"Acting for owners in an existing building or community"}
+selector #form-field-field_17bc3b1-0 + label::after{content:"Handover, expiry or a problem to solve now"}
