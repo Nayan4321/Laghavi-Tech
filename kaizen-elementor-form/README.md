@@ -55,20 +55,27 @@ Optional, to match the HTML's behaviour:
 
 ## 2. Add the CSS
 
-Paste all of [`kaizen-form.css`](kaizen-form.css) into
-**Appearance → Customize → Additional CSS**, then publish. Keep the `@import` line at the very top; it loads
-the Marcellus and Montserrat fonts. Clear any cache plugin afterwards.
+**Option A: the widget's Custom CSS box (recommended).** Select the Form widget,
+go to **Advanced → Custom CSS**, and paste all of
+[`kaizen-form-elementor-widget.css`](kaizen-form-elementor-widget.css). It uses Elementor's `selector`
+keyword, so it applies only to this widget and keeps working if the widget is duplicated.
 
-(If you'd rather use Elementor → Custom Code, wrap it in `<style>…</style>` and
-change the `@import` into
-`<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;500;600;700&display=swap">`
-placed above the style tag.)
+The Custom CSS box can't load Google Fonts (`@import` doesn't work there). To load them,
+use the Form widget's **Style** tab:
+- **Label → Typography → Family:** `Montserrat`
+- **Field → HTML Field Typography → Family** (or any Typography control on the page): `Marcellus`
 
-Everything is scoped to `.elementor-element-e67e0ee`, so nothing else on the
-site is affected. If the widget is ever duplicated or rebuilt, its id changes.
-Find the new id in the form's hidden `form_id` input and replace every `e67e0ee`.
-The two-column pairs and the "optional" hints target field ids such as
-`field_70176f8`. If you rename a field's ID in Elementor, update it in the CSS too.
+Elementor then loads both fonts, and the CSS uses them.
+
+**Option B: the whole site.** Paste all of [`kaizen-form.css`](kaizen-form.css) into
+**Appearance → Customize → Additional CSS**. Keep its `@import` line first; that line loads the fonts. This version
+targets the widget id `e67e0ee`. If the widget is rebuilt, find the new id in the form's
+hidden `form_id` input and replace every `e67e0ee`.
+
+Use one option, not both. Clear any cache plugin afterwards.
+
+Both versions target field ids such as `field_70176f8` for the two-column pairs and the
+"optional" hints. If you rename a field's ID in Elementor, update it in the CSS too.
 
 ## What the CSS does
 
