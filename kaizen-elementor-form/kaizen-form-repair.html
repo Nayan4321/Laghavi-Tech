@@ -3,25 +3,29 @@
   KAIZEN form repair: makes the multi-step form work without changing any option text.
 
   Some radio options end in "<small>" instead of "</small>". The browser then nests
-  the rest of the form inside step 1, so Elementor finds only one step.
-  This puts every field and option back where Elementor expects it.
+  the rest of the form (and the rest of the page) inside <small> tags, so Elementor
+  finds only one step and the text after the form shrinks.
+  This puts every field and option back where Elementor expects it and removes the
+  stray <small> tags.
 
-  Paste into an Elementor HTML widget placed DIRECTLY BELOW the form widget.
-  It must run before Elementor starts (which happens when the page finishes loading).
+  Paste into an Elementor HTML widget anywhere on the page (above or below the form).
+  It runs before Elementor sets up the steps.
 */
 (function () {
-  function repair(form) {
+  function isStray(s) {
+    return !s.closest('.elementor-field-option label');
+  }
+
+  function unwrap(s) {
+    if (!s.parentNode) return;
+    while (s.firstChild) s.parentNode.insertBefore(s.firstChild, s);
+    s.parentNode.removeChild(s);
+  }
+
+  function repairForm(form) {
     var wrapper = form.querySelector('.elementor-form-fields-wrapper');
-    if (!wrapper) return;
-
-    var stray = [].filter.call(form.querySelectorAll('small'), function (s) {
-      return !s.closest('label');
-    });
-    if (!stray.length) return; // form is healthy, nothing to do
-
-    if (form.querySelector('.e-form__indicators')) {
-      console.warn('KAIZEN form repair ran after Elementor; move the HTML widget directly below the form.');
-    }
+    if (!wrapper) return false;
+    if (![].some.call(form.querySelectorAll('small'), isStray)) return false; // healthy form
 
     // 1. put every option back into its own field's option list
     [].forEach.call(wrapper.querySelectorAll('.elementor-field-subgroup'), function (sub) {
@@ -38,14 +42,33 @@
       wrapper.appendChild(col);
     });
 
-    // 3. remove the stray <small> wrappers (the descriptions inside labels are kept)
-    [].forEach.call(form.querySelectorAll('small'), function (s) {
-      if (s.closest('label') || !s.parentNode) return;
-      while (s.firstChild) s.parentNode.insertBefore(s.firstChild, s);
-      s.parentNode.removeChild(s);
+    // 3. remove the stray <small> wrappers inside the form (descriptions in labels are kept)
+    [].filter.call(form.querySelectorAll('small'), isStray).forEach(unwrap);
+    return true;
+  }
+
+  var firstBroken = null;
+
+  function run() {
+    [].forEach.call(document.querySelectorAll('.elementor-widget-form form.elementor-form'), function (form) {
+      if (repairForm(form) && !firstBroken) firstBroken = form;
     });
   }
 
-  [].forEach.call(document.querySelectorAll('.elementor-widget-form form.elementor-form'), repair);
+  // remove the <small> tags that leaked out of the form into the rest of the page
+  function cleanPage() {
+    if (!firstBroken) return;
+    [].filter.call(document.querySelectorAll('small'), function (s) {
+      return isStray(s) && (firstBroken.compareDocumentPosition(s) & Node.DOCUMENT_POSITION_FOLLOWING);
+    }).forEach(unwrap);
+  }
+
+  if (document.readyState === 'loading') {
+    run(); // fixes the form now if this widget sits below it
+    document.addEventListener('DOMContentLoaded', function () { run(); cleanPage(); });
+  } else {
+    run();
+    cleanPage();
+  }
 })();
 </script>

@@ -13,8 +13,9 @@ page, with a single "1" indicator and small text.
    `<small>` instead of `</small>`. The browser then nests the rest of the form inside
    step 1, so Elementor finds only one step. The option text has to stay as it is, so
    [`kaizen-form-repair.html`](kaizen-form-repair.html) repairs the page in the browser instead.
-   Add an **HTML** widget **directly below the Form widget** (same container) and paste the
-   file's contents into it. Submitted values are not changed.
+   Add an **HTML** widget anywhere on the page (above or below the form is fine) and paste
+   the file's contents into it. It also removes the `<small>` tags that leak past the form
+   and shrink the text of the widgets and footer below it. Submitted values are not changed.
    If a caching/optimisation plugin "delays JavaScript" (WP Rocket, LiteSpeed, etc.), exclude
    this script from it, because it must run before Elementor starts.
 
@@ -32,7 +33,7 @@ page, with a single "1" indicator and small text.
    process?*.
 
 5. **Steps indicator.** In Form → *Steps Settings* → *Type*, pick anything
-   except *None* or *Progress Bar* (e.g. *Number*). The CSS turns the
+   except *None* or *Progress Bar* (e.g. *Number*). It is currently *None*, so no bar shows. The CSS turns the
    indicators into the thin 4-segment bar.
 
 Optional, to match the HTML's behaviour:
