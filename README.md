@@ -25,3 +25,11 @@ zero-click automation — the profile just opens the instant a call rings,
 with nothing open beforehand — see **[`extension/`](extension/README.md)**,
 a small browser extension installed once on each agent's computer. It
 reuses the same `php/` backend; only the delivery mechanism changes.
+
+## Laghavi Social Login (WordPress plugin)
+
+[`laghavi-social-login/`](laghavi-social-login/readme.txt) is a free WordPress
+plugin by Laghavi Digital: sign up and log in with Google, Facebook, Apple,
+Microsoft and LinkedIn, with WooCommerce support and a math question on the
+login form. Zip the folder (without `.wordpress-org/`, which holds the
+WordPress.org icon and banner) and upload it in Plugins > Add New.

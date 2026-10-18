@@ -1,0 +1,185 @@
+/* Laghavi Social Login – front end */
+.lsl-buttons {
+	margin: 16px 0;
+	clear: both;
+}
+
+.lsl-divider {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+	margin: 0 0 12px;
+	color: #646970;
+	font-size: 13px;
+	text-align: center;
+}
+
+.lsl-divider::before,
+.lsl-divider::after {
+	content: "";
+	flex: 1;
+	border-top: 1px solid #dcdcde;
+}
+
+.lsl-buttons__list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+.lsl-button {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 10px;
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 42px;
+	padding: 8px 16px;
+	border: 1px solid transparent;
+	border-radius: 6px;
+	font-size: 15px;
+	font-weight: 500;
+	line-height: 1.2;
+	text-decoration: none !important;
+	box-shadow: none;
+	cursor: pointer;
+	transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.lsl-button:hover {
+	filter: brightness(0.95);
+}
+
+.lsl-button:focus-visible {
+	outline: 2px solid #2f55a6;
+	outline-offset: 2px;
+}
+
+.lsl-button__icon {
+	display: inline-flex;
+	flex: 0 0 20px;
+}
+
+.lsl-button__icon svg {
+	display: block;
+	width: 20px;
+	height: 20px;
+}
+
+.lsl-button--google {
+	background: #fff;
+	border-color: #747775;
+	color: #1f1f1f !important;
+}
+
+.lsl-button--facebook {
+	background: #1877f2;
+	color: #fff !important;
+}
+
+.lsl-button--apple {
+	background: #000;
+	color: #fff !important;
+}
+
+.lsl-button--microsoft {
+	background: #fff;
+	border-color: #8c8c8c;
+	color: #5e5e5e !important;
+}
+
+.lsl-button--linkedin {
+	background: #0a66c2;
+	color: #fff !important;
+}
+
+/* Icons-only layout */
+.lsl-buttons--icons .lsl-buttons__list {
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+.lsl-buttons--icons .lsl-button {
+	width: 48px;
+	min-height: 48px;
+	padding: 0;
+}
+
+.lsl-buttons--icons .lsl-button__label {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	white-space: nowrap;
+}
+
+.lsl-credit {
+	margin: 10px 0 0;
+	font-size: 12px;
+	color: #646970;
+	text-align: center;
+}
+
+.lsl-credit a {
+	color: #2f55a6;
+}
+
+/* wp-login.php */
+.login .lsl-context-wp-login {
+	margin: 16px 0 0;
+	padding-top: 4px;
+}
+
+.login .lsl-captcha label {
+	display: block;
+}
+
+/* WooCommerce checkout */
+.lsl-context-checkout {
+	max-width: 420px;
+	margin: 0 auto 24px;
+}
+
+/* Messages shown by the shortcode */
+.lsl-message {
+	margin: 0 0 12px;
+	padding: 10px 12px;
+	border-left: 4px solid #d63638;
+	background: #fcf0f1;
+}
+
+/* Connected accounts */
+.lsl-inline-icon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	margin-right: 6px;
+	border-radius: 4px;
+	vertical-align: middle;
+}
+
+.lsl-inline-icon svg {
+	width: 16px;
+	height: 16px;
+}
+
+.lsl-connected__list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.lsl-connected__list li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 10px 0;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
