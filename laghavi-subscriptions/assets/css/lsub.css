@@ -1,0 +1,377 @@
+/* Laghavi Subscriptions */
+:root {
+	--lsub-accent: #2f55a6;
+	--lsub-border: rgba(0, 0, 0, 0.1);
+	--lsub-soft: rgba(0, 0, 0, 0.03);
+	--lsub-radius: 10px;
+}
+
+/* ---------- Prices ---------- */
+.lsub-period {
+	font-size: 0.85em;
+	opacity: 0.8;
+}
+
+.lsub-plan-details {
+	display: block;
+	font-size: 0.8em;
+	opacity: 0.75;
+	margin-top: 2px;
+}
+
+/* ---------- Badges ---------- */
+.lsub-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.5;
+	background: #f0f0f1;
+	color: #3c434a;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.lsub-badge--active { background: #e7f6ec; color: #116329; }
+.lsub-badge--trial { background: #e8f0fe; color: #1a4fa0; }
+.lsub-badge--on-hold { background: #fdecea; color: #a1221b; }
+.lsub-badge--pending-cancel { background: #fff4e0; color: #8a5300; }
+.lsub-badge--cancelled,
+.lsub-badge--expired { background: #f0f0f1; color: #646970; }
+
+.lsub-alert {
+	padding: 12px 16px;
+	border-radius: var(--lsub-radius);
+	background: #fdecea;
+	color: #7a1712;
+}
+
+.lsub-alert a {
+	font-weight: 600;
+	margin-left: 6px;
+}
+
+/* ---------- Subscription cards ---------- */
+.lsub-subscriptions {
+	display: grid;
+	gap: 16px;
+}
+
+.lsub-card {
+	border: 1px solid var(--lsub-border);
+	border-radius: var(--lsub-radius);
+	padding: 20px;
+	background: #fff;
+}
+
+.lsub-card__head {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.lsub-card__image img {
+	width: 56px;
+	height: 56px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.lsub-card__title {
+	flex: 1;
+	min-width: 0;
+}
+
+.lsub-card__title h3 {
+	margin: 0 0 2px;
+	font-size: 1.1em;
+}
+
+.lsub-price {
+	opacity: 0.8;
+}
+
+.lsub-card__facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 12px;
+	margin: 18px 0;
+	padding: 14px;
+	border-radius: 8px;
+	background: var(--lsub-soft);
+}
+
+.lsub-card__facts div {
+	margin: 0;
+}
+
+.lsub-card__facts dt {
+	font-size: 12px;
+	opacity: 0.7;
+	margin: 0;
+}
+
+.lsub-card__facts dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.lsub-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.lsub-inline-form {
+	display: inline;
+	margin: 0;
+}
+
+.lsub-link-button.button {
+	background: none !important;
+	border: 0 !important;
+	color: inherit !important;
+	text-decoration: underline;
+	opacity: 0.75;
+	box-shadow: none !important;
+}
+
+.lsub-card__history {
+	margin-top: 14px;
+}
+
+.lsub-card__history summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.lsub-empty {
+	padding: 32px;
+	text-align: center;
+	border: 1px dashed var(--lsub-border);
+	border-radius: var(--lsub-radius);
+}
+
+/* ---------- Account dashboard ---------- */
+.lsub-dashboard {
+	display: grid;
+	gap: 24px;
+}
+
+.lsub-hello h2 {
+	margin: 0 0 4px;
+}
+
+.lsub-hello p {
+	margin: 0;
+	opacity: 0.75;
+}
+
+.lsub-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 12px;
+}
+
+.lsub-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 18px;
+	border: 1px solid var(--lsub-border);
+	border-radius: var(--lsub-radius);
+	background: #fff;
+}
+
+.lsub-stat__value {
+	font-size: 1.5em;
+	font-weight: 700;
+	color: var(--lsub-accent);
+	line-height: 1.2;
+}
+
+.lsub-stat__label {
+	font-size: 13px;
+	opacity: 0.75;
+}
+
+.lsub-section h3 {
+	margin: 0 0 10px;
+}
+
+.lsub-mini-list {
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	border: 1px solid var(--lsub-border);
+	border-radius: var(--lsub-radius);
+}
+
+.lsub-mini-list li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--lsub-border);
+}
+
+.lsub-mini-list li:last-child {
+	border-bottom: 0;
+}
+
+.lsub-quick-links {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.lsub-quick-link {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 16px;
+	border: 1px solid var(--lsub-border);
+	border-radius: var(--lsub-radius);
+	text-decoration: none !important;
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.lsub-quick-link:hover {
+	border-color: var(--lsub-accent);
+	transform: translateY(-1px);
+}
+
+.lsub-quick-link span {
+	font-size: 13px;
+	opacity: 0.7;
+}
+
+/* Modern account navigation */
+.lsub-account .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	margin: 0;
+	padding: 8px;
+	border: 1px solid var(--lsub-border);
+	border-radius: var(--lsub-radius);
+}
+
+.lsub-account .woocommerce-MyAccount-navigation li a {
+	display: block;
+	padding: 10px 14px;
+	border-radius: 8px;
+	text-decoration: none;
+}
+
+.lsub-account .woocommerce-MyAccount-navigation li.is-active a,
+.lsub-account .woocommerce-MyAccount-navigation li a:hover {
+	background: var(--lsub-soft);
+	color: var(--lsub-accent);
+	font-weight: 600;
+}
+
+/* ---------- Checkout ---------- */
+.lsub-continue {
+	margin: 0 0 16px;
+}
+
+.lsub-qty {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 6px;
+	vertical-align: middle;
+}
+
+.lsub-qty__btn {
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 1px solid var(--lsub-border);
+	border-radius: 6px;
+	background: #fff;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.lsub-qty__input {
+	width: 48px !important;
+	height: 28px;
+	padding: 0 4px !important;
+	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.lsub-qty__input::-webkit-outer-spin-button,
+.lsub-qty__input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.lsub-qty__remove {
+	margin-left: 6px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #a1221b;
+	font-size: 12px;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.lsub-recurring-total small {
+	opacity: 0.75;
+}
+
+/* ---------- Ask for price ---------- */
+.lsub-ask {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 12px 0;
+}
+
+.lsub-ask a.button {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.lsub-ask__whatsapp.button {
+	background: #25d366 !important;
+	border-color: #25d366 !important;
+	color: #fff !important;
+}
+
+.lsub-ask-price-text {
+	font-weight: 600;
+}
+
+/* ---------- Admin ---------- */
+.lsub-admin-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.lsub-admin-stats div {
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+	padding: 14px 18px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.lsub-admin-stats strong {
+	font-size: 22px;
+}
+
+.lsub-details th {
+	width: 180px;
+}

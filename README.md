@@ -40,3 +40,8 @@ reuses the same `php/` backend; only the delivery mechanism changes.
 - [`laghavi-license-manager/`](laghavi-license-manager/readme.txt): install on
   laghavi.com only. Turns WooCommerce sales into license keys, handles site
   activations, and serves Pro updates.
+- [`laghavi-subscriptions/`](laghavi-subscriptions/readme.txt): WooCommerce
+  subscriptions without a third-party plugin. Stripe Billing renewals (as a
+  WooCommerce payment method), invoice renewals for other gateways, reminder
+  emails, a new My Account dashboard, checkout without a cart page, and
+  "Ask for price" products with contact/WhatsApp buttons.
