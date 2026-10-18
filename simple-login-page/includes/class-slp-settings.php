@@ -30,6 +30,7 @@ class SLP_Settings {
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'update_option_' . self::OPTION, array( __CLASS__, 'flush_cache' ) );
+		add_action( 'update_option_' . self::OPTION, array( 'SLP_Login_Url', 'notify_change' ), 10, 2 );
 		add_action( 'admin_notices', array( __CLASS__, 'credit_notice' ) );
 		add_action( 'admin_post_slp_credit', array( __CLASS__, 'credit_answer' ) );
 	}
@@ -105,6 +106,12 @@ class SLP_Settings {
 			'captcha_register'   => 1,
 			// WordPress.org guideline 10: a front-end credit link must be opted into by the site owner.
 			'show_credit'        => 0,
+			'login_slug'         => '',
+			'log_failed_logins'  => 1,
+			'log_retention_days' => 30,
+			'ip_source'          => 'remote_addr',
+			'geo_lookup'         => 0,
+			'geo_token'          => '',
 			'button_text'        => 'continue',
 			'layout'             => 'full',
 			'providers'          => $providers,
@@ -157,6 +164,8 @@ class SLP_Settings {
 			SLP_URL . 'assets/images/menu-icon.png',
 			71
 		);
+		// Name the first submenu item "Settings" instead of repeating the menu title.
+		add_submenu_page( self::PAGE, __( 'Simple Login Page', 'simple-login-page' ), __( 'Settings', 'simple-login-page' ), 'manage_options', self::PAGE, array( __CLASS__, 'page' ) );
 	}
 
 	/**
@@ -168,7 +177,8 @@ class SLP_Settings {
 		// The menu icon is a PNG, so give it the same size as dashicons everywhere in wp-admin.
 		wp_add_inline_style( 'wp-admin', '#toplevel_page_simple-login-page .wp-menu-image img{width:20px;height:20px;padding:7px 0 0;opacity:1}' );
 
-		if ( 'toplevel_page_' . self::PAGE !== $hook ) {
+		// The settings page and the Failed logins page.
+		if ( false === strpos( $hook, self::PAGE ) ) {
 			return;
 		}
 		wp_enqueue_style( 'slp-admin', SLP_URL . 'assets/css/admin.css', array(), SLP_VERSION );
@@ -207,11 +217,22 @@ class SLP_Settings {
 		$defaults = self::defaults();
 		$clean    = array();
 
-		foreach ( array( 'allow_registration', 'show_wp_login', 'show_wp_register', 'show_wc_login', 'show_wc_register', 'show_wc_checkout', 'captcha_login', 'captcha_register', 'show_credit' ) as $key ) {
+		foreach ( array( 'allow_registration', 'show_wp_login', 'show_wp_register', 'show_wc_login', 'show_wc_register', 'show_wc_checkout', 'captcha_login', 'captcha_register', 'show_credit', 'log_failed_logins', 'geo_lookup' ) as $key ) {
 			$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 		}
 		$clean['button_text'] = isset( $input['button_text'] ) && in_array( $input['button_text'], array( 'continue', 'signin', 'login' ), true ) ? $input['button_text'] : 'continue';
 		$clean['layout']      = isset( $input['layout'] ) && 'icons' === $input['layout'] ? 'icons' : 'full';
+
+		$clean['log_retention_days'] = isset( $input['log_retention_days'] ) ? min( 365, max( 1, absint( $input['log_retention_days'] ) ) ) : 30;
+		$clean['ip_source']          = isset( $input['ip_source'] ) && in_array( $input['ip_source'], array( 'remote_addr', 'cloudflare', 'forwarded', 'real_ip' ), true ) ? $input['ip_source'] : 'remote_addr';
+		$clean['geo_token']          = isset( $input['geo_token'] ) && '' !== trim( $input['geo_token'] ) ? sanitize_text_field( $input['geo_token'] ) : ( isset( $old['geo_token'] ) ? $old['geo_token'] : '' );
+
+		$slug = SLP_Login_Url::validate( isset( $input['login_slug'] ) ? (string) $input['login_slug'] : '' );
+		if ( is_wp_error( $slug ) ) {
+			add_settings_error( self::OPTION, $slug->get_error_code(), $slug->get_error_message() );
+			$slug = isset( $old['login_slug'] ) ? $old['login_slug'] : '';
+		}
+		$clean['login_slug'] = $slug;
 
 		$secrets = array( 'client_secret', 'private_key' );
 		foreach ( $defaults['providers'] as $id => $provider_defaults ) {
@@ -455,12 +476,74 @@ class SLP_Settings {
 				</div>
 
 				<div class="slp-card">
+					<h2><?php esc_html_e( 'Login page URL', 'simple-login-page' ); ?></h2>
+					<?php if ( is_multisite() ) : ?>
+						<p class="description"><?php esc_html_e( 'Changing the login URL is not available on multisite networks.', 'simple-login-page' ); ?></p>
+					<?php else : ?>
+						<p class="description"><?php esc_html_e( 'Move the login page away from wp-login.php so bots cannot find it. Logged-out visitors who open wp-login.php or wp-admin are sent to your 404 page. Leave empty to keep the normal address.', 'simple-login-page' ); ?></p>
+						<p class="slp-slug">
+							<label for="slp-login-slug" class="slp-slug__prefix"><?php echo esc_html( get_option( 'permalink_structure' ) ? trailingslashit( home_url() ) : trailingslashit( home_url() ) . '?' ); ?></label>
+							<input type="text" id="slp-login-slug" name="<?php echo esc_attr( self::OPTION ); ?>[login_slug]" value="<?php echo esc_attr( $settings['login_slug'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. my-login', 'simple-login-page' ); ?>" autocomplete="off" />
+						</p>
+						<?php if ( '' !== $settings['login_slug'] ) : ?>
+							<div class="notice notice-info inline"><p>
+								<?php esc_html_e( 'Your login page is now:', 'simple-login-page' ); ?>
+								<a href="<?php echo esc_url( SLP_Login_Url::url() ); ?>"><strong><?php echo esc_html( SLP_Login_Url::url() ); ?></strong></a>
+								&mdash; <?php esc_html_e( 'bookmark it. A copy was emailed to the site admin when it was set.', 'simple-login-page' ); ?>
+							</p></div>
+						<?php endif; ?>
+						<p class="description"><?php esc_html_e( 'Locked out? Deactivate this plugin (for example by renaming its folder over FTP) and wp-login.php works again. WooCommerce\'s My Account login is not affected.', 'simple-login-page' ); ?></p>
+					<?php endif; ?>
+				</div>
+
+				<div class="slp-card">
 					<h2><?php esc_html_e( 'Bot protection', 'simple-login-page' ); ?></h2>
 					<p class="description"><?php esc_html_e( 'Asks a simple math question (for example "What is 7 + 9?"), picked at random from four, before a password login or registration goes through.', 'simple-login-page' ); ?></p>
 					<?php
 					self::checkbox( 'captcha_login', __( 'On the WordPress and WooCommerce login forms', 'simple-login-page' ) );
 					self::checkbox( 'captcha_register', __( 'On the WordPress and WooCommerce registration forms', 'simple-login-page' ) );
 					?>
+				</div>
+
+				<div class="slp-card" id="slp-log-settings">
+					<h2><?php esc_html_e( 'Failed login log', 'simple-login-page' ); ?></h2>
+					<p class="description">
+						<?php
+						printf(
+							/* translators: %s: link to the Failed logins page. */
+							esc_html__( 'Records every failed login with the username tried, IP address, device and location. See them under %s.', 'simple-login-page' ),
+							'<a href="' . esc_url( admin_url( 'admin.php?page=' . SLP_Login_Log::PAGE ) ) . '">' . esc_html__( 'Simple Login > Failed logins', 'simple-login-page' ) . '</a>'
+						);
+						?>
+					</p>
+					<?php self::checkbox( 'log_failed_logins', __( 'Record failed login attempts', 'simple-login-page' ) ); ?>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="slp-retention"><?php esc_html_e( 'Keep entries for', 'simple-login-page' ); ?></label></th>
+							<td><input type="number" id="slp-retention" min="1" max="365" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[log_retention_days]" value="<?php echo esc_attr( $settings['log_retention_days'] ); ?>" /> <?php esc_html_e( 'days', 'simple-login-page' ); ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="slp-ip-source"><?php esc_html_e( 'IP address source', 'simple-login-page' ); ?></label></th>
+							<td>
+								<select id="slp-ip-source" name="<?php echo esc_attr( self::OPTION ); ?>[ip_source]">
+									<option value="remote_addr" <?php selected( $settings['ip_source'], 'remote_addr' ); ?>><?php esc_html_e( 'Direct connection (recommended)', 'simple-login-page' ); ?></option>
+									<option value="cloudflare" <?php selected( $settings['ip_source'], 'cloudflare' ); ?>><?php esc_html_e( 'Cloudflare (CF-Connecting-IP)', 'simple-login-page' ); ?></option>
+									<option value="forwarded" <?php selected( $settings['ip_source'], 'forwarded' ); ?>><?php esc_html_e( 'Proxy / load balancer (X-Forwarded-For)', 'simple-login-page' ); ?></option>
+									<option value="real_ip" <?php selected( $settings['ip_source'], 'real_ip' ); ?>><?php esc_html_e( 'Nginx proxy (X-Real-IP)', 'simple-login-page' ); ?></option>
+								</select>
+								<p class="description"><?php esc_html_e( 'Only change this if every attempt shows the same IP (your proxy\'s). Visitors can fake these headers when the site is not really behind that proxy.', 'simple-login-page' ); ?></p>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'Location', 'simple-login-page' ); ?></th>
+							<td>
+								<?php self::checkbox( 'geo_lookup', __( 'Look up city and country for each IP (uses the free IPinfo.io service)', 'simple-login-page' ) ); ?>
+								<p class="description"><?php esc_html_e( 'IP addresses are sent to ipinfo.io only when you open the Failed logins page. Sites behind Cloudflare get the country without this.', 'simple-login-page' ); ?></p>
+								<label for="slp-geo-token" class="slp-check"><?php esc_html_e( 'IPinfo token (optional, for higher limits)', 'simple-login-page' ); ?></label>
+								<input type="password" id="slp-geo-token" name="<?php echo esc_attr( self::OPTION ); ?>[geo_token]" class="regular-text" autocomplete="new-password" placeholder="<?php echo '' !== $settings['geo_token'] ? esc_attr__( 'Saved. Leave empty to keep it.', 'simple-login-page' ) : ''; ?>" />
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<h2 class="slp-section-title"><?php esc_html_e( 'Login providers', 'simple-login-page' ); ?></h2>

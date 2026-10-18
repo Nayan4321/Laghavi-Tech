@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Simple Login Page
  * Plugin URI:        https://laghavi.com/
- * Description:       Let visitors sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn. Works with WordPress and WooCommerce accounts, and adds a simple math question to the login form to stop bots.
+ * Description:       Let visitors sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn. Works with WordPress and WooCommerce accounts, adds a simple math question to the login form to stop bots, lets you move the login page to your own URL, and logs failed logins with IP, device and location.
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
@@ -29,6 +29,8 @@ require_once SLP_DIR . 'includes/class-slp-auth.php';
 require_once SLP_DIR . 'includes/class-slp-buttons.php';
 require_once SLP_DIR . 'includes/class-slp-account.php';
 require_once SLP_DIR . 'includes/class-slp-captcha.php';
+require_once SLP_DIR . 'includes/class-slp-login-url.php';
+require_once SLP_DIR . 'includes/class-slp-login-log.php';
 
 /**
  * Whether WooCommerce is active.
@@ -47,6 +49,16 @@ add_action(
 		SLP_Buttons::init();
 		SLP_Account::init();
 		SLP_Captcha::init();
+		SLP_Login_Url::init();
+		SLP_Login_Log::init();
+	}
+);
+
+register_activation_hook( __FILE__, array( 'SLP_Login_Log', 'install' ) );
+register_deactivation_hook(
+	__FILE__,
+	static function () {
+		wp_clear_scheduled_hook( 'slp_prune_log' );
 	}
 );
 

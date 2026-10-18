@@ -207,12 +207,22 @@ class SLP_Auth {
 
 		$user = self::find_or_create_user( $provider, $profile );
 		if ( is_wp_error( $user ) ) {
+			/**
+			 * Fires when a social login is refused.
+			 *
+			 * @param string $provider Provider ID.
+			 * @param string $code     Error code.
+			 * @param string $email    Email shared by the provider.
+			 */
+			do_action( 'slp_social_login_failed', $provider, $user->get_error_code(), $profile['email'] );
 			return self::redirect_response( add_query_arg( 'slp_error', $user->get_error_code(), $from ) );
 		}
 
 		/** This filter is documented in wp-includes/user.php. Lets plugins such as user-approval plugins block the login. */
 		$checked = apply_filters( 'wp_authenticate_user', $user, '' );
 		if ( is_wp_error( $checked ) ) {
+			/** This action is documented above. */
+			do_action( 'slp_social_login_failed', $provider, 'blocked', $profile['email'] );
 			return self::redirect_response( add_query_arg( 'slp_error', 'blocked', $from ) );
 		}
 

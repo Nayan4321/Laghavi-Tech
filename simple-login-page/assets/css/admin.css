@@ -127,3 +127,74 @@
 .slp-admin__credit {
 	color: #646970;
 }
+
+.slp-slug {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 4px;
+}
+
+.slp-slug__prefix {
+	color: #50575e;
+	font-family: Consolas, Monaco, monospace;
+}
+
+/* Failed logins */
+.slp-log {
+	max-width: none;
+}
+
+.slp-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.slp-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	min-width: 140px;
+	padding: 14px 18px;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+}
+
+.slp-stat--wide {
+	flex: 1 1 320px;
+}
+
+.slp-stat__value {
+	font-size: 28px;
+	font-weight: 600;
+	line-height: 1.1;
+	color: #2f55a6;
+}
+
+.slp-stat__label {
+	color: #50575e;
+}
+
+.slp-top {
+	margin: 4px 0 0 18px;
+}
+
+.slp-log__table td {
+	vertical-align: top;
+}
+
+.slp-log__user {
+	font-size: 12px;
+}
+
+.slp-log__footer {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 12px 0;
+}
