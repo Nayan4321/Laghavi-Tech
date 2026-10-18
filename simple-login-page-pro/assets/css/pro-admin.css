@@ -1,0 +1,98 @@
+/* Simple Login Page Pro – admin screens */
+.slpp-inline-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.slpp-actions form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+
+.slpp-transfer {
+	color: #b32d2e !important;
+}
+
+.slpp-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	margin: 16px 0;
+}
+
+.slpp-user-card {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+}
+
+.slpp-user-card h2,
+.slpp-user-card p {
+	margin: 0 0 4px;
+}
+
+.slpp-user-card img,
+.slpp-recent img {
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+.slpp-recent {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 8px 16px;
+	margin: 0;
+}
+
+.slpp-recent li {
+	margin: 0;
+}
+
+.slpp-recent .description {
+	display: block;
+	margin-left: 30px;
+}
+
+.slpp-rules details > summary {
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.slpp-rules details[open] > summary {
+	margin-bottom: 12px;
+}
+
+.slpp-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 6px 16px;
+}
+
+.slpp-group {
+	padding: 8px 0;
+}
+
+.slpp-item {
+	display: block;
+	padding: 2px 0;
+}
+
+.slpp-item code {
+	font-size: 11px;
+	color: #646970;
+}
+
+.slpp-sub {
+	margin-left: 22px;
+}
+
+.slpp-summary {
+	margin: 0 0 0 18px;
+	list-style: disc;
+}

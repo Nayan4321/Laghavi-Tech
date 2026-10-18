@@ -26,10 +26,17 @@ with nothing open beforehand — see **[`extension/`](extension/README.md)**,
 a small browser extension installed once on each agent's computer. It
 reuses the same `php/` backend; only the delivery mechanism changes.
 
-## Simple Login Page (WordPress plugin)
+## WordPress plugins by Laghavi Digital
 
-[`simple-login-page/`](simple-login-page/readme.txt) is a free WordPress
-plugin by Laghavi Digital: sign up and log in with Google, Facebook, Apple,
-Microsoft and LinkedIn, with WooCommerce support and a math question on the
-login form. Zip the folder (without `.wordpress-org/`, which holds the
-WordPress.org icon and banner) and upload it in Plugins > Add New.
+- [`simple-login-page/`](simple-login-page/readme.txt): free plugin for
+  WordPress.org. Social login (Google, Facebook, Apple, Microsoft, LinkedIn)
+  with WooCommerce support, a math question against login bots, a custom
+  login URL, and a failed-login log. Zip the folder without `.wordpress-org/`
+  (that folder holds the WordPress.org icon and banner).
+- [`simple-login-page-pro/`](simple-login-page-pro/readme.txt): paid add-on
+  sold on laghavi.com. Super admin, user activity log, and per-role/per-user
+  hiding of admin menus, editor blocks, panels, meta boxes and custom fields,
+  plus front-end block and widget visibility. Needs the free plugin.
+- [`laghavi-license-manager/`](laghavi-license-manager/readme.txt): install on
+  laghavi.com only. Turns WooCommerce sales into license keys, handles site
+  activations, and serves Pro updates.

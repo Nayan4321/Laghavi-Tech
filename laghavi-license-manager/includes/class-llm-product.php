@@ -1,0 +1,235 @@
+<?php
+/**
+ * "License" tab on WooCommerce products: what the product licenses, for how many sites and how long,
+ * and the plugin zip delivered as updates.
+ *
+ * @package LaghaviLicenseManager
+ */
+
+defined( 'ABSPATH' ) || exit;
+
+/**
+ * Product license settings.
+ */
+class LLM_Product {
+
+	/**
+	 * Hook everything up.
+	 */
+	public static function init() {
+		add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
+		add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
+		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save' ) );
+		add_action( 'post_edit_form_tag', array( __CLASS__, 'form_enctype' ) );
+	}
+
+	/**
+	 * Settings of a product (variations use their parent's).
+	 *
+	 * @param int $product_id Product ID.
+	 * @return array
+	 */
+	public static function settings( $product_id ) {
+		$parent = wp_get_post_parent_id( $product_id );
+		$id     = 'product_variation' === get_post_type( $product_id ) && $parent ? $parent : $product_id;
+		return array(
+			'id'           => $id,
+			'enabled'      => 'yes' === get_post_meta( $id, '_llm_enabled', true ),
+			'slug'         => (string) get_post_meta( $id, '_llm_slug', true ),
+			'sites'        => '' === get_post_meta( $id, '_llm_sites', true ) ? 1 : (int) get_post_meta( $id, '_llm_sites', true ),
+			'days'         => '' === get_post_meta( $id, '_llm_days', true ) ? 365 : (int) get_post_meta( $id, '_llm_days', true ),
+			'version'      => (string) get_post_meta( $id, '_llm_version', true ),
+			'tested'       => (string) get_post_meta( $id, '_llm_tested', true ),
+			'requires'     => (string) get_post_meta( $id, '_llm_requires', true ),
+			'requires_php' => (string) get_post_meta( $id, '_llm_requires_php', true ),
+			'changelog'    => (string) get_post_meta( $id, '_llm_changelog', true ),
+			'file'         => (string) get_post_meta( $id, '_llm_file', true ),
+		);
+	}
+
+	/**
+	 * Find the product that sells a plugin slug.
+	 *
+	 * @param string $slug Plugin slug.
+	 * @return int Product ID or 0.
+	 */
+	public static function product_for_slug( $slug ) {
+		$ids = get_posts(
+			array(
+				'post_type'      => 'product',
+				'post_status'    => 'any',
+				'fields'         => 'ids',
+				'posts_per_page' => 1,
+				'meta_key'       => '_llm_slug', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+				'meta_value'     => sanitize_key( $slug ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+			)
+		);
+		return $ids ? (int) $ids[0] : 0;
+	}
+
+	/**
+	 * Allow file uploads on the product form.
+	 *
+	 * @param WP_Post $post Post being edited.
+	 */
+	public static function form_enctype( $post ) {
+		if ( $post && 'product' === $post->post_type ) {
+			echo ' enctype="multipart/form-data"';
+		}
+	}
+
+	/**
+	 * Add the "License" tab.
+	 *
+	 * @param array $tabs Tabs.
+	 * @return array
+	 */
+	public static function tab( $tabs ) {
+		$tabs['llm_license'] = array(
+			'label'    => __( 'License', 'laghavi-license-manager' ),
+			'target'   => 'llm_license_data',
+			'class'    => array(),
+			'priority' => 75,
+		);
+		return $tabs;
+	}
+
+	/**
+	 * The tab's fields.
+	 */
+	public static function panel() {
+		global $post;
+		$s = self::settings( $post->ID );
+		?>
+		<div id="llm_license_data" class="panel woocommerce_options_panel">
+			<div class="options_group">
+				<?php
+				woocommerce_wp_checkbox(
+					array(
+						'id'          => '_llm_enabled',
+						'label'       => __( 'Sell a license', 'laghavi-license-manager' ),
+						'description' => __( 'Create a license key for each one bought.', 'laghavi-license-manager' ),
+						'value'       => $s['enabled'] ? 'yes' : 'no',
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'          => '_llm_slug',
+						'label'       => __( 'Plugin slug', 'laghavi-license-manager' ),
+						'description' => __( 'The plugin\'s folder name, e.g. simple-login-page-pro.', 'laghavi-license-manager' ),
+						'desc_tip'    => true,
+						'value'       => $s['slug'],
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'                => '_llm_sites',
+						'label'             => __( 'Sites per license', 'laghavi-license-manager' ),
+						'description'       => __( '0 = unlimited sites.', 'laghavi-license-manager' ),
+						'type'              => 'number',
+						'custom_attributes' => array( 'min' => 0 ),
+						'value'             => $s['sites'],
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'                => '_llm_days',
+						'label'             => __( 'Updates for (days)', 'laghavi-license-manager' ),
+						'description'       => __( '0 = lifetime. After this, the plugin keeps working but stops getting updates.', 'laghavi-license-manager' ),
+						'type'              => 'number',
+						'custom_attributes' => array( 'min' => 0 ),
+						'value'             => $s['days'],
+					)
+				);
+				?>
+			</div>
+			<div class="options_group">
+				<?php
+				woocommerce_wp_text_input(
+					array(
+						'id'    => '_llm_version',
+						'label' => __( 'Latest version', 'laghavi-license-manager' ),
+						'value' => $s['version'],
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'    => '_llm_requires',
+						'label' => __( 'Requires WordPress', 'laghavi-license-manager' ),
+						'value' => $s['requires'],
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'    => '_llm_tested',
+						'label' => __( 'Tested up to', 'laghavi-license-manager' ),
+						'value' => $s['tested'],
+					)
+				);
+				woocommerce_wp_text_input(
+					array(
+						'id'    => '_llm_requires_php',
+						'label' => __( 'Requires PHP', 'laghavi-license-manager' ),
+						'value' => $s['requires_php'],
+					)
+				);
+				woocommerce_wp_textarea_input(
+					array(
+						'id'    => '_llm_changelog',
+						'label' => __( 'Changelog', 'laghavi-license-manager' ),
+						'value' => $s['changelog'],
+					)
+				);
+				?>
+				<p class="form-field">
+					<label for="llm_zip"><?php esc_html_e( 'Plugin zip', 'laghavi-license-manager' ); ?></label>
+					<input type="file" name="llm_zip" id="llm_zip" accept=".zip" />
+					<span class="description">
+						<?php
+						if ( '' !== $s['file'] ) {
+							/* translators: %s: file name. */
+							echo esc_html( sprintf( __( 'Current file: %s. Upload a new zip to replace it, and update "Latest version" to match.', 'laghavi-license-manager' ), $s['file'] ) );
+						} else {
+							esc_html_e( 'Upload the plugin zip. It is stored privately and only licensed sites can download it.', 'laghavi-license-manager' );
+						}
+						?>
+					</span>
+				</p>
+			</div>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Save the tab.
+	 *
+	 * @param int $product_id Product ID.
+	 */
+	public static function save( $product_id ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce verified the product form nonce.
+		if ( ! current_user_can( 'edit_product', $product_id ) ) {
+			return;
+		}
+		update_post_meta( $product_id, '_llm_enabled', isset( $_POST['_llm_enabled'] ) ? 'yes' : 'no' );
+		$text = array( '_llm_slug', '_llm_version', '_llm_tested', '_llm_requires', '_llm_requires_php' );
+		foreach ( $text as $key ) {
+			$value = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
+			update_post_meta( $product_id, $key, '_llm_slug' === $key ? sanitize_key( $value ) : $value );
+		}
+		update_post_meta( $product_id, '_llm_sites', isset( $_POST['_llm_sites'] ) ? absint( $_POST['_llm_sites'] ) : 1 );
+		update_post_meta( $product_id, '_llm_days', isset( $_POST['_llm_days'] ) ? absint( $_POST['_llm_days'] ) : 365 );
+		update_post_meta( $product_id, '_llm_changelog', isset( $_POST['_llm_changelog'] ) ? wp_kses_post( wp_unslash( $_POST['_llm_changelog'] ) ) : '' );
+
+		if ( ! empty( $_FILES['llm_zip']['tmp_name'] ) && isset( $_FILES['llm_zip']['error'] ) && UPLOAD_ERR_OK === $_FILES['llm_zip']['error'] ) {
+			$name = isset( $_FILES['llm_zip']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['llm_zip']['name'] ) ) : '';
+			if ( '.zip' === strtolower( substr( $name, -4 ) ) && is_uploaded_file( $_FILES['llm_zip']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP's temporary path.
+				$slug   = (string) get_post_meta( $product_id, '_llm_slug', true );
+				$target = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-' . gmdate( 'YmdHis' ) . '.zip';
+				if ( move_uploaded_file( $_FILES['llm_zip']['tmp_name'], LLM_Licenses::private_dir() . $target ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+					update_post_meta( $product_id, '_llm_file', $target );
+				}
+			}
+		}
+		// phpcs:enable
+	}
+}
