@@ -2,7 +2,7 @@
 /**
  * Starts the provider login, handles the callback, and finds, links or creates the WordPress user.
  *
- * @package LaghaviSocialLogin
+ * @package SimpleLoginPage
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,12 +10,12 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Social login flow.
  */
-class LSL_Auth {
+class SLP_Auth {
 
 	/**
 	 * Cookie that ties a login attempt to the browser that started it.
 	 */
-	const BIND_COOKIE = 'lsl_oauth';
+	const BIND_COOKIE = 'slp_oauth';
 
 	/**
 	 * How long a login attempt may take, start to finish.
@@ -37,7 +37,7 @@ class LSL_Auth {
 	 * @return string
 	 */
 	public static function meta_key( $provider ) {
-		return '_lsl_' . $provider . '_id';
+		return '_slp_' . $provider . '_id';
 	}
 
 	/**
@@ -49,12 +49,12 @@ class LSL_Auth {
 	 * @return string
 	 */
 	public static function login_url( $provider, $redirect_to = '', $from = '' ) {
-		$args = array( 'lsl_login' => $provider );
+		$args = array( 'slp_login' => $provider );
 		if ( '' !== $redirect_to ) {
 			$args['redirect_to'] = $redirect_to;
 		}
 		if ( '' !== $from ) {
-			$args['lsl_from'] = $from;
+			$args['slp_from'] = $from;
 		}
 		return add_query_arg( array_map( 'rawurlencode', $args ), home_url( '/' ) );
 	}
@@ -69,10 +69,10 @@ class LSL_Auth {
 	public static function link_url( $provider, $from ) {
 		return add_query_arg(
 			array(
-				'lsl_login' => rawurlencode( $provider ),
-				'lsl_mode'  => 'link',
-				'lsl_from'  => rawurlencode( $from ),
-				'_wpnonce'  => wp_create_nonce( 'lsl_link_' . $provider ),
+				'slp_login' => rawurlencode( $provider ),
+				'slp_mode'  => 'link',
+				'slp_from'  => rawurlencode( $from ),
+				'_wpnonce'  => wp_create_nonce( 'slp_link_' . $provider ),
 			),
 			home_url( '/' )
 		);
@@ -88,7 +88,7 @@ class LSL_Auth {
 		$home = wp_parse_url( home_url() );
 		$host = $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
 		$url  = ( is_ssl() ? 'https://' : 'http://' ) . $host . $uri;
-		return remove_query_arg( array( 'lsl_error', 'lsl_notice' ), $url );
+		return remove_query_arg( array( 'slp_error', 'slp_notice' ), $url );
 	}
 
 	/**
@@ -96,13 +96,13 @@ class LSL_Auth {
 	 */
 	public static function maybe_start() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Login links are public; linking checks its nonce below.
-		if ( empty( $_GET['lsl_login'] ) ) {
+		if ( empty( $_GET['slp_login'] ) ) {
 			return;
 		}
 
-		$provider = sanitize_key( wp_unslash( $_GET['lsl_login'] ) );
-		$mode     = isset( $_GET['lsl_mode'] ) && 'link' === $_GET['lsl_mode'] ? 'link' : 'login';
-		$from     = isset( $_GET['lsl_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['lsl_from'] ) ), '' ) : '';
+		$provider = sanitize_key( wp_unslash( $_GET['slp_login'] ) );
+		$mode     = isset( $_GET['slp_mode'] ) && 'link' === $_GET['slp_mode'] ? 'link' : 'login';
+		$from     = isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), '' ) : '';
 		$redirect = isset( $_GET['redirect_to'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ), '' ) : '';
 		// phpcs:enable
 
@@ -110,15 +110,15 @@ class LSL_Auth {
 			$from = 'link' === $mode ? self::default_link_page() : self::default_login_page();
 		}
 
-		if ( ! LSL_Providers::is_enabled( $provider ) ) {
-			self::redirect( add_query_arg( 'lsl_error', 'provider_disabled', $from ) );
+		if ( ! SLP_Providers::is_enabled( $provider ) ) {
+			self::redirect( add_query_arg( 'slp_error', 'provider_disabled', $from ) );
 		}
 
 		$user_id = 0;
 		if ( 'link' === $mode ) {
 			$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-			if ( ! is_user_logged_in() || ! wp_verify_nonce( $nonce, 'lsl_link_' . $provider ) ) {
-				self::redirect( add_query_arg( 'lsl_error', 'expired', $from ) );
+			if ( ! is_user_logged_in() || ! wp_verify_nonce( $nonce, 'slp_link_' . $provider ) ) {
+				self::redirect( add_query_arg( 'slp_error', 'expired', $from ) );
 			}
 			$user_id = get_current_user_id();
 		} elseif ( is_user_logged_in() ) {
@@ -129,7 +129,7 @@ class LSL_Auth {
 		$bind  = wp_generate_password( 40, false, false );
 
 		set_transient(
-			'lsl_state_' . $state,
+			'slp_state_' . $state,
 			array(
 				'provider'    => $provider,
 				'mode'        => $mode,
@@ -143,7 +143,7 @@ class LSL_Auth {
 		self::set_bind_cookie( $bind, time() + self::STATE_TTL );
 
 		nocache_headers();
-		wp_redirect( LSL_Providers::authorize_url( $provider, $state ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Redirects to the provider's own domain.
+		wp_redirect( SLP_Providers::authorize_url( $provider, $state ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Redirects to the provider's own domain.
 		exit;
 	}
 
@@ -152,7 +152,7 @@ class LSL_Auth {
 	 */
 	public static function register_routes() {
 		register_rest_route(
-			'laghavi-social-login/v1',
+			'simple-login-page/v1',
 			'/callback/(?P<provider>[a-z]+)',
 			array(
 				// Apple returns with a POST (form_post); everyone else with a GET.
@@ -173,17 +173,17 @@ class LSL_Auth {
 	public static function callback( $request ) {
 		$provider = sanitize_key( $request['provider'] );
 		$state    = (string) $request->get_param( 'state' );
-		$data     = '' !== $state && preg_match( '/^[A-Za-z0-9]{40}$/', $state ) ? get_transient( 'lsl_state_' . $state ) : false;
+		$data     = '' !== $state && preg_match( '/^[A-Za-z0-9]{40}$/', $state ) ? get_transient( 'slp_state_' . $state ) : false;
 		$bind     = isset( $_COOKIE[ self::BIND_COOKIE ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ self::BIND_COOKIE ] ) ) : '';
 
 		if ( false !== $data ) {
 			// One use only.
-			delete_transient( 'lsl_state_' . $state );
+			delete_transient( 'slp_state_' . $state );
 		}
 		self::set_bind_cookie( '', time() - YEAR_IN_SECONDS );
 
 		if ( ! is_array( $data ) || $data['provider'] !== $provider || '' === $bind || ! hash_equals( $data['bind'], hash( 'sha256', $bind ) ) ) {
-			return self::redirect_response( add_query_arg( 'lsl_error', 'expired', self::default_login_page() ) );
+			return self::redirect_response( add_query_arg( 'slp_error', 'expired', self::default_login_page() ) );
 		}
 
 		$from = $data['from'];
@@ -192,13 +192,13 @@ class LSL_Auth {
 		// parameter before it reaches us, so its absence is the reliable signal.)
 		$code = (string) $request->get_param( 'code' );
 		if ( '' === $code ) {
-			return self::redirect_response( add_query_arg( 'lsl_error', 'cancelled', $from ) );
+			return self::redirect_response( add_query_arg( 'slp_error', 'cancelled', $from ) );
 		}
 
-		$profile = LSL_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
+		$profile = SLP_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
 		if ( is_wp_error( $profile ) ) {
 			self::log( $provider, $profile );
-			return self::redirect_response( add_query_arg( 'lsl_error', 'failed', $from ) );
+			return self::redirect_response( add_query_arg( 'slp_error', 'failed', $from ) );
 		}
 
 		if ( 'link' === $data['mode'] ) {
@@ -207,13 +207,13 @@ class LSL_Auth {
 
 		$user = self::find_or_create_user( $provider, $profile );
 		if ( is_wp_error( $user ) ) {
-			return self::redirect_response( add_query_arg( 'lsl_error', $user->get_error_code(), $from ) );
+			return self::redirect_response( add_query_arg( 'slp_error', $user->get_error_code(), $from ) );
 		}
 
 		/** This filter is documented in wp-includes/user.php. Lets plugins such as user-approval plugins block the login. */
 		$checked = apply_filters( 'wp_authenticate_user', $user, '' );
 		if ( is_wp_error( $checked ) ) {
-			return self::redirect_response( add_query_arg( 'lsl_error', 'blocked', $from ) );
+			return self::redirect_response( add_query_arg( 'slp_error', 'blocked', $from ) );
 		}
 
 		wp_set_current_user( $user->ID );
@@ -225,7 +225,7 @@ class LSL_Auth {
 		$redirect = '' !== $data['redirect_to'] ? $data['redirect_to'] : $default;
 		/** This filter is documented in wp-login.php. */
 		$redirect = apply_filters( 'login_redirect', $redirect, $data['redirect_to'], $user );
-		$redirect = apply_filters( 'lsl_login_redirect', $redirect, $user, $provider );
+		$redirect = apply_filters( 'slp_login_redirect', $redirect, $user, $provider );
 
 		return self::redirect_response( wp_validate_redirect( $redirect, $default ) );
 	}
@@ -241,16 +241,16 @@ class LSL_Auth {
 	 */
 	private static function link( $user_id, $provider, $profile, $from ) {
 		if ( ! $user_id || ! get_userdata( $user_id ) ) {
-			return add_query_arg( 'lsl_error', 'expired', $from );
+			return add_query_arg( 'slp_error', 'expired', $from );
 		}
 
 		$owner = self::user_by_provider_id( $provider, $profile['id'] );
 		if ( $owner && $owner->ID !== $user_id ) {
-			return add_query_arg( 'lsl_error', 'already_linked', $from );
+			return add_query_arg( 'slp_error', 'already_linked', $from );
 		}
 
 		self::save_link( $user_id, $provider, $profile );
-		return add_query_arg( 'lsl_notice', 'linked', $from );
+		return add_query_arg( 'slp_notice', 'linked', $from );
 	}
 
 	/**
@@ -281,7 +281,7 @@ class LSL_Auth {
 		}
 
 		// 3. New sign-up.
-		if ( ! LSL_Settings::get( 'allow_registration' ) ) {
+		if ( ! SLP_Settings::get( 'allow_registration' ) ) {
 			return new WP_Error( 'registration_disabled' );
 		}
 		if ( '' === $profile['email'] ) {
@@ -295,7 +295,7 @@ class LSL_Auth {
 		}
 
 		self::save_link( $user_id, $provider, $profile );
-		update_user_meta( $user_id, '_lsl_registered_with', $provider );
+		update_user_meta( $user_id, '_slp_registered_with', $provider );
 
 		/**
 		 * Fires after a new user signs up through a social provider.
@@ -304,7 +304,7 @@ class LSL_Auth {
 		 * @param string $provider Provider ID.
 		 * @param array  $profile  Normalized profile.
 		 */
-		do_action( 'lsl_user_registered', $user_id, $provider, $profile );
+		do_action( 'slp_user_registered', $user_id, $provider, $profile );
 
 		return get_userdata( $user_id );
 	}
@@ -316,11 +316,11 @@ class LSL_Auth {
 	 * @return string
 	 */
 	public static function new_user_role() {
-		$role = lsl_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' );
+		$role = slp_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' );
 		if ( ! $role || ! get_role( $role ) ) {
 			$role = 'subscriber';
 		}
-		return apply_filters( 'lsl_new_user_role', $role );
+		return apply_filters( 'slp_new_user_role', $role );
 	}
 
 	/**
@@ -340,7 +340,7 @@ class LSL_Auth {
 			'display_name' => '' !== $profile['display_name'] ? $profile['display_name'] : $username,
 		);
 
-		if ( lsl_is_woocommerce_active() && function_exists( 'wc_create_new_customer' ) ) {
+		if ( slp_is_woocommerce_active() && function_exists( 'wc_create_new_customer' ) ) {
 			// Lets WooCommerce send its "new account" email and fire its own customer hooks.
 			$user_id = wc_create_new_customer( $profile['email'], $username, $password, array_merge( $names, array( 'role' => $role ) ) );
 			if ( ! is_wp_error( $user_id ) ) {
@@ -364,7 +364,7 @@ class LSL_Auth {
 			)
 		);
 
-		if ( ! is_wp_error( $user_id ) && apply_filters( 'lsl_notify_admin_of_new_user', true, $user_id ) ) {
+		if ( ! is_wp_error( $user_id ) && apply_filters( 'slp_notify_admin_of_new_user', true, $user_id ) ) {
 			wp_send_new_user_notifications( $user_id, 'admin' );
 		}
 
@@ -406,7 +406,7 @@ class LSL_Auth {
 	 */
 	private static function save_link( $user_id, $provider, $profile ) {
 		update_user_meta( $user_id, self::meta_key( $provider ), $profile['id'] );
-		update_user_meta( $user_id, '_lsl_' . $provider . '_email', $profile['email'] );
+		update_user_meta( $user_id, '_slp_' . $provider . '_email', $profile['email'] );
 	}
 
 	/**
@@ -417,7 +417,7 @@ class LSL_Auth {
 	 */
 	public static function unlink( $user_id, $provider ) {
 		delete_user_meta( $user_id, self::meta_key( $provider ) );
-		delete_user_meta( $user_id, '_lsl_' . $provider . '_email' );
+		delete_user_meta( $user_id, '_slp_' . $provider . '_email' );
 	}
 
 	/**
@@ -446,7 +446,7 @@ class LSL_Auth {
 	 * @return string
 	 */
 	private static function default_redirect( $user ) {
-		if ( lsl_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) && ! user_can( $user, 'edit_posts' ) ) {
+		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) && ! user_can( $user, 'edit_posts' ) ) {
 			return wc_get_page_permalink( 'myaccount' );
 		}
 		return user_can( $user, 'edit_posts' ) ? admin_url() : home_url( '/' );
@@ -458,7 +458,7 @@ class LSL_Auth {
 	 * @return string
 	 */
 	private static function default_login_page() {
-		if ( lsl_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) ) {
+		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) ) {
 			return wc_get_page_permalink( 'myaccount' );
 		}
 		return wp_login_url();
@@ -470,7 +470,7 @@ class LSL_Auth {
 	 * @return string
 	 */
 	private static function default_link_page() {
-		if ( lsl_is_woocommerce_active() && function_exists( 'wc_get_account_endpoint_url' ) ) {
+		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_account_endpoint_url' ) ) {
 			return wc_get_account_endpoint_url( 'edit-account' );
 		}
 		return admin_url( 'profile.php' );
@@ -530,7 +530,7 @@ class LSL_Auth {
 	 */
 	private static function log( $provider, $error ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-			error_log( sprintf( '[Laghavi Social Login] %s: %s', $provider, $error->get_error_message() ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+			error_log( sprintf( '[Simple Login Page] %s: %s', $provider, $error->get_error_message() ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 
@@ -542,15 +542,15 @@ class LSL_Auth {
 	 */
 	public static function error_message( $code ) {
 		$messages = array(
-			'provider_disabled'     => __( 'This login option is not available right now.', 'laghavi-social-login' ),
-			'expired'               => __( 'Your login session expired. Please try again.', 'laghavi-social-login' ),
-			'cancelled'             => __( 'Login was cancelled.', 'laghavi-social-login' ),
-			'failed'                => __( 'We could not log you in. Please try again.', 'laghavi-social-login' ),
-			'email_unverified'      => __( 'An account with this email already exists. Log in with your password, then connect this account from your profile.', 'laghavi-social-login' ),
-			'registration_disabled' => __( 'No account was found for this login, and new sign-ups are turned off.', 'laghavi-social-login' ),
-			'no_email'              => __( 'Your account did not share an email address, so we cannot create an account. Please allow email access and try again.', 'laghavi-social-login' ),
-			'blocked'               => __( 'Your account cannot log in right now.', 'laghavi-social-login' ),
-			'already_linked'        => __( 'That account is already connected to a different user on this site.', 'laghavi-social-login' ),
+			'provider_disabled'     => __( 'This login option is not available right now.', 'simple-login-page' ),
+			'expired'               => __( 'Your login session expired. Please try again.', 'simple-login-page' ),
+			'cancelled'             => __( 'Login was cancelled.', 'simple-login-page' ),
+			'failed'                => __( 'We could not log you in. Please try again.', 'simple-login-page' ),
+			'email_unverified'      => __( 'An account with this email already exists. Log in with your password, then connect this account from your profile.', 'simple-login-page' ),
+			'registration_disabled' => __( 'No account was found for this login, and new sign-ups are turned off.', 'simple-login-page' ),
+			'no_email'              => __( 'Your account did not share an email address, so we cannot create an account. Please allow email access and try again.', 'simple-login-page' ),
+			'blocked'               => __( 'Your account cannot log in right now.', 'simple-login-page' ),
+			'already_linked'        => __( 'That account is already connected to a different user on this site.', 'simple-login-page' ),
 		);
 		return isset( $messages[ $code ] ) ? $messages[ $code ] : $messages['failed'];
 	}
@@ -563,7 +563,7 @@ class LSL_Auth {
 	 */
 	public static function notice_message( $code ) {
 		return 'unlinked' === $code
-			? __( 'The account was disconnected.', 'laghavi-social-login' )
-			: __( 'The account was connected. You can now log in with it.', 'laghavi-social-login' );
+			? __( 'The account was disconnected.', 'simple-login-page' )
+			: __( 'The account was connected. You can now log in with it.', 'simple-login-page' );
 	}
 }

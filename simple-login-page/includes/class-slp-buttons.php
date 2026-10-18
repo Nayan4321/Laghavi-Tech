@@ -2,7 +2,7 @@
 /**
  * Renders the social login buttons and places them on the login, register, My Account and checkout pages.
  *
- * @package LaghaviSocialLogin
+ * @package SimpleLoginPage
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Social login buttons.
  */
-class LSL_Buttons {
+class SLP_Buttons {
 
 	/**
 	 * Hook everything up.
@@ -18,7 +18,7 @@ class LSL_Buttons {
 	public static function init() {
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'enqueue_login_styles' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'register_styles' ) );
-		add_shortcode( 'laghavi_social_login', array( __CLASS__, 'shortcode' ) );
+		add_shortcode( 'simple_login_page', array( __CLASS__, 'shortcode' ) );
 
 		// wp-login.php.
 		add_action( 'login_form', array( __CLASS__, 'wp_login_form' ), 20 );
@@ -36,7 +36,7 @@ class LSL_Buttons {
 	 * Register the front-end stylesheet; it is enqueued only where buttons are shown.
 	 */
 	public static function register_styles() {
-		wp_register_style( 'laghavi-social-login', LSL_URL . 'assets/css/lsl.css', array(), LSL_VERSION );
+		wp_register_style( 'simple-login-page', SLP_URL . 'assets/css/slp.css', array(), SLP_VERSION );
 	}
 
 	/**
@@ -44,15 +44,15 @@ class LSL_Buttons {
 	 */
 	public static function enqueue_login_styles() {
 		self::register_styles();
-		wp_enqueue_style( 'laghavi-social-login' );
-		wp_enqueue_script( 'laghavi-social-login-login', LSL_URL . 'assets/js/login.js', array(), LSL_VERSION, true );
+		wp_enqueue_style( 'simple-login-page' );
+		wp_enqueue_script( 'simple-login-page-login', SLP_URL . 'assets/js/login.js', array(), SLP_VERSION, true );
 	}
 
 	/**
 	 * Buttons on the wp-login.php login form.
 	 */
 	public static function wp_login_form() {
-		if ( LSL_Settings::get( 'show_wp_login' ) ) {
+		if ( SLP_Settings::get( 'show_wp_login' ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading where to go after login, as wp-login.php does.
 			$redirect = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
 			self::output( self::render( $redirect, 'wp-login' ) );
@@ -63,7 +63,7 @@ class LSL_Buttons {
 	 * Buttons on the wp-login.php registration form.
 	 */
 	public static function wp_register_form() {
-		if ( LSL_Settings::get( 'show_wp_register' ) ) {
+		if ( SLP_Settings::get( 'show_wp_register' ) ) {
 			self::output( self::render( '', 'wp-login' ) );
 		}
 	}
@@ -72,7 +72,7 @@ class LSL_Buttons {
 	 * Buttons on the WooCommerce login form (My Account and checkout).
 	 */
 	public static function wc_login_form() {
-		if ( LSL_Settings::get( 'show_wc_login' ) ) {
+		if ( SLP_Settings::get( 'show_wc_login' ) ) {
 			$redirect = function_exists( 'is_checkout' ) && is_checkout() ? wc_get_checkout_url() : '';
 			self::output( self::render( $redirect, 'woocommerce' ) );
 		}
@@ -82,7 +82,7 @@ class LSL_Buttons {
 	 * Buttons on the WooCommerce registration form.
 	 */
 	public static function wc_register_form() {
-		if ( LSL_Settings::get( 'show_wc_register' ) ) {
+		if ( SLP_Settings::get( 'show_wc_register' ) ) {
 			self::output( self::render( '', 'woocommerce' ) );
 		}
 	}
@@ -93,18 +93,18 @@ class LSL_Buttons {
 	 * They come back to the checkout afterwards; WooCommerce moves the guest's cart onto the new account.
 	 */
 	public static function wc_checkout() {
-		if ( ! LSL_Settings::get( 'show_wc_checkout' ) || is_user_logged_in() ) {
+		if ( ! SLP_Settings::get( 'show_wc_checkout' ) || is_user_logged_in() ) {
 			return;
 		}
-		$heading = LSL_Settings::get( 'allow_registration' )
-			? __( 'Create an account or log in with one click', 'laghavi-social-login' )
-			: __( 'Returning customer? Log in with one click', 'laghavi-social-login' );
+		$heading = SLP_Settings::get( 'allow_registration' )
+			? __( 'Create an account or log in with one click', 'simple-login-page' )
+			: __( 'Returning customer? Log in with one click', 'simple-login-page' );
 
 		self::output( self::render( wc_get_checkout_url(), 'woocommerce checkout', $heading ) );
 	}
 
 	/**
-	 * [laghavi_social_login] shortcode.
+	 * [simple_login_page] shortcode.
 	 *
 	 * Attributes: redirect_to (URL to open after login), heading (text above the buttons).
 	 *
@@ -118,7 +118,7 @@ class LSL_Buttons {
 				'heading'     => null,
 			),
 			$atts,
-			'laghavi_social_login'
+			'simple_login_page'
 		);
 
 		if ( is_user_logged_in() ) {
@@ -127,10 +127,10 @@ class LSL_Buttons {
 
 		$html = '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! lsl_is_woocommerce_active() && ! empty( $_GET['lsl_error'] ) ) {
+		if ( ! slp_is_woocommerce_active() && ! empty( $_GET['slp_error'] ) ) {
 			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
-			$code  = sanitize_key( wp_unslash( $_GET['lsl_error'] ) );
-			$html .= '<div class="lsl-message lsl-message--error" role="alert">' . esc_html( LSL_Auth::error_message( $code ) ) . '</div>';
+			$code  = sanitize_key( wp_unslash( $_GET['slp_error'] ) );
+			$html .= '<div class="slp-message slp-message--error" role="alert">' . esc_html( SLP_Auth::error_message( $code ) ) . '</div>';
 		}
 
 		return $html . self::render( esc_url_raw( $atts['redirect_to'] ), 'shortcode', $atts['heading'] );
@@ -144,8 +144,8 @@ class LSL_Buttons {
 	 */
 	public static function wp_login_messages( $errors ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! empty( $_GET['lsl_error'] ) ) {
-			$errors->add( 'lsl_error', esc_html( LSL_Auth::error_message( sanitize_key( wp_unslash( $_GET['lsl_error'] ) ) ) ) );
+		if ( ! empty( $_GET['slp_error'] ) ) {
+			$errors->add( 'slp_error', esc_html( SLP_Auth::error_message( sanitize_key( wp_unslash( $_GET['slp_error'] ) ) ) ) );
 		}
 		// phpcs:enable
 		return $errors;
@@ -155,18 +155,18 @@ class LSL_Buttons {
 	 * Show login errors and account notices as WooCommerce notices.
 	 */
 	public static function wc_messages() {
-		if ( ! lsl_is_woocommerce_active() || ! function_exists( 'wc_add_notice' ) || ! function_exists( 'is_account_page' ) ) {
+		if ( ! slp_is_woocommerce_active() || ! function_exists( 'wc_add_notice' ) || ! function_exists( 'is_account_page' ) ) {
 			return;
 		}
 		if ( ! is_account_page() && ! is_checkout() ) {
 			return;
 		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! empty( $_GET['lsl_error'] ) ) {
-			wc_add_notice( LSL_Auth::error_message( sanitize_key( wp_unslash( $_GET['lsl_error'] ) ) ), 'error' );
+		if ( ! empty( $_GET['slp_error'] ) ) {
+			wc_add_notice( SLP_Auth::error_message( sanitize_key( wp_unslash( $_GET['slp_error'] ) ) ), 'error' );
 		}
-		if ( ! empty( $_GET['lsl_notice'] ) ) {
-			wc_add_notice( LSL_Auth::notice_message( sanitize_key( wp_unslash( $_GET['lsl_notice'] ) ) ), 'success' );
+		if ( ! empty( $_GET['slp_notice'] ) ) {
+			wc_add_notice( SLP_Auth::notice_message( sanitize_key( wp_unslash( $_GET['slp_notice'] ) ) ), 'success' );
 		}
 		// phpcs:enable
 	}
@@ -178,17 +178,17 @@ class LSL_Buttons {
 	 * @return string
 	 */
 	public static function button_label( $provider ) {
-		$label = LSL_Providers::label( $provider );
-		switch ( LSL_Settings::get( 'button_text' ) ) {
+		$label = SLP_Providers::label( $provider );
+		switch ( SLP_Settings::get( 'button_text' ) ) {
 			case 'signin':
 				/* translators: %s: provider name, e.g. Google. */
-				return sprintf( __( 'Sign in with %s', 'laghavi-social-login' ), $label );
+				return sprintf( __( 'Sign in with %s', 'simple-login-page' ), $label );
 			case 'login':
 				/* translators: %s: provider name, e.g. Google. */
-				return sprintf( __( 'Log in with %s', 'laghavi-social-login' ), $label );
+				return sprintf( __( 'Log in with %s', 'simple-login-page' ), $label );
 			default:
 				/* translators: %s: provider name, e.g. Google. */
-				return sprintf( __( 'Continue with %s', 'laghavi-social-login' ), $label );
+				return sprintf( __( 'Continue with %s', 'simple-login-page' ), $label );
 		}
 	}
 
@@ -201,32 +201,32 @@ class LSL_Buttons {
 	 * @return string HTML.
 	 */
 	public static function render( $redirect_to = '', $context = '', $heading = null ) {
-		$providers = LSL_Providers::enabled();
+		$providers = SLP_Providers::enabled();
 		if ( ! $providers ) {
 			return '';
 		}
 
-		wp_enqueue_style( 'laghavi-social-login' );
+		wp_enqueue_style( 'simple-login-page' );
 
 		if ( null === $heading ) {
-			$heading = __( 'or', 'laghavi-social-login' );
+			$heading = __( 'or', 'simple-login-page' );
 		}
 
-		$layout  = 'icons' === LSL_Settings::get( 'layout' ) ? 'icons' : 'full';
-		$from    = LSL_Auth::current_url();
-		$classes = 'lsl-buttons lsl-buttons--' . $layout . ( '' !== $context ? ' lsl-context-' . str_replace( ' ', ' lsl-context-', $context ) : '' );
+		$layout  = 'icons' === SLP_Settings::get( 'layout' ) ? 'icons' : 'full';
+		$from    = SLP_Auth::current_url();
+		$classes = 'slp-buttons slp-buttons--' . $layout . ( '' !== $context ? ' slp-context-' . str_replace( ' ', ' slp-context-', $context ) : '' );
 
 		$html = '<div class="' . esc_attr( $classes ) . '">';
 		if ( '' !== $heading ) {
-			$html .= '<p class="lsl-divider"><span>' . esc_html( $heading ) . '</span></p>';
+			$html .= '<p class="slp-divider"><span>' . esc_html( $heading ) . '</span></p>';
 		}
-		$html .= '<div class="lsl-buttons__list">';
+		$html .= '<div class="slp-buttons__list">';
 		foreach ( $providers as $provider ) {
 			$label = self::button_label( $provider );
 			$html .= sprintf(
-				'<a class="lsl-button lsl-button--%1$s" href="%2$s" rel="nofollow" aria-label="%3$s"%4$s><span class="lsl-button__icon" aria-hidden="true">%5$s</span><span class="lsl-button__label">%6$s</span></a>',
+				'<a class="slp-button slp-button--%1$s" href="%2$s" rel="nofollow" aria-label="%3$s"%4$s><span class="slp-button__icon" aria-hidden="true">%5$s</span><span class="slp-button__label">%6$s</span></a>',
 				esc_attr( $provider ),
-				esc_url( LSL_Auth::login_url( $provider, $redirect_to, $from ) ),
+				esc_url( SLP_Auth::login_url( $provider, $redirect_to, $from ) ),
 				esc_attr( $label ),
 				'icons' === $layout ? ' title="' . esc_attr( $label ) . '"' : '',
 				self::icon( $provider ),
@@ -235,10 +235,10 @@ class LSL_Buttons {
 		}
 		$html .= '</div>';
 
-		if ( LSL_Settings::get( 'show_credit' ) ) {
-			$html .= '<p class="lsl-credit">' . sprintf(
+		if ( SLP_Settings::get( 'show_credit' ) ) {
+			$html .= '<p class="slp-credit">' . sprintf(
 				/* translators: %s: link to Laghavi Digital. */
-				esc_html__( 'Powered by %s', 'laghavi-social-login' ),
+				esc_html__( 'Powered by %s', 'simple-login-page' ),
 				'<a href="https://laghavi.com/" target="_blank" rel="noopener">Laghavi Digital</a>'
 			) . '</p>';
 		}

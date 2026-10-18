@@ -1,9 +1,9 @@
-/* Laghavi Social Login – settings page */
-.lsl-admin {
+/* Simple Login Page – settings page */
+.slp-admin {
 	max-width: 900px;
 }
 
-.lsl-admin__header {
+.slp-admin__header {
 	display: flex;
 	align-items: center;
 	gap: 20px;
@@ -13,23 +13,23 @@
 	border-radius: 8px;
 }
 
-.lsl-admin__header h1 {
+.slp-admin__header h1 {
 	margin: 0 0 4px;
 	padding: 0;
 	color: #2f55a6;
 }
 
-.lsl-admin__header p {
+.slp-admin__header p {
 	margin: 0;
 	color: #3c434a;
 }
 
-.lsl-admin__logo {
+.slp-admin__logo {
 	width: 140px;
 	height: auto;
 }
 
-.lsl-card {
+.slp-card {
 	margin: 0 0 16px;
 	padding: 16px 20px;
 	background: #fff;
@@ -37,20 +37,20 @@
 	border-radius: 8px;
 }
 
-.lsl-card h2 {
+.slp-card h2 {
 	margin-top: 0;
 }
 
-.lsl-check {
+.slp-check {
 	display: block;
 	margin: 8px 0;
 }
 
-.lsl-section-title {
+.slp-section-title {
 	margin-top: 28px;
 }
 
-.lsl-provider summary {
+.slp-provider summary {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -59,11 +59,11 @@
 	font-weight: 600;
 }
 
-.lsl-provider[open] summary {
+.slp-provider[open] summary {
 	margin-bottom: 12px;
 }
 
-.lsl-provider__icon {
+.slp-provider__icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -73,16 +73,16 @@
 	border: 1px solid #dcdcde;
 }
 
-.lsl-provider__icon svg {
+.slp-provider__icon svg {
 	width: 18px;
 	height: 18px;
 }
 
-.lsl-provider__icon.lsl-button--facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
-.lsl-provider__icon.lsl-button--apple { background: #000; color: #fff; border-color: #000; }
-.lsl-provider__icon.lsl-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
+.slp-provider__icon.slp-button--facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
+.slp-provider__icon.slp-button--apple { background: #000; color: #fff; border-color: #000; }
+.slp-provider__icon.slp-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
 
-.lsl-badge {
+.slp-badge {
 	margin-left: auto;
 	padding: 2px 10px;
 	border-radius: 999px;
@@ -92,38 +92,38 @@
 	font-weight: 500;
 }
 
-.lsl-badge--on {
+.slp-badge--on {
 	background: #edfaef;
 	color: #007017;
 }
 
-.lsl-badge--warn {
+.slp-badge--warn {
 	background: #fcf9e8;
 	color: #8a6116;
 }
 
-.lsl-copy {
+.slp-copy {
 	display: flex;
 	gap: 6px;
 	flex-wrap: wrap;
 }
 
-.lsl-copy input {
+.slp-copy input {
 	flex: 1 1 320px;
 	background: #f6f7f7;
 }
 
-.lsl-steps {
+.slp-steps {
 	margin-top: 8px;
 	padding: 12px 16px;
 	background: #f6f7f7;
 	border-radius: 6px;
 }
 
-.lsl-steps ol {
+.slp-steps ol {
 	margin: 8px 0 8px 20px;
 }
 
-.lsl-admin__credit {
+.slp-admin__credit {
 	color: #646970;
 }

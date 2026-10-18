@@ -26,9 +26,9 @@ with nothing open beforehand — see **[`extension/`](extension/README.md)**,
 a small browser extension installed once on each agent's computer. It
 reuses the same `php/` backend; only the delivery mechanism changes.
 
-## Laghavi Social Login (WordPress plugin)
+## Simple Login Page (WordPress plugin)
 
-[`laghavi-social-login/`](laghavi-social-login/readme.txt) is a free WordPress
+[`simple-login-page/`](simple-login-page/readme.txt) is a free WordPress
 plugin by Laghavi Digital: sign up and log in with Google, Facebook, Apple,
 Microsoft and LinkedIn, with WooCommerce support and a math question on the
 login form. Zip the folder (without `.wordpress-org/`, which holds the

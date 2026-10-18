@@ -2,7 +2,7 @@
 /**
  * Simple math question on the login and registration forms to stop bots.
  *
- * @package LaghaviSocialLogin
+ * @package SimpleLoginPage
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Math security question.
  */
-class LSL_Captcha {
+class SLP_Captcha {
 
 	/**
 	 * How long a question shown on a page stays valid.
@@ -35,12 +35,12 @@ class LSL_Captcha {
 	 * Hook everything up.
 	 */
 	public static function init() {
-		if ( LSL_Settings::get( 'captcha_login' ) ) {
+		if ( SLP_Settings::get( 'captcha_login' ) ) {
 			add_action( 'login_form', array( __CLASS__, 'field_wp' ), 10 );
 			add_action( 'woocommerce_login_form', array( __CLASS__, 'field_wc' ) );
 			add_filter( 'authenticate', array( __CLASS__, 'check_login' ), 99 );
 		}
-		if ( LSL_Settings::get( 'captcha_register' ) ) {
+		if ( SLP_Settings::get( 'captcha_register' ) ) {
 			add_action( 'register_form', array( __CLASS__, 'field_wp' ), 10 );
 			add_filter( 'registration_errors', array( __CLASS__, 'check_wp_register' ) );
 			add_action( 'woocommerce_register_form', array( __CLASS__, 'field_wc' ) );
@@ -60,7 +60,7 @@ class LSL_Captcha {
 		$token     = $index . '|' . $time . '|' . self::sign( $index, $time );
 
 		/* translators: 1: first number, 2: second number. */
-		$text = sprintf( __( 'What is %1$d + %2$d?', 'laghavi-social-login' ), $questions[ $index ][0], $questions[ $index ][1] );
+		$text = sprintf( __( 'What is %1$d + %2$d?', 'simple-login-page' ), $questions[ $index ][0], $questions[ $index ][1] );
 
 		return array( $text, $token );
 	}
@@ -73,7 +73,7 @@ class LSL_Captcha {
 	 * @return string
 	 */
 	private static function sign( $index, $time ) {
-		return substr( hash_hmac( 'sha256', 'lsl_captcha|' . $index . '|' . $time, wp_salt( 'nonce' ) ), 0, 32 );
+		return substr( hash_hmac( 'sha256', 'slp_captcha|' . $index . '|' . $time, wp_salt( 'nonce' ) ), 0, 32 );
 	}
 
 	/**
@@ -111,8 +111,8 @@ class LSL_Captcha {
 	 */
 	private static function posted_answer_is_correct() {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- The login/registration form's own handling does nonce checks; this only adds a question.
-		$token  = isset( $_POST['lsl_captcha_token'] ) ? sanitize_text_field( wp_unslash( $_POST['lsl_captcha_token'] ) ) : '';
-		$answer = isset( $_POST['lsl_captcha_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['lsl_captcha_answer'] ) ) : '';
+		$token  = isset( $_POST['slp_captcha_token'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_token'] ) ) : '';
+		$answer = isset( $_POST['slp_captcha_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_answer'] ) ) : '';
 		// phpcs:enable
 		return self::verify( $token, $answer );
 	}
@@ -124,8 +124,8 @@ class LSL_Captcha {
 	 */
 	private static function error() {
 		return new WP_Error(
-			'lsl_captcha',
-			'<strong>' . esc_html__( 'Error:', 'laghavi-social-login' ) . '</strong> ' . esc_html__( 'Please answer the security question correctly.', 'laghavi-social-login' )
+			'slp_captcha',
+			'<strong>' . esc_html__( 'Error:', 'simple-login-page' ) . '</strong> ' . esc_html__( 'Please answer the security question correctly.', 'simple-login-page' )
 		);
 	}
 
@@ -135,10 +135,10 @@ class LSL_Captcha {
 	public static function field_wp() {
 		list( $text, $token ) = self::new_question();
 		?>
-		<p class="lsl-captcha">
-			<label for="lsl_captcha_answer"><?php esc_html_e( 'Security question:', 'laghavi-social-login' ); ?> <?php echo esc_html( $text ); ?></label>
-			<input type="text" name="lsl_captcha_answer" id="lsl_captcha_answer" class="input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" size="5" required />
-			<input type="hidden" name="lsl_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+		<p class="slp-captcha">
+			<label for="slp_captcha_answer"><?php esc_html_e( 'Security question:', 'simple-login-page' ); ?> <?php echo esc_html( $text ); ?></label>
+			<input type="text" name="slp_captcha_answer" id="slp_captcha_answer" class="input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" size="5" required />
+			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
 		</p>
 		<?php
 	}
@@ -148,12 +148,12 @@ class LSL_Captcha {
 	 */
 	public static function field_wc() {
 		list( $text, $token ) = self::new_question();
-		$id                   = 'lsl_captcha_answer_' . wp_rand( 1000, 9999 );
+		$id                   = 'slp_captcha_answer_' . wp_rand( 1000, 9999 );
 		?>
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide lsl-captcha">
-			<label for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Security question:', 'laghavi-social-login' ); ?> <?php echo esc_html( $text ); ?>&nbsp;<span class="required" aria-hidden="true">*</span></label>
-			<input type="text" name="lsl_captcha_answer" id="<?php echo esc_attr( $id ); ?>" class="woocommerce-Input input-text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-required="true" />
-			<input type="hidden" name="lsl_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide slp-captcha">
+			<label for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Security question:', 'simple-login-page' ); ?> <?php echo esc_html( $text ); ?>&nbsp;<span class="required" aria-hidden="true">*</span></label>
+			<input type="text" name="slp_captcha_answer" id="<?php echo esc_attr( $id ); ?>" class="woocommerce-Input input-text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-required="true" />
+			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
 		</p>
 		<?php
 	}
@@ -191,7 +191,7 @@ class LSL_Captcha {
 	 */
 	public static function check_wp_register( $errors ) {
 		if ( ! self::posted_answer_is_correct() ) {
-			$errors->add( 'lsl_captcha', self::error()->get_error_message() );
+			$errors->add( 'slp_captcha', self::error()->get_error_message() );
 		}
 		return $errors;
 	}
@@ -207,7 +207,7 @@ class LSL_Captcha {
 	public static function check_wc_register( $errors ) {
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Detecting which form was submitted.
 		if ( isset( $_POST['woocommerce-register-nonce'] ) && ! self::posted_answer_is_correct() ) {
-			$errors->add( 'lsl_captcha', self::error()->get_error_message() );
+			$errors->add( 'slp_captcha', self::error()->get_error_message() );
 		}
 		return $errors;
 	}

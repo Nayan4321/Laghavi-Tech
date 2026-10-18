@@ -1,4 +1,4 @@
-=== Laghavi Social Login ===
+=== Simple Login Page ===
 Contributors: laghavidigital
 Donate link: https://laghavi.com/
 Tags: social login, google login, woocommerce login, apple login, facebook login
@@ -13,7 +13,7 @@ One-click sign up and login with Google, Facebook, Apple, Microsoft and LinkedIn
 
 == Description ==
 
-Laghavi Social Login lets your visitors create an account or log in with one click using the accounts they already have:
+Simple Login Page lets your visitors create an account or log in with one click using the accounts they already have:
 
 * **Google**
 * **Facebook**
@@ -27,7 +27,7 @@ Laghavi Social Login lets your visitors create an account or log in with one cli
 * Buttons on the WooCommerce My Account login and registration forms.
 * Buttons at the top of the WooCommerce checkout, so guests can sign up or log in and come straight back to checkout with their cart kept.
 * WooCommerce's own "create an account during checkout" option keeps working.
-* A `[laghavi_social_login]` shortcode to place the buttons anywhere.
+* A `[simple_login_page]` shortcode to place the buttons anywhere.
 
 **The right role for every new account**
 
@@ -53,9 +53,9 @@ Made by [Laghavi Digital](https://laghavi.com/).
 
 == Installation ==
 
-1. Upload the `laghavi-social-login` folder to `/wp-content/plugins/`, or install the plugin from Plugins > Add New.
+1. Upload the `simple-login-page` folder to `/wp-content/plugins/`, or install the plugin from Plugins > Add New.
 2. Activate the plugin.
-3. Go to **Social Login** in the admin menu.
+3. Go to **Simple Login** in the admin menu.
 4. Open each provider you want, copy its Redirect URI into the provider's developer console, paste the keys back, and tick "Enable".
 5. Save. The buttons appear on the login, registration, My Account and checkout pages.
 
@@ -69,7 +69,7 @@ No. Without WooCommerce, the buttons appear on the WordPress login and registrat
 
 = What role do new users get? =
 
-Customer when WooCommerce is active, otherwise the default role in Settings > General. You can change a user's role any time. Developers can use the `lsl_new_user_role` filter.
+Customer when WooCommerce is active, otherwise the default role in Settings > General. You can change a user's role any time. Developers can use the `slp_new_user_role` filter.
 
 = Can I stop new accounts being created? =
 
@@ -85,7 +85,7 @@ Yes. Guests see the buttons at the top of the checkout page. After signing up or
 
 = Where do people go after logging in? =
 
-Back to the page they came from when it is known (for example checkout), otherwise My Account for WooCommerce customers, the dashboard for editors and admins, or the home page. Developers can change this with the `lsl_login_redirect` filter.
+Back to the page they came from when it is known (for example checkout), otherwise My Account for WooCommerce customers, the dashboard for editors and admins, or the home page. Developers can change this with the `slp_login_redirect` filter.
 
 = Can I change the security questions? =
 
