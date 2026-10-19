@@ -48,6 +48,14 @@ Subscription products with automatic Stripe renewals, reminder emails, a better 
 
 * Tick "Ask for price" on a product: the price becomes "Price on request" (also hidden from Google's product data), it cannot be bought online, and it shows "Ask for price" (your contact or booking page) and/or "Chat on WhatsApp" with a ready-written message naming the product.
 
+**Currency switcher**
+
+* Your store currency (set in WooCommerce > Settings > General, e.g. US dollar) stays the default; add any others (AED, EUR, GBP…) with an exchange rate in WooCommerce > Settings > Subscriptions > Currencies.
+* "Update rates now" (or daily, optional) fetches rates from the free open.er-api.com service, or type your own.
+* Per currency: decimals and price rounding (exact, up to whole, ending .99, up to 5), and countries that get it automatically on their first visit (with Cloudflare or WooCommerce's MaxMind geolocation).
+* Switcher: floating in a corner, "Pay in USD · AED · EUR" on checkout, and the `[lsub_currency_switcher]` shortcode for your menu or header.
+* Prices, sign-up fees, fixed coupons and shipping convert. The order, its Stripe payment and every renewal stay in the currency the customer chose; renewal invoices for other payment methods are priced in that currency too. Admin screens and reports stay in your store currency, and monthly recurring revenue is converted back to it.
+
 **Admin**
 
 * WooCommerce > Subscriptions: counts, monthly recurring revenue, search and filter, and each subscription's details, orders and actions (cancel now / at period end, resume, send renewal invoice now, open in Stripe).
@@ -64,10 +72,13 @@ Subscription products with automatic Stripe renewals, reminder emails, a better 
 
 == Notes ==
 
-* Prices are charged in your store currency (AED by default). Stripe accepts cards from the UAE, UK, US, Germany and most other countries. Cards issued in Russia generally cannot be charged through Stripe; offer those customers bank transfer, which uses invoice renewals.
+* Customers are charged in the currency they chose (your store currency by default). Stripe accepts cards from the UAE, UK, US, Germany and most other countries. Cards issued in Russia generally cannot be charged through Stripe; offer those customers bank transfer, which uses invoice renewals.
 * Changing a product's price later does not change existing Stripe subscriptions (they keep the price they started with). New subscribers get the new price.
 * Coupons apply to the first payment only.
 * Deleting the plugin keeps subscription records (financial history). Existing Stripe subscriptions keep charging until cancelled in Stripe.
+
+* With the currency switcher, page-caching plugins must not cache shop, product, checkout or account pages for visitors with the `lsub_currency` cookie (or cache per cookie), otherwise one visitor's currency can show to another. Most caching plugins already skip WooCommerce cart/checkout/account pages.
+* WooCommerce's built-in Analytics adds up orders without converting currencies; use WooCommerce > Subscriptions for recurring revenue in your store currency.
 
 == Changelog ==
 

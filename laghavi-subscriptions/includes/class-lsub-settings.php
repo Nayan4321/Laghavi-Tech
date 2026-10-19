@@ -47,6 +47,10 @@ class LSUB_Settings {
 			/* translators: {product} and {url} are replaced with the product name and link. */
 			'lsub_ask_message'         => __( 'Hi! I am interested in {product}. Could we schedule a meeting to discuss it? {url}', 'laghavi-subscriptions' ),
 			'lsub_ask_price_text'      => __( 'Price on request', 'laghavi-subscriptions' ),
+			'lsub_currency_floating'   => 'yes',
+			'lsub_currency_checkout'   => 'yes',
+			'lsub_currency_geo'        => 'no',
+			'lsub_rates_auto'          => 'no',
 		);
 	}
 
@@ -249,6 +253,51 @@ class LSUB_Settings {
 				'type' => 'sectionend',
 				'id'   => 'lsub_ask',
 			),
+
+			array(
+				'title' => __( 'Currencies', 'laghavi-subscriptions' ),
+				'type'  => 'title',
+				/* translators: %s: shortcode. */
+				'desc'  => sprintf( __( 'Let visitors pay in their own currency. Add the switcher anywhere (menu, header, widget) with %s.', 'laghavi-subscriptions' ), '<code>[lsub_currency_switcher]</code>' ),
+				'id'    => 'lsub_currency',
+			),
+			array(
+				'title' => __( 'Extra currencies', 'laghavi-subscriptions' ),
+				'id'    => LSUB_Currency::OPTION,
+				'type'  => 'lsub_currencies',
+			),
+			array(
+				'title'   => __( 'Floating switcher', 'laghavi-subscriptions' ),
+				'desc'    => __( 'Show a small currency picker in the bottom corner of every page.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_currency_floating',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_currency_floating'],
+			),
+			array(
+				'title'   => __( 'Switcher on checkout', 'laghavi-subscriptions' ),
+				'desc'    => __( 'Show "Pay in USD / AED / …" above the payment methods.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_currency_checkout',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_currency_checkout'],
+			),
+			array(
+				'title'   => __( 'Pick currency by country', 'laghavi-subscriptions' ),
+				'desc'    => __( 'On a visitor\'s first visit, choose the currency listed for their country (needs Cloudflare, or MaxMind set up in WooCommerce > Settings > Integration). Visitors can still switch.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_currency_geo',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_currency_geo'],
+			),
+			array(
+				'title'   => __( 'Update rates daily', 'laghavi-subscriptions' ),
+				'desc'    => __( 'Fetch exchange rates automatically once a day from open.er-api.com. Leave off to keep your own rates.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_rates_auto',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_rates_auto'],
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'lsub_currency',
+			),
 		);
 	}
 
@@ -266,6 +315,9 @@ class LSUB_Settings {
 		woocommerce_update_options( self::fields() );
 		// The WhatsApp number must be digits only for wa.me links.
 		update_option( 'lsub_ask_whatsapp', preg_replace( '/\D+/', '', (string) get_option( 'lsub_ask_whatsapp' ) ) );
+		if ( ! self::on( 'lsub_rates_auto' ) ) {
+			wp_clear_scheduled_hook( 'lsub_daily_rates' );
+		}
 		flush_rewrite_rules();
 	}
 }

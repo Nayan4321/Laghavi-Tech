@@ -375,3 +375,65 @@
 .lsub-details th {
 	width: 180px;
 }
+
+/* ---------- Currency switcher ---------- */
+.lsub-currency {
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+}
+
+.lsub-currency select {
+	padding: 4px 26px 4px 8px;
+	border: 1px solid var(--lsub-border);
+	border-radius: 999px;
+	background-color: #fff;
+	font-size: 14px;
+	cursor: pointer;
+}
+
+.lsub-currency.floating {
+	position: fixed;
+	left: 16px;
+	bottom: 16px;
+	z-index: 9999;
+	padding: 4px;
+	border-radius: 999px;
+	background: #fff;
+	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.lsub-currency.floating select {
+	border: 0;
+}
+
+.lsub-currency-checkout {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 14px;
+	font-size: 14px;
+}
+
+.lsub-currency-checkout a {
+	padding: 3px 10px;
+	border: 1px solid var(--lsub-border);
+	border-radius: 999px;
+	text-decoration: none;
+}
+
+.lsub-currency-checkout a.is-current {
+	border-color: var(--lsub-accent);
+	background: var(--lsub-accent);
+	color: #fff;
+}
+
+.lsub-currency .screen-reader-text {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	white-space: nowrap;
+}

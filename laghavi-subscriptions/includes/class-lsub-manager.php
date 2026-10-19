@@ -156,8 +156,14 @@ class LSUB_Manager {
 			$order->calculate_totals( false );
 			$order->set_total( $amount );
 		} elseif ( $product ) {
-			$order->add_product( $product, (int) $sub->quantity );
-			$order->calculate_totals( true );
+			// Price the renewal in the subscription's currency, not the store's.
+			LSUB_Currency::run_as(
+				$order->get_currency(),
+				static function () use ( $order, $sub ) {
+					$order->add_product( wc_get_product( $sub->product_id ), (int) $sub->quantity );
+					$order->calculate_totals( true );
+				}
+			);
 		} else {
 			$line = new WC_Order_Item_Product();
 			$line->set_props(

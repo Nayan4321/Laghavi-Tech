@@ -301,7 +301,7 @@ class LSUB_Product {
 		}
 		if ( $plan['signup_fee'] > 0 ) {
 			/* translators: %s: fee. */
-			$extra[] = sprintf( __( '%s sign-up fee', 'laghavi-subscriptions' ), wp_strip_all_tags( wc_price( $plan['signup_fee'] ) ) );
+			$extra[] = sprintf( __( '%s sign-up fee', 'laghavi-subscriptions' ), wp_strip_all_tags( wc_price( LSUB_Currency::convert( $plan['signup_fee'] ) ) ) );
 		}
 		if ( $plan['length'] ) {
 			/* translators: %d: number of payments. */
@@ -418,7 +418,7 @@ class LSUB_Product {
 				$cart->add_fee(
 					/* translators: %s: product name. */
 					sprintf( __( 'Sign-up fee: %s', 'laghavi-subscriptions' ), $item['data']->get_name() ),
-					$plan['signup_fee'] * $item['quantity'],
+					LSUB_Currency::convert( $plan['signup_fee'] * $item['quantity'] ),
 					'taxable' === $item['data']->get_tax_status(),
 					$item['data']->get_tax_class()
 				);

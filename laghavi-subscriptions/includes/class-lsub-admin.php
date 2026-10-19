@@ -193,7 +193,8 @@ class LSUB_Admin {
 				'month' => 1,
 				'year'  => 1 / 12,
 			);
-			$mrr      += (float) $live->recurring_amount * ( isset( $per_month[ $live->period ] ) ? $per_month[ $live->period ] : 1 ) / max( 1, (int) $live->interval_count );
+			$amount    = LSUB_Currency::to_base( (float) $live->recurring_amount, $live->currency ? $live->currency : LSUB_Currency::base() );
+			$mrr      += $amount * ( isset( $per_month[ $live->period ] ) ? $per_month[ $live->period ] : 1 ) / max( 1, (int) $live->interval_count );
 		}
 		?>
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Subscriptions', 'laghavi-subscriptions' ); ?></h1>
@@ -201,7 +202,7 @@ class LSUB_Admin {
 			<div><strong><?php echo esc_html( number_format_i18n( LSUB_Subscriptions::count( "status IN ('active','trial','pending-cancel')" ) ) ); ?></strong><span><?php esc_html_e( 'Active', 'laghavi-subscriptions' ); ?></span></div>
 			<div><strong><?php echo esc_html( number_format_i18n( LSUB_Subscriptions::count( "status = 'trial'" ) ) ); ?></strong><span><?php esc_html_e( 'In free trial', 'laghavi-subscriptions' ); ?></span></div>
 			<div><strong><?php echo esc_html( number_format_i18n( LSUB_Subscriptions::count( "status = 'on-hold'" ) ) ); ?></strong><span><?php esc_html_e( 'Payment due', 'laghavi-subscriptions' ); ?></span></div>
-			<div><strong><?php echo wp_kses_post( wc_price( $mrr ) ); ?></strong><span><?php esc_html_e( 'Monthly recurring revenue', 'laghavi-subscriptions' ); ?></span></div>
+			<div><strong><?php echo wp_kses_post( wc_price( $mrr, array( 'currency' => LSUB_Currency::base() ) ) ); ?></strong><span><?php esc_html_e( 'Monthly recurring revenue', 'laghavi-subscriptions' ); ?></span></div>
 		</div>
 
 		<ul class="subsubsub">

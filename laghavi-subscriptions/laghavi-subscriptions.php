@@ -2,7 +2,7 @@
 /**
  * Plugin Name:          Laghavi Subscriptions for WooCommerce
  * Plugin URI:           https://laghavi.com/
- * Description:          Subscription products with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, and "Ask for price" products.
+ * Description:          Subscription products with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, "Ask for price" products, and a currency switcher.
  * Version:              1.0.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
@@ -34,6 +34,7 @@ require_once LSUB_DIR . 'includes/class-lsub-account.php';
 require_once LSUB_DIR . 'includes/class-lsub-checkout.php';
 require_once LSUB_DIR . 'includes/class-lsub-ask-price.php';
 require_once LSUB_DIR . 'includes/class-lsub-admin.php';
+require_once LSUB_DIR . 'includes/class-lsub-currency.php';
 
 // HPOS (custom order tables) and block checkout are supported.
 add_action(
@@ -66,6 +67,7 @@ add_action(
 		);
 
 		LSUB_Settings::init();
+		LSUB_Currency::init();
 		LSUB_Product::init();
 		LSUB_Manager::init();
 		LSUB_Webhooks::init();
@@ -92,6 +94,7 @@ register_deactivation_hook(
 	__FILE__,
 	static function () {
 		wp_clear_scheduled_hook( 'lsub_hourly' );
+		wp_clear_scheduled_hook( 'lsub_daily_rates' );
 		flush_rewrite_rules();
 	}
 );
