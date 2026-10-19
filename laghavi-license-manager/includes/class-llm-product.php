@@ -115,23 +115,27 @@ class LLM_Product {
 	}
 
 	/**
-	 * Find the product that sells a plugin slug.
+	 * Clean a plugin slug the way WordPress names plugin folders: "Simple Login Page Pro" -> "simple-login-page-pro".
 	 *
-	 * @param string $slug Plugin slug.
-	 * @return int Product ID or 0.
+	 * @param string $slug Slug as typed.
+	 * @return string
 	 */
-	public static function product_for_slug( $slug ) {
-		$ids = get_posts(
-			array(
-				'post_type'      => 'product',
-				'post_status'    => 'any',
-				'fields'         => 'ids',
-				'posts_per_page' => 1,
-				'meta_key'       => '_llm_slug', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-				'meta_value'     => sanitize_key( $slug ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
-			)
-		);
-		return $ids ? (int) $ids[0] : 0;
+	public static function clean_slug( $slug ) {
+		return sanitize_title( remove_accents( trim( (string) $slug ) ) );
+	}
+
+	/**
+	 * Whether two slugs name the same plugin, ignoring case, spaces and dashes
+	 * (so "simpleloginpagepro" saved by older versions still matches "simple-login-page-pro").
+	 *
+	 * @param string $a Slug.
+	 * @param string $b Slug.
+	 * @return bool
+	 */
+	public static function slugs_match( $a, $b ) {
+		$a = preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $a ) );
+		$b = preg_replace( '/[^a-z0-9]/', '', strtolower( (string) $b ) );
+		return '' !== $a && $a === $b;
 	}
 
 	/**
@@ -183,11 +187,15 @@ class LLM_Product {
 					array(
 						'id'          => '_llm_slug',
 						'label'       => __( 'Plugin slug', 'laghavi-license-manager' ),
-						'description' => __( 'The plugin\'s folder name, e.g. simple-login-page-pro.', 'laghavi-license-manager' ),
+						'description' => __( 'The plugin\'s folder name, e.g. simple-login-page-pro. Keys only activate in the plugin with this name.', 'laghavi-license-manager' ),
 						'desc_tip'    => true,
+						'placeholder' => 'simple-login-page-pro',
 						'value'       => $s['slug'],
 					)
 				);
+				if ( $s['enabled'] && '' === $s['slug'] ) {
+					echo '<p class="form-field" style="color:#b32d2e"><strong>' . esc_html__( 'Fill in the Plugin slug, otherwise license keys for this product cannot be activated.', 'laghavi-license-manager' ) . '</strong></p>';
+				}
 				woocommerce_wp_text_input(
 					array(
 						'id'                => '_llm_sites',
@@ -281,7 +289,7 @@ class LLM_Product {
 		$text = array( '_llm_slug', '_llm_version', '_llm_tested', '_llm_requires', '_llm_requires_php' );
 		foreach ( $text as $key ) {
 			$value = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
-			update_post_meta( $product_id, $key, '_llm_slug' === $key ? sanitize_key( $value ) : $value );
+			update_post_meta( $product_id, $key, '_llm_slug' === $key ? self::clean_slug( $value ) : $value );
 		}
 		update_post_meta( $product_id, '_llm_sites', isset( $_POST['_llm_sites'] ) ? absint( $_POST['_llm_sites'] ) : 1 );
 		update_post_meta( $product_id, '_llm_days', isset( $_POST['_llm_days'] ) ? absint( $_POST['_llm_days'] ) : 365 );

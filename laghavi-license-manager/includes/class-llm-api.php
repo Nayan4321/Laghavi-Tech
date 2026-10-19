@@ -126,7 +126,10 @@ class LLM_Api {
 			return self::fail( 'invalid', __( 'This license key is not valid.', 'laghavi-license-manager' ), 404 );
 		}
 		$settings = LLM_Product::settings( $license->product_id );
-		if ( $settings['slug'] !== sanitize_key( (string) $request['slug'] ) ) {
+		if ( '' === $settings['slug'] ) {
+			return self::fail( 'not_configured', __( 'This product is not set up for activation yet (no plugin slug on the store). Please contact support.', 'laghavi-license-manager' ), 409 );
+		}
+		if ( ! LLM_Product::slugs_match( $settings['slug'], (string) $request['slug'] ) ) {
 			return self::fail( 'invalid', __( 'This license key is for a different product.', 'laghavi-license-manager' ), 404 );
 		}
 		return array( $license, $site, $settings );

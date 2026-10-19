@@ -132,6 +132,17 @@ class LLM_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Licenses', 'laghavi-license-manager' ); ?></h1>
+			<?php foreach ( $products as $product ) : ?>
+				<?php if ( '' === LLM_Product::settings( $product->ID )['slug'] ) : ?>
+					<div class="notice notice-error inline"><p>
+						<?php
+						/* translators: %s: product name. */
+						echo esc_html( sprintf( __( '"%s" has no Plugin slug, so its keys cannot be activated. Edit the product and fill in Plugin slug in its License tab.', 'laghavi-license-manager' ), $product->post_title ) );
+						?>
+						<a href="<?php echo esc_url( get_edit_post_link( $product->ID ) ); ?>"><?php esc_html_e( 'Edit product', 'laghavi-license-manager' ); ?></a>
+					</p></div>
+				<?php endif; ?>
+			<?php endforeach; ?>
 			<form method="get" style="margin:12px 0">
 				<input type="hidden" name="page" value="<?php echo esc_attr( self::PAGE ); ?>" />
 				<input type="search" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Key, email or order number', 'laghavi-license-manager' ); ?>" class="regular-text" />
