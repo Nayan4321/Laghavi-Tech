@@ -41,6 +41,17 @@ Requires the free **Simple Login Page** plugin. Buy a license at [laghavi.com](h
 * Editor sidebar panels: Summary, Permalink, Template, Categories, Tags, Featured image, Excerpt, Discussion, Page attributes.
 * Editor features: code editor, block locking, block patterns, block directory, Openverse, template editing.
 
+**Login page design**
+
+* Five templates: Glass (frosted card over a background), Split screen (brand panel + form), Wave card (curved brand panel with centred logo), Image card (form + your picture) and Gradient (colourful panel, rounded inputs with icons).
+* Your logo (with width), a page background image, a panel image, and a "darken images" slider so text stays readable.
+* Colours (button, second colour, page, panel, panel text), font (system or Poppins, Inter, Montserrat, DM Sans from Google Fonts) and corners (square, rounded, pill).
+* Your own text: panel headline, panel text, footer ({year} and {site} placeholders), and a title and subtitle for each screen: login, register, forgot password and reset password.
+* Hide what you don't want: logo, headline, panel text, footer, titles, subtitles, "Remember me", "Lost your password?", "Register", "Go to site", privacy link, language switcher, the "or" divider, or the whole brand panel on phones.
+* Forgot-password, reset-password and registration screens use the same template automatically, also on a custom login URL.
+* Fully responsive: on phones the brand panel becomes a header (or hides), and nothing scrolls sideways.
+* Desktop and phone previews on the settings screen, including a real reset-password preview.
+
 **Front-end visibility per user tier**
 
 * Every block gets a "Who can see this block" setting: everyone, only chosen roles (and/or logged-out visitors), or everyone except them.
@@ -69,4 +80,4 @@ Page caching plugins usually serve the same page to every logged-out visitor and
 == Changelog ==
 
 = 1.0.0 =
-* First release.
+* First release: super admin, activity log, hide & restrict, front-end visibility, login page designer.

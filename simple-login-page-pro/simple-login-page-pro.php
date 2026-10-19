@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Simple Login Page Pro
  * Plugin URI:        https://laghavi.com/
- * Description:       Pro add-on for Simple Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets.
+ * Description:       Pro add-on for Simple Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets, plus login page templates.
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
@@ -35,6 +35,7 @@ require_once SLPP_DIR . 'includes/class-slpp-owner.php';
 require_once SLPP_DIR . 'includes/class-slpp-activity.php';
 require_once SLPP_DIR . 'includes/class-slpp-restrictions.php';
 require_once SLPP_DIR . 'includes/class-slpp-visibility.php';
+require_once SLPP_DIR . 'includes/class-slpp-login-design.php';
 
 add_action(
 	'plugins_loaded',
@@ -55,6 +56,7 @@ add_action(
 		SLPP_Activity::init();
 		SLPP_Restrictions::init();
 		SLPP_Visibility::init();
+		SLPP_Login_Design::init();
 	},
 	20
 );

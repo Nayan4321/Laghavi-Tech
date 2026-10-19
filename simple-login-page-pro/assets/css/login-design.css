@@ -1,0 +1,985 @@
+/* Simple Login Page Pro – login page templates.
+ * Colours, font, corners and images come from CSS variables set in the settings.
+ */
+
+/* ---------------------------------------------------------------- Base */
+body.login.slpp-design {
+	--slpp-text: #111827;
+	--slpp-muted: #6b7280;
+	--slpp-field-border: #d1d5db;
+	--slpp-field-bg: #ffffff;
+	min-height: 100vh;
+	margin: 0;
+	background: var(--slpp-page-bg);
+	color: var(--slpp-text);
+	font-family: var(--slpp-font);
+	-webkit-font-smoothing: antialiased;
+}
+
+.slpp-design *,
+.slpp-design *::before,
+.slpp-design *::after {
+	box-sizing: border-box;
+}
+
+.slpp-design #login {
+	width: 100%;
+	max-width: 380px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+/* WordPress logo: replaced by our own logo. */
+.slpp-design #login > h1 {
+	display: none;
+}
+
+.slpp-lp {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100vh;
+	padding: 40px 20px;
+	overflow: hidden;
+}
+
+.slpp-lp__card {
+	position: relative;
+	z-index: 1;
+	display: flex;
+	width: 100%;
+	max-width: 1000px;
+	min-height: 600px;
+	overflow: hidden;
+	border-radius: var(--slpp-card-radius);
+	background: #ffffff;
+	box-shadow: 0 30px 80px rgba(15, 23, 42, 0.25);
+}
+
+.slpp-lp__brand {
+	position: relative;
+	display: flex;
+	flex: 1 1 50%;
+	flex-direction: column;
+	justify-content: space-between;
+	gap: 24px;
+	padding: 48px;
+	overflow: hidden;
+	background-color: var(--slpp-panel-bg);
+	background-position: center;
+	background-size: cover;
+	color: var(--slpp-panel-text);
+}
+
+.slpp-lp__brand-inner {
+	position: relative;
+	z-index: 1;
+}
+
+.slpp-lp__brand,
+.slpp-lp__form {
+	min-width: 0;
+}
+
+.slpp-lp__headline,
+.slpp-lp__description,
+.slpp-form-title,
+.slpp-form-subtitle,
+.slpp-logo__text,
+.slpp-design #nav,
+.slpp-design #backtoblog,
+.slpp-lp__footer {
+	overflow-wrap: anywhere;
+}
+
+.slpp-lp__form {
+	display: flex;
+	flex: 1 1 50%;
+	flex-direction: column;
+	justify-content: center;
+	padding: 48px 40px;
+}
+
+.slpp-lp__headline {
+	margin: 32px 0 16px;
+	color: inherit;
+	font-size: clamp(30px, 4vw, 52px);
+	font-weight: 700;
+	line-height: 1.1;
+	letter-spacing: -0.02em;
+}
+
+.slpp-lp__description {
+	max-width: 420px;
+	margin: 0;
+	color: inherit;
+	font-size: 16px;
+	line-height: 1.6;
+	opacity: 0.9;
+}
+
+.slpp-lp__footer {
+	position: relative;
+	z-index: 1;
+	margin: 0;
+	color: inherit;
+	font-size: 13px;
+	opacity: 0.75;
+}
+
+/* Logo */
+.slpp-logo {
+	display: inline-block;
+	color: inherit;
+	text-decoration: none;
+	box-shadow: none;
+	outline-offset: 4px;
+}
+
+.slpp-logo img {
+	display: block;
+	width: var(--slpp-logo-width);
+	max-width: 100%;
+	height: auto;
+}
+
+.slpp-logo__text {
+	font-size: 24px;
+	font-weight: 700;
+}
+
+.slpp-logo--form {
+	margin-bottom: 20px;
+}
+
+/* Images: page background and panel picture, with an optional darkening layer. */
+.slpp-has-bg {
+	background-image: linear-gradient(rgba(0, 0, 0, var(--slpp-overlay, 0.3)), rgba(0, 0, 0, var(--slpp-overlay, 0.3))), var(--slpp-bg-image) !important;
+	background-position: center !important;
+	background-size: cover !important;
+	background-attachment: fixed;
+}
+
+.slpp-has-side .slpp-lp__brand {
+	background-image: linear-gradient(rgba(0, 0, 0, var(--slpp-overlay, 0.3)), rgba(0, 0, 0, var(--slpp-overlay, 0.3))), var(--slpp-side-image);
+}
+
+/* ---------------------------------------------------------------- Form */
+.slpp-form-head {
+	margin-bottom: 24px;
+}
+
+.slpp-form-title {
+	margin: 0 0 6px;
+	color: var(--slpp-text);
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.2;
+}
+
+.slpp-form-subtitle {
+	margin: 0;
+	color: var(--slpp-muted);
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.slpp-design.login form {
+	margin: 0;
+	padding: 0;
+	overflow: visible;
+	border: 0;
+	background: none;
+	box-shadow: none;
+}
+
+.slpp-design.login label {
+	display: inline-block;
+	margin-bottom: 6px;
+	color: var(--slpp-text);
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.4;
+}
+
+.slpp-design.login form .input,
+.slpp-design.login input[type="text"],
+.slpp-design.login input[type="email"],
+.slpp-design.login input[type="password"] {
+	width: 100%;
+	height: 48px;
+	min-height: 48px;
+	margin: 0 0 18px;
+	padding: 0 14px;
+	border: 1px solid var(--slpp-field-border);
+	border-radius: var(--slpp-radius);
+	background: var(--slpp-field-bg);
+	box-shadow: none;
+	color: var(--slpp-text);
+	font-family: inherit;
+	font-size: 15px;
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.slpp-design.login form .input:focus,
+.slpp-design.login input[type="text"]:focus,
+.slpp-design.login input[type="email"]:focus,
+.slpp-design.login input[type="password"]:focus {
+	border-color: var(--slpp-primary);
+	outline: none;
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--slpp-primary) 22%, transparent);
+}
+
+.slpp-design.login .wp-pwd {
+	position: relative;
+}
+
+.slpp-design.login .button.wp-hide-pw {
+	top: 0;
+	right: 4px;
+	height: 48px;
+	min-height: 48px;
+	border: 0;
+	background: transparent;
+	color: var(--slpp-muted);
+}
+
+.slpp-design.login .button.wp-hide-pw:focus {
+	box-shadow: none;
+}
+
+.slpp-design.login .forgetmenot {
+	float: none;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+}
+
+.slpp-design.login .forgetmenot label {
+	margin: 0;
+	font-weight: 400;
+}
+
+.slpp-design.login input[type="checkbox"] {
+	width: 18px;
+	height: 18px;
+	margin: 0;
+	border-radius: 4px;
+	border-color: var(--slpp-field-border);
+}
+
+.slpp-design.login input[type="checkbox"]:checked::before {
+	content: "";
+	display: block;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	border-radius: 3px;
+	background: var(--slpp-primary) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='white' stroke-width='3' d='M5 12l5 5 9-10'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+/* "Remember me" and "Forgot password?" on one row (built by login-design.js). */
+.slpp-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	margin: 0 0 20px;
+	font-size: 14px;
+}
+
+.slpp-row a {
+	color: var(--slpp-primary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.slpp-design.login .submit,
+.slpp-design.login p.submit {
+	float: none;
+	clear: both;
+	margin: 0;
+	padding: 0;
+}
+
+.slpp-design.login .button-primary,
+.slpp-design.login #wp-submit {
+	float: none;
+	width: 100%;
+	height: 50px;
+	min-height: 50px;
+	padding: 0 20px;
+	border: 0;
+	border-radius: var(--slpp-radius);
+	background: var(--slpp-primary);
+	box-shadow: none;
+	color: #ffffff;
+	font-family: inherit;
+	font-size: 16px;
+	font-weight: 600;
+	text-shadow: none;
+	cursor: pointer;
+	transition: filter 0.15s ease, transform 0.15s ease;
+}
+
+.slpp-design.login .button-primary:hover,
+.slpp-design.login #wp-submit:hover {
+	filter: brightness(1.08);
+}
+
+.slpp-design.login .button-primary:active {
+	transform: translateY(1px);
+}
+
+/* Reset password screen */
+.slpp-design.login #pass-strength-result {
+	width: 100%;
+	margin: -8px 0 16px;
+	border-radius: var(--slpp-radius);
+}
+
+.slpp-design.login .reset-pass-submit {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.slpp-design.login .reset-pass-submit .button {
+	flex: 1 1 160px;
+	height: 48px;
+	margin: 0;
+	border-radius: var(--slpp-radius);
+}
+
+.slpp-design.login .reset-pass-submit .button:not(.button-primary) {
+	border: 1px solid var(--slpp-field-border);
+	background: #ffffff;
+	color: #111827;
+}
+
+.slpp-design.login .indicator-hint,
+.slpp-design.login .description {
+	color: var(--slpp-muted);
+	font-size: 13px;
+}
+
+/* Messages */
+.slpp-design.login .message,
+.slpp-design.login .notice,
+.slpp-design.login #login_error {
+	margin: 0 0 18px;
+	padding: 12px 14px;
+	border: 0;
+	border-left: 4px solid var(--slpp-primary);
+	border-radius: var(--slpp-radius);
+	background: color-mix(in srgb, var(--slpp-primary) 8%, #ffffff);
+	box-shadow: none;
+	color: var(--slpp-text);
+	font-size: 14px;
+}
+
+.slpp-design.login #login_error,
+.slpp-design.login .notice-error {
+	border-left-color: #dc2626;
+	background: #fef2f2;
+}
+
+/* Links under the form */
+.slpp-design.login #nav,
+.slpp-design.login #backtoblog {
+	margin: 18px 0 0;
+	padding: 0;
+	text-align: center;
+	font-size: 14px;
+}
+
+.slpp-design.login #nav a,
+.slpp-design.login #backtoblog a,
+.slpp-design.login .privacy-policy-link {
+	color: var(--slpp-primary);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.slpp-design.login #nav {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 6px 16px;
+}
+
+.slpp-design .privacy-policy-page-link {
+	margin: 16px 0 0;
+	text-align: center;
+	font-size: 13px;
+}
+
+.slpp-design .language-switcher {
+	margin-top: 16px;
+}
+
+/* Social buttons and math question (free plugin) */
+.slpp-design.login .slp-buttons {
+	margin: 20px 0 0;
+}
+
+.slpp-design.login .slp-button {
+	min-height: 46px;
+	border-radius: var(--slpp-radius);
+	font-family: inherit;
+}
+
+.slpp-design.login .slp-divider {
+	color: var(--slpp-muted);
+}
+
+.slpp-design.login .slp-captcha label {
+	display: block;
+}
+
+.slpp-design.login .slp-captcha .input {
+	max-width: 140px;
+}
+
+/* Things the owner chose to hide */
+.slpp-hide-remember .forgetmenot,
+.slpp-hide-lost a[href*="action=lostpassword"],
+.slpp-hide-back #backtoblog,
+.slpp-hide-social-divider .slp-divider {
+	display: none !important;
+}
+
+/* ---------------------------------------------------------------- 1. Glass */
+.slpp-tpl-glass {
+	background: radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--slpp-secondary) 80%, transparent) 0, transparent 34%),
+		radial-gradient(circle at 88% 82%, color-mix(in srgb, var(--slpp-secondary) 70%, transparent) 0, transparent 30%),
+		linear-gradient(135deg, var(--slpp-page-bg), var(--slpp-primary));
+}
+
+.slpp-lp--glass::before,
+.slpp-lp--glass::after {
+	content: "";
+	position: absolute;
+	border-radius: 999px;
+	background: linear-gradient(135deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.05));
+	filter: blur(1px);
+}
+
+.slpp-lp--glass::before {
+	top: 14%;
+	left: 12%;
+	width: 160px;
+	height: 60px;
+	transform: rotate(-30deg);
+}
+
+.slpp-lp--glass::after {
+	right: 10%;
+	bottom: 16%;
+	width: 220px;
+	height: 80px;
+	transform: rotate(-20deg);
+}
+
+.slpp-has-bg .slpp-lp--glass::before,
+.slpp-has-bg .slpp-lp--glass::after {
+	display: none;
+}
+
+.slpp-lp--glass .slpp-lp__card {
+	flex-direction: column;
+	max-width: 440px;
+	min-height: 0;
+	border: 1px solid rgba(255, 255, 255, 0.35);
+	background: rgba(255, 255, 255, 0.14);
+	-webkit-backdrop-filter: blur(18px) saturate(140%);
+	backdrop-filter: blur(18px) saturate(140%);
+	box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
+}
+
+.slpp-lp--glass .slpp-lp__form {
+	padding: 40px 36px 28px;
+}
+
+body.login.slpp-design.slpp-tpl-glass {
+	--slpp-text: #ffffff;
+	--slpp-muted: rgba(255, 255, 255, 0.8);
+	--slpp-field-border: rgba(255, 255, 255, 0.55);
+	--slpp-field-bg: rgba(255, 255, 255, 0.92);
+}
+
+.slpp-tpl-glass.login input[type="text"],
+.slpp-tpl-glass.login input[type="email"],
+.slpp-tpl-glass.login input[type="password"],
+.slpp-tpl-glass.login form .input {
+	color: #111827;
+}
+
+.slpp-tpl-glass.login #nav a,
+.slpp-tpl-glass.login #backtoblog a,
+.slpp-tpl-glass .slpp-row a,
+.slpp-tpl-glass .privacy-policy-link {
+	color: #ffffff;
+}
+
+.slpp-tpl-glass.login .message,
+.slpp-tpl-glass.login .notice {
+	background: rgba(255, 255, 255, 0.9);
+	color: #111827;
+}
+
+.slpp-tpl-glass .slp-credit,
+.slpp-tpl-glass .slp-credit a,
+.slpp-tpl-glass .slp-divider {
+	color: rgba(255, 255, 255, 0.85);
+}
+
+.slpp-lp--glass .slpp-lp__footer {
+	padding: 0 36px 24px;
+	text-align: center;
+	color: #ffffff;
+}
+
+/* ---------------------------------------------------------------- 2. Split screen */
+body.login.slpp-tpl-split {
+	background: #ffffff !important;
+}
+
+.slpp-lp--split {
+	padding: 0;
+}
+
+.slpp-lp--split .slpp-lp__card {
+	max-width: none;
+	min-height: 100vh;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.slpp-lp--split .slpp-lp__brand {
+	flex-basis: 52%;
+	padding: 56px 64px;
+	background-image: repeating-radial-gradient(circle at 110% -10%, transparent 0 60px, rgba(255, 255, 255, 0.06) 61px 62px);
+}
+
+.slpp-tpl-split.slpp-has-bg .slpp-lp__brand {
+	background-image: linear-gradient(rgba(0, 0, 0, var(--slpp-overlay, 0.3)), rgba(0, 0, 0, var(--slpp-overlay, 0.3))), var(--slpp-bg-image);
+}
+
+.slpp-tpl-split.slpp-has-side .slpp-lp__brand {
+	background-image: linear-gradient(rgba(0, 0, 0, var(--slpp-overlay, 0.3)), rgba(0, 0, 0, var(--slpp-overlay, 0.3))), var(--slpp-side-image);
+}
+
+.slpp-lp--split .slpp-lp__brand .slpp-lp__headline {
+	margin-top: 18vh;
+}
+
+.slpp-lp--split .slpp-lp__form {
+	flex-basis: 48%;
+	align-items: center;
+	background: #ffffff;
+}
+
+.slpp-lp--split .slpp-lp__form #login {
+	max-width: 400px;
+}
+
+/* ---------------------------------------------------------------- 3. Wave card */
+.slpp-lp--wave .slpp-lp__card {
+	max-width: 960px;
+}
+
+.slpp-lp--wave .slpp-lp__brand {
+	flex-basis: 44%;
+	align-items: center;
+	justify-content: center;
+	padding: 48px 72px 48px 40px;
+	background-image: linear-gradient(160deg, var(--slpp-panel-bg), var(--slpp-secondary));
+	text-align: center;
+}
+
+.slpp-lp--wave .slpp-lp__brand::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: -1px;
+	bottom: 0;
+	width: 70px;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 70 220' preserveAspectRatio='none'%3E%3Cpath fill='white' fill-opacity='.45' d='M70 0H48C22 18 22 48 44 60C14 76 18 120 46 130C18 146 22 196 50 220H70Z'/%3E%3Cpath fill='white' d='M70 0H60C38 20 38 46 58 58C30 76 32 116 58 128C32 148 36 194 62 220H70Z'/%3E%3C/svg%3E") repeat-y right top / 70px 220px;
+}
+
+.slpp-lp--wave .slpp-lp__brand-inner {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.slpp-lp--wave .slpp-lp__headline {
+	order: -1;
+	margin: 0 0 28px;
+	font-size: clamp(24px, 3vw, 34px);
+	font-weight: 500;
+}
+
+.slpp-lp--wave .slpp-logo--brand {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 120px;
+	min-height: 120px;
+	margin-bottom: 24px;
+	padding: 20px;
+	border-radius: 999px;
+	background: #ffffff;
+	color: var(--slpp-panel-bg);
+}
+
+.slpp-lp--wave .slpp-logo--brand img {
+	width: min(var(--slpp-logo-width), 110px);
+}
+
+.slpp-lp--wave .slpp-lp__description {
+	font-size: 14px;
+}
+
+.slpp-lp--wave .slpp-lp__footer {
+	position: absolute;
+	bottom: 24px;
+	left: 0;
+	right: 50px;
+	text-align: center;
+	font-size: 12px;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.slpp-lp--wave .slpp-lp__form {
+	padding-left: 56px;
+}
+
+.slpp-tpl-wave .slpp-form-title {
+	text-align: center;
+	font-weight: 600;
+}
+
+.slpp-tpl-wave .slpp-form-subtitle {
+	text-align: center;
+}
+
+.slpp-tpl-wave.login input[type="text"],
+.slpp-tpl-wave.login input[type="email"],
+.slpp-tpl-wave.login input[type="password"],
+.slpp-tpl-wave.login form .input {
+	border-width: 0 0 2px;
+	border-radius: 0;
+	padding-left: 2px;
+	background: transparent;
+}
+
+/* ---------------------------------------------------------------- 4. Image card */
+.slpp-tpl-image {
+	background-image: radial-gradient(ellipse at 20% 30%, rgba(255, 255, 255, 0.1) 0 18%, transparent 19%),
+		radial-gradient(ellipse at 75% 15%, rgba(255, 255, 255, 0.08) 0 14%, transparent 15%),
+		radial-gradient(ellipse at 60% 85%, rgba(255, 255, 255, 0.1) 0 20%, transparent 21%);
+}
+
+.slpp-lp--image .slpp-lp__card {
+	flex-direction: row-reverse;
+	max-width: 980px;
+	min-height: 560px;
+}
+
+.slpp-lp--image .slpp-lp__brand {
+	flex-basis: 48%;
+	padding: 0;
+	background-image: radial-gradient(circle at 30% 30%, #ffffff 0 22%, transparent 23%),
+		radial-gradient(circle at 75% 70%, #ffffff 0 26%, transparent 27%),
+		linear-gradient(135deg, var(--slpp-panel-bg), #d4d4d4);
+}
+
+.slpp-tpl-image.slpp-has-side .slpp-lp__brand {
+	background-image: linear-gradient(rgba(0, 0, 0, var(--slpp-overlay, 0.3)), rgba(0, 0, 0, var(--slpp-overlay, 0.3))), var(--slpp-side-image);
+}
+
+.slpp-lp--image .slpp-lp__form {
+	flex-basis: 52%;
+	align-items: center;
+	background: #f7f7f7;
+}
+
+.slpp-tpl-image .slpp-form-title {
+	font-size: 30px;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- 5. Gradient */
+.slpp-tpl-gradient {
+	background: linear-gradient(135deg, var(--slpp-page-bg), var(--slpp-secondary));
+}
+
+.slpp-lp--gradient .slpp-lp__card {
+	max-width: 960px;
+	min-height: 540px;
+}
+
+.slpp-lp--gradient .slpp-lp__brand {
+	flex-basis: 56%;
+	justify-content: flex-start;
+	padding: 72px 56px;
+	background-image: linear-gradient(160deg, var(--slpp-panel-bg) 10%, var(--slpp-secondary));
+}
+
+.slpp-lp--gradient .slpp-lp__headline {
+	margin-top: 40px;
+}
+
+.slpp-lp--gradient .slpp-lp__footer {
+	margin-top: auto;
+}
+
+.slpp-shape {
+	position: absolute;
+	z-index: 0;
+	height: 64px;
+	border-radius: 999px;
+	background: linear-gradient(90deg, rgba(255, 183, 120, 0.95), rgba(255, 120, 160, 0.4));
+	transform: rotate(-35deg);
+	opacity: 0.85;
+}
+
+.slpp-shape--1 {
+	bottom: 60px;
+	left: -30px;
+	width: 260px;
+}
+
+.slpp-shape--2 {
+	bottom: 10px;
+	left: 140px;
+	width: 200px;
+	height: 50px;
+}
+
+.slpp-shape--3 {
+	bottom: 130px;
+	left: 220px;
+	width: 160px;
+	height: 14px;
+	opacity: 0.7;
+}
+
+.slpp-shape--4 {
+	top: 40px;
+	right: -40px;
+	width: 180px;
+	height: 180px;
+	background: radial-gradient(circle, rgba(255, 160, 140, 0.55), transparent 70%);
+	transform: none;
+}
+
+.slpp-lp--gradient .slpp-lp__form {
+	flex-basis: 44%;
+	align-items: center;
+}
+
+.slpp-tpl-gradient .slpp-form-head {
+	text-align: center;
+}
+
+.slpp-tpl-gradient .slpp-form-title {
+	color: var(--slpp-primary);
+	font-size: 20px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+body.login.slpp-design.slpp-tpl-gradient {
+	--slpp-field-border: transparent;
+	--slpp-field-bg: color-mix(in srgb, var(--slpp-primary) 10%, #ffffff);
+}
+
+.slpp-tpl-gradient.login #user_login,
+.slpp-tpl-gradient.login #user_email,
+.slpp-tpl-gradient.login #user_pass,
+.slpp-tpl-gradient.login #pass1 {
+	padding-left: 44px;
+	background-position: 16px center;
+	background-repeat: no-repeat;
+	background-size: 18px;
+}
+
+.slpp-tpl-gradient.login #user_login,
+.slpp-tpl-gradient.login #user_email {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c6cf0' stroke-width='2'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6'/%3E%3C/svg%3E");
+}
+
+.slpp-tpl-gradient.login #user_pass,
+.slpp-tpl-gradient.login #pass1 {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237c6cf0' stroke-width='2'%3E%3Crect x='5' y='11' width='14' height='10' rx='2'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E");
+}
+
+.slpp-tpl-gradient.login .button-primary,
+.slpp-tpl-gradient.login #wp-submit {
+	background: linear-gradient(90deg, var(--slpp-primary), var(--slpp-secondary));
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+/* ---------------------------------------------------------------- Tablets and phones */
+@media (max-width: 860px) {
+	.slpp-lp__card {
+		max-width: 100%;
+	}
+
+	.slpp-lp {
+		align-items: flex-start;
+		padding: 24px 16px;
+	}
+
+	.slpp-lp__card,
+	.slpp-lp--image .slpp-lp__card {
+		flex-direction: column;
+		min-height: 0;
+	}
+
+	.slpp-lp__brand {
+		flex: 0 0 auto;
+		padding: 32px 28px;
+	}
+
+	.slpp-lp__form {
+		flex: 1 1 auto;
+		padding: 32px 24px 28px;
+	}
+
+	.slpp-lp__headline {
+		margin: 18px 0 10px;
+		font-size: 30px;
+	}
+
+	.slpp-lp__description {
+		font-size: 15px;
+	}
+
+	/* Split: brand becomes a header band */
+	.slpp-lp--split {
+		padding: 0;
+	}
+
+	.slpp-lp--split .slpp-lp__card {
+		min-height: 100vh;
+	}
+
+	.slpp-lp--split .slpp-lp__brand {
+		padding: 28px 24px 32px;
+	}
+
+	.slpp-lp--split .slpp-lp__brand .slpp-lp__headline {
+		margin-top: 22px;
+	}
+
+	.slpp-lp--split .slpp-lp__footer {
+		display: none;
+	}
+
+	/* Wave: waves along the bottom of the header */
+	.slpp-lp--wave .slpp-lp__brand {
+		padding: 32px 24px 64px;
+	}
+
+	.slpp-lp--wave .slpp-lp__brand::after {
+		top: auto;
+		right: 0;
+		bottom: -1px;
+		left: 0;
+		width: auto;
+		height: 50px;
+		background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 220 50' preserveAspectRatio='none'%3E%3Cpath fill='white' fill-opacity='.45' d='M0 50V34C18 10 48 10 60 30C76 4 120 8 130 30C146 6 196 10 220 32V50Z'/%3E%3Cpath fill='white' d='M0 50V42C20 22 46 22 58 40C76 18 116 20 128 40C148 20 194 22 220 42V50Z'/%3E%3C/svg%3E") repeat-x left bottom / 220px 50px;
+	}
+
+	.slpp-lp--wave .slpp-logo--brand {
+		min-width: 90px;
+		min-height: 90px;
+		margin-bottom: 14px;
+	}
+
+	.slpp-lp--wave .slpp-lp__headline {
+		margin-bottom: 16px;
+	}
+
+	.slpp-lp--wave .slpp-lp__footer {
+		display: none;
+	}
+
+	.slpp-lp--wave .slpp-lp__form {
+		padding-left: 24px;
+	}
+
+	/* Image card: picture on top */
+	.slpp-lp--image .slpp-lp__brand {
+		order: -1;
+		min-height: 200px;
+	}
+
+	/* Gradient: shorter header */
+	.slpp-lp--gradient .slpp-lp__brand {
+		padding: 36px 28px 48px;
+	}
+
+	.slpp-lp--gradient .slpp-lp__headline {
+		margin-top: 16px;
+	}
+
+	.slpp-lp--gradient .slpp-lp__footer {
+		display: none;
+	}
+
+	.slpp-hide-side-mobile .slpp-lp__brand {
+		display: none;
+	}
+
+	.slpp-hide-side-mobile .slpp-logo--brand {
+		display: none;
+	}
+}
+
+@media (max-width: 480px) {
+	.slpp-lp {
+		padding: 12px;
+	}
+
+	.slpp-lp--split {
+		padding: 0;
+	}
+
+	.slpp-lp__card {
+		border-radius: 16px;
+	}
+
+	.slpp-lp--split .slpp-lp__card {
+		border-radius: 0;
+	}
+
+	.slpp-lp--glass .slpp-lp__form {
+		padding: 28px 20px 20px;
+	}
+
+	.slpp-form-title {
+		font-size: 24px;
+	}
+
+	.slpp-lp__headline {
+		font-size: 26px;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.slpp-design * {
+		transition: none !important;
+	}
+}
