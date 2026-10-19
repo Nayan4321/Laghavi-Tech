@@ -378,18 +378,93 @@
 
 /* ---------- Currency switcher ---------- */
 .lsub-currency {
-	display: inline-flex;
-	align-items: center;
+	--lsub-currency-bg: #2563eb;
+	--lsub-currency-bg-hover: #1d4ed8;
+	position: relative;
+	display: inline-block;
 	margin: 0;
+	font-size: 16px;
+	line-height: 1;
 }
 
-.lsub-currency select {
-	padding: 4px 26px 4px 8px;
-	border: 1px solid var(--lsub-border);
-	border-radius: 999px;
-	background-color: #fff;
-	font-size: 14px;
+.lsub-currency details {
+	position: relative;
+}
+
+.lsub-currency summary {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border-radius: 50%;
+	background: var(--lsub-currency-bg);
+	color: #fff;
+	font-weight: 700;
 	cursor: pointer;
+	list-style: none;
+	box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+	user-select: none;
+}
+
+.lsub-currency summary::-webkit-details-marker,
+.lsub-currency summary::marker {
+	display: none;
+	content: "";
+}
+
+.lsub-currency summary:hover,
+.lsub-currency details[open] summary {
+	background: var(--lsub-currency-bg-hover);
+}
+
+.lsub-currency summary:focus-visible,
+.lsub-currency a:focus-visible {
+	outline: 2px solid #fff;
+	outline-offset: -4px;
+}
+
+.lsub-currency ul {
+	position: absolute;
+	left: 0;
+	top: calc(100% + 8px);
+	z-index: 10000;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	margin: 0;
+	padding: 6px;
+	border-radius: 26px;
+	background: var(--lsub-currency-bg);
+	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+	list-style: none;
+}
+
+.lsub-currency li {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.lsub-currency a {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	color: #fff !important;
+	font-weight: 600;
+	text-decoration: none !important;
+}
+
+.lsub-currency a:hover {
+	background: rgba(255, 255, 255, 0.18);
+}
+
+.lsub-currency a.is-current {
+	background: #fff;
+	color: var(--lsub-currency-bg) !important;
 }
 
 .lsub-currency.floating {
@@ -397,14 +472,12 @@
 	left: 16px;
 	bottom: 16px;
 	z-index: 9999;
-	padding: 4px;
-	border-radius: 999px;
-	background: #fff;
-	box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
-.lsub-currency.floating select {
-	border: 0;
+/* The floating one sits at the bottom, so its list opens upwards. */
+.lsub-currency.floating ul {
+	top: auto;
+	bottom: calc(100% + 8px);
 }
 
 .lsub-currency-checkout {
@@ -427,15 +500,6 @@
 	border-color: var(--lsub-accent);
 	background: var(--lsub-accent);
 	color: #fff;
-}
-
-.lsub-currency .screen-reader-text {
-	position: absolute !important;
-	width: 1px;
-	height: 1px;
-	overflow: hidden;
-	clip: rect(1px, 1px, 1px, 1px);
-	white-space: nowrap;
 }
 
 /* Subscriptions and licenses are bought one at a time. Some themes draw their own +/- buttons around

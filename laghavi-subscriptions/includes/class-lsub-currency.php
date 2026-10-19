@@ -436,26 +436,34 @@ class LSUB_Currency {
 	// ---------------------------------------------------------------- Switcher.
 
 	/**
-	 * Switcher HTML: a small form, so it works without JavaScript too.
+	 * Switcher HTML: a button showing the current currency's symbol that opens a list of symbols.
+	 * Plain links, no form field, so themes can't restyle it into a search box, and it works without JavaScript.
 	 *
-	 * @param string $class Extra class.
+	 * @param string $class Extra class ("floating" or "inline").
 	 * @return string
 	 */
 	public static function switcher( $class = '' ) {
 		$current = self::current();
-		$html    = '<form class="lsub-currency ' . esc_attr( $class ) . '" method="get" action="">';
-		foreach ( $_GET as $key => $value ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Keeps the visitor on the same page.
-			if ( 'currency' !== $key && is_scalar( $value ) ) {
-				$html .= '<input type="hidden" name="' . esc_attr( sanitize_key( $key ) ) . '" value="' . esc_attr( sanitize_text_field( wp_unslash( $value ) ) ) . '" />';
-			}
-		}
-		$html .= '<label class="screen-reader-text" for="lsub-currency-' . esc_attr( $class ) . '">' . esc_html__( 'Currency', 'laghavi-subscriptions' ) . '</label>';
-		$html .= '<select name="currency" id="lsub-currency-' . esc_attr( $class ) . '" onchange="this.form.submit()">';
+		$names   = get_woocommerce_currencies();
+		$html    = '<div class="lsub-currency ' . esc_attr( $class ) . '"><details>';
+		$html   .= '<summary aria-label="' . esc_attr( sprintf( /* translators: %s: currency code. */ __( 'Currency: %s', 'laghavi-subscriptions' ), $current ) ) . '" title="' . esc_attr( $current ) . '">' . self::symbol_html( $current ) . '</summary><ul>';
 		foreach ( self::codes() as $code ) {
-			$html .= '<option value="' . esc_attr( $code ) . '"' . selected( $current, $code, false ) . '>' . esc_html( $code . ' ' . html_entity_decode( get_woocommerce_currency_symbol( $code ), ENT_QUOTES, 'UTF-8' ) ) . '</option>';
+			$label = ( isset( $names[ $code ] ) ? $names[ $code ] . ' ' : '' ) . '(' . $code . ')';
+			$html .= '<li><a href="' . esc_url( add_query_arg( 'currency', $code, remove_query_arg( array( 'add-to-cart', 'added-to-cart', 'quantity', 'variation_id' ) ) ) ) . '" class="' . ( $current === $code ? 'is-current' : '' ) . '" title="' . esc_attr( $label ) . '" aria-label="' . esc_attr( $label ) . '">' . self::symbol_html( $code ) . '</a></li>';
 		}
-		$html .= '</select><noscript><button type="submit">' . esc_html__( 'Change', 'laghavi-subscriptions' ) . '</button></noscript></form>';
+		$html .= '</ul></details></div>';
 		return $html;
+	}
+
+	/**
+	 * A currency's symbol, isolated so right-to-left symbols like the dirham's display correctly.
+	 *
+	 * @param string $code Currency code.
+	 * @return string
+	 */
+	private static function symbol_html( $code ) {
+		$symbol = html_entity_decode( get_woocommerce_currency_symbol( $code ), ENT_QUOTES, 'UTF-8' );
+		return '<bdi class="lsub-currency__symbol">' . esc_html( '' !== $symbol ? $symbol : $code ) . '</bdi>';
 	}
 
 	/**
@@ -465,31 +473,21 @@ class LSUB_Currency {
 	 */
 	private static function allowed_html() {
 		return array(
-			'form'     => array(
-				'class'  => true,
-				'method' => true,
-				'action' => true,
+			'div'     => array( 'class' => true ),
+			'details' => array(),
+			'summary' => array(
+				'aria-label' => true,
+				'title'      => true,
 			),
-			'input'    => array(
-				'type'  => true,
-				'name'  => true,
-				'value' => true,
+			'ul'      => array(),
+			'li'      => array(),
+			'a'       => array(
+				'href'       => true,
+				'class'      => true,
+				'title'      => true,
+				'aria-label' => true,
 			),
-			'label'    => array(
-				'class' => true,
-				'for'   => true,
-			),
-			'select'   => array(
-				'name'     => true,
-				'id'       => true,
-				'onchange' => true,
-			),
-			'option'   => array(
-				'value'    => true,
-				'selected' => true,
-			),
-			'noscript' => array(),
-			'button'   => array( 'type' => true ),
+			'bdi'     => array( 'class' => true ),
 		);
 	}
 
@@ -499,7 +497,20 @@ class LSUB_Currency {
 	 * @return string
 	 */
 	public static function shortcode() {
-		return self::switcher( 'inline' );
+		add_action( 'wp_footer', array( __CLASS__, 'close_script' ) );
+		return wp_kses( self::switcher( 'inline' ), self::allowed_html() );
+	}
+
+	/**
+	 * Close an open switcher when the visitor clicks elsewhere or presses Escape (once per page).
+	 */
+	public static function close_script() {
+		static $done = false;
+		if ( $done ) {
+			return;
+		}
+		$done = true;
+		wp_print_inline_script_tag( "(function(){function c(e){document.querySelectorAll('.lsub-currency details[open]').forEach(function(d){if(!e||e.type==='keydown'||!d.contains(e.target)){d.removeAttribute('open');}});}document.addEventListener('click',c);document.addEventListener('keydown',function(e){if(e.key==='Escape'){c(e);}});})();" );
 	}
 
 	/**
@@ -508,6 +519,7 @@ class LSUB_Currency {
 	public static function floating_switcher() {
 		if ( LSUB_Settings::on( 'lsub_currency_floating' ) && ! is_admin() ) {
 			echo wp_kses( self::switcher( 'floating' ), self::allowed_html() );
+			self::close_script();
 		}
 	}
 
