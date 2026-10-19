@@ -437,3 +437,9 @@
 	clip: rect(1px, 1px, 1px, 1px);
 	white-space: nowrap;
 }
+
+/* Subscriptions and licenses are bought one at a time. Some themes draw their own +/- buttons around
+   WooCommerce's hidden quantity field, so hide the whole box when the field is hidden. */
+form.cart .quantity:has(input[type="hidden"][name="quantity"]) {
+	display: none !important;
+}

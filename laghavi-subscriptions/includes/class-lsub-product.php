@@ -26,6 +26,7 @@ class LSUB_Product {
 		add_filter( 'woocommerce_get_price_html', array( __CLASS__, 'price_html' ), 20, 2 );
 		add_filter( 'woocommerce_product_single_add_to_cart_text', array( __CLASS__, 'button_text' ), 20, 2 );
 		add_filter( 'woocommerce_product_add_to_cart_text', array( __CLASS__, 'button_text' ), 20, 2 );
+		add_filter( 'woocommerce_is_sold_individually', array( __CLASS__, 'sold_individually' ), 20, 2 );
 
 		// Cart and checkout.
 		add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'one_subscription_per_cart' ), 10, 3 );
@@ -96,6 +97,31 @@ class LSUB_Product {
 	 */
 	public static function is_subscription( $product ) {
 		return null !== self::plan( $product );
+	}
+
+	/**
+	 * Subscriptions are bought one at a time, so the product page shows no quantity box.
+	 * A variable product counts when any of its variations is a subscription.
+	 *
+	 * @param bool       $single  Sold individually.
+	 * @param WC_Product $product Product.
+	 * @return bool
+	 */
+	public static function sold_individually( $single, $product ) {
+		if ( $single || ! $product instanceof WC_Product ) {
+			return $single;
+		}
+		if ( self::is_subscription( $product ) ) {
+			return true;
+		}
+		if ( $product->is_type( 'variable' ) ) {
+			foreach ( $product->get_children() as $child_id ) {
+				if ( 'yes' === get_post_meta( $child_id, '_lsub_enabled', true ) ) {
+					return true;
+				}
+			}
+		}
+		return $single;
 	}
 
 	/**

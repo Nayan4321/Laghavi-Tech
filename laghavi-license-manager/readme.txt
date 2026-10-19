@@ -12,7 +12,8 @@ Sell your plugins with WooCommerce on laghavi.com: license keys, site activation
 Install this on your shop (laghavi.site), next to WooCommerce. It is a normal WordPress plugin: no separate server is needed. Your shop's own address is what the Pro plugin talks to for activations and updates.
 
 * **License keys on purchase.** When an order for a licensed product is paid (Processing or Completed), one key is created per item bought. Keys appear on the thank-you page, in the order emails and in My Account.
-* **Sites per license.** Set how many sites one key works on (0 = unlimited). Customers move a key by deactivating it in the plugin, or by removing a site in My Account > Licenses.
+* **Sites per license.** Set how many sites one key works on (0 = unlimited). Customers move a key by deactivating it in the plugin, or by removing a site in My Account > Licenses. A license is bought one at a time (no quantity box).
+* **Plans by number of sites.** Make the product Variable with an attribute such as Sites (1 site / 5 sites / Unlimited sites), give each variation its own price, and set "License: sites per key" on each variation (0 = unlimited, empty = the License tab's number). The License tab (slug, zip, version) stays on the main product.
 * **Updates for a period.** Set how long a key gets updates (365 days by default, 0 = lifetime). After that the plugin keeps working but updates stop until renewed.
 * **Automatic updates.** Upload the plugin zip on the product. It is stored in a private folder and only sites with an active key can download it. Licensed sites see the new version under Dashboard > Updates like any other plugin.
 * **Download in My Account.** As soon as the payment succeeds, My Account > Licenses shows the key (with a Copy button), a Download button for the plugin zip, install steps, and the sites it is used on. The thank-you page and the order email link there too. Downloads only work for the logged-in owner of an active key.

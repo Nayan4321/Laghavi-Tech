@@ -21,18 +21,38 @@ class LLM_Product {
 		add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
 		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save' ) );
 		add_action( 'post_edit_form_tag', array( __CLASS__, 'form_enctype' ) );
+		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'variation_fields' ), 20, 3 );
+		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation' ), 10, 2 );
+		add_filter( 'woocommerce_is_sold_individually', array( __CLASS__, 'sold_individually' ), 20, 2 );
 	}
 
 	/**
-	 * Settings of a product (variations use their parent's).
+	 * One license per purchase: more sites come from choosing a bigger plan, not a quantity,
+	 * so the product page shows no quantity box.
+	 *
+	 * @param bool       $single  Sold individually.
+	 * @param WC_Product $product Product.
+	 * @return bool
+	 */
+	public static function sold_individually( $single, $product ) {
+		if ( ! $single && $product instanceof WC_Product && self::settings( $product->get_id() )['enabled'] ) {
+			return true;
+		}
+		return $single;
+	}
+
+	/**
+	 * Settings of a product. Variations use their parent's, except for their own number of sites when set
+	 * (e.g. 1 site, 5 sites, unlimited at different prices).
 	 *
 	 * @param int $product_id Product ID.
 	 * @return array
 	 */
 	public static function settings( $product_id ) {
-		$parent = wp_get_post_parent_id( $product_id );
-		$id     = 'product_variation' === get_post_type( $product_id ) && $parent ? $parent : $product_id;
-		return array(
+		$parent   = wp_get_post_parent_id( $product_id );
+		$is_child = 'product_variation' === get_post_type( $product_id ) && $parent;
+		$id       = $is_child ? $parent : $product_id;
+		$settings = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_llm_enabled', true ),
 			'slug'         => (string) get_post_meta( $id, '_llm_slug', true ),
@@ -45,6 +65,53 @@ class LLM_Product {
 			'changelog'    => (string) get_post_meta( $id, '_llm_changelog', true ),
 			'file'         => (string) get_post_meta( $id, '_llm_file', true ),
 		);
+		if ( $is_child && '' !== (string) get_post_meta( $product_id, '_llm_sites', true ) ) {
+			$settings['sites'] = (int) get_post_meta( $product_id, '_llm_sites', true );
+		}
+		return $settings;
+	}
+
+	/**
+	 * "Sites per license" on each variation.
+	 *
+	 * @param int     $loop           Variation index.
+	 * @param array   $variation_data Data.
+	 * @param WP_Post $variation      Variation post.
+	 */
+	public static function variation_fields( $loop, $variation_data, $variation ) {
+		woocommerce_wp_text_input(
+			array(
+				'id'                => '_llm_var_sites_' . $loop,
+				'name'              => '_llm_var_sites[' . $loop . ']',
+				'label'             => __( 'License: sites per key', 'laghavi-license-manager' ),
+				'description'       => __( '0 = unlimited. Leave empty to use the License tab\'s number.', 'laghavi-license-manager' ),
+				'desc_tip'          => true,
+				'type'              => 'number',
+				'custom_attributes' => array( 'min' => 0 ),
+				'value'             => (string) get_post_meta( $variation->ID, '_llm_sites', true ),
+				'wrapper_class'     => 'form-row form-row-full',
+			)
+		);
+	}
+
+	/**
+	 * Save a variation's number of sites.
+	 *
+	 * @param int $variation_id Variation ID.
+	 * @param int $i            Variation index.
+	 */
+	public static function save_variation( $variation_id, $i ) {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce checked the variations nonce.
+		if ( ! current_user_can( 'edit_product', $variation_id ) ) {
+			return;
+		}
+		$value = isset( $_POST['_llm_var_sites'][ $i ] ) ? trim( sanitize_text_field( wp_unslash( $_POST['_llm_var_sites'][ $i ] ) ) ) : '';
+		// phpcs:enable
+		if ( '' === $value ) {
+			delete_post_meta( $variation_id, '_llm_sites' );
+		} else {
+			update_post_meta( $variation_id, '_llm_sites', absint( $value ) );
+		}
 	}
 
 	/**
