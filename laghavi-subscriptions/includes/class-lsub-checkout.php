@@ -131,7 +131,7 @@ class LSUB_Checkout {
 		if ( ! function_exists( 'is_checkout' ) || ! is_checkout() || is_wc_endpoint_url() ) {
 			return;
 		}
-		wp_enqueue_script( 'lsub-checkout', LSUB_URL . 'assets/js/checkout.js', array( 'jquery', 'wc-checkout' ), LSUB_VERSION, true );
+		wp_enqueue_script( 'lsub-checkout', LSUB_URL . 'assets/js/checkout.js', array( 'jquery', 'wc-checkout' ), lsub_asset_version( 'assets/js/checkout.js' ), true );
 		wp_localize_script(
 			'lsub-checkout',
 			'lsubCheckout',

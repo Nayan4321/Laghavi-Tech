@@ -43,7 +43,7 @@ class LSUB_Stripe_Blocks extends AbstractPaymentMethodType {
 	 * @return string[]
 	 */
 	public function get_payment_method_script_handles() {
-		wp_register_script( 'lsub-stripe-blocks', LSUB_URL . 'assets/js/blocks.js', array( 'wc-blocks-registry', 'wp-element', 'wp-html-entities' ), LSUB_VERSION, true );
+		wp_register_script( 'lsub-stripe-blocks', LSUB_URL . 'assets/js/blocks.js', array( 'wc-blocks-registry', 'wp-element', 'wp-html-entities' ), lsub_asset_version( 'assets/js/blocks.js' ), true );
 		return array( 'lsub-stripe-blocks' );
 	}
 

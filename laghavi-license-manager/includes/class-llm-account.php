@@ -140,8 +140,8 @@ class LLM_Account {
 	 */
 	public static function assets() {
 		if ( function_exists( 'is_account_page' ) && ( is_account_page() || is_wc_endpoint_url( 'order-received' ) ) ) {
-			wp_enqueue_style( 'llm-account', LLM_URL . 'assets/css/llm.css', array(), LLM_VERSION );
-			wp_enqueue_script( 'llm-account', LLM_URL . 'assets/js/llm.js', array(), LLM_VERSION, true );
+			wp_enqueue_style( 'llm-account', LLM_URL . 'assets/css/llm.css', array(), LLM_VERSION . '.' . (int) filemtime( LLM_DIR . 'assets/css/llm.css' ) );
+			wp_enqueue_script( 'llm-account', LLM_URL . 'assets/js/llm.js', array(), LLM_VERSION . '.' . (int) filemtime( LLM_DIR . 'assets/js/llm.js' ), true );
 			wp_localize_script( 'llm-account', 'llmAccount', array( 'copied' => __( 'Copied!', 'laghavi-license-manager' ) ) );
 		}
 	}

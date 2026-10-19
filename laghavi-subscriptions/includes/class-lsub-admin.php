@@ -39,7 +39,7 @@ class LSUB_Admin {
 	 */
 	public static function assets( $hook ) {
 		if ( false !== strpos( $hook, self::PAGE ) ) {
-			wp_enqueue_style( 'lsub', LSUB_URL . 'assets/css/lsub.css', array(), LSUB_VERSION );
+			wp_enqueue_style( 'lsub', LSUB_URL . 'assets/css/lsub.css', array(), lsub_asset_version( 'assets/css/lsub.css' ) );
 		}
 	}
 

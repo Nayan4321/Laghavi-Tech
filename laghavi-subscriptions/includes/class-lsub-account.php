@@ -80,7 +80,7 @@ class LSUB_Account {
 	 * Styles on account, checkout and product pages.
 	 */
 	public static function assets() {
-		wp_enqueue_style( 'lsub', LSUB_URL . 'assets/css/lsub.css', array(), LSUB_VERSION );
+		wp_enqueue_style( 'lsub', LSUB_URL . 'assets/css/lsub.css', array(), lsub_asset_version( 'assets/css/lsub.css' ) );
 	}
 
 	/**
@@ -92,6 +92,14 @@ class LSUB_Account {
 	public static function body_class( $classes ) {
 		if ( LSUB_Settings::on( 'lsub_account_design' ) && function_exists( 'is_account_page' ) && is_account_page() ) {
 			$classes[] = 'lsub-account';
+		}
+		// Subscriptions and licenses are bought one at a time. Some themes print their own quantity box
+		// (or +/- buttons) whatever WooCommerce says, so flag the page and hide it with CSS.
+		if ( function_exists( 'is_product' ) && is_product() ) {
+			$product = wc_get_product( get_queried_object_id() );
+			if ( $product && $product->is_sold_individually() ) {
+				$classes[] = 'lsub-no-quantity';
+			}
 		}
 		return $classes;
 	}

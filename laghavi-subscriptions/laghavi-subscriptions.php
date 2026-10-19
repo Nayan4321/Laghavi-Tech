@@ -23,6 +23,18 @@ define( 'LSUB_FILE', __FILE__ );
 define( 'LSUB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LSUB_URL', plugin_dir_url( __FILE__ ) );
 
+/**
+ * Version string for a CSS/JS file: changes whenever the file changes, so browsers and caches
+ * pick up an updated plugin right away.
+ *
+ * @param string $file Path inside the plugin, e.g. assets/css/lsub.css.
+ * @return string
+ */
+function lsub_asset_version( $file ) {
+	$time = @filemtime( LSUB_DIR . $file ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Missing file falls back to the plugin version.
+	return $time ? LSUB_VERSION . '.' . $time : LSUB_VERSION;
+}
+
 require_once LSUB_DIR . 'includes/class-lsub-subscriptions.php';
 require_once LSUB_DIR . 'includes/class-lsub-settings.php';
 require_once LSUB_DIR . 'includes/class-lsub-product.php';

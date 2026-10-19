@@ -377,107 +377,141 @@
 }
 
 /* ---------- Currency switcher ---------- */
-.lsub-currency {
+/* Written with extra specificity and !important on the basics, because themes style details, summary,
+   ul and li everywhere (borders, bullets, arrows) and would otherwise turn this into a plain list. */
+div.lsub-currency {
 	--lsub-currency-bg: #2563eb;
 	--lsub-currency-bg-hover: #1d4ed8;
 	position: relative;
 	display: inline-block;
 	margin: 0;
+	padding: 0;
 	font-size: 16px;
 	line-height: 1;
 }
 
-.lsub-currency details {
+div.lsub-currency details {
 	position: relative;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
 }
 
-.lsub-currency summary {
-	display: flex;
+div.lsub-currency details > summary {
+	display: flex !important;
 	align-items: center;
 	justify-content: center;
-	width: 44px;
-	height: 44px;
-	border-radius: 50%;
-	background: var(--lsub-currency-bg);
-	color: #fff;
+	box-sizing: border-box;
+	width: 44px !important;
+	height: 44px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 50% !important;
+	background: var(--lsub-currency-bg) !important;
+	color: #fff !important;
 	font-weight: 700;
 	cursor: pointer;
-	list-style: none;
+	list-style: none !important;
 	box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+	outline: none;
 	user-select: none;
 }
 
-.lsub-currency summary::-webkit-details-marker,
-.lsub-currency summary::marker {
-	display: none;
-	content: "";
+div.lsub-currency details > summary::-webkit-details-marker {
+	display: none !important;
 }
 
-.lsub-currency summary:hover,
-.lsub-currency details[open] summary {
-	background: var(--lsub-currency-bg-hover);
+div.lsub-currency details > summary::marker,
+div.lsub-currency details > summary::before,
+div.lsub-currency details > summary::after {
+	display: none !important;
+	content: "" !important;
 }
 
-.lsub-currency summary:focus-visible,
-.lsub-currency a:focus-visible {
-	outline: 2px solid #fff;
+div.lsub-currency details > summary:hover,
+div.lsub-currency details[open] > summary {
+	background: var(--lsub-currency-bg-hover) !important;
+}
+
+div.lsub-currency details > summary:focus-visible,
+div.lsub-currency ul a:focus-visible {
+	outline: 2px solid #fff !important;
 	outline-offset: -4px;
 }
 
-.lsub-currency ul {
-	position: absolute;
-	left: 0;
+div.lsub-currency details > ul {
+	position: absolute !important;
+	left: 0 !important;
 	top: calc(100% + 8px);
 	z-index: 10000;
-	display: flex;
+	display: flex !important;
 	flex-direction: column;
 	gap: 4px;
-	margin: 0;
-	padding: 6px;
-	border-radius: 26px;
-	background: var(--lsub-currency-bg);
+	box-sizing: border-box;
+	width: 44px !important;
+	margin: 0 !important;
+	padding: 6px !important;
+	border: 0 !important;
+	border-radius: 22px !important;
+	background: var(--lsub-currency-bg) !important;
 	box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
-	list-style: none;
+	list-style: none !important;
 }
 
-.lsub-currency li {
-	margin: 0;
-	padding: 0;
-	list-style: none;
+div.lsub-currency details > ul > li {
+	display: block !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	background: none !important;
+	list-style: none !important;
 }
 
-.lsub-currency a {
-	display: flex;
+div.lsub-currency details > ul > li::before,
+div.lsub-currency details > ul > li::marker {
+	display: none !important;
+	content: "" !important;
+}
+
+div.lsub-currency details > ul > li > a {
+	display: flex !important;
 	align-items: center;
 	justify-content: center;
-	width: 32px;
-	height: 32px;
-	border-radius: 50%;
+	width: 32px !important;
+	height: 32px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+	border: 0 !important;
+	border-radius: 50% !important;
+	background: none !important;
 	color: #fff !important;
 	font-weight: 600;
 	text-decoration: none !important;
+	box-shadow: none !important;
 }
 
-.lsub-currency a:hover {
-	background: rgba(255, 255, 255, 0.18);
+div.lsub-currency details > ul > li > a:hover {
+	background: rgba(255, 255, 255, 0.18) !important;
 }
 
-.lsub-currency a.is-current {
-	background: #fff;
+div.lsub-currency details > ul > li > a.is-current {
+	background: #fff !important;
 	color: var(--lsub-currency-bg) !important;
 }
 
-.lsub-currency.floating {
-	position: fixed;
+div.lsub-currency.floating {
+	position: fixed !important;
 	left: 16px;
 	bottom: 16px;
 	z-index: 9999;
 }
 
 /* The floating one sits at the bottom, so its list opens upwards. */
-.lsub-currency.floating ul {
-	top: auto;
-	bottom: calc(100% + 8px);
+div.lsub-currency.floating details > ul {
+	top: auto !important;
+	bottom: calc(100% + 8px) !important;
 }
 
 .lsub-currency-checkout {
@@ -502,8 +536,14 @@
 	color: #fff;
 }
 
-/* Subscriptions and licenses are bought one at a time. Some themes draw their own +/- buttons around
-   WooCommerce's hidden quantity field, so hide the whole box when the field is hidden. */
-form.cart .quantity:has(input[type="hidden"][name="quantity"]) {
+/* Subscriptions and licenses are bought one at a time. Hide WooCommerce's quantity field and the
+   +/- boxes themes add around it (the page gets the lsub-no-quantity class from the plugin). */
+form.cart .quantity:has(input[type="hidden"][name="quantity"]),
+body.lsub-no-quantity form.cart .quantity,
+body.lsub-no-quantity form.cart .qty-box,
+body.lsub-no-quantity form.cart .quantity-wrap,
+body.lsub-no-quantity form.cart .qty-wrap,
+body.lsub-no-quantity form.cart .qib-container,
+body.lsub-no-quantity form.cart .product-quantity {
 	display: none !important;
 }
