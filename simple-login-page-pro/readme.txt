@@ -12,7 +12,7 @@ Pro add-on for Simple Login Page: a protected super admin, a full user activity 
 
 == Description ==
 
-Requires the free **Simple Login Page** plugin. Buy a license at [laghavi.com](https://laghavi.com/).
+Requires the free **Simple Login Page** plugin. Buy a license at [laghavi.site](https://laghavi.site/).
 
 **Super admin**
 
@@ -71,7 +71,7 @@ Everything keeps working. You stop getting updates until you renew. If a license
 
 = Can I move my license to another site? =
 
-Yes. Click "Deactivate on this site" on the Pro license screen, then activate it on the new site. You can also remove sites from My Account > Licenses on laghavi.com.
+Yes. Click "Deactivate on this site" on the Pro license screen, then activate it on the new site. You can also remove sites from My Account > Licenses on laghavi.site.
 
 = Do cached pages respect block visibility? =
 

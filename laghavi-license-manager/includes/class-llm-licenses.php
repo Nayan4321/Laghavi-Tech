@@ -301,7 +301,24 @@ class LLM_Licenses {
 	}
 
 	/**
+	 * The subscription a license was bought with (Laghavi Subscriptions), if any.
+	 *
+	 * @param object $license License.
+	 * @return object|null
+	 */
+	public static function subscription( $license ) {
+		if ( ! class_exists( 'LSUB_Subscriptions' ) || empty( $license->order_id ) ) {
+			return null;
+		}
+		$subs = LSUB_Subscriptions::for_order( (int) $license->order_id );
+		return $subs ? $subs[0] : null;
+	}
+
+	/**
 	 * Status shown to people: active, expired or revoked.
+	 *
+	 * Keys bought with a subscription follow it: active while it is paid (also after the customer
+	 * cancels, until the paid period ends), expired once it has ended.
 	 *
 	 * @param object $license License.
 	 * @return string
@@ -309,6 +326,13 @@ class LLM_Licenses {
 	public static function status( $license ) {
 		if ( 'active' !== $license->status ) {
 			return $license->status;
+		}
+		$sub = self::subscription( $license );
+		if ( $sub ) {
+			if ( 'pending-cancel' === $sub->status ) {
+				return $sub->next_payment && strtotime( $sub->next_payment . ' UTC' ) > time() ? 'active' : 'expired';
+			}
+			return in_array( $sub->status, array( 'pending', 'trial', 'active', 'on-hold' ), true ) ? 'active' : 'expired';
 		}
 		return self::is_expired( $license ) ? 'expired' : 'active';
 	}
@@ -335,6 +359,68 @@ class LLM_Licenses {
 	 * @return string
 	 */
 	public static function expiry_label( $license ) {
+		$sub = self::subscription( $license );
+		if ( $sub ) {
+			$date = static function ( $mysql ) {
+				return $mysql ? wp_date( get_option( 'date_format' ), strtotime( $mysql . ' UTC' ) ) : '';
+			};
+			switch ( $sub->status ) {
+				case 'pending-cancel':
+					/* translators: %s: date. */
+					return sprintf( __( 'Until %s (subscription cancelled, will not renew)', 'laghavi-license-manager' ), $date( $sub->next_payment ) );
+				case 'cancelled':
+				case 'expired':
+					/* translators: %s: date. */
+					return sprintf( __( 'Ended %s', 'laghavi-license-manager' ), $date( $sub->end_date ) );
+				default:
+					return $sub->next_payment
+						/* translators: %s: date. */
+						? sprintf( __( 'Renews automatically on %s', 'laghavi-license-manager' ), $date( $sub->next_payment ) )
+						: __( 'While your subscription is active', 'laghavi-license-manager' );
+			}
+		}
 		return empty( $license->expires_at ) ? __( 'Lifetime', 'laghavi-license-manager' ) : wp_date( get_option( 'date_format' ), strtotime( $license->expires_at . ' UTC' ) );
+	}
+
+	/**
+	 * Whether a user owns a license (by account, or by the email used to buy it).
+	 *
+	 * @param object  $license License.
+	 * @param WP_User $user    User.
+	 * @return bool
+	 */
+	public static function owned_by( $license, $user ) {
+		return $user && $user->ID && ( (int) $license->user_id === (int) $user->ID || ( '' !== $license->email && strtolower( $license->email ) === strtolower( $user->user_email ) ) );
+	}
+
+	/**
+	 * Path of the zip for a license's product, or '' if none is uploaded.
+	 *
+	 * @param object $license License.
+	 * @return string
+	 */
+	public static function file_path( $license ) {
+		$settings = LLM_Product::settings( $license->product_id );
+		if ( '' === $settings['file'] ) {
+			return '';
+		}
+		$path = self::private_dir() . basename( $settings['file'] );
+		return is_readable( $path ) ? $path : '';
+	}
+
+	/**
+	 * Download link for the customer (only works for the logged-in owner).
+	 *
+	 * @param object $license License.
+	 * @return string
+	 */
+	public static function download_url( $license ) {
+		return add_query_arg(
+			array(
+				'llm_download' => (int) $license->id,
+				'_wpnonce'     => wp_create_nonce( 'llm_download_' . $license->id ),
+			),
+			wc_get_account_endpoint_url( LLM_Account::ENDPOINT )
+		);
 	}
 }

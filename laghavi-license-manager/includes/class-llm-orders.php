@@ -37,6 +37,10 @@ class LLM_Orders {
 		if ( ! $order ) {
 			return array();
 		}
+		// Subscription renewals keep the key from the first order; no new key every month.
+		if ( $order->get_meta( '_lsub_renewal' ) ) {
+			return array();
+		}
 		// Two copies of the same order object can be in play during one request (status hook and email),
 		// so the stored keys, not just the order meta, decide whether they were already made.
 		$existing = LLM_Licenses::for_order( $order->get_id() );
@@ -50,6 +54,8 @@ class LLM_Orders {
 			if ( ! $settings['enabled'] ) {
 				continue;
 			}
+			// A subscription decides how long its key lasts, so it gets no fixed end date.
+			$is_subscription = class_exists( 'LSUB_Product' ) && LSUB_Product::is_subscription( $product_id );
 			for ( $i = 0; $i < max( 1, (int) $item->get_quantity() ); $i++ ) {
 				LLM_Licenses::create(
 					array(
@@ -58,7 +64,7 @@ class LLM_Orders {
 						'user_id'       => $order->get_customer_id(),
 						'email'         => $order->get_billing_email(),
 						'sites_allowed' => $settings['sites'],
-						'days'          => $settings['days'],
+						'days'          => $is_subscription ? 0 : $settings['days'],
 					)
 				);
 			}
@@ -94,13 +100,18 @@ class LLM_Orders {
 		<section class="llm-order-licenses">
 			<h2><?php esc_html_e( 'Your license keys', 'laghavi-license-manager' ); ?></h2>
 			<table class="woocommerce-table shop_table">
-				<thead><tr><th><?php esc_html_e( 'Product', 'laghavi-license-manager' ); ?></th><th><?php esc_html_e( 'License key', 'laghavi-license-manager' ); ?></th><th><?php esc_html_e( 'Updates until', 'laghavi-license-manager' ); ?></th></tr></thead>
+				<thead><tr><th><?php esc_html_e( 'Product', 'laghavi-license-manager' ); ?></th><th><?php esc_html_e( 'License key', 'laghavi-license-manager' ); ?></th><th><?php esc_html_e( 'Valid', 'laghavi-license-manager' ); ?></th><th></th></tr></thead>
 				<tbody>
 				<?php foreach ( $licenses as $license ) : ?>
 					<tr>
 						<td><?php echo esc_html( get_the_title( $license->product_id ) ); ?></td>
 						<td><code><?php echo esc_html( $license->license_key ); ?></code></td>
 						<td><?php echo esc_html( LLM_Licenses::expiry_label( $license ) ); ?></td>
+						<td>
+							<?php if ( LLM_Licenses::owned_by( $license, wp_get_current_user() ) && 'active' === LLM_Licenses::status( $license ) && '' !== LLM_Licenses::file_path( $license ) ) : ?>
+								<a class="button" href="<?php echo esc_url( LLM_Licenses::download_url( $license ) ); ?>"><?php esc_html_e( 'Download', 'laghavi-license-manager' ); ?></a>
+							<?php endif; ?>
+						</td>
 					</tr>
 				<?php endforeach; ?>
 				</tbody>
@@ -131,14 +142,14 @@ class LLM_Orders {
 			foreach ( $licenses as $license ) {
 				echo esc_html( get_the_title( $license->product_id ) . ': ' . $license->license_key ) . "\n";
 			}
-			echo "\n";
+			echo "\n" . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses:', 'laghavi-license-manager' ) . ' ' . esc_url_raw( wc_get_account_endpoint_url( LLM_Account::ENDPOINT ) ) . "\n\n";
 			return;
 		}
 		echo '<h2>' . esc_html__( 'Your license keys', 'laghavi-license-manager' ) . '</h2><ul>';
 		foreach ( $licenses as $license ) {
 			echo '<li>' . esc_html( get_the_title( $license->product_id ) ) . ': <strong style="font-family:monospace">' . esc_html( $license->license_key ) . '</strong></li>';
 		}
-		echo '</ul><p>' . esc_html__( 'Enter the key in the plugin\'s license screen. You can manage your sites in My Account > Licenses.', 'laghavi-license-manager' ) . '</p>';
+		echo '</ul><p>' . esc_html__( 'Enter the key in the plugin\'s license screen.', 'laghavi-license-manager' ) . ' <a href="' . esc_url( wc_get_account_endpoint_url( LLM_Account::ENDPOINT ) ) . '">' . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses.', 'laghavi-license-manager' ) . '</a></p>';
 	}
 
 	/**

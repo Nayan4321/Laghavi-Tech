@@ -1,6 +1,6 @@
 <?php
 /**
- * License key activation and automatic updates from laghavi.com.
+ * License key activation and automatic updates from laghavi.site.
  *
  * @package SimpleLoginPagePro
  */
@@ -28,7 +28,7 @@ class SLPP_License {
 		}
 
 		// WordPress 5.8+ asks plugins with an "Update URI" header for their own updates.
-		add_filter( 'update_plugins_laghavi.com', array( __CLASS__, 'update_info' ), 10, 3 );
+		add_filter( 'update_plugins_laghavi.site', array( __CLASS__, 'update_info' ), 10, 3 );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugin_details' ), 10, 3 );
 	}
 
@@ -233,7 +233,7 @@ class SLPP_License {
 		$data   = self::data();
 		$labels = array(
 			'active'   => __( 'Active', 'simple-login-page-pro' ),
-			'expired'  => __( 'Expired: Pro keeps working, but updates have stopped. Renew on laghavi.com to get updates again.', 'simple-login-page-pro' ),
+			'expired'  => __( 'Expired: Pro keeps working, but updates have stopped. Renew on laghavi.site to get updates again.', 'simple-login-page-pro' ),
 			'revoked'  => __( 'Revoked: this key is no longer valid.', 'simple-login-page-pro' ),
 			'invalid'  => __( 'Invalid key.', 'simple-login-page-pro' ),
 			'inactive' => __( 'This site is not activated for this key.', 'simple-login-page-pro' ),
@@ -249,12 +249,12 @@ class SLPP_License {
 					<input type="hidden" name="action" value="slpp_license" />
 					<?php wp_nonce_field( 'slpp_license' ); ?>
 					<?php if ( '' === $data['key'] ) : ?>
-						<p><?php esc_html_e( 'Enter the license key from your purchase email or from My Account > Licenses on laghavi.com.', 'simple-login-page-pro' ); ?></p>
+						<p><?php esc_html_e( 'Enter the license key from your purchase email or from My Account > Licenses on laghavi.site.', 'simple-login-page-pro' ); ?></p>
 						<p>
 							<input type="text" name="license_key" class="regular-text code" placeholder="XXXXX-XXXXX-XXXXX-XXXXX" required autocomplete="off" />
 							<button type="submit" name="todo" value="activate" class="button button-primary"><?php esc_html_e( 'Activate', 'simple-login-page-pro' ); ?></button>
 						</p>
-						<p><a href="https://laghavi.com/" target="_blank" rel="noopener"><?php esc_html_e( 'Buy a license on laghavi.com', 'simple-login-page-pro' ); ?></a></p>
+						<p><a href="https://laghavi.site/" target="_blank" rel="noopener"><?php esc_html_e( 'Buy a license on laghavi.site', 'simple-login-page-pro' ); ?></a></p>
 					<?php else : ?>
 						<table class="form-table" role="presentation">
 							<tr><th scope="row"><?php esc_html_e( 'License key', 'simple-login-page-pro' ); ?></th><td><code><?php echo esc_html( substr( $data['key'], 0, 5 ) . str_repeat( '•', 12 ) . substr( $data['key'], -5 ) ); ?></code></td></tr>
@@ -293,10 +293,10 @@ class SLPP_License {
 		}
 
 		return array(
-			'id'           => 'laghavi.com/' . SLPP_SLUG,
+			'id'           => 'laghavi.site/' . SLPP_SLUG,
 			'slug'         => SLPP_SLUG,
 			'version'      => $info['version'],
-			'url'          => 'https://laghavi.com/',
+			'url'          => 'https://laghavi.site/',
 			'package'      => isset( $info['package'] ) ? $info['package'] : '',
 			'tested'       => isset( $info['tested'] ) ? $info['tested'] : '',
 			'requires_php' => isset( $info['requires_php'] ) ? $info['requires_php'] : '',
@@ -325,7 +325,7 @@ class SLPP_License {
 			'slug'          => SLPP_SLUG,
 			'version'       => $info['version'],
 			'author'        => '<a href="https://laghavi.com/">Laghavi Digital</a>',
-			'homepage'      => 'https://laghavi.com/',
+			'homepage'      => 'https://laghavi.site/',
 			'requires'      => isset( $info['requires'] ) ? $info['requires'] : '',
 			'tested'        => isset( $info['tested'] ) ? $info['tested'] : '',
 			'requires_php'  => isset( $info['requires_php'] ) ? $info['requires_php'] : '',

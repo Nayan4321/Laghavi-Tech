@@ -12,7 +12,7 @@
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       simple-login-page-pro
- * Update URI:        https://laghavi.com/simple-login-page-pro
+ * Update URI:        https://laghavi.site/simple-login-page-pro
  *
  * @package SimpleLoginPagePro
  */
@@ -26,8 +26,8 @@ define( 'SLPP_URL', plugin_dir_url( __FILE__ ) );
 define( 'SLPP_SLUG', 'simple-login-page-pro' );
 
 if ( ! defined( 'SLPP_LICENSE_SERVER' ) ) {
-	// Laghavi License Manager's API on laghavi.com.
-	define( 'SLPP_LICENSE_SERVER', 'https://laghavi.com/wp-json/laghavi-licenses/v1/' );
+	// Laghavi License Manager's API on the store (laghavi.site).
+	define( 'SLPP_LICENSE_SERVER', 'https://laghavi.site/wp-json/laghavi-licenses/v1/' );
 }
 
 require_once SLPP_DIR . 'includes/class-slpp-license.php';

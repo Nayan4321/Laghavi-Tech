@@ -122,6 +122,10 @@ class LSUB_Account {
 
 		$sub    = LSUB_Subscriptions::get( $id );
 		$return = wc_get_account_endpoint_url( self::ENDPOINT );
+		// Buttons shown on other account pages (for example Licenses) bring the customer back there.
+		if ( ! empty( $_POST['lsub_return'] ) ) {
+			$return = wp_validate_redirect( esc_url_raw( wp_unslash( $_POST['lsub_return'] ) ), $return );
+		}
 		if ( ! $sub || (int) $sub->user_id !== get_current_user_id() ) {
 			wc_add_notice( __( 'Subscription not found.', 'laghavi-subscriptions' ), 'error' );
 			wp_safe_redirect( $return );
@@ -164,12 +168,16 @@ class LSUB_Account {
 	 * @param string $label  Text.
 	 * @param string $class  Extra class.
 	 * @param string $confirm Confirmation question.
+	 * @param string $return  Page to come back to (defaults to the Subscriptions tab).
 	 */
-	private static function action_button( $sub, $action, $label, $class = '', $confirm = '' ) {
+	public static function action_button( $sub, $action, $label, $class = '', $confirm = '', $return = '' ) {
 		?>
 		<form method="post" class="lsub-inline-form">
 			<?php wp_nonce_field( 'lsub_action_' . $sub->id ); ?>
 			<input type="hidden" name="subscription_id" value="<?php echo esc_attr( $sub->id ); ?>" />
+			<?php if ( '' !== $return ) : ?>
+				<input type="hidden" name="lsub_return" value="<?php echo esc_url( $return ); ?>" />
+			<?php endif; ?>
 			<button type="submit" name="lsub_action" value="<?php echo esc_attr( $action ); ?>" class="button <?php echo esc_attr( $class ); ?>"<?php echo $confirm ? ' onclick="return confirm( this.dataset.confirm );" data-confirm="' . esc_attr( $confirm ) . '"' : ''; ?>><?php echo esc_html( $label ); ?></button>
 		</form>
 		<?php
