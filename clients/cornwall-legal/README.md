@@ -1,6 +1,6 @@
-# Cornwall Legal Centre CIC: new pages (Elementor HTML widget)
+# Cornwall Legal Centre CIC: pages (Elementor HTML widget)
 
-Three new pages, ready to paste into Elementor. Each file contains everything it needs
+Four pages, ready to paste into Elementor. Each file contains everything it needs
 (styles plus content), so no plugin or custom CSS is needed.
 
 | File | Suggested page title | Suggested slug |
@@ -8,9 +8,9 @@ Three new pages, ready to paste into Elementor. Each file contains everything it
 | `accessible-justice-project.html` | The Accessible Justice Project | `accessible-justice-project` |
 | `privacy-notice.html` | Privacy Notice | `privacy-notice` |
 | `terms-and-conditions.html` | Terms and Conditions | `terms-and-conditions` |
+| `fees-and-funding.html` | Fees and Funding (replaces *Our Services*) | `fees-and-funding` |
 
-Changes to existing pages (phone number, Areas of Expertise, Fees and Funding,
-News and Media) are being done manually and are not included here. There are no contact forms
+Other changes to existing pages (phone number, Areas of Expertise, News and Media) are being done manually and are not included here. There are no contact forms
 either: add a Gravity Form wherever you want one.
 
 ## How to add each page
@@ -25,6 +25,17 @@ either: add a Gravity Form wherever you want one.
 
 The text inherits the site's fonts automatically, and the colours match the homepage
 (charcoal, gold and cream).
+
+## Replacing "Our Services" with Fees and Funding
+
+1. Open the existing **Our Services** page with Elementor, delete its sections, and follow the
+   steps above using `fees-and-funding.html`.
+2. In **Pages → Quick Edit**, change the title to **Fees and Funding** and the slug to `fees-and-funding`.
+3. Rename the menu item from *Services* to **Fees and Funding** in **Appearance → Menus**.
+   If you change the slug, update the menu link too.
+4. Old links to `/our-services/` will break once the slug changes. Add a 301 redirect from
+   `/our-services/` to `/fees-and-funding/` (Rank Math / Yoast redirects, or the free
+   *Redirection* plugin), or keep the old slug.
 
 ## Links to check
 

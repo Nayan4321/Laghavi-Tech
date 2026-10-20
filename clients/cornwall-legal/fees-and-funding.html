@@ -1,0 +1,201 @@
+<!-- Cornwall Legal Centre CIC | Fees and Funding page (replaces "Our Services")
+     Paste ALL of this into one Elementor "HTML" widget (see README.md for setup). -->
+<style>
+/* Cornwall Legal Centre CIC – shared page styles (scoped to .clc so nothing else on the site is affected) */
+.clc{--clc-dark:#222627;--clc-dark-2:#2b332e;--clc-gold:#c9a55c;--clc-gold-text:#8a6a2a;--clc-cream:#f5f1ee;--clc-white:#fff;--clc-ink:#2a2a2a;--clc-muted:#5c5c5c;--clc-line:#e7e1d8;--clc-radius:4px;--clc-shadow:0 6px 24px rgba(0,0,0,.06);
+  font-family:inherit;color:var(--clc-ink);font-size:16px;line-height:1.7;background:var(--clc-cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.clc *,.clc *::before,.clc *::after{box-sizing:border-box}
+.clc h1,.clc h2,.clc h3,.clc h4{font-family:inherit;color:var(--clc-ink);line-height:1.25;margin:0 0 .6em;font-weight:600;letter-spacing:-.01em}
+.clc p{margin:0 0 1em}
+.clc a{color:var(--clc-gold-text);text-decoration:underline;text-underline-offset:2px}
+.clc a:hover{color:var(--clc-ink)}
+.clc a:focus-visible,.clc .clc-btn:focus-visible{outline:3px solid var(--clc-gold);outline-offset:3px}
+.clc ul{margin:0 0 1.2em;padding-left:1.25em}
+.clc li{margin:0 0 .45em}
+.clc li::marker{color:var(--clc-gold)}
+.clc strong{font-weight:600}
+/* layout */
+.clc-wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.clc-narrow{max-width:820px}
+.clc-section{padding:80px 0}
+.clc-section--white{background:var(--clc-white)}
+.clc-section--tight{padding:56px 0}
+/* hero – matches the dark homepage banner */
+.clc-hero{background:var(--clc-dark);color:#fff;padding:96px 0 88px;position:relative}
+.clc-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(201,165,92,.08),transparent 60%);pointer-events:none}
+.clc-hero .clc-wrap{position:relative;z-index:1}
+.clc-eyebrow{display:block;color:var(--clc-gold);font-size:14px;font-weight:600;margin:0 0 14px}
+.clc-hero h1{color:#fff;font-size:clamp(32px,5vw,48px);font-weight:700;max-width:760px;margin:0 0 18px}
+.clc-hero p{color:rgba(255,255,255,.85);font-size:17px;max-width:680px;margin:0}
+.clc-hero .clc-meta{margin-top:18px;font-size:14px;color:rgba(255,255,255,.65);font-style:italic}
+/* section titles – "Areas of Expertise" style with gold word + dots */
+.clc-title{text-align:center;margin:0 0 48px}
+.clc-title h2{font-size:clamp(26px,3.4vw,34px);margin:0 0 12px}
+.clc-title h2 span{color:var(--clc-gold)}
+.clc-title p{max-width:680px;margin:14px auto 0;color:var(--clc-muted)}
+.clc-dots{display:inline-flex;gap:5px}
+.clc-dots i{width:5px;height:3px;background:var(--clc-gold);display:block;border-radius:2px}
+.clc-dots i:nth-child(2){width:14px}
+/* gold callout – matches "What We Do" quote */
+.clc-callout{border-left:3px solid var(--clc-gold);padding:6px 0 6px 20px;color:var(--clc-gold-text);font-size:18px;font-weight:600;margin:0 0 28px}
+.clc-card{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:30px 26px;display:flex;flex-direction:column;border-top:3px solid transparent;transition:border-color .2s,transform .2s}
+.clc-card:hover{border-top-color:var(--clc-gold);transform:translateY(-2px)}
+.clc-card h3{font-size:19px;margin:0 0 12px}
+.clc-card p{font-size:15px;color:var(--clc-muted);margin:0 0 18px;flex:1}
+.clc-card .clc-num{display:inline-block;color:var(--clc-gold);font-weight:700;font-size:14px;letter-spacing:.1em;margin-bottom:10px}
+/* price lists */
+.clc-price-group{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:32px;margin:0 0 28px}
+.clc-price-group h3{font-size:21px;margin:0 0 6px}
+.clc-price-group > p{color:var(--clc-muted);margin:0 0 18px;font-size:15px}
+.clc-price{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:14px 0;border-top:1px solid var(--clc-line)}
+.clc-price:first-of-type{border-top:0}
+.clc-price-name{font-weight:600}
+.clc-price-name small{display:block;font-weight:400;color:var(--clc-muted);font-size:14px;margin-top:4px;line-height:1.6}
+.clc-price-amt{color:var(--clc-gold-text);font-weight:700;white-space:nowrap;text-align:right}
+.clc-feature{background:var(--clc-dark);color:#fff;border-radius:var(--clc-radius);padding:40px;display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;margin:0 0 48px}
+.clc-feature h2{color:#fff;font-size:26px;margin:0 0 8px}
+.clc-feature p{color:rgba(255,255,255,.85);margin:0}
+.clc-feature .clc-big{font-size:clamp(34px,5vw,48px);font-weight:700;color:var(--clc-gold);line-height:1;white-space:nowrap}
+.clc-feature .clc-big small{display:block;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-top:8px;font-weight:600}
+.clc-subhead{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--clc-gold-text);font-weight:700;margin:56px 0 18px;display:flex;align-items:center;gap:14px}
+.clc-subhead::after{content:"";flex:1;height:1px;background:var(--clc-line)}
+.clc-note{font-size:14px;color:var(--clc-muted);font-style:italic}
+/* call to action band */
+.clc-cta{background:var(--clc-dark-2);color:#fff;text-align:center;padding:72px 0}
+.clc-cta h2{color:#fff;font-size:clamp(24px,3vw,32px);margin:0 0 12px}
+.clc-cta h2 span{color:var(--clc-gold)}
+.clc-cta p{color:rgba(255,255,255,.85);max-width:640px;margin:0 auto 28px}
+.clc-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.clc-btn{display:inline-flex;align-items:center;gap:8px;background:var(--clc-gold);color:var(--clc-dark)!important;text-decoration:none!important;font-weight:600;font-size:15px;padding:13px 26px;border-radius:999px;border:1px solid var(--clc-gold);transition:background .2s,color .2s}
+.clc-btn:hover{background:transparent;color:var(--clc-gold)!important}
+.clc-btn--ghost{background:transparent;color:#fff!important;border-color:rgba(255,255,255,.7)}
+.clc-btn--ghost:hover{background:#fff;color:var(--clc-dark)!important;border-color:#fff}
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .clc-section{padding:64px 0}
+}
+@media (max-width:767px){
+  .clc{font-size:15.5px}
+  .clc-wrap{padding:0 18px}
+  .clc-section{padding:48px 0}
+  .clc-section--tight{padding:40px 0}
+  .clc-hero{padding:64px 0 56px}
+  .clc-hero p{font-size:16px}
+  .clc-title{margin-bottom:32px}
+  .clc-card{padding:24px 20px}
+  .clc-price-group{padding:22px 18px}
+  .clc-price{flex-direction:column;gap:4px}
+  .clc-price-amt{text-align:left;white-space:normal}
+  .clc-feature{grid-template-columns:1fr;gap:16px;padding:28px 22px}
+  .clc-cta{padding:52px 0}
+  .clc-btns{flex-direction:column;align-items:stretch}
+  .clc-btn{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.clc-card{transition:none}.clc-card:hover{transform:none}}
+</style>
+<div class="clc">
+<section class="clc-hero">
+  <div class="clc-wrap">
+    <span class="clc-eyebrow">Clear, upfront pricing</span>
+    <h1>Fees and Funding</h1>
+    <p>What our services cost, what is free, and where funding may be available, explained clearly before any work begins.</p>
+  </div>
+</section>
+
+<section class="clc-section">
+  <div class="clc-wrap clc-narrow">
+
+    <div class="clc-feature">
+      <div class="clc-big">Free<small>No charge*</small></div>
+      <div>
+        <h2>Initial Consultation</h2>
+        <p>Up to 45 minutes in person (*you buy the coffee!), by telephone call or by video call. We will take time to listen and narrow down your problems into manageable legal issues.</p>
+      </div>
+    </div>
+
+    <div class="clc-subhead">Payable services</div>
+
+    <div class="clc-price-group">
+      <div class="clc-price">
+        <div class="clc-price-name">Case Preparation
+          <small>Expert help on work such as organising evidence, preparing statements and understanding procedures. We work alongside you at every stage of your case, so you always know what to expect and feel confident about next steps.</small>
+        </div>
+        <div class="clc-price-amt">£150 per hour</div>
+      </div>
+      <div class="clc-price">
+        <div class="clc-price-name">Ongoing case queries
+          <small>By telephone call or by video call.</small>
+        </div>
+        <div class="clc-price-amt">20 minutes: £45<br>50 minutes: £100</div>
+      </div>
+    </div>
+
+    <div class="clc-price-group">
+      <h3>For businesses</h3>
+      <p>Representing you at court as your in-house legal counsel.</p>
+      <div class="clc-price"><div class="clc-price-name">Short hearings</div><div class="clc-price-amt">£175</div></div>
+      <div class="clc-price"><div class="clc-price-name">Small Claims Trials</div><div class="clc-price-amt">£175 half day<br>£300 full day</div></div>
+      <div class="clc-price"><div class="clc-price-name">Fast Track / Multi-Track Trials</div><div class="clc-price-amt">Starting at £500 per day</div></div>
+    </div>
+
+    <div class="clc-price-group">
+      <h3>For individuals: representation at court</h3>
+      <p>Representing you at court as your lay representative / McKenzie Friend (when permission is given by the Judge).</p>
+      <div class="clc-price"><div class="clc-price-name">Short hearings</div><div class="clc-price-amt">£175</div></div>
+      <div class="clc-price"><div class="clc-price-name">Small Claims Trials</div><div class="clc-price-amt">£175 half day<br>£300 full day</div></div>
+      <div class="clc-price"><div class="clc-price-name">Fast Track / Multi-Track Trials</div><div class="clc-price-amt">Starting at £500 per day</div></div>
+    </div>
+
+    <div class="clc-price-group">
+      <h3>For individuals: support at court</h3>
+      <p>Supporting you at court as your McKenzie Friend.</p>
+      <div class="clc-price"><div class="clc-price-name">Short hearings</div><div class="clc-price-amt">£75</div></div>
+      <div class="clc-price"><div class="clc-price-name">Small Claims Trials</div><div class="clc-price-amt">£100 half day<br>£200 full day</div></div>
+      <div class="clc-price"><div class="clc-price-name">Fast Track / Multi-Track Trials</div><div class="clc-price-amt">Starting at £200 per day</div></div>
+    </div>
+
+    <div class="clc-subhead">Funded services</div>
+
+    <div class="clc-price-group">
+      <h3>Funded services, sometimes called 'Legal Aid'</h3>
+      <p style="margin-bottom:0">We work with trusted firms of solicitors and law centres to offer referrals and early legal advice on issues involving housing, debt, welfare benefits and family law. The funding rules are complex, so we will assess your income and try our best to ensure you qualify. Where the funding application is complex, we would ask that you donate £25 to us, to cover our time.</p>
+    </div>
+
+    <div class="clc-subhead">Non-legal services</div>
+
+    <div class="clc-price-group">
+      <div class="clc-price">
+        <div class="clc-price-name">Complaints Handling
+          <small>We can review your evidence, draft complaints and deal with appeals.</small>
+        </div>
+        <div class="clc-price-amt">From £75 per hour</div>
+      </div>
+      <div class="clc-price">
+        <div class="clc-price-name">Form Filling
+          <small>Assistance completing official or government forms accurately and on time. We ensure everything is in order before submission.</small>
+        </div>
+        <div class="clc-price-amt">£25 – £100 per hour</div>
+      </div>
+      <div class="clc-price">
+        <div class="clc-price-name">Certification of documents
+          <small>Official certification of copies and statements for use in legal, financial or immigration proceedings, recognised and accepted by courts, government bodies and institutions both in the UK and internationally.</small>
+        </div>
+        <div class="clc-price-amt">From £25 per document</div>
+      </div>
+    </div>
+
+    <p class="clc-note">Fees are explained and agreed with you before work begins. See our <a href="/terms-and-conditions/">Terms and Conditions</a> for payment terms.</p>
+  </div>
+</section>
+
+<section class="clc-cta">
+  <div class="clc-wrap">
+    <h2>Not sure what you need? <span>Start with a free chat.</span></h2>
+    <p>Book your free initial consultation and we will help you work out the next steps.</p>
+    <div class="clc-btns">
+      <a class="clc-btn" href="/contact-us/">Get in touch &rarr;</a>
+      <a class="clc-btn clc-btn--ghost" href="tel:+447792609049">Call 07792 609049</a>
+    </div>
+  </div>
+</section>
+</div>
