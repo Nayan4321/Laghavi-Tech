@@ -1,0 +1,9 @@
+[gravityform id="1" title="false" description="false" ajax="true"]
+
+REQUIRED
+- Add an Elementor "Shortcode" widget between the two HTML widgets and paste the line above.
+- Change id="1" to your form's ID (WP Admin > Forms: the ID column).
+- Select the container holding the Shortcode widget > Advanced > CSS Classes, and enter:
+    clc-gf              (dark form card on cream, matches your current contact form)
+    clc-gf clc-gf--light (light form card on white)
+- Set that container's Padding to 0 and Content Width to Full Width.

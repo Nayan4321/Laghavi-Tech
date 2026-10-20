@@ -1,0 +1,319 @@
+<!-- Cornwall Legal Centre CIC | About Us | TOP part
+     Paste ALL of this into an Elementor "HTML" widget. See README.md. -->
+<style>
+/* Cornwall Legal Centre CIC – shared page styles (scoped to .clc so nothing else on the site is affected) */
+.clc{--clc-dark:#222627;--clc-dark-2:#2b332e;--clc-gold:#c9a55c;--clc-gold-text:#8a6a2a;--clc-cream:#f5f1ee;--clc-white:#fff;--clc-ink:#2a2a2a;--clc-muted:#5c5c5c;--clc-line:#e7e1d8;--clc-radius:4px;--clc-shadow:0 6px 24px rgba(0,0,0,.06);
+  font-family:inherit;color:var(--clc-ink);font-size:16px;line-height:1.7;background:var(--clc-cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.clc *,.clc *::before,.clc *::after{box-sizing:border-box}
+.clc h1,.clc h2,.clc h3,.clc h4{font-family:inherit;color:var(--clc-ink);line-height:1.25;margin:0 0 .6em;font-weight:600;letter-spacing:-.01em}
+.clc p{margin:0 0 1em}
+.clc a{color:var(--clc-gold-text);text-decoration:underline;text-underline-offset:2px}
+.clc a:hover{color:var(--clc-ink)}
+.clc a:focus-visible,.clc .clc-btn:focus-visible{outline:3px solid var(--clc-gold);outline-offset:3px}
+.clc ul{margin:0 0 1.2em;padding-left:1.25em}
+.clc li{margin:0 0 .45em}
+.clc li::marker{color:var(--clc-gold)}
+.clc strong{font-weight:600}
+/* layout */
+.clc-wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.clc-narrow{max-width:820px}
+.clc-section{padding:80px 0}
+.clc-section--white{background:var(--clc-white)}
+.clc-section--tight{padding:56px 0}
+/* hero – matches the dark homepage banner */
+.clc-hero{background:var(--clc-dark);color:#fff;padding:96px 0 88px;position:relative}
+.clc-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(201,165,92,.08),transparent 60%);pointer-events:none}
+.clc-hero .clc-wrap{position:relative;z-index:1}
+.clc-eyebrow{display:block;color:var(--clc-gold);font-size:14px;font-weight:600;margin:0 0 14px}
+.clc-hero h1{color:#fff;font-size:clamp(32px,5vw,48px);font-weight:700;max-width:760px;margin:0 0 18px}
+.clc-hero p{color:rgba(255,255,255,.85);font-size:17px;max-width:680px;margin:0}
+.clc-hero .clc-meta{margin-top:18px;font-size:14px;color:rgba(255,255,255,.65);font-style:italic}
+/* section titles – "Areas of Expertise" style with gold word + dots */
+.clc-title{text-align:center;margin:0 0 48px}
+.clc-title h2{font-size:clamp(26px,3.4vw,34px);margin:0 0 12px}
+.clc-title h2 span{color:var(--clc-gold)}
+.clc-title p{max-width:680px;margin:14px auto 0;color:var(--clc-muted)}
+.clc-dots{display:inline-flex;gap:5px}
+.clc-dots i{width:5px;height:3px;background:var(--clc-gold);display:block;border-radius:2px}
+.clc-dots i:nth-child(2){width:14px}
+/* gold callout – matches "What We Do" quote */
+.clc-callout{border-left:3px solid var(--clc-gold);padding:6px 0 6px 20px;color:var(--clc-gold-text);font-size:18px;font-weight:600;margin:0 0 28px}
+/* cards */
+.clc-grid{display:grid;gap:24px}
+.clc-grid--4{grid-template-columns:repeat(4,1fr)}
+.clc-grid--3{grid-template-columns:repeat(3,1fr)}
+.clc-grid--2{grid-template-columns:repeat(2,1fr)}
+.clc-card{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:30px 26px;display:flex;flex-direction:column;border-top:3px solid transparent;transition:border-color .2s,transform .2s}
+.clc-card:hover{border-top-color:var(--clc-gold);transform:translateY(-2px)}
+.clc-card h3{font-size:19px;margin:0 0 12px}
+.clc-card p{font-size:15px;color:var(--clc-muted);margin:0 0 18px;flex:1}
+.clc-card .clc-num{display:inline-block;color:var(--clc-gold);font-weight:700;font-size:14px;letter-spacing:.1em;margin-bottom:10px}
+.clc-note{font-size:14px;color:var(--clc-muted);font-style:italic}
+/* two-column text + aside */
+.clc-split{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:start}
+.clc-panel{background:var(--clc-dark-2);color:#fff;border-radius:var(--clc-radius);padding:32px}
+.clc-panel h3{color:#fff;font-size:20px}
+.clc-panel li{color:rgba(255,255,255,.88)}
+.clc-panel p{color:rgba(255,255,255,.88)}
+/* long-form legal / article text */
+.clc-prose h2{font-size:clamp(22px,2.6vw,26px);margin:48px 0 14px;padding-top:8px;scroll-margin-top:120px}
+.clc-prose h2:first-child{margin-top:0}
+.clc-prose h3{font-size:19px;margin:28px 0 10px}
+.clc-prose p,.clc-prose li{font-size:16.5px}
+.clc-prose .clc-important{background:#fbf6ea;border-left:3px solid var(--clc-gold);padding:14px 18px;font-weight:600;margin:0 0 1.2em}
+.clc-toc{background:var(--clc-white);box-shadow:var(--clc-shadow);border-radius:var(--clc-radius);padding:24px 28px;margin:0 0 48px}
+.clc-toc strong{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--clc-gold-text);margin-bottom:10px}
+.clc-toc ol{margin:0;padding-left:1.3em;columns:2;column-gap:40px}
+.clc-toc li{font-size:15px;margin:0 0 6px;break-inside:avoid}
+.clc-toc a{text-decoration:none;color:var(--clc-ink)}
+.clc-toc a:hover{color:var(--clc-gold-text);text-decoration:underline}
+.clc-contact-list{list-style:none;padding:0}
+.clc-contact-list li{margin:0 0 6px}
+/* quote */
+.clc-quote{text-align:center;max-width:820px;margin:0 auto;font-size:clamp(20px,2.6vw,26px);line-height:1.5;font-weight:600;color:var(--clc-ink)}
+.clc-quote::before{content:"\201C";display:block;color:var(--clc-gold);font-size:64px;line-height:.6;margin-bottom:12px}
+/* call to action band */
+.clc-cta{background:var(--clc-dark-2);color:#fff;text-align:center;padding:72px 0}
+.clc-cta h2{color:#fff;font-size:clamp(24px,3vw,32px);margin:0 0 12px}
+.clc-cta h2 span{color:var(--clc-gold)}
+.clc-cta p{color:rgba(255,255,255,.85);max-width:640px;margin:0 auto 28px}
+.clc-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.clc-btn{display:inline-flex;align-items:center;gap:8px;background:var(--clc-gold);color:var(--clc-dark)!important;text-decoration:none!important;font-weight:600;font-size:15px;padding:13px 26px;border-radius:999px;border:1px solid var(--clc-gold);transition:background .2s,color .2s}
+.clc-btn:hover{background:transparent;color:var(--clc-gold)!important}
+.clc-btn--ghost{background:transparent;color:#fff!important;border-color:rgba(255,255,255,.7)}
+.clc-btn--ghost:hover{background:#fff;color:var(--clc-dark)!important;border-color:#fff}
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .clc-grid--4{grid-template-columns:repeat(2,1fr)}
+  .clc-split{grid-template-columns:1fr;gap:40px}
+  .clc-section{padding:64px 0}
+}
+@media (max-width:767px){
+  .clc{font-size:15.5px}
+  .clc-wrap{padding:0 18px}
+  .clc-section{padding:48px 0}
+  .clc-section--tight{padding:40px 0}
+  .clc-hero{padding:64px 0 56px}
+  .clc-hero p{font-size:16px}
+  .clc-title{margin-bottom:32px}
+  .clc-grid--4,.clc-grid--3,.clc-grid--2{grid-template-columns:1fr;gap:16px}
+  .clc-card{padding:24px 20px}
+  .clc-toc ol{columns:1}
+  .clc-toc{padding:20px}
+  .clc-prose h2{margin-top:36px}
+  .clc-cta{padding:52px 0}
+  .clc-btns{flex-direction:column;align-items:stretch}
+  .clc-btn{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.clc-card{transition:none}.clc-card:hover{transform:none}}
+/* image + text rows (image hides itself if no URL is set, text then goes full width) */
+.clc-media-row{display:flex;gap:56px;align-items:center}
+.clc-media-row > *{flex:1 1 0;min-width:0}
+.clc-media-row--top{align-items:flex-start}
+.clc-media img{width:100%;height:auto;display:block;border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);object-fit:cover}
+.clc-media--portrait img{aspect-ratio:4/5}
+.clc-media--wide img{aspect-ratio:3/2}
+.clc-lead{font-size:clamp(19px,2.2vw,22px);line-height:1.55;font-weight:500;color:var(--clc-ink)}
+
+/* check / tick list */
+.clc-ticks{list-style:none;padding:0;margin:0 0 1.2em}
+.clc-ticks li{position:relative;padding-left:30px;margin:0 0 10px}
+.clc-ticks li::before{content:"";position:absolute;left:0;top:.45em;width:16px;height:9px;border-left:2px solid var(--clc-gold);border-bottom:2px solid var(--clc-gold);transform:rotate(-45deg)}
+
+/* icon cards (contact details) */
+.clc-icon{width:52px;height:52px;border-radius:50%;background:#f3ece0;color:var(--clc-gold-text);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px}
+.clc-icon svg{width:22px;height:22px}
+.clc-card a.clc-big-link{font-size:17px;font-weight:600;color:var(--clc-ink);text-decoration:none;word-break:break-word}
+.clc-card a.clc-big-link:hover{color:var(--clc-gold-text)}
+.clc-social{display:flex;gap:10px;margin-top:4px}
+.clc-social a{width:40px;height:40px;border-radius:50%;border:1px solid var(--clc-line);display:inline-flex;align-items:center;justify-content:center;color:var(--clc-ink)}
+.clc-social a:hover{background:var(--clc-gold);border-color:var(--clc-gold);color:var(--clc-dark)}
+.clc-social svg{width:18px;height:18px;fill:currentColor}
+
+/* numbered steps */
+.clc-steps{counter-reset:clc-step}
+.clc-step{position:relative;padding-top:8px}
+.clc-step::before{counter-increment:clc-step;content:counter(clc-step,decimal-leading-zero);display:block;font-size:34px;font-weight:700;color:var(--clc-gold);line-height:1;margin-bottom:12px}
+.clc-step h3{font-size:19px}
+.clc-step p{color:var(--clc-muted);font-size:15px;margin:0}
+
+/* values strip on dark */
+.clc-dark{background:var(--clc-dark);color:#fff}
+.clc-dark h2,.clc-dark h3{color:#fff}
+.clc-dark .clc-title p{color:rgba(255,255,255,.75)}
+.clc-value{border-top:2px solid var(--clc-gold);padding-top:20px}
+.clc-value h3{font-size:20px;margin-bottom:8px}
+.clc-value p{color:rgba(255,255,255,.78);font-size:15px;margin:0}
+
+/* video */
+.clc-embed{position:relative;width:100%;aspect-ratio:16/9;background:#000;border-radius:var(--clc-radius);overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.25)}
+.clc-embed iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.clc-hero--video{padding-bottom:180px}
+.clc-video-lift{margin-top:-140px;position:relative;z-index:2}
+.clc-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.clc-tags span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:#f3ece0;color:var(--clc-gold-text);padding:5px 10px;border-radius:999px;font-weight:600}
+
+/* Facebook feed */
+.clc-fb{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:16px;display:flex;justify-content:center}
+.clc-fb iframe{border:0;width:100%;max-width:500px;height:700px;display:block}
+
+/* ===== Gravity Forms styling =====
+   Put the Elementor "Shortcode" widget inside a container whose
+   Advanced > CSS Classes = clc-gf  (cream background, dark card)
+   or                       clc-gf clc-gf--light  (white card)       */
+.clc-gf{background:#f5f1ee;padding:0 24px 80px!important}
+.clc-gf *,.clc-gf *::before,.clc-gf *::after{box-sizing:border-box}
+.clc-gf .gform_wrapper .gform_fields{display:grid;row-gap:22px!important}
+.clc-gf .gform_wrapper .gfield_label,.clc-gf .gform_wrapper legend.gfield_label{display:block;margin:0 0 8px!important}
+.clc-gf .gform_wrapper{max-width:760px!important;margin:0 auto!important;background:#434d47;border-radius:4px;padding:44px 40px!important;box-shadow:0 10px 30px rgba(0,0,0,.12);font-family:inherit}
+.clc-gf .gform_wrapper .gform_title,.clc-gf .gform_wrapper .gform_description{color:#fff!important}
+.clc-gf .gform_wrapper .gfield_label,.clc-gf .gform_wrapper legend.gfield_label,.clc-gf .gform_wrapper .gform-field-label{color:#fff!important;font-weight:600!important;font-size:14px!important;font-family:inherit!important}
+.clc-gf .gform_wrapper .gfield_required{color:#c9a55c!important}
+.clc-gf .gform_wrapper .gfield_description,.clc-gf .gform_wrapper .gform-field-label--type-sub{color:rgba(255,255,255,.7)!important}
+.clc-gf .gform_wrapper input:not([type=submit]):not([type=button]):not([type=checkbox]):not([type=radio]):not([type=file]),
+.clc-gf .gform_wrapper select,.clc-gf .gform_wrapper textarea{background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.35)!important;border-radius:3px!important;color:#fff!important;font-family:inherit!important;font-size:15px!important;padding:12px 14px!important;box-shadow:none!important;width:100%!important}
+.clc-gf .gform_wrapper select option{color:#222}
+.clc-gf .gform_wrapper input::placeholder,.clc-gf .gform_wrapper textarea::placeholder{color:rgba(255,255,255,.5)!important}
+.clc-gf .gform_wrapper input:focus,.clc-gf .gform_wrapper select:focus,.clc-gf .gform_wrapper textarea:focus{border-color:#c9a55c!important;outline:2px solid rgba(201,165,92,.4)!important;outline-offset:1px}
+.clc-gf .gform_wrapper .gfield_checkbox label,.clc-gf .gform_wrapper .gfield_radio label,.clc-gf .gform_wrapper .gfield_consent_label{color:rgba(255,255,255,.88)!important}
+.clc-gf .gform_wrapper .gform_footer,.clc-gf .gform_wrapper .gform_page_footer{margin-top:20px!important;padding:0!important}
+.clc-gf .gform_wrapper .gform_button,.clc-gf .gform_wrapper input[type=submit],.clc-gf .gform_wrapper button[type=submit]{background:#c9a55c!important;color:#222627!important;border:1px solid #c9a55c!important;border-radius:999px!important;padding:13px 34px!important;font-weight:600!important;font-size:15px!important;font-family:inherit!important;cursor:pointer;width:auto!important;transition:background .2s,color .2s}
+.clc-gf .gform_wrapper .gform_button:hover,.clc-gf .gform_wrapper input[type=submit]:hover{background:transparent!important;color:#c9a55c!important}
+.clc-gf .gform_wrapper .gfield_validation_message,.clc-gf .gform_wrapper .validation_message{background:transparent!important;border:0!important;color:#ffb4a8!important;padding:4px 0 0!important}
+.clc-gf .gform_wrapper .gform_validation_errors{background:rgba(255,180,168,.12)!important;border:1px solid #ffb4a8!important;border-radius:3px!important;box-shadow:none!important}
+.clc-gf .gform_wrapper .gform_validation_errors h2{color:#fff!important;font-size:15px!important}
+.clc-gf .gform_confirmation_message{max-width:760px;margin:0 auto;background:#434d47;color:#fff;padding:32px 40px;border-radius:4px;border-left:3px solid #c9a55c}
+/* light variant */
+.clc-gf--light{background:#fff}
+.clc-gf--light .gform_wrapper{background:#f5f1ee;box-shadow:none}
+.clc-gf--light .gform_wrapper .gfield_label,.clc-gf--light .gform_wrapper legend.gfield_label,.clc-gf--light .gform_wrapper .gform-field-label,.clc-gf--light .gform_wrapper .gform_title{color:#2a2a2a!important}
+.clc-gf--light .gform_wrapper input:not([type=submit]):not([type=checkbox]):not([type=radio]),.clc-gf--light .gform_wrapper select,.clc-gf--light .gform_wrapper textarea{background:#fff!important;border-color:#d9d1c4!important;color:#2a2a2a!important}
+.clc-gf--light .gform_wrapper input::placeholder,.clc-gf--light .gform_wrapper textarea::placeholder{color:#8a8a8a!important}
+.clc-gf--light .gform_wrapper .gfield_checkbox label,.clc-gf--light .gform_wrapper .gfield_radio label,.clc-gf--light .gform_wrapper .gfield_consent_label,.clc-gf--light .gform_wrapper .gfield_description{color:#5c5c5c!important}
+
+@media (max-width:1024px){
+  .clc-media-row{gap:40px}
+}
+@media (max-width:767px){
+  .clc-media-row{flex-direction:column;gap:28px}
+  .clc-media-row--reverse-mobile{flex-direction:column-reverse}
+  .clc-hero--video{padding-bottom:120px}
+  .clc-video-lift{margin-top:-90px}
+  .clc-gf{padding:0 16px 48px!important}
+  .clc-gf .gform_wrapper{padding:28px 20px!important}
+  .clc-gf .gform_wrapper .gform_button,.clc-gf .gform_wrapper input[type=submit]{width:100%!important}
+  .clc-fb iframe{height:600px}
+}
+</style>
+<div class="clc">
+<section class="clc-hero">
+  <div class="clc-wrap">
+    <span class="clc-eyebrow">About Us</span>
+    <h1>Making the law accessible, empowering and understandable</h1>
+    <p>Cornwall Legal Centre CIC supports individuals, community groups and organisations with high-quality legal education, training and practical guidance.</p>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap">
+    <div class="clc-media-row">
+      <div>
+        <p class="clc-lead">Cornwall Legal Centre CIC exists to make the law accessible, empowering, and understandable.</p>
+        <p>We support individuals, community groups, and organisations by providing high-quality legal education, training, and practical guidance, helping people build the confidence and knowledge they need to navigate legal issues for themselves and others.</p>
+        <div class="clc-callout">Our focus is no longer on casework or crisis response. Instead, we work towards prevention, understanding, and empowerment.</div>
+      </div>
+      <!-- IMAGE: paste the image URL into src="". If left blank, this column hides and the text goes full width. -->
+      <div class="clc-media clc-media--wide">
+        <img src="PASTE-IMAGE-URL-HERE" alt="Cornwall Legal Centre CIC" loading="lazy" onerror="this.parentNode.style.display='none'">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section">
+  <div class="clc-wrap">
+    <div class="clc-media-row clc-media-row--top">
+      <div>
+        <span class="clc-eyebrow" style="color:var(--clc-gold-text)">Our Approach</span>
+        <h2 style="font-size:clamp(26px,3.4vw,34px)">From frontline casework to lasting change</h2>
+        <p>For many years, Cornwall Legal Centre CIC was rooted in frontline legal casework. While this work remains deeply important, we are now intentionally refocusing our services towards education and capacity-building.</p>
+        <p>We believe the most sustainable way to improve access to justice is to equip people with the legal knowledge they need to navigate the system confidently, rather than relying solely on one-to-one intervention.</p>
+      </div>
+      <div class="clc-panel">
+        <h3>By teaching vital legal principles in clear, practical ways, we help:</h3>
+        <ul class="clc-ticks" style="margin:0">
+          <li>individuals advocate for themselves</li>
+          <li>organisations support their clients more effectively</li>
+          <li>communities reduce legal crises before they escalate</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap">
+    <div class="clc-title">
+      <h2>What We <span>Do Now</span></h2>
+      <div class="clc-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+    </div>
+    <div class="clc-grid clc-grid--3">
+      <article class="clc-card">
+        <span class="clc-num">01</span>
+        <h3>Legal Training &amp; Education</h3>
+        <p style="flex:0">We design and deliver training that is:</p>
+        <ul class="clc-ticks">
+          <li>practical and jargon-free</li>
+          <li>grounded in real-world experience</li>
+          <li>tailored to individuals, charities, community groups, and professionals</li>
+        </ul>
+        <p style="margin:0">Training can be delivered 1-2-1 or in group sessions, in writing, online, or in person. We love coming to your workplaces to understand how you work.</p>
+      </article>
+      <article class="clc-card">
+        <span class="clc-num">02</span>
+        <h3>Empowerment &amp; Capacity Building</h3>
+        <p style="flex:0">Our work focuses on:</p>
+        <ul class="clc-ticks">
+          <li>increasing legal confidence</li>
+          <li>improving decision-making</li>
+          <li>reducing fear and confusion around legal processes</li>
+        </ul>
+        <p style="margin:0">We aim to leave people stronger, more informed, and more independent.</p>
+      </article>
+      <article class="clc-card">
+        <span class="clc-num">03</span>
+        <h3>Organisational Support</h3>
+        <p style="flex:0">We support organisations by helping staff and volunteers:</p>
+        <ul class="clc-ticks">
+          <li>understand key legal frameworks</li>
+          <li>recognise legal risk and responsibility</li>
+          <li>respond appropriately and ethically</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section clc-dark">
+  <div class="clc-wrap">
+    <div class="clc-title">
+      <h2>Our <span>Values</span></h2>
+      <div class="clc-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p>Cornwall Legal Centre CIC is committed to delivering work that is both professionally robust and personally sustainable.</p>
+    </div>
+    <div class="clc-grid clc-grid--4">
+      <div class="clc-value"><h3>Accessibility</h3><p>The law should not be intimidating or exclusive.</p></div>
+      <div class="clc-value"><h3>Empowerment</h3><p>Knowledge creates confidence and choice.</p></div>
+      <div class="clc-value"><h3>Sustainability</h3><p>Support must be affordable and a long-term investment.</p></div>
+      <div class="clc-value"><h3>Integrity</h3><p>We build relationships with clear boundaries, honest practice, and ethical delivery.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap clc-narrow" style="text-align:center">
+    <span class="clc-eyebrow" style="color:var(--clc-gold-text)">Looking Ahead</span>
+    <p class="clc-lead">This refocused direction allows Cornwall Legal Centre CIC to continue serving the community in a way that is effective, ethical, and sustainable, ensuring that legal knowledge reaches further, lasts longer, and creates meaningful change.</p>
+  </div>
+</section>
+</div>
