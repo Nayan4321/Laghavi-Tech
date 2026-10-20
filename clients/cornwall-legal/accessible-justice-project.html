@@ -1,0 +1,229 @@
+<!-- Cornwall Legal Centre CIC | The Accessible Justice Project page
+     Paste ALL of this into one Elementor "HTML" widget (see README.md for setup). -->
+<style>
+/* Cornwall Legal Centre CIC – shared page styles (scoped to .clc so nothing else on the site is affected) */
+.clc{--clc-dark:#222627;--clc-dark-2:#2b332e;--clc-gold:#c9a55c;--clc-gold-text:#8a6a2a;--clc-cream:#f5f1ee;--clc-white:#fff;--clc-ink:#2a2a2a;--clc-muted:#5c5c5c;--clc-line:#e7e1d8;--clc-radius:4px;--clc-shadow:0 6px 24px rgba(0,0,0,.06);
+  font-family:inherit;color:var(--clc-ink);font-size:16px;line-height:1.7;background:var(--clc-cream);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.clc *,.clc *::before,.clc *::after{box-sizing:border-box}
+.clc h1,.clc h2,.clc h3,.clc h4{font-family:inherit;color:var(--clc-ink);line-height:1.25;margin:0 0 .6em;font-weight:600;letter-spacing:-.01em}
+.clc p{margin:0 0 1em}
+.clc a{color:var(--clc-gold-text);text-decoration:underline;text-underline-offset:2px}
+.clc a:hover{color:var(--clc-ink)}
+.clc a:focus-visible,.clc .clc-btn:focus-visible{outline:3px solid var(--clc-gold);outline-offset:3px}
+.clc ul{margin:0 0 1.2em;padding-left:1.25em}
+.clc li{margin:0 0 .45em}
+.clc li::marker{color:var(--clc-gold)}
+.clc strong{font-weight:600}
+/* layout */
+.clc-wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+.clc-narrow{max-width:820px}
+.clc-section{padding:80px 0}
+.clc-section--white{background:var(--clc-white)}
+.clc-section--tight{padding:56px 0}
+/* hero – matches the dark homepage banner */
+.clc-hero{background:var(--clc-dark);color:#fff;padding:96px 0 88px;position:relative}
+.clc-hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(201,165,92,.08),transparent 60%);pointer-events:none}
+.clc-hero .clc-wrap{position:relative;z-index:1}
+.clc-eyebrow{display:block;color:var(--clc-gold);font-size:14px;font-weight:600;margin:0 0 14px}
+.clc-hero h1{color:#fff;font-size:clamp(32px,5vw,48px);font-weight:700;max-width:760px;margin:0 0 18px}
+.clc-hero p{color:rgba(255,255,255,.85);font-size:17px;max-width:680px;margin:0}
+.clc-hero .clc-meta{margin-top:18px;font-size:14px;color:rgba(255,255,255,.65);font-style:italic}
+/* section titles – "Areas of Expertise" style with gold word + dots */
+.clc-title{text-align:center;margin:0 0 48px}
+.clc-title h2{font-size:clamp(26px,3.4vw,34px);margin:0 0 12px}
+.clc-title h2 span{color:var(--clc-gold)}
+.clc-title p{max-width:680px;margin:14px auto 0;color:var(--clc-muted)}
+.clc-dots{display:inline-flex;gap:5px}
+.clc-dots i{width:5px;height:3px;background:var(--clc-gold);display:block;border-radius:2px}
+.clc-dots i:nth-child(2){width:14px}
+/* gold callout – matches "What We Do" quote */
+.clc-callout{border-left:3px solid var(--clc-gold);padding:6px 0 6px 20px;color:var(--clc-gold-text);font-size:18px;font-weight:600;margin:0 0 28px}
+/* cards */
+.clc-grid{display:grid;gap:24px}
+.clc-grid--4{grid-template-columns:repeat(4,1fr)}
+.clc-grid--3{grid-template-columns:repeat(3,1fr)}
+.clc-grid--2{grid-template-columns:repeat(2,1fr)}
+.clc-card{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:30px 26px;display:flex;flex-direction:column;border-top:3px solid transparent;transition:border-color .2s,transform .2s}
+.clc-card:hover{border-top-color:var(--clc-gold);transform:translateY(-2px)}
+.clc-card h3{font-size:19px;margin:0 0 12px}
+.clc-card p{font-size:15px;color:var(--clc-muted);margin:0 0 18px;flex:1}
+.clc-card .clc-num{display:inline-block;color:var(--clc-gold);font-weight:700;font-size:14px;letter-spacing:.1em;margin-bottom:10px}
+.clc-note{font-size:14px;color:var(--clc-muted);font-style:italic}
+/* two-column text + aside */
+.clc-split{display:grid;grid-template-columns:1.4fr 1fr;gap:56px;align-items:start}
+.clc-panel{background:var(--clc-dark-2);color:#fff;border-radius:var(--clc-radius);padding:32px}
+.clc-panel h3{color:#fff;font-size:20px}
+.clc-panel li{color:rgba(255,255,255,.88)}
+.clc-panel p{color:rgba(255,255,255,.88)}
+/* long-form legal / article text */
+.clc-prose h2{font-size:clamp(22px,2.6vw,26px);margin:48px 0 14px;padding-top:8px;scroll-margin-top:120px}
+.clc-prose h2:first-child{margin-top:0}
+.clc-prose h3{font-size:19px;margin:28px 0 10px}
+.clc-prose p,.clc-prose li{font-size:16.5px}
+.clc-prose .clc-important{background:#fbf6ea;border-left:3px solid var(--clc-gold);padding:14px 18px;font-weight:600;margin:0 0 1.2em}
+.clc-toc{background:var(--clc-white);box-shadow:var(--clc-shadow);border-radius:var(--clc-radius);padding:24px 28px;margin:0 0 48px}
+.clc-toc strong{display:block;font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--clc-gold-text);margin-bottom:10px}
+.clc-toc ol{margin:0;padding-left:1.3em;columns:2;column-gap:40px}
+.clc-toc li{font-size:15px;margin:0 0 6px;break-inside:avoid}
+.clc-toc a{text-decoration:none;color:var(--clc-ink)}
+.clc-toc a:hover{color:var(--clc-gold-text);text-decoration:underline}
+.clc-contact-list{list-style:none;padding:0}
+.clc-contact-list li{margin:0 0 6px}
+/* quote */
+.clc-quote{text-align:center;max-width:820px;margin:0 auto;font-size:clamp(20px,2.6vw,26px);line-height:1.5;font-weight:600;color:var(--clc-ink)}
+.clc-quote::before{content:"\201C";display:block;color:var(--clc-gold);font-size:64px;line-height:.6;margin-bottom:12px}
+/* call to action band */
+.clc-cta{background:var(--clc-dark-2);color:#fff;text-align:center;padding:72px 0}
+.clc-cta h2{color:#fff;font-size:clamp(24px,3vw,32px);margin:0 0 12px}
+.clc-cta h2 span{color:var(--clc-gold)}
+.clc-cta p{color:rgba(255,255,255,.85);max-width:640px;margin:0 auto 28px}
+.clc-btns{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.clc-btn{display:inline-flex;align-items:center;gap:8px;background:var(--clc-gold);color:var(--clc-dark)!important;text-decoration:none!important;font-weight:600;font-size:15px;padding:13px 26px;border-radius:999px;border:1px solid var(--clc-gold);transition:background .2s,color .2s}
+.clc-btn:hover{background:transparent;color:var(--clc-gold)!important}
+.clc-btn--ghost{background:transparent;color:#fff!important;border-color:rgba(255,255,255,.7)}
+.clc-btn--ghost:hover{background:#fff;color:var(--clc-dark)!important;border-color:#fff}
+/* ---------- responsive ---------- */
+@media (max-width:1024px){
+  .clc-grid--4{grid-template-columns:repeat(2,1fr)}
+  .clc-split{grid-template-columns:1fr;gap:40px}
+  .clc-section{padding:64px 0}
+}
+@media (max-width:767px){
+  .clc{font-size:15.5px}
+  .clc-wrap{padding:0 18px}
+  .clc-section{padding:48px 0}
+  .clc-section--tight{padding:40px 0}
+  .clc-hero{padding:64px 0 56px}
+  .clc-hero p{font-size:16px}
+  .clc-title{margin-bottom:32px}
+  .clc-grid--4,.clc-grid--3,.clc-grid--2{grid-template-columns:1fr;gap:16px}
+  .clc-card{padding:24px 20px}
+  .clc-toc ol{columns:1}
+  .clc-toc{padding:20px}
+  .clc-prose h2{margin-top:36px}
+  .clc-cta{padding:52px 0}
+  .clc-btns{flex-direction:column;align-items:stretch}
+  .clc-btn{justify-content:center}
+}
+@media (prefers-reduced-motion:reduce){.clc-card{transition:none}.clc-card:hover{transform:none}}
+</style>
+<div class="clc">
+<section class="clc-hero">
+  <div class="clc-wrap">
+    <span class="clc-eyebrow">The Accessible Justice Project</span>
+    <h1>Removing barriers. Making justice more accessible.</h1>
+    <p>At Cornwall Legal Centre CIC, we believe that everyone should have a fair opportunity to understand their legal rights and access appropriate support.</p>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap">
+    <div class="clc-split">
+      <div class="clc-prose">
+        <p>But for some people, getting help with a legal problem is not straightforward. Explaining what has happened, completing complicated forms, organising documents, understanding legal processes and communicating under pressure can be particularly difficult for people experiencing neurodivergence, trauma and other invisible disabilities.</p>
+        <div class="clc-callout">The Accessible Justice Project is our developing initiative to help make the first steps towards legal support more accessible.</div>
+
+        <h2>Why this project matters</h2>
+        <p>A legal problem can affect every part of a person's life. It may involve housing, family matters, disability discrimination, welfare benefits, debt or another issue that needs timely attention. Yet the process of seeking help can itself become a barrier.</p>
+        <p>Some people may struggle to explain their circumstances in a short appointment. Others may find lengthy forms, unfamiliar terminology or requests for information overwhelming. People who have experienced trauma may find it difficult to recount distressing events, particularly when they feel under pressure to do so. These difficulties do not mean that a person's problem is less important, or that they should be expected to navigate the system without support.</p>
+      </div>
+      <aside class="clc-panel">
+        <h3>What our data tells us</h3>
+        <p>Our early referral data captured from 2023 to 2026 suggests that a substantial proportion of the people approaching us experience invisible disabilities, particularly neurodivergence and trauma-related difficulties.</p>
+        <p>This has reinforced our commitment to developing more accessible ways for people to take the first steps towards appropriate assistance.</p>
+        <p style="margin:0;color:var(--clc-gold);font-weight:600">We believe that services should adapt to people's needs, rather than expecting people to fit into systems that may not work for them.</p>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section">
+  <div class="clc-wrap">
+    <div class="clc-title">
+      <h2>What is The <span>Accessible Justice Project?</span></h2>
+      <div class="clc-dots" aria-hidden="true"><i></i><i></i><i></i></div>
+      <p>The project aims to develop a practical, community-based approach to accessible initial legal triage. The focus is on helping people explain their concerns, identify the nature and urgency of a problem, organise relevant information and understand what steps they may need to take to access appropriate support. It is being developed around three principles:</p>
+    </div>
+    <div class="clc-grid clc-grid--3">
+      <article class="clc-card">
+        <span class="clc-num">01</span>
+        <h3>Accessibility</h3>
+        <p>Communicating clearly, recognising that people process information differently, and making reasonable efforts to reduce unnecessary barriers.</p>
+      </article>
+      <article class="clc-card">
+        <span class="clc-num">02</span>
+        <h3>Early assistance</h3>
+        <p>Helping people organise their concerns and identify appropriate next steps before problems become harder to manage.</p>
+      </article>
+      <article class="clc-card">
+        <span class="clc-num">03</span>
+        <h3>Safe and responsible support</h3>
+        <p>Ensuring that those involved understand their role, respect confidentiality, recognise their limits and know when a matter needs to be referred to a suitably qualified professional.</p>
+      </article>
+    </div>
+    <div class="clc-wrap clc-narrow" style="padding:0;margin-top:36px">
+      <p class="clc-note" style="text-align:center;font-style:normal">The project is not intended to replace solicitors, barristers or other qualified professionals. Nor is it a substitute for legal aid or other established services. It aims to help address some of the practical barriers people encounter when trying to access appropriate support, including where their particular problem does not qualify for public funding.</p>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap clc-narrow clc-prose">
+    <h2>Building skills within our community</h2>
+    <p>A central part of the project is developing the skills and confidence of people who can help others navigate the initial stages of a legal problem. Our pilot programme is designed to provide structured training for existing Cornwall Legal Centre volunteers.</p>
+    <p>The training will focus on accessible communication, initial triage, information gathering, recognising urgency, understanding boundaries and identifying when further professional input is required. Volunteers will be trained to provide appropriate assistant-level support. They will not be trained to act as independent legal advisers.</p>
+    <p>We want to build a model that is practical, safe and capable of developing over time. Starting with a small pilot will allow us to learn from the experience, evaluate what works and improve the approach before seeking to expand it. Our longer-term ambition is to develop further training opportunities and, as funding allows, create paid trainee opportunities at the National Living Wage. We want the project to strengthen access to support while also building skills and opportunities within the local community.</p>
+  </div>
+</section>
+
+<section class="clc-section">
+  <div class="clc-wrap">
+    <div class="clc-grid clc-grid--2">
+      <div class="clc-card">
+        <h3>Who is the project for?</h3>
+        <p style="flex:0">The project is being developed with people in mind who may face additional barriers when seeking help with a legal problem, including people who experience:</p>
+        <ul>
+          <li>Autism, ADHD, dyslexia or other forms of neurodivergence.</li>
+          <li>Trauma-related difficulties.</li>
+          <li>Anxiety or distress when dealing with unfamiliar processes.</li>
+          <li>Difficulties organising information, completing paperwork or communicating their circumstances.</li>
+          <li>Other invisible disabilities that can affect access to services.</li>
+        </ul>
+        <p style="flex:0">A formal diagnosis should not be the starting point for deciding whether someone deserves an accessible approach. People have different needs, and practical adjustments can help many people navigate difficult situations.</p>
+        <p style="flex:0;margin:0">The project will develop alongside Cornwall Legal Centre's wider commitment to treating people with dignity, listening to their circumstances and recognising that there is no single way to communicate or ask for help.</p>
+      </div>
+      <div class="clc-card">
+        <h3>Our vision for the future</h3>
+        <p style="flex:0">We want to build a sustainable model that can grow in response to the needs of our community. Over time, we hope to:</p>
+        <ul>
+          <li>Develop and improve accessible initial triage and information-gathering processes.</li>
+          <li>Train more people to provide appropriate, supervised assistant-level support.</li>
+          <li>Build stronger referral pathways to qualified professionals and relevant support services.</li>
+          <li>Evaluate the project's impact and learn from the experiences of the people who use it.</li>
+          <li>Create paid training opportunities as funding becomes available.</li>
+          <li>Share learning about accessible community-based support with other organisations.</li>
+        </ul>
+        <p style="flex:0;margin:0">We recognise that this work will take time. We are beginning with a focused pilot so that we can build the project carefully, responsibly and on the basis of practical experience.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="clc-section clc-section--white">
+  <div class="clc-wrap">
+    <p class="clc-quote">A person should not be prevented from accessing justice simply because the traditional route into legal services does not work for them.</p>
+  </div>
+</section>
+
+<section class="clc-cta">
+  <div class="clc-wrap">
+    <h2>Help us make justice <span>more accessible</span></h2>
+    <p>The Accessible Justice Project is part of Cornwall Legal Centre CIC's wider commitment to improving access to support for people who may otherwise struggle to navigate traditional routes to legal assistance.</p>
+    <p>We welcome conversations with community organisations, potential funding partners and others who share our commitment to accessibility, inclusion and fair access to justice. If your organisation would like to learn more about the project, explore a potential partnership or discuss how you could support its development, we would welcome hearing from you.</p>
+    <div class="clc-btns">
+      <a class="clc-btn" href="/contact-us/">Discuss a partnership &rarr;</a>
+      <a class="clc-btn clc-btn--ghost" href="mailto:info@cornwall-legal.org">info@cornwall-legal.org</a>
+    </div>
+  </div>
+</section>
+</div>
