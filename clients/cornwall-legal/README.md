@@ -54,6 +54,19 @@ the full width, so the page never shows a broken image.
 The Facebook block on Meet Our Founder is optional. It shows your latest Facebook posts
 automatically. Delete that `<section>` if you don't want it.
 
+## Faded background images
+
+Every banner and call-to-action band has a faded, greyscale background photo, and light
+sections carry a faint scales-of-justice watermark (built into the code, so it always shows).
+
+The photos are free Unsplash stock images loaded from `images.unsplash.com`. To swap one for
+your own, find the line under `<!-- BACKGROUND IMAGE ... -->` and replace the URL inside
+`url('...')` with a Media Library URL. Delete the line to remove that photo.
+
+**Recommended:** download the photos you like (or use your homepage hero image) and upload them to
+the Media Library, so the site doesn't depend on Unsplash. If any image fails to load, the section
+simply shows its normal dark colour, never a broken image.
+
 ## Page setup (OceanWP + Elementor)
 
 1. Open the page or post and click **Edit with Elementor**.
