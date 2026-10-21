@@ -1,7 +1,7 @@
 {
   "name": "photo-watermark-remover",
   "version": "1.0.0",
-  "description": "Remove watermarks/logos from property photos you own, using the LaMa inpainting model running on the server CPU.",
+  "description": "Remove watermarks/logos from property photos and videos you own: LaMa AI for photos, ffmpeg for videos, all on the server CPU.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
@@ -12,6 +12,7 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
+    "ffmpeg-static": "^5.3.0",
     "multer": "^2.0.2",
     "onnxruntime-node": "^1.22.0",
     "sharp": "^0.35.5"

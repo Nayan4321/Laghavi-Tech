@@ -1,83 +1,94 @@
-# Photo Watermark Remover (test version)
+# Watermark Remover (photos + videos)
 
-Upload a property photo, paint over the watermark or logo, and the
-**LaMa** AI model fills the area in with matching background — floor,
-wall, sky, etc. Everything runs on your own Hostinger Business hosting:
-**no paid API, no per-photo cost.**
+Remove watermarks and logos from property **photos** and **videos** you
+own. Everything runs on your own Hostinger Business hosting:
+**no paid API, no per-file cost.**
 
-> Only use this on photos you own or have permission to edit. The tool
-> asks the user to confirm this before every removal.
+> Only use this on photos/videos you own or have permission to edit. The
+> tool asks the user to confirm this before every removal.
 
-Live at: **https://photo.femmehaven.net** (once deployed — steps below)
+Live at: **https://photo.femmehaven.net**
 
 ## How it works
 
-- Node.js + Express app (Hostinger Business "Node.js Web App").
+### Photos — LaMa AI
 - The browser sends the photo + a black/white mask of what you painted.
-- The server crops just the area around the mask, runs LaMa on it at
-  512×512, and pastes the result back into the full-size photo.
+- The server crops just the area around the mask, runs the **LaMa** AI
+  model on it at 512×512, and pastes the result back into the full-size
+  photo. LaMa fills in matching floor, wall, sky, etc.
 - Photos are processed in memory and never saved on the server.
 - On first start the server downloads the AI model (~200 MB) into
-  `models/`. The page shows the download progress; after that it's ready.
+  `models/`. The page shows the download progress.
 
-## Deploy on Hostinger (Business account)
+### Videos — ffmpeg
+Running AI on every frame is far too slow for 2–5 minute videos on
+shared hosting (thousands of frames × ~30 s each), so videos use a
+different method:
 
-### 1. Make the upload zip
+1. You upload the video and paint over the watermark(s) on one frame.
+   The watermark must stay in the same place for the whole video.
+2. The server samples ~240 frames from across the whole video. Because
+   the camera moves but the watermark doesn't, it can work out per pixel
+   **how see-through the watermark is and its colour**.
+3. **Faded / see-through watermarks** (e.g. light text across the middle):
+   the blend is mathematically undone on every frame —
+   `real = (frame − opacity × colour) / (1 − opacity)` — which brings back
+   the actual picture underneath instead of smudging it.
+4. **Solid logos** (e.g. a coloured box in the corner): the area is
+   filled with a smooth blend of the surrounding pixels (soft patch).
+5. The result is re-encoded as MP4 (H.264 + AAC audio kept).
 
-Download `watermark-remover.zip` (sent in the chat), **or** make it
-yourself: zip the *contents* of this `watermark-remover/` folder so that
-`package.json` is at the top level of the zip. Do **not** include
-`node_modules/` or `models/`.
+- **Preview 5 seconds** first to check the result quickly, then
+  **Process full video**.
+- Expect roughly 1–2× the video's length to process (a 3-minute video ≈
+  3–6 minutes), depending on how busy the shared server is.
+- Uploads and results are stored in `jobs/` and deleted after 2 hours.
+- Choose **Solid logo only** if Auto leaves a faint ghost of a logo.
+- Works best when the camera moves (walkthroughs). On a tripod shot
+  (e.g. an agent talking to camera) parts of the background never change,
+  so those parts of the watermark get the soft fill instead of a full
+  recovery — usually fine on plain walls.
 
-### 2. Create the Node.js app
+## Deploy / update on Hostinger (Business account)
 
-1. Log in to hPanel with the **Business Web Hosting** account (the one
-   that has `femmehaven.net`).
-2. Go to **Websites → Add Website → Node.js Apps**.
-3. Choose **Upload your website files** and upload `watermark-remover.zip`.
-4. When asked for the domain, choose/enter **`photo.femmehaven.net`**.
-   If it doesn't let you type a subdomain, first create it under
-   **Domains → Subdomains** for `femmehaven.net`, then come back.
-5. Build settings — Hostinger usually detects these, check they match:
-   | Setting | Value |
-   |---|---|
-   | Framework | Express |
-   | Node.js version | **22.x** |
-   | Entry file | `server.js` |
-   | Build / install command | `npm install` |
-   | Start command | `npm start` |
-6. **Environment variables** (strongly recommended):
+### Make the upload zip
+
+Use `watermark-remover.zip` (sent in the chat), **or** zip the *contents*
+of this `watermark-remover/` folder so `package.json` is at the top level.
+Include the hidden `.npmrc` file. Do **not** include `node_modules/`,
+`models/` or `jobs/`.
+
+### First deploy
+
+1. hPanel (Business account) → **Websites → Add Website → Node.js Web App**
+   → upload the zip.
+2. Build settings: Framework **Express**, Node **22.x**, root `./`,
+   entry `server.js`, install `npm install`, start `npm start`.
+3. Environment variables:
    | Name | Value |
    |---|---|
-   | `ACCESS_PASSWORD` | a password of your choice — without it anyone who finds the URL can use your server |
+   | `ACCESS_PASSWORD` | a password (letters and numbers) — any username works at the login prompt |
    | `ORT_THREADS` | `2` |
-7. Click **Deploy** and wait for the build to finish.
+   | `FFMPEG_THREADS` | `2` |
+4. Deploy, then connect the domain `photo.femmehaven.net`.
 
-### 3. First run
+### Updating to a new version
 
-1. Open https://photo.femmehaven.net (enter the password if you set
-   one — any username works).
-2. The top of the page shows *"Downloading AI model… X%"*. Wait until
-   it says **AI model ready** (usually 1–3 minutes, one time only).
-3. Upload a photo, paint over the watermark with a bit of margin, tick
-   the confirmation box, click **Remove watermark**.
-4. The result shows how many seconds it took. **Tell me this number** —
-   it decides whether this free setup is fast enough.
-
-### Updating later
-
-Re-upload a new zip the same way (or redeploy). The model is
-re-downloaded if Hostinger wipes the app folder on redeploy.
+Open the existing app in hPanel → upload the new zip / **Redeploy**. Keep
+the same environment variables. The AI model may re-download once after a
+redeploy (the page shows progress).
 
 ## If something goes wrong
 
 | Symptom | Likely cause / fix |
 |---|---|
-| Build fails while installing `onnxruntime-node` | Make sure the `.npmrc` file is in the zip (it stops an unneeded GPU download). Some zip tools hide dot-files. |
-| Stuck on "AI model error: Model download failed" | The server couldn't reach Hugging Face. Download `lama_fp32.onnx` from https://huggingface.co/Carve/LaMa-ONNX yourself and upload it into a `models/` folder in the app via File Manager. |
-| "Failed (503)" / app restarts while processing | Hit the hosting memory limit. Try a smaller photo; tell me and I'll lower memory use. |
-| Very slow (over ~60 s) | Shared CPU is busy/limited. We can switch processing to a paid per-image API or a VPS without changing the page. |
-| Blurry/odd fill on big watermarks across the middle | LaMa works best on small–medium marks. Remove large ones in a few smaller strokes using **Remove more from this result**. |
+| Build fails while installing `onnxruntime-node` | Make sure the `.npmrc` file is in the zip (it stops an unneeded GPU download). |
+| Build fails while installing `ffmpeg-static` | It downloads the ffmpeg program from GitHub during install. Redeploy once; if it keeps failing, send me the build log. |
+| "AI model error: Model download failed" | Download `lama_fp32.onnx` from https://huggingface.co/Carve/LaMa-ONNX and upload it into a `models/` folder in the app via File Manager. |
+| Video upload fails at a certain size | Hostinger may limit upload size. Try a smaller/compressed video, or tell me the size that fails. |
+| Video stuck at the same % for a long time / app restarts | Shared hosting CPU or memory limit. Try a shorter clip; tell me the video length and resolution. |
+| Faint outline of the watermark left in the video | Brush a little wider around the watermark and run again. |
+| Photo: blurry/odd fill on big watermarks | Remove large ones in a few smaller strokes using **Remove more from this result**. |
 
 ## Run locally
 

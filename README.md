@@ -26,9 +26,9 @@ with nothing open beforehand — see **[`extension/`](extension/README.md)**,
 a small browser extension installed once on each agent's computer. It
 reuses the same `php/` backend; only the delivery mechanism changes.
 
-## Photo watermark remover
+## Photo & video watermark remover
 
 **[`watermark-remover/`](watermark-remover/README.md)** is a separate tool:
-upload a property photo, paint over a watermark or logo you own, and the
-LaMa AI model removes it. Node.js, for Hostinger Business hosting at
-`photo.femmehaven.net`. No paid API.
+upload a property photo or video, paint over a watermark or logo you own,
+and it's removed (LaMa AI for photos, ffmpeg for videos). Node.js, for
+Hostinger Business hosting at `photo.femmehaven.net`. No paid API.

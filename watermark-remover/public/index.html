@@ -3,221 +3,400 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Photo Watermark Remover</title>
+<title>Watermark Remover</title>
 <style>
   :root { --bg:#f6f7f9; --card:#fff; --text:#1d2433; --muted:#667085; --line:#e4e7ec; --accent:#2563eb; --danger:#b42318; }
   * { box-sizing: border-box; }
   body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
   main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
   h1 { font-size: 22px; margin: 0 0 4px; }
-  p.sub { color: var(--muted); margin: 0 0 20px; }
+  p.sub { color: var(--muted); margin: 0 0 16px; }
+  .tabs { display:flex; gap:8px; margin-bottom:16px; }
+  .tabs button.active { background:var(--text); color:#fff; border-color:var(--text); }
   .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
   .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
   button, .btn { font: inherit; border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; text-decoration:none; color:var(--text); }
   button.primary, .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
   button:disabled { opacity:.5; cursor:not-allowed; }
-  #stage { position:relative; margin-top:12px; touch-action:none; display:none; }
-  #stage canvas { width:100%; height:auto; display:block; border-radius:8px; }
-  #mask { position:absolute; inset:0; opacity:.5; cursor:crosshair; }
-  #status { font-size:14px; color:var(--muted); }
-  #error { color:var(--danger); font-size:14px; min-height:1em; }
+  .stage { position:relative; margin-top:12px; touch-action:none; display:none; }
+  .stage canvas { width:100%; height:auto; display:block; border-radius:8px; }
+  .stage canvas.mask { position:absolute; inset:0; opacity:.5; cursor:crosshair; }
+  .tools { margin-top:12px; display:none; }
+  .status { font-size:14px; color:var(--muted); }
+  .error { color:var(--danger); font-size:14px; min-height:1em; }
   label.check { display:flex; gap:8px; align-items:flex-start; font-size:14px; }
-  #result img { width:100%; border-radius:8px; display:block; }
+  .result { display:none; }
+  .result img, .result video { width:100%; border-radius:8px; display:block; background:#000; }
   .hint { font-size:13px; color:var(--muted); }
+  progress { width: 220px; }
+  [hidden] { display:none !important; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Photo Watermark Remover</h1>
-  <p class="sub">Upload a property photo, paint over the watermark or logo, and remove it.</p>
+  <h1>Watermark Remover</h1>
+  <p class="sub">For property photos and videos you own: paint over the watermark or logo and remove it.</p>
 
-  <div class="card">
-    <div class="row">
-      <input type="file" id="file" accept="image/jpeg,image/png,image/webp">
-      <span id="status">Checking AI model…</span>
-    </div>
-    <div id="stage">
-      <canvas id="photo"></canvas>
-      <canvas id="mask"></canvas>
-    </div>
-    <div class="row" id="tools" style="margin-top:12px; display:none">
-      <label>Brush <input type="range" id="brush" min="5" max="150" value="40"></label>
-      <button id="undo">Undo</button>
-      <button id="clear">Clear</button>
-      <span class="hint">Paint fully over the watermark, with a little margin.</span>
-    </div>
+  <div class="tabs">
+    <button id="tab-photo" class="active">Photo</button>
+    <button id="tab-video">Video</button>
   </div>
 
   <div class="card">
     <label class="check"><input type="checkbox" id="rights">
-      <span>I confirm these photos belong to us or we have permission to edit them. Removing someone else's watermark without permission is not allowed.</span></label>
-    <div class="row" style="margin-top:12px">
-      <button class="primary" id="go" disabled>Remove watermark</button>
-      <span id="error"></span>
-    </div>
+      <span>I confirm these photos/videos belong to us or we have permission to edit them. Removing someone else's watermark without permission is not allowed.</span></label>
   </div>
 
-  <div class="card" id="result" style="display:none">
-    <div class="row" style="margin-bottom:12px">
-      <button id="compare">Hold to see original</button>
-      <a class="btn primary" id="download" download="clean-photo.jpg">Download</a>
-      <button id="again">Remove more from this result</button>
-      <span id="timing" class="hint"></span>
+  <!-- PHOTO -->
+  <section id="photo-panel">
+    <div class="card">
+      <div class="row">
+        <input type="file" id="p-file" accept="image/jpeg,image/png,image/webp">
+        <span class="status" id="p-status">Checking AI model…</span>
+      </div>
+      <div class="stage" id="p-stage"><canvas id="p-photo"></canvas><canvas class="mask" id="p-mask"></canvas></div>
+      <div class="row tools" id="p-tools">
+        <label>Brush <input type="range" id="p-brush" min="5" max="150" value="40"></label>
+        <button id="p-undo">Undo</button>
+        <button id="p-clear">Clear</button>
+        <span class="hint">Paint fully over the watermark, with a little margin.</span>
+      </div>
     </div>
-    <img id="out" alt="Result">
-  </div>
+    <div class="card">
+      <div class="row">
+        <button class="primary" id="p-go" disabled>Remove watermark</button>
+        <span class="error" id="p-error"></span>
+      </div>
+    </div>
+    <div class="card result" id="p-result">
+      <div class="row" style="margin-bottom:12px">
+        <button id="p-compare">Hold to see original</button>
+        <a class="btn primary" id="p-download" download="clean-photo.jpg">Download</a>
+        <button id="p-again">Remove more from this result</button>
+        <span id="p-timing" class="hint"></span>
+      </div>
+      <img id="p-out" alt="Result">
+    </div>
+  </section>
+
+  <!-- VIDEO -->
+  <section id="video-panel" hidden>
+    <div class="card">
+      <div class="row">
+        <input type="file" id="v-file" accept="video/*,.mp4,.mov,.m4v,.mkv,.webm">
+        <span class="status" id="v-status"></span>
+        <progress id="v-upload" max="1" value="0" hidden></progress>
+      </div>
+      <p class="hint" style="margin:8px 0 0">Below is a frame from your video. Paint over every watermark/logo — they must stay in the same place throughout the video.</p>
+      <div class="stage" id="v-stage"><canvas id="v-photo"></canvas><canvas class="mask" id="v-mask"></canvas></div>
+      <div class="row tools" id="v-tools">
+        <label>Brush <input type="range" id="v-brush" min="5" max="150" value="40"></label>
+        <button id="v-undo">Undo</button>
+        <button id="v-clear">Clear</button>
+        <label>Watermark type
+          <select id="v-mode">
+            <option value="auto">Auto (faded/see-through or solid)</option>
+            <option value="fill">Solid logo only (blur fill)</option>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row">
+        <button id="v-preview" disabled>Preview 5 seconds</button>
+        <button class="primary" id="v-go" disabled>Process full video</button>
+        <progress id="v-progress" max="1" value="0" hidden></progress>
+        <span class="status" id="v-state"></span>
+      </div>
+      <div class="error" id="v-error" style="margin-top:8px"></div>
+      <p class="hint" style="margin:8px 0 0">Full videos take roughly as long as the video itself (or a bit more). You can leave this page open and wait.</p>
+    </div>
+    <div class="card result" id="v-result">
+      <div class="row" style="margin-bottom:12px">
+        <a class="btn primary" id="v-download">Download</a>
+        <span class="hint" id="v-note"></span>
+      </div>
+      <video id="v-out" controls playsinline></video>
+    </div>
+  </section>
+
 </main>
 
 <script>
 const $ = (id) => document.getElementById(id);
-const photo = $('photo'), mask = $('mask');
-const pctx = photo.getContext('2d'), mctx = mask.getContext('2d');
-let sourceBlob = null, originalUrl = null, resultBlob = null;
-let strokes = [], drawing = false;
 
-async function pollStatus() {
+// ---------- shared brush ----------
+function makeBrush(prefix, onChange) {
+  const photo = $(prefix + '-photo'), mask = $(prefix + '-mask');
+  const pctx = photo.getContext('2d'), mctx = mask.getContext('2d');
+  let strokes = [], drawing = false;
+
+  function redraw() {
+    mctx.clearRect(0, 0, mask.width, mask.height);
+    mctx.strokeStyle = '#ff2d55';
+    mctx.lineCap = mctx.lineJoin = 'round';
+    for (const s of strokes) {
+      mctx.lineWidth = s.size;
+      mctx.beginPath();
+      mctx.moveTo(s.pts[0].x, s.pts[0].y);
+      for (const p of s.pts) mctx.lineTo(p.x, p.y);
+      if (s.pts.length === 1) mctx.lineTo(s.pts[0].x + 0.1, s.pts[0].y);
+      mctx.stroke();
+    }
+    onChange();
+  }
+  function point(e) {
+    const r = mask.getBoundingClientRect();
+    const scale = mask.width / r.width;
+    return { x: (e.clientX - r.left) * scale, y: (e.clientY - r.top) * scale, scale };
+  }
+  mask.addEventListener('pointerdown', (e) => {
+    drawing = true;
+    mask.setPointerCapture(e.pointerId);
+    const p = point(e);
+    strokes.push({ size: $(prefix + '-brush').value * p.scale, pts: [p] });
+    redraw();
+  });
+  mask.addEventListener('pointermove', (e) => {
+    if (!drawing) return;
+    strokes[strokes.length - 1].pts.push(point(e));
+    redraw();
+  });
+  mask.addEventListener('pointerup', () => { drawing = false; });
+  $(prefix + '-undo').onclick = () => { strokes.pop(); redraw(); };
+  $(prefix + '-clear').onclick = () => { strokes = []; redraw(); };
+
+  return {
+    setImage(img) {
+      for (const c of [photo, mask]) { c.width = img.naturalWidth || img.width; c.height = img.naturalHeight || img.height; }
+      pctx.drawImage(img, 0, 0);
+      strokes = [];
+      redraw();
+      $(prefix + '-stage').style.display = 'block';
+      $(prefix + '-tools').style.display = 'flex';
+    },
+    hasStrokes: () => strokes.length > 0,
+    // White = remove, black = keep.
+    maskBlob() {
+      const c = document.createElement('canvas');
+      c.width = mask.width; c.height = mask.height;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.drawImage(mask, 0, 0);
+      const d = ctx.getImageData(0, 0, c.width, c.height);
+      for (let i = 0; i < d.data.length; i += 4) {
+        const v = d.data[i] > 0 ? 255 : 0;
+        d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255;
+      }
+      ctx.putImageData(d, 0, 0);
+      return new Promise((r) => c.toBlob(r, 'image/png'));
+    },
+  };
+}
+
+function loadImage(src) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+}
+
+async function errorText(res) {
+  return (await res.json().catch(() => ({}))).error || 'Failed (' + res.status + ')';
+}
+
+// ---------- tabs ----------
+for (const name of ['photo', 'video']) {
+  $('tab-' + name).onclick = () => {
+    for (const n of ['photo', 'video']) {
+      $(n + '-panel').hidden = n !== name;
+      $('tab-' + n).classList.toggle('active', n === name);
+    }
+  };
+}
+
+// ---------- photo ----------
+let sourceBlob = null, originalUrl = null, resultBlob = null;
+const pBrush = makeBrush('p', updatePhotoButton);
+
+function updatePhotoButton() {
+  $('p-go').disabled = !(sourceBlob && pBrush.hasStrokes() && $('rights').checked);
+}
+
+async function pollModel() {
   try {
     const s = await (await fetch('api/status')).json();
-    const text = {
+    $('p-status').textContent = {
       idle: 'AI model not loaded yet',
       downloading: 'Downloading AI model (one-time)… ' + (s.total ? Math.round(s.downloaded / s.total * 100) + '%' : ''),
       loading: 'Loading AI model…',
       ready: 'AI model ready',
       error: 'AI model error: ' + s.error,
     }[s.status];
-    $('status').textContent = text;
-    if (s.status !== 'ready') setTimeout(pollStatus, 2000);
-  } catch { setTimeout(pollStatus, 5000); }
+    if (s.status !== 'ready') setTimeout(pollModel, 2000);
+  } catch { setTimeout(pollModel, 5000); }
 }
-pollStatus();
+pollModel();
 
-function loadImage(blob) {
-  return new Promise((resolve, reject) => {
-    const img = new Image();
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = URL.createObjectURL(blob);
-  });
-}
-
-async function setSource(blob) {
+async function setPhoto(blob) {
   sourceBlob = blob;
-  const img = await loadImage(blob);
-  for (const c of [photo, mask]) { c.width = img.naturalWidth; c.height = img.naturalHeight; }
-  pctx.drawImage(img, 0, 0);
-  strokes = [];
-  redrawMask();
-  $('stage').style.display = 'block';
-  $('tools').style.display = 'flex';
-  updateButton();
+  pBrush.setImage(await loadImage(URL.createObjectURL(blob)));
 }
 
-$('file').addEventListener('change', async (e) => {
+$('p-file').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   originalUrl = URL.createObjectURL(f);
-  $('result').style.display = 'none';
-  $('error').textContent = '';
-  await setSource(f);
+  $('p-result').style.display = 'none';
+  $('p-error').textContent = '';
+  await setPhoto(f);
 });
 
-function point(e) {
-  const r = mask.getBoundingClientRect();
-  const scale = mask.width / r.width;
-  return { x: (e.clientX - r.left) * scale, y: (e.clientY - r.top) * scale, scale };
-}
-
-function redrawMask() {
-  mctx.clearRect(0, 0, mask.width, mask.height);
-  mctx.strokeStyle = mctx.fillStyle = '#ff2d55';
-  mctx.lineCap = mctx.lineJoin = 'round';
-  for (const s of strokes) {
-    mctx.lineWidth = s.size;
-    mctx.beginPath();
-    mctx.moveTo(s.pts[0].x, s.pts[0].y);
-    for (const p of s.pts) mctx.lineTo(p.x, p.y);
-    if (s.pts.length === 1) mctx.lineTo(s.pts[0].x + 0.1, s.pts[0].y);
-    mctx.stroke();
-  }
-}
-
-mask.addEventListener('pointerdown', (e) => {
-  drawing = true;
-  mask.setPointerCapture(e.pointerId);
-  const p = point(e);
-  strokes.push({ size: $('brush').value * p.scale, pts: [p] });
-  redrawMask();
-  updateButton();
-});
-mask.addEventListener('pointermove', (e) => {
-  if (!drawing) return;
-  strokes[strokes.length - 1].pts.push(point(e));
-  redrawMask();
-});
-mask.addEventListener('pointerup', () => { drawing = false; });
-$('undo').onclick = () => { strokes.pop(); redrawMask(); updateButton(); };
-$('clear').onclick = () => { strokes = []; redrawMask(); updateButton(); };
-$('rights').onchange = updateButton;
-
-function updateButton() {
-  $('go').disabled = !(sourceBlob && strokes.length && $('rights').checked);
-}
-
-function maskBlob() {
-  // White = remove, black = keep.
-  const c = document.createElement('canvas');
-  c.width = mask.width; c.height = mask.height;
-  const ctx = c.getContext('2d');
-  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
-  ctx.drawImage(mask, 0, 0);
-  const d = ctx.getImageData(0, 0, c.width, c.height);
-  for (let i = 0; i < d.data.length; i += 4) {
-    const v = d.data[i] > 0 ? 255 : 0;
-    d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255;
-  }
-  ctx.putImageData(d, 0, 0);
-  return new Promise((r) => c.toBlob(r, 'image/png'));
-}
-
-$('go').onclick = async () => {
-  $('go').disabled = true;
-  $('error').textContent = 'Working… this can take up to a minute on shared hosting.';
+$('p-go').onclick = async () => {
+  $('p-go').disabled = true;
+  $('p-error').textContent = 'Working… this can take up to a minute.';
   const started = Date.now();
   try {
     const fd = new FormData();
     fd.append('rights', 'yes');
     fd.append('image', sourceBlob, sourceBlob.name || 'photo.png');
-    fd.append('mask', await maskBlob(), 'mask.png');
+    fd.append('mask', await pBrush.maskBlob(), 'mask.png');
     const res = await fetch('api/remove', { method: 'POST', body: fd });
-    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed (' + res.status + ')');
+    if (!res.ok) throw new Error(await errorText(res));
     resultBlob = await res.blob();
     const url = URL.createObjectURL(resultBlob);
-    $('out').src = url;
-    $('download').href = url;
-    $('download').download = 'clean-photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg');
+    $('p-out').src = url;
+    $('p-download').href = url;
+    $('p-download').download = 'clean-photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg');
     const serverMs = Number(res.headers.get('X-Processing-Ms'));
-    $('timing').textContent = 'Processed in ' + (serverMs / 1000).toFixed(1) + 's on the server (' + ((Date.now() - started) / 1000).toFixed(1) + 's total)';
-    $('result').style.display = 'block';
-    $('error').textContent = '';
-    $('result').scrollIntoView({ behavior: 'smooth' });
+    $('p-timing').textContent = 'Processed in ' + (serverMs / 1000).toFixed(1) + 's on the server (' + ((Date.now() - started) / 1000).toFixed(1) + 's total)';
+    $('p-result').style.display = 'block';
+    $('p-error').textContent = '';
+    $('p-result').scrollIntoView({ behavior: 'smooth' });
   } catch (err) {
-    $('error').textContent = err.message;
+    $('p-error').textContent = err.message;
   } finally {
-    updateButton();
+    updatePhotoButton();
   }
 };
 
-const showOriginal = () => { $('out').src = originalUrl; };
-const showResult = () => { $('out').src = $('download').href; };
-$('compare').addEventListener('pointerdown', showOriginal);
-$('compare').addEventListener('pointerup', showResult);
-$('compare').addEventListener('pointerleave', showResult);
+const showOriginal = () => { $('p-out').src = originalUrl; };
+const showResult = () => { $('p-out').src = $('p-download').href; };
+$('p-compare').addEventListener('pointerdown', showOriginal);
+$('p-compare').addEventListener('pointerup', showResult);
+$('p-compare').addEventListener('pointerleave', showResult);
 
-$('again').onclick = async () => {
-  await setSource(new File([resultBlob], 'photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg'), { type: resultBlob.type }));
-  $('result').style.display = 'none';
+$('p-again').onclick = async () => {
+  const ext = resultBlob.type === 'image/png' ? 'png' : 'jpg';
+  await setPhoto(new File([resultBlob], 'photo.' + ext, { type: resultBlob.type }));
+  $('p-result').style.display = 'none';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
+
+// ---------- video ----------
+let videoId = null, busy = false;
+const vBrush = makeBrush('v', updateVideoButtons);
+
+function updateVideoButtons() {
+  const ok = videoId && vBrush.hasStrokes() && $('rights').checked && !busy;
+  $('v-go').disabled = $('v-preview').disabled = !ok;
+}
+$('rights').addEventListener('change', () => { updatePhotoButton(); updateVideoButtons(); });
+
+function upload(file) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    const fd = new FormData();
+    fd.append('video', file);
+    xhr.open('POST', 'api/video');
+    xhr.upload.onprogress = (e) => { if (e.lengthComputable) $('v-upload').value = e.loaded / e.total; };
+    xhr.onload = () => {
+      let body = {};
+      try { body = JSON.parse(xhr.responseText); } catch {}
+      if (xhr.status === 200) resolve(body);
+      else reject(new Error(body.error || 'Upload failed (' + xhr.status + ')'));
+    };
+    xhr.onerror = () => reject(new Error('Upload failed — check your connection, or the file may be too large for the server.'));
+    xhr.send(fd);
+  });
+}
+
+$('v-file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  videoId = null;
+  updateVideoButtons();
+  $('v-result').style.display = 'none';
+  $('v-error').textContent = '';
+  $('v-upload').hidden = false;
+  $('v-upload').value = 0;
+  $('v-status').textContent = 'Uploading ' + (f.size / 1048576).toFixed(0) + ' MB…';
+  try {
+    const info = await upload(f);
+    $('v-status').textContent = 'Uploaded: ' + Math.round(info.duration) + ' s, ' + info.width + '×' + info.height;
+    vBrush.setImage(await loadImage('api/video/' + info.id + '/frame.jpg'));
+    videoId = info.id;
+  } catch (err) {
+    $('v-status').textContent = '';
+    $('v-error').textContent = err.message;
+  } finally {
+    $('v-upload').hidden = true;
+    updateVideoButtons();
+  }
+});
+
+async function processVideo(preview) {
+  busy = true;
+  updateVideoButtons();
+  $('v-error').textContent = '';
+  $('v-result').style.display = 'none';
+  try {
+    const fd = new FormData();
+    fd.append('rights', 'yes');
+    fd.append('mode', $('v-mode').value);
+    fd.append('preview', preview ? 'yes' : 'no');
+    fd.append('mask', await vBrush.maskBlob(), 'mask.png');
+    const res = await fetch('api/video/' + videoId + '/process', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error(await errorText(res));
+    $('v-progress').hidden = false;
+    const started = Date.now();
+    for (;;) {
+      await new Promise((r) => setTimeout(r, 2000));
+      const s = await (await fetch('api/video/' + videoId + '/status')).json();
+      if (s.error && s.state !== 'error') throw new Error(s.error);
+      $('v-progress').value = s.progress || 0;
+      const mins = Math.floor((Date.now() - started) / 60000), secs = Math.floor((Date.now() - started) / 1000) % 60;
+      $('v-state').textContent = {
+        queued: 'Waiting for another video to finish…',
+        analysing: 'Studying the watermark across the video…',
+        processing: 'Removing… ' + Math.round((s.progress || 0) * 100) + '%',
+      }[s.state] + ' (' + mins + 'm ' + secs + 's)';
+      if (s.state === 'error') throw new Error(s.error);
+      if (s.state === 'done') break;
+    }
+    const url = 'api/video/' + videoId + '/result.mp4?t=' + Date.now();
+    $('v-out').src = url;
+    $('v-download').href = url + '&download=1';
+    $('v-download').textContent = preview ? 'Download preview' : 'Download video';
+    $('v-note').textContent = preview
+      ? 'This is a 5-second preview. If it looks good, click "Process full video".'
+      : 'Done. Files are deleted from the server after 2 hours.';
+    $('v-result').style.display = 'block';
+    $('v-state').textContent = '';
+    $('v-result').scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    $('v-error').textContent = err.message;
+    $('v-state').textContent = '';
+  } finally {
+    busy = false;
+    $('v-progress').hidden = true;
+    updateVideoButtons();
+  }
+}
+$('v-preview').onclick = () => processVideo(true);
+$('v-go').onclick = () => processVideo(false);
 </script>
 </body>
 </html>
