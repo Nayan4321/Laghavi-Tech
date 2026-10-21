@@ -64,14 +64,50 @@ function runFfmpeg(args, { onStdout, onProgress, totalSeconds } = {}) {
   });
 }
 
+const seconds = (m) => Number(m[1]) * 3600 + Number(m[2]) * 60 + Number(m[3]);
+
 async function probe(job) {
   // `ffmpeg -i` with no output exits non-zero but still prints the stream info.
   const info = await runFfmpeg(['-i', job.input]).catch((e) => e.stderr || '');
+  const videoLine = (info.match(/Stream #.*Video:.*/) || [''])[0].trim();
+  console.log('[video probe]', path.basename(job.dir), videoLine);
+  if (!videoLine) throw new Error('This file does not look like a video.');
+
   const d = info.match(/Duration: (\d+):(\d+):([\d.]+)/);
-  if (!d || !/Video:/.test(info)) throw new Error('This file does not look like a video.');
-  job.duration = Number(d[1]) * 3600 + Number(d[2]) * 60 + Number(d[3]);
+  if (d) {
+    job.duration = seconds(d);
+  } else {
+    // Some files don't store their length: read through the video to find it.
+    const scan = await runFfmpeg(['-i', job.input, '-map', '0:V:0', '-c', 'copy', '-f', 'null', '-']).catch((e) => e.stderr || '');
+    const times = [...scan.matchAll(/time=(\d+):(\d+):([\d.]+)/g)];
+    job.duration = times.length ? seconds(times[times.length - 1]) : 0;
+  }
+
+  // Grab a frame to paint on. Some files (phone/edited/downloaded videos)
+  // don't allow jumping in or have an extra cover image, so try a few ways.
   job.frame = path.join(job.dir, 'frame.jpg');
-  await runFfmpeg(['-ss', String(Math.min(1, job.duration / 2)), '-i', job.input, '-frames:v', '1', '-q:v', '2', '-y', job.frame]);
+  const out = ['-frames:v', '1', '-q:v', '2', '-update', '1', '-y', job.frame];
+  const attempts = [
+    ['-ss', String(Math.min(1, job.duration / 2)), '-i', job.input, '-map', '0:V:0', ...out],
+    ['-i', job.input, '-map', '0:V:0', ...out],
+    ['-fflags', '+genpts+discardcorrupt', '-ignore_editlist', '1', '-i', job.input, '-map', '0:V:0', ...out],
+    ['-i', job.input, '-map', '0:v:0', ...out],
+  ];
+  let lastError;
+  for (const args of attempts) {
+    try {
+      fs.rmSync(job.frame, { force: true });
+      await runFfmpeg(args);
+      if (fs.existsSync(job.frame) && fs.statSync(job.frame).size > 0) break;
+    } catch (err) {
+      lastError = err;
+    }
+  }
+  if (!fs.existsSync(job.frame) || !fs.statSync(job.frame).size) {
+    console.error('[video probe] no frame:', lastError && lastError.message);
+    throw new Error(`Couldn't read the picture from this video. Try exporting/saving it again as MP4 (H.264). Details: ${videoLine}`);
+  }
+  if (!job.duration) throw new Error(`Couldn't work out how long this video is. Try exporting it again as MP4. Details: ${videoLine}`);
   // Use the decoded frame's size: it already accounts for phone rotation.
   const meta = await sharp(job.frame).metadata();
   job.width = meta.width;
@@ -148,7 +184,7 @@ async function frameStats(job, box) {
     const sumSq = new Uint32Array(frameSize);
     let pending = Buffer.alloc(0);
     let count = 0;
-    await runFfmpeg([...pre, '-i', job.input, '-vf', `${vf}crop=${box.w}:${box.h}:${box.x}:${box.y},format=rgb24`,
+    await runFfmpeg([...pre, '-i', job.input, '-map', '0:V:0', '-vf', `${vf}crop=${box.w}:${box.h}:${box.x}:${box.y},format=rgb24`,
       '-an', '-fps_mode', 'passthrough', '-frames:v', '240', '-f', 'rawvideo', 'pipe:1'], {
       onStdout: (chunk) => {
         pending = pending.length ? Buffer.concat([pending, chunk]) : chunk;
@@ -493,7 +529,7 @@ async function render(job, preview) {
     return `[${inputs.filter((a) => a === '-i').length - 1}:v]`;
   };
   const graph = [];
-  let last = '[0:v]';
+  let last = '[0:V:0]';
   job.regions.forEach((rg, k) => {
     const { x, y, w, h } = rg.box;
     graph.push(`${last}split[base${k}][in${k}]`, `[in${k}]crop=${w}:${h}:${x}:${y},format=gbrp[c${k}]`);
