@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Photo Watermark Remover</title>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --text:#1d2433; --muted:#667085; --line:#e4e7ec; --accent:#2563eb; --danger:#b42318; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); }
+  main { max-width: 1000px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 22px; margin: 0 0 4px; }
+  p.sub { color: var(--muted); margin: 0 0 20px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; margin-bottom:16px; }
+  .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+  button, .btn { font: inherit; border:1px solid var(--line); background:#fff; padding:8px 14px; border-radius:8px; cursor:pointer; text-decoration:none; color:var(--text); }
+  button.primary, .btn.primary { background:var(--accent); border-color:var(--accent); color:#fff; }
+  button:disabled { opacity:.5; cursor:not-allowed; }
+  #stage { position:relative; margin-top:12px; touch-action:none; display:none; }
+  #stage canvas { width:100%; height:auto; display:block; border-radius:8px; }
+  #mask { position:absolute; inset:0; opacity:.5; cursor:crosshair; }
+  #status { font-size:14px; color:var(--muted); }
+  #error { color:var(--danger); font-size:14px; min-height:1em; }
+  label.check { display:flex; gap:8px; align-items:flex-start; font-size:14px; }
+  #result img { width:100%; border-radius:8px; display:block; }
+  .hint { font-size:13px; color:var(--muted); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Photo Watermark Remover</h1>
+  <p class="sub">Upload a property photo, paint over the watermark or logo, and remove it.</p>
+
+  <div class="card">
+    <div class="row">
+      <input type="file" id="file" accept="image/jpeg,image/png,image/webp">
+      <span id="status">Checking AI model…</span>
+    </div>
+    <div id="stage">
+      <canvas id="photo"></canvas>
+      <canvas id="mask"></canvas>
+    </div>
+    <div class="row" id="tools" style="margin-top:12px; display:none">
+      <label>Brush <input type="range" id="brush" min="5" max="150" value="40"></label>
+      <button id="undo">Undo</button>
+      <button id="clear">Clear</button>
+      <span class="hint">Paint fully over the watermark, with a little margin.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <label class="check"><input type="checkbox" id="rights">
+      <span>I confirm these photos belong to us or we have permission to edit them. Removing someone else's watermark without permission is not allowed.</span></label>
+    <div class="row" style="margin-top:12px">
+      <button class="primary" id="go" disabled>Remove watermark</button>
+      <span id="error"></span>
+    </div>
+  </div>
+
+  <div class="card" id="result" style="display:none">
+    <div class="row" style="margin-bottom:12px">
+      <button id="compare">Hold to see original</button>
+      <a class="btn primary" id="download" download="clean-photo.jpg">Download</a>
+      <button id="again">Remove more from this result</button>
+      <span id="timing" class="hint"></span>
+    </div>
+    <img id="out" alt="Result">
+  </div>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const photo = $('photo'), mask = $('mask');
+const pctx = photo.getContext('2d'), mctx = mask.getContext('2d');
+let sourceBlob = null, originalUrl = null, resultBlob = null;
+let strokes = [], drawing = false;
+
+async function pollStatus() {
+  try {
+    const s = await (await fetch('api/status')).json();
+    const text = {
+      idle: 'AI model not loaded yet',
+      downloading: 'Downloading AI model (one-time)… ' + (s.total ? Math.round(s.downloaded / s.total * 100) + '%' : ''),
+      loading: 'Loading AI model…',
+      ready: 'AI model ready',
+      error: 'AI model error: ' + s.error,
+    }[s.status];
+    $('status').textContent = text;
+    if (s.status !== 'ready') setTimeout(pollStatus, 2000);
+  } catch { setTimeout(pollStatus, 5000); }
+}
+pollStatus();
+
+function loadImage(blob) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = URL.createObjectURL(blob);
+  });
+}
+
+async function setSource(blob) {
+  sourceBlob = blob;
+  const img = await loadImage(blob);
+  for (const c of [photo, mask]) { c.width = img.naturalWidth; c.height = img.naturalHeight; }
+  pctx.drawImage(img, 0, 0);
+  strokes = [];
+  redrawMask();
+  $('stage').style.display = 'block';
+  $('tools').style.display = 'flex';
+  updateButton();
+}
+
+$('file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  originalUrl = URL.createObjectURL(f);
+  $('result').style.display = 'none';
+  $('error').textContent = '';
+  await setSource(f);
+});
+
+function point(e) {
+  const r = mask.getBoundingClientRect();
+  const scale = mask.width / r.width;
+  return { x: (e.clientX - r.left) * scale, y: (e.clientY - r.top) * scale, scale };
+}
+
+function redrawMask() {
+  mctx.clearRect(0, 0, mask.width, mask.height);
+  mctx.strokeStyle = mctx.fillStyle = '#ff2d55';
+  mctx.lineCap = mctx.lineJoin = 'round';
+  for (const s of strokes) {
+    mctx.lineWidth = s.size;
+    mctx.beginPath();
+    mctx.moveTo(s.pts[0].x, s.pts[0].y);
+    for (const p of s.pts) mctx.lineTo(p.x, p.y);
+    if (s.pts.length === 1) mctx.lineTo(s.pts[0].x + 0.1, s.pts[0].y);
+    mctx.stroke();
+  }
+}
+
+mask.addEventListener('pointerdown', (e) => {
+  drawing = true;
+  mask.setPointerCapture(e.pointerId);
+  const p = point(e);
+  strokes.push({ size: $('brush').value * p.scale, pts: [p] });
+  redrawMask();
+  updateButton();
+});
+mask.addEventListener('pointermove', (e) => {
+  if (!drawing) return;
+  strokes[strokes.length - 1].pts.push(point(e));
+  redrawMask();
+});
+mask.addEventListener('pointerup', () => { drawing = false; });
+$('undo').onclick = () => { strokes.pop(); redrawMask(); updateButton(); };
+$('clear').onclick = () => { strokes = []; redrawMask(); updateButton(); };
+$('rights').onchange = updateButton;
+
+function updateButton() {
+  $('go').disabled = !(sourceBlob && strokes.length && $('rights').checked);
+}
+
+function maskBlob() {
+  // White = remove, black = keep.
+  const c = document.createElement('canvas');
+  c.width = mask.width; c.height = mask.height;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#000'; ctx.fillRect(0, 0, c.width, c.height);
+  ctx.drawImage(mask, 0, 0);
+  const d = ctx.getImageData(0, 0, c.width, c.height);
+  for (let i = 0; i < d.data.length; i += 4) {
+    const v = d.data[i] > 0 ? 255 : 0;
+    d.data[i] = d.data[i + 1] = d.data[i + 2] = v; d.data[i + 3] = 255;
+  }
+  ctx.putImageData(d, 0, 0);
+  return new Promise((r) => c.toBlob(r, 'image/png'));
+}
+
+$('go').onclick = async () => {
+  $('go').disabled = true;
+  $('error').textContent = 'Working… this can take up to a minute on shared hosting.';
+  const started = Date.now();
+  try {
+    const fd = new FormData();
+    fd.append('rights', 'yes');
+    fd.append('image', sourceBlob, sourceBlob.name || 'photo.png');
+    fd.append('mask', await maskBlob(), 'mask.png');
+    const res = await fetch('api/remove', { method: 'POST', body: fd });
+    if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed (' + res.status + ')');
+    resultBlob = await res.blob();
+    const url = URL.createObjectURL(resultBlob);
+    $('out').src = url;
+    $('download').href = url;
+    $('download').download = 'clean-photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg');
+    const serverMs = Number(res.headers.get('X-Processing-Ms'));
+    $('timing').textContent = 'Processed in ' + (serverMs / 1000).toFixed(1) + 's on the server (' + ((Date.now() - started) / 1000).toFixed(1) + 's total)';
+    $('result').style.display = 'block';
+    $('error').textContent = '';
+    $('result').scrollIntoView({ behavior: 'smooth' });
+  } catch (err) {
+    $('error').textContent = err.message;
+  } finally {
+    updateButton();
+  }
+};
+
+const showOriginal = () => { $('out').src = originalUrl; };
+const showResult = () => { $('out').src = $('download').href; };
+$('compare').addEventListener('pointerdown', showOriginal);
+$('compare').addEventListener('pointerup', showResult);
+$('compare').addEventListener('pointerleave', showResult);
+
+$('again').onclick = async () => {
+  await setSource(new File([resultBlob], 'photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg'), { type: resultBlob.type }));
+  $('result').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+</script>
+</body>
+</html>
