@@ -19,7 +19,7 @@ All pages are responsive (checked at desktop, tablet and 390px mobile).
 |---|---|---|
 | `contact-us/` | Contact Us | required |
 | `about-us/` | About Us | optional |
-| `meet-our-founder/` | Meet Our Founder (blog post) | optional, plus a Facebook feed shortcode (see below) |
+| `meet-our-founder/` | Meet Our Founder (blog post) | optional (Facebook feed is built into part 3) |
 
 Each folder holds three files, added to the page **top to bottom in this order**:
 
@@ -38,15 +38,10 @@ container's padding to 0. Change `id="1"` in the shortcode to your form's ID
 
 On About Us and Meet Our Founder, skip the Shortcode widget if you don't want a form there.
 
-### Meet Our Founder: five widgets
+### Meet Our Founder: Facebook feed
 
-This page has a second shortcode slot for the Smash Balloon Facebook feed:
-
-1. `1-html-widget.html`: HTML (banner, video, episode text)
-2. `2-shortcode-widget.txt`: Shortcode, Gravity Form (optional)
-3. `3-html-widget.html`: HTML ("Latest from Facebook" heading)
-4. `4-facebook-shortcode-widget.txt`: Shortcode, `[custom-facebook-feed feed=1]`, in a container with CSS class `clc-fbfeed`
-5. `5-html-widget.html`: HTML (Follow us button and call-to-action)
+Part 3 already contains the Smash Balloon shortcode `[custom-facebook-feed feed=1]` inside the
+HTML widget (it renders on this site), styled to match the page. No extra widget is needed.
 
 ## Images and video to link (search the file for `PASTE-`)
 

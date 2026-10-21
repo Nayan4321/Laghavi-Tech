@@ -1,4 +1,4 @@
-<!-- Cornwall Legal Centre CIC | Meet Our Founder (blog post) | PART 3 (Facebook heading)
+<!-- Cornwall Legal Centre CIC | Meet Our Founder (blog post) | BOTTOM part
      Paste ALL of this into an Elementor "HTML" widget. See README.md. -->
 <style>
 /* Cornwall Legal Centre CIC – shared page styles (scoped to .clc so nothing else on the site is affected) */
@@ -154,11 +154,9 @@
 .clc-tags span{font-size:12px;letter-spacing:.06em;text-transform:uppercase;background:#f3ece0;color:var(--clc-gold-text);padding:5px 10px;border-radius:999px;font-weight:600}
 
 /* Facebook feed */
-.clc-fb{background:var(--clc-white);border-radius:var(--clc-radius);box-shadow:var(--clc-shadow);padding:16px;display:flex;justify-content:center}
-.clc-fb iframe{border:0;width:100%;max-width:500px;height:700px;display:block}
+.clc-fb{max-width:760px;margin:0 auto;position:relative;z-index:1}
 
 /* ===== Gravity Forms styling =====
-   Put the Elementor "Shortcode" widget inside a container whose
    Advanced > CSS Classes = clc-gf  (cream background, dark card)
    or                       clc-gf clc-gf--light  (white card)       */
 .clc-gf{background:#f5f1ee;padding:0 24px 80px!important}
@@ -202,7 +200,6 @@
   .clc-gf{padding:0 16px 48px!important}
   .clc-gf .gform_wrapper{padding:28px 20px!important}
   .clc-gf .gform_wrapper .gform_button,.clc-gf .gform_wrapper input[type=submit]{width:100%!important}
-  .clc-fb iframe{height:600px}
 }
 
 /* faded background photos: swap the URL in each <div class="clc-bg" ...> for your own Media Library image */
@@ -222,33 +219,50 @@
 }
 
 /* ===== Smash Balloon Custom Facebook Feed styling =====
-   Put the Elementor "Shortcode" widget inside a container whose
-   Advanced > CSS Classes = clc-fbfeed                                  */
-.clc-fbfeed{background:#f5f1ee;padding:0 24px!important}
-.clc-fbfeed *,.clc-fbfeed *::before,.clc-fbfeed *::after{box-sizing:border-box}
-.clc-fbfeed #cff,.clc-fbfeed .cff-wrapper{max-width:760px!important;margin:0 auto!important;background:transparent!important;font-family:inherit!important}
-.clc-fbfeed .cff-item{background:#fff!important;border:0!important;border-radius:4px!important;box-shadow:0 6px 24px rgba(0,0,0,.06)!important;padding:24px 26px!important;margin:0 0 20px!important;border-top:3px solid transparent!important;transition:border-color .2s}
-.clc-fbfeed .cff-item:hover{border-top-color:#c9a55c!important}
-.clc-fbfeed .cff-author-text .cff-page-name a,.clc-fbfeed .cff-author a{color:#2a2a2a!important;font-weight:600!important;text-decoration:none!important}
-.clc-fbfeed .cff-date{color:#5c5c5c!important}
-.clc-fbfeed .cff-post-text,.clc-fbfeed .cff-text{color:#2a2a2a!important;font-size:15.5px!important;line-height:1.7!important}
-.clc-fbfeed .cff-media-wrap img,.clc-fbfeed .cff-photo img,.clc-fbfeed .cff-html5-video{border-radius:4px!important;max-width:100%!important;height:auto}
-.clc-fbfeed a{color:#8a6a2a}
-.clc-fbfeed .cff-post-links a,.clc-fbfeed .cff-viewpost-facebook,.clc-fbfeed .cff-viewpost-link{color:#8a6a2a!important;font-weight:600!important;text-transform:uppercase;font-size:12px!important;letter-spacing:.1em}
-.clc-fbfeed .cff-likebox,.clc-fbfeed .cff-load-more{margin-top:12px!important}
-.clc-fbfeed #cff .cff-load-more,.clc-fbfeed .cff-load-more{background:#c9a55c!important;color:#222627!important;border:0!important;border-radius:999px!important;font-weight:600!important;padding:12px 28px!important;width:auto!important;display:inline-block!important}
+   Styles the [custom-facebook-feed] shortcode inside <div class="clc-fb"> */
+.clc-fb *,.clc-fb *::before,.clc-fb *::after{box-sizing:border-box}
+.clc-fb #cff,.clc-fb .cff-wrapper{max-width:760px!important;margin:0 auto!important;background:transparent!important;font-family:inherit!important}
+.clc-fb .cff-item{background:#fff!important;border:0!important;border-radius:4px!important;box-shadow:0 6px 24px rgba(0,0,0,.06)!important;padding:24px 26px!important;margin:0 0 20px!important;border-top:3px solid transparent!important;transition:border-color .2s}
+.clc-fb .cff-item:hover{border-top-color:#c9a55c!important}
+.clc-fb .cff-author-text .cff-page-name a,.clc-fb .cff-author a{color:#2a2a2a!important;font-weight:600!important;text-decoration:none!important}
+.clc-fb .cff-date{color:#5c5c5c!important}
+.clc-fb .cff-post-text,.clc-fb .cff-text{color:#2a2a2a!important;font-size:15.5px!important;line-height:1.7!important}
+.clc-fb .cff-media-wrap img,.clc-fb .cff-photo img,.clc-fb .cff-html5-video{border-radius:4px!important;max-width:100%!important;height:auto}
+.clc-fb a{color:#8a6a2a}
+.clc-fb .cff-post-links a,.clc-fb .cff-viewpost-facebook,.clc-fb .cff-viewpost-link{color:#8a6a2a!important;font-weight:600!important;text-transform:uppercase;font-size:12px!important;letter-spacing:.1em}
+.clc-fb .cff-likebox,.clc-fb .cff-load-more{margin-top:12px!important}
+.clc-fb #cff .cff-load-more,.clc-fb .cff-load-more{background:#c9a55c!important;color:#222627!important;border:0!important;border-radius:999px!important;font-weight:600!important;padding:12px 28px!important;width:auto!important;display:inline-block!important}
 @media (max-width:767px){
-  .clc-fbfeed{padding:0 16px!important}
-  .clc-fbfeed .cff-item{padding:18px 16px!important}
+  .clc-fb .cff-item{padding:18px 16px!important}
 }
 </style>
 <div class="clc">
-<section class="clc-section clc-watermark" style="padding-bottom:32px">
+<!-- Facebook feed (Smash Balloon). Delete this whole <section> if you don't want it. -->
+<section class="clc-section clc-watermark">
   <div class="clc-wrap">
-    <div class="clc-title" style="margin-bottom:0">
+    <div class="clc-title">
       <h2>Latest from <span>Facebook</span></h2>
       <div class="clc-dots" aria-hidden="true"><i></i><i></i><i></i></div>
       <p>Our newest posts appear here automatically.</p>
+    </div>
+    <div class="clc-fb">
+      [custom-facebook-feed feed=1]
+    </div>
+    <div class="clc-btns" style="margin-top:28px">
+      <a class="clc-btn" href="https://www.facebook.com/cornwalllegalcentre" target="_blank" rel="noopener">Follow us on Facebook &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section class="clc-cta">
+  <!-- BACKGROUND IMAGE: replace the URL with your own (Media Library > Copy URL) or delete this line -->
+  <div class="clc-bg clc-bg--full" style="background-image:url('https://images.unsplash.com/photo-1589994965851-a8f479c573a9?auto=format&fit=crop&w=1920&q=60')" aria-hidden="true"></div>
+  <div class="clc-wrap">
+    <h2>Facing a legal issue? <span>We're here to help.</span></h2>
+    <p>If anything in this episode resonates with you, or if you're facing a legal issue and aren't sure what your options are, get in touch with us today.</p>
+    <div class="clc-btns">
+      <a class="clc-btn" href="/contact-us/">Get in touch with us today &rarr;</a>
+      <a class="clc-btn clc-btn--ghost" href="tel:+447792609049">Call 07792 609049</a>
     </div>
   </div>
 </section>

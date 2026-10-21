@@ -1,6 +1,0 @@
-[custom-facebook-feed feed=1]
-
-- Add an Elementor "Shortcode" widget directly below the part 3 HTML widget and paste the line above.
-- Select the container holding this Shortcode widget > Advanced > CSS Classes, and enter:
-    clc-fbfeed
-- Set that container's Padding to 0 and Content Width to Full Width.
