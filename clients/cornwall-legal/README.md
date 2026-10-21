@@ -19,7 +19,7 @@ All pages are responsive (checked at desktop, tablet and 390px mobile).
 |---|---|---|
 | `contact-us/` | Contact Us | required |
 | `about-us/` | About Us | optional |
-| `meet-our-founder/` | Meet Our Founder (blog post) | optional |
+| `meet-our-founder/` | Meet Our Founder (blog post) | optional, plus a Facebook feed shortcode (see below) |
 
 Each folder holds three files, added to the page **top to bottom in this order**:
 
@@ -38,6 +38,16 @@ container's padding to 0. Change `id="1"` in the shortcode to your form's ID
 
 On About Us and Meet Our Founder, skip the Shortcode widget if you don't want a form there.
 
+### Meet Our Founder: five widgets
+
+This page has a second shortcode slot for the Smash Balloon Facebook feed:
+
+1. `1-html-widget.html`: HTML (banner, video, episode text)
+2. `2-shortcode-widget.txt`: Shortcode, Gravity Form (optional)
+3. `3-html-widget.html`: HTML ("Latest from Facebook" heading)
+4. `4-facebook-shortcode-widget.txt`: Shortcode, `[custom-facebook-feed feed=1]`, in a container with CSS class `clc-fbfeed`
+5. `5-html-widget.html`: HTML (Follow us button and call-to-action)
+
 ## Images and video to link (search the file for `PASTE-`)
 
 | Page | What to replace | Where to get it |
@@ -45,14 +55,11 @@ On About Us and Meet Our Founder, skip the Shortcode widget if you don't want a 
 | About Us, part 1 | `PASTE-IMAGE-URL-HERE` | Media Library → click image → **Copy URL to clipboard** |
 | Meet Our Founder, part 1 | `PASTE-FOUNDER-PHOTO-URL-HERE` | Same as above |
 | Meet Our Founder, part 1 | `PASTE-YOUTUBE-ID-HERE` | The ID from the YouTube link: `youtube.com/watch?v=`**`AbC123`** |
-| Meet Our Founder, part 3 | `YOURPAGENAME` (twice) | Your Facebook page address, the part after `facebook.com/` |
 | Contact Us, part 1 | `PASTE-FACEBOOK-URL`, `PASTE-INSTAGRAM-URL`, `PASTE-LINKEDIN-URL` | Your full social profile links |
 
 If an image URL is left as the placeholder, that image column hides itself and the text spans
 the full width, so the page never shows a broken image.
 
-The Facebook block on Meet Our Founder is optional. It shows your latest Facebook posts
-automatically. Delete that `<section>` if you don't want it.
 
 ## Faded background images
 
