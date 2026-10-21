@@ -1,5 +1,5 @@
 === Laghavi Subscriptions for WooCommerce ===
-Contributors: laghavidigital
+Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4

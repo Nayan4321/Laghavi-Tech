@@ -634,9 +634,9 @@ class SLP_Settings {
 			<p class="slp-admin__credit">
 				<?php
 				printf(
-					/* translators: %s: link to laghavi.com. */
+					/* translators: %s: link to laghavi.site. */
 					esc_html__( 'Made with care by %s.', 'simple-login-page' ),
-					'<a href="https://laghavi.com/" target="_blank" rel="noopener noreferrer">Laghavi Digital</a>'
+					'<a href="https://laghavi.site/" target="_blank" rel="noopener noreferrer">Laghavi Digital</a>'
 				);
 				?>
 			</p>

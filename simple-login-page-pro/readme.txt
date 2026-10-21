@@ -1,5 +1,5 @@
 === Simple Login Page Pro ===
-Contributors: laghavidigital
+Contributors: nayan4321
 Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 5.8
 Tested up to: 6.8

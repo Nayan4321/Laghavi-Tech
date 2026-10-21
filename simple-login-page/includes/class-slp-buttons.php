@@ -239,7 +239,7 @@ class SLP_Buttons {
 			$html .= '<p class="slp-credit">' . sprintf(
 				/* translators: %s: link to Laghavi Digital. */
 				esc_html__( 'Powered by %s', 'simple-login-page' ),
-				'<a href="https://laghavi.com/" target="_blank" rel="noopener">Laghavi Digital</a>'
+				'<a href="https://laghavi.site/" target="_blank" rel="noopener">Laghavi Digital</a>'
 			) . '</p>';
 		}
 

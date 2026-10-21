@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name:       Simple Login Page
- * Plugin URI:        https://laghavi.com/
+ * Plugin URI:        https://laghavi.site/simple-login-page/
  * Description:       Let visitors sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn. Works with WordPress and WooCommerce accounts, adds a simple math question to the login form to stop bots, lets you move the login page to your own URL, and logs failed logins with IP, device and location.
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
- * Author URI:        https://laghavi.com/
+ * Author URI:        https://laghavi.site/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       simple-login-page

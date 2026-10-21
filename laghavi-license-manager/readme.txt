@@ -1,11 +1,11 @@
 === Laghavi License Manager ===
-Contributors: laghavidigital
+Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
 
-Sell your plugins with WooCommerce on laghavi.com: license keys, site activations and automatic updates.
+Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
 
 == Description ==
 
@@ -24,7 +24,7 @@ Install this on your shop (laghavi.site), next to WooCommerce. It is a normal Wo
 
 == Setting up Simple Login Page Pro for sale ==
 
-1. Install and activate this plugin on laghavi.com (WooCommerce must be active). Visit Settings > Permalinks once and click Save so the My Account > Licenses page works.
+1. Install and activate this plugin on laghavi.site (WooCommerce must be active). Visit Settings > Permalinks once and click Save so the My Account > Licenses page works.
 2. Create a WooCommerce product "Simple Login Page Pro" (Simple product, Virtual + Downloadable not needed).
 3. In the product's **License** tab: tick "Sell a license", set Plugin slug to `simple-login-page-pro`, choose Sites per license and Updates for (days), set Latest version to `1.0.0`, and upload `simple-login-page-pro.zip`. To sell it as a subscription, also tick "Subscription" in the General tab (Laghavi Subscriptions); "Updates for (days)" is then ignored, because the subscription decides.
 4. Publish the product. Buy it once yourself with a 100% coupon to test the key, the email and the activation.

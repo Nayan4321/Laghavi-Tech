@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name:       Laghavi License Manager
- * Plugin URI:        https://laghavi.com/
+ * Plugin URI:        https://laghavi.site/
  * Description:       Sell plugins with WooCommerce: license keys on purchase, downloads in My Account, keys that follow Laghavi Subscriptions (cancel any time, key works until the paid period ends), site activations and automatic updates.
  * Version:           1.0.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
  * Author:            Laghavi Digital
- * Author URI:        https://laghavi.com/
+ * Author URI:        https://laghavi.site/
  * License:           GPL-2.0-or-later
  * Text Domain:       laghavi-license-manager
  *

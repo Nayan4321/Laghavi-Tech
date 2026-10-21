@@ -324,7 +324,7 @@ class SLPP_License {
 			'name'          => 'Simple Login Page Pro',
 			'slug'          => SLPP_SLUG,
 			'version'       => $info['version'],
-			'author'        => '<a href="https://laghavi.com/">Laghavi Digital</a>',
+			'author'        => '<a href="https://laghavi.site/">Laghavi Digital</a>',
 			'homepage'      => 'https://laghavi.site/',
 			'requires'      => isset( $info['requires'] ) ? $info['requires'] : '',
 			'tested'        => isset( $info['tested'] ) ? $info['tested'] : '',

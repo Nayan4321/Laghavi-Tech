@@ -153,7 +153,7 @@ class LLM_Api {
 			return self::fail( 'revoked', __( 'This license key has been revoked.', 'laghavi-license-manager' ), 403 );
 		}
 		if ( 'expired' === $status ) {
-			return self::fail( 'expired', __( 'This license key has expired. Please renew it on laghavi.com.', 'laghavi-license-manager' ), 403 );
+			return self::fail( 'expired', __( 'This license key has expired. Please renew it on laghavi.site.', 'laghavi-license-manager' ), 403 );
 		}
 
 		$existing = LLM_Licenses::activation( $license->id, $site );
@@ -165,7 +165,7 @@ class LLM_Api {
 				return self::fail(
 					'limit',
 					/* translators: %d: number of sites. */
-					sprintf( _n( 'This key is already used on %d site. Deactivate it there first, or remove that site in My Account > Licenses on laghavi.com.', 'This key is already used on %d sites. Deactivate it on one of them first, or remove a site in My Account > Licenses on laghavi.com.', $count, 'laghavi-license-manager' ), $count ),
+					sprintf( _n( 'This key is already used on %d site. Deactivate it there first, or remove that site in My Account > Licenses on laghavi.site.', 'This key is already used on %d sites. Deactivate it on one of them first, or remove a site in My Account > Licenses on laghavi.site.', $count, 'laghavi-license-manager' ), $count ),
 					403
 				);
 			}

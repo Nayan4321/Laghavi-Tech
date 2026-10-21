@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name:       Simple Login Page Pro
- * Plugin URI:        https://laghavi.com/
+ * Plugin URI:        https://laghavi.site/simple-login-page/
  * Description:       Pro add-on for Simple Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets, plus login page templates.
  * Version:           1.0.0
  * Requires at least: 5.8
  * Requires PHP:      7.4
  * Requires Plugins:  simple-login-page
  * Author:            Laghavi Digital
- * Author URI:        https://laghavi.com/
+ * Author URI:        https://laghavi.site/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       simple-login-page-pro

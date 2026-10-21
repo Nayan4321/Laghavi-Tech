@@ -1,6 +1,5 @@
 === Simple Login Page ===
-Contributors: laghavidigital
-Donate link: https://laghavi.com/
+Contributors: nayan4321
 Tags: social login, google login, woocommerce login, apple login, facebook login
 Requires at least: 5.8
 Tested up to: 6.8
@@ -9,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-One-click sign up and login with Google, Facebook, Apple, Microsoft and LinkedIn, for WordPress and WooCommerce, with a math question to stop login bots.
+One-click sign up and login with Google, Facebook, Apple, Microsoft and LinkedIn for WordPress and WooCommerce, with a math question to stop bots.
 
 == Description ==
 
@@ -49,7 +48,7 @@ The login and registration forms (WordPress and WooCommerce) ask one random ques
 * Secrets are never shown again after saving.
 * No tracking and no data sent anywhere except to the login provider the visitor chooses.
 
-Made by [Laghavi Digital](https://laghavi.com/).
+Made by [Laghavi Digital](https://laghavi.site/) (Laghavi FZE LLC). Plugin page: [laghavi.site/simple-login-page](https://laghavi.site/simple-login-page/).
 
 == Installation ==
 
