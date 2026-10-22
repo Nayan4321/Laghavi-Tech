@@ -8,7 +8,7 @@ Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Subscriptions for WooCommerce with automatic Stripe renewals, reminders, a better My Account, and license keys for the plugins you sell.
+Subscriptions for WooCommerce with any payment method, automatic Stripe renewals, reminders, and license keys for the plugins you sell.
 
 == Description ==
 
