@@ -1,0 +1,340 @@
+<!--
+  Happy Subscription – landing page for laghavi.site (https://laghavi.site/happy-subscription/)
+  Paste everything below into an Elementor "HTML" widget (Elementor > HTML, not "Text Editor").
+  Put it in a full-width container with no padding; the page centres itself at 1080px.
+  Before publishing, check the two links:
+    1. FREE DOWNLOAD: https://laghavi.site/wp-content/uploads/happy-subscription.zip
+       (upload happy-subscription.zip in Media > Add New and copy its "File URL" here if it differs;
+       once the plugin is on WordPress.org, use https://wordpress.org/plugins/happy-subscription/ instead)
+    2. PRO PRODUCT:   https://laghavi.site/product/happy-subscription-pro/
+       (open the product page and copy its address here if it differs)
+  Use Find & Replace in a text editor to change them everywhere.
+-->
+<style>
+#hs-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#ea580c;--brand2:#db2777;--navy:#1a1446;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#hs-lp *,#hs-lp *::before,#hs-lp *::after{box-sizing:border-box}
+#hs-lp h1,#hs-lp h2,#hs-lp h3,#hs-lp p{margin:0}
+#hs-lp a{text-decoration:none}
+#hs-lp section{margin-top:56px}
+#hs-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#hs-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#hs-lp .hs-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#hs-lp .hs-btn:hover{transform:translateY(-1px)}
+#hs-lp .hs-btn svg{width:18px;height:18px;flex:none}
+#hs-lp .hs-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#hs-lp .hs-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#hs-lp .hs-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#hs-lp .hs-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(234,88,12,.3)}
+#hs-lp .hs-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#hs-lp .hs-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#hs-lp .hs-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(219,39,119,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(234,88,12,.4),transparent 60%),linear-gradient(135deg,#140f3a,#24185a);overflow:hidden}
+#hs-lp .hs-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#hs-lp .hs-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#hs-lp .hs-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#hs-lp .hs-hero p{color:#d6d9f5;margin-top:14px;font-size:16px;max-width:560px}
+#hs-lp .hs-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#hs-lp .hs-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#hs-lp .hs-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#hs-lp .hs-stats span{font-size:12.5px;color:#b9bde8}
+/* Hero product + license mock-up */
+#hs-lp .hs-mock{display:grid;gap:14px;max-width:340px;justify-self:end;width:100%}
+#hs-lp .hs-mock__card{background:#fff;border-radius:18px;padding:20px;color:var(--ink);box-shadow:0 30px 60px rgba(0,0,0,.35)}
+#hs-lp .hs-mock__name{font-weight:700;font-size:17px}
+#hs-lp .hs-mock__price{font-size:30px;font-weight:800;margin-top:8px;letter-spacing:-.02em}
+#hs-lp .hs-mock__price span{font-size:14px;font-weight:600;color:var(--muted)}
+#hs-lp .hs-mock__meta{font-size:12.5px;color:var(--muted);margin-top:2px}
+#hs-lp .hs-mock__row{display:flex;gap:8px;margin-top:14px}
+#hs-lp .hs-mock__opt{flex:1;border:1px solid var(--line);border-radius:9px;padding:8px;font-size:12px;text-align:center;color:var(--muted)}
+#hs-lp .hs-mock__opt.is-on{border:2px solid var(--brand);color:var(--ink);font-weight:700}
+#hs-lp .hs-mock__btn{height:42px;border-radius:10px;margin-top:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center}
+#hs-lp .hs-mock__dl{display:inline-flex;align-items:center;gap:6px;margin-top:12px;padding:4px 10px;border-radius:999px;background:#fff7ed;color:#c2410c;font-size:12px;font-weight:700}
+#hs-lp .hs-mock__key{background:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 20px 40px rgba(0,0,0,.3);color:var(--ink)}
+#hs-lp .hs-mock__key small{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:700}
+#hs-lp .hs-mock__key code{display:block;margin-top:4px;font-size:14px;font-weight:700;background:var(--soft);border-radius:8px;padding:7px 10px;color:var(--ink);font-family:ui-monospace,Menlo,Consolas,monospace}
+#hs-lp .hs-mock__key em{display:flex;justify-content:space-between;font-style:normal;font-size:12px;color:var(--muted);margin-top:8px}
+#hs-lp .hs-mock__key em b{color:#16a34a}
+
+/* Cards */
+#hs-lp .hs-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#hs-lp .hs-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#hs-lp .hs-card__head{display:flex;gap:12px;align-items:center}
+#hs-lp .hs-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#hs-lp .hs-icon svg{width:20px;height:20px}
+#hs-lp .hs-card h3{font-size:16px;font-weight:700}
+#hs-lp .hs-card small{display:block;font-size:12px;color:var(--muted)}
+#hs-lp .hs-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#hs-lp .hs-card li{margin:4px 0}
+
+/* Install steps */
+#hs-lp .hs-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#hs-lp .hs-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#hs-lp .hs-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#hs-lp .hs-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#hs-lp .hs-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#hs-lp .hs-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#hs-lp .hs-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#hs-lp .hs-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#hs-lp .hs-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#hs-lp .hs-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#hs-lp .hs-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#hs-lp .hs-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#hs-lp .hs-table th:last-child,#hs-lp .hs-table td:last-child{background:rgba(234,88,12,.05)}
+#hs-lp .hs-table td.hs-yes{color:#16a34a;font-weight:700;font-size:16px}
+#hs-lp .hs-table td.hs-no{color:#c0c4d0}
+
+/* Pricing */
+#hs-lp .hs-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#hs-lp .hs-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#hs-lp .hs-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(234,88,12,.15)}
+#hs-lp .hs-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#hs-lp .hs-price h3{font-size:17px;font-weight:700}
+#hs-lp .hs-price__sites{font-size:13px;color:var(--muted)}
+#hs-lp .hs-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#hs-lp .hs-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#hs-lp .hs-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#hs-lp .hs-price li{padding:4px 0 4px 24px;position:relative}
+#hs-lp .hs-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#hs-lp .hs-price .hs-btn{justify-content:center}
+#hs-lp .hs-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#hs-lp .hs-faq{margin-top:20px;display:grid;gap:10px}
+#hs-lp .hs-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#hs-lp .hs-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#hs-lp .hs-faq summary::-webkit-details-marker{display:none}
+#hs-lp .hs-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#hs-lp .hs-faq details[open] summary::after{content:"–"}
+#hs-lp .hs-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#hs-lp .hs-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#hs-lp .hs-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#hs-lp .hs-maker p{font-size:14px;color:var(--muted)}
+#hs-lp .hs-maker b{color:var(--ink)}
+#hs-lp .hs-maker a{color:var(--brand)}
+#hs-lp .hs-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#ea580c,#db2777 60%,#9333ea)}
+#hs-lp .hs-cta h2{color:#fff}
+#hs-lp .hs-cta p{color:#fff1f2;margin:10px auto 0;max-width:560px}
+#hs-lp .hs-cta .hs-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #hs-lp .hs-hero__grid{grid-template-columns:1fr}
+ #hs-lp .hs-mock{justify-self:start;max-width:100%}
+ #hs-lp .hs-cards,#hs-lp .hs-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #hs-lp .hs-cards,#hs-lp .hs-steps,#hs-lp .hs-prices{grid-template-columns:1fr}
+ #hs-lp .hs-stats{grid-template-columns:repeat(2,1fr)}
+ #hs-lp .hs-hero__ctas .hs-btn{flex:1 1 100%;justify-content:center}
+ #hs-lp .hs-mock{display:none}
+ #hs-lp .hs-table{min-width:0;font-size:13px}
+ #hs-lp .hs-table th,#hs-lp .hs-table td{padding:11px 10px}
+ #hs-lp .hs-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#hs-lp h1,#hs-lp h2,#hs-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#hs-lp h2,#hs-lp h3{color:var(--ink)}
+#hs-lp .hs-hero h1,#hs-lp .hs-cta h2{color:#fff}
+#hs-lp p,#hs-lp li,#hs-lp td,#hs-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#hs-lp a{box-shadow:none;border-bottom:0}
+#hs-lp a:not(.hs-btn){color:var(--brand)}
+#hs-lp a.hs-btn{text-decoration:none!important}
+#hs-lp ul{margin-left:0;margin-right:0}
+#hs-lp .hs-card ul{list-style:disc}
+#hs-lp table,#hs-lp th,#hs-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#hs-lp th{border-top:0}
+#hs-lp table{margin:0;border:0;background:#fff}
+#hs-lp tr{background:none}
+#hs-lp details{margin:0}
+#hs-lp summary{color:var(--ink);background:none;border:0}
+#hs-lp section{display:block;padding:0}
+</style>
+
+<div id="hs-lp" class="hs-lp">
+
+  <!-- Hero -->
+  <section class="hs-hero">
+    <div class="hs-hero__grid">
+      <div>
+        <span class="hs-badge">Free WordPress plugin for WooCommerce</span>
+        <h1>Happy Subscription</h1>
+        <p>Sell subscriptions and software licenses with WooCommerce. Stripe charges every renewal automatically, customers manage everything from My Account, and the plugins you sell get license keys, downloads and automatic updates. No other subscription plugin needed.</p>
+        <div class="hs-hero__ctas">
+          <a class="hs-btn hs-btn--white" href="https://laghavi.site/wp-content/uploads/happy-subscription.zip" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+            Download free plugin
+          </a>
+          <a class="hs-btn hs-btn--ghost" href="https://laghavi.site/product/happy-subscription-pro/">Buy Pro – from $49/year</a>
+        </div>
+        <div class="hs-stats">
+          <div><b>Auto</b><span>Stripe renewals</span></div>
+          <div><b>0</b><span>extra plugins needed</span></div>
+          <div><b>1-click</b><span>cancel &amp; resume</span></div>
+          <div><b>$0</b><span>free forever</span></div>
+        </div>
+      </div>
+      <div class="hs-mock" aria-hidden="true">
+        <div class="hs-mock__card">
+          <div class="hs-mock__name">Growth Plan</div>
+          <div class="hs-mock__price">$49.00<span> / year</span></div>
+          <div class="hs-mock__meta">7-day free trial · cancel any time</div>
+          <div class="hs-mock__row"><span class="hs-mock__opt">1 site</span><span class="hs-mock__opt is-on">5 sites</span><span class="hs-mock__opt">Unlimited</span></div>
+          <div class="hs-mock__btn">Subscribe</div>
+          <span class="hs-mock__dl">↓ 1,284 downloads</span>
+        </div>
+        <div class="hs-mock__key">
+          <small>Your license key</small>
+          <code>H7VPU-CZCDU-Y9X3A-HYTUK</code>
+          <em><span>Renews on 22 Oct 2027</span><b>● Active</b></em>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free features -->
+  <section id="whats-inside">
+    <h2>What you get, free</h2>
+    <p class="lead">Everything you need to run a subscription shop or sell software, in one plugin. Install it, connect Stripe, and tick “Subscription” on a product.</p>
+    <div class="hs-cards">
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#ea580c"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg></span><div><h3>Subscription products</h3><small>Monthly, yearly or any period</small></div></div>
+        <ul><li>Tick “Subscription” on a product or on each variation</li><li>Free trials, sign-up fees and a set number of payments</li><li>Prices show as “$49.00 / year · 7-day free trial”</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#635bff"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><div><h3>Stripe renewals</h3><small>Charged automatically</small></div></div>
+        <ul><li>Stripe Billing charges every renewal and retries failed cards</li><li>Cards, Apple Pay and Google Pay on Stripe’s secure page</li><li>Other payment methods get a “Pay now” invoice on each renewal</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#0f766e"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></span><div><h3>Reminders &amp; emails</h3><small>In your WooCommerce email design</small></div></div>
+        <ul><li>Upcoming renewal and trial-ending reminders</li><li>Payment failed, with an “Update card” button</li><li>Cancellation confirmations for the customer and you</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#db2777"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><div><h3>A better My Account</h3><small>Customers help themselves</small></div></div>
+        <ul><li>Overview dashboard with next payment and recent orders</li><li>Payment history, Pay now and Update card</li><li>Cancel at the end of the paid period, or Resume</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#9333ea"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg></span><div><h3>Checkout without a cart</h3><small>Fewer steps, more sales</small></div></div>
+        <ul><li>“Subscribe” goes straight to checkout</li><li>Change quantities or remove items right on checkout</li><li>Shows the recurring total and the next payment date</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#111827"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="15" r="4"/><path d="m10.8 12.2 9.2-9.2M17 6l3 3"/></svg></span><div><h3>License keys</h3><small>For plugins and software you sell</small></div></div>
+        <ul><li>A key on every paid order, in the email and My Account</li><li>Downloads in My Account and automatic updates</li><li>Set sites per key; keys follow the subscription</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="#fff"><path d="m12 2 3 6.6 7.2.7-5.4 4.8 1.6 7.1L12 17.5 5.6 21.2l1.6-7.1L1.8 9.3 9 8.6z"/></svg></span><div><h3>Buyer-only reviews</h3><small>Reviews you can trust</small></div></div>
+        <ul><li>Only customers who bought a product can review it</li><li>Each review shows “Purchased in March 2026”</li><li>Turn either option on or off in the settings</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#2563eb"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg></span><div><h3>Download counts</h3><small>Social proof on product pages</small></div></div>
+        <ul><li>Show “1,234 downloads” under the price</li><li>Choose the products that show it</li><li>Add downloads from elsewhere, like WordPress.org</li></ul>
+      </div>
+      <div class="hs-card">
+        <div class="hs-card__head"><span class="hs-icon" style="background:#16a34a"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><div><h3>Subscriptions dashboard</h3><small>Your recurring revenue at a glance</small></div></div>
+        <ul><li>Monthly recurring revenue and counts by status</li><li>Search, filter and open any subscription</li><li>Cancel, resume or send a renewal invoice now</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="hs-install">
+    <h2>Up and running in minutes</h2>
+    <div class="hs-steps">
+      <div class="hs-step"><span class="hs-step__n">1</span><h3>Install</h3><p>Download the free plugin, then in WordPress go to Plugins → Add New → Upload Plugin and choose the zip. WooCommerce must be active.</p></div>
+      <div class="hs-step"><span class="hs-step__n">2</span><h3>Connect Stripe</h3><p>Paste your Stripe secret key in WooCommerce → Settings → Payments → Stripe. The webhook is set up for you automatically.</p></div>
+      <div class="hs-step"><span class="hs-step__n">3</span><h3>Create a plan</h3><p>Edit a product, tick “Subscription”, choose monthly or yearly. To sell software, tick “Sell a license” and upload your zip.</p></div>
+    </div>
+    <p class="hs-note">Needs WordPress 6.0+, PHP 7.4+ and WooCommerce 8.0+. Works with HPOS and the block checkout.</p>
+  </section>
+
+  <!-- Free vs Pro -->
+  <section>
+    <h2>Free plugin vs Happy Subscription Pro</h2>
+    <p class="lead">The free plugin runs a complete subscription shop. Pro adds plans by number of sites, “Ask for price” products and a currency switcher for international customers.</p>
+    <div class="hs-table-wrap">
+      <table class="hs-table">
+        <thead><tr><th>Feature</th><th>Free plugin</th><th>Pro</th></tr></thead>
+        <tbody>
+          <tr><td>Subscription products with trials and sign-up fees</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>Stripe automatic renewals</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>Invoice renewals for other payment methods</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>Reminder and payment emails</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>My Account dashboard, cancel and resume</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>Checkout without a cart page</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>Buyer-only reviews and download counts</td><td class="hs-yes">✓</td><td class="hs-yes">✓</td></tr>
+          <tr><td>License keys, downloads and updates</td><td>Simple products</td><td>Simple and variable products</td></tr>
+          <tr><td>Plans by number of sites (1 / 5 / unlimited)</td><td class="hs-no">—</td><td>Each plan with its own price and sites</td></tr>
+          <tr><td>“Ask for price” products</td><td class="hs-no">—</td><td>Contact page and WhatsApp buttons</td></tr>
+          <tr><td>Currency switcher</td><td class="hs-no">—</td><td>Exchange rates, rounding and per-country currencies</td></tr>
+          <tr><td>Updates &amp; support</td><td>Free updates</td><td>Automatic updates and email support</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pro pricing -->
+  <section id="pro">
+    <h2>Get Happy Subscription Pro</h2>
+    <p class="lead">Yearly license with updates and support. Cancel any time and your license keeps working until the paid year ends.</p>
+    <div class="hs-prices">
+      <div class="hs-price">
+        <h3>Personal</h3><div class="hs-price__sites">1 website</div>
+        <div class="hs-price__amt">$49<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
+        <a class="hs-btn hs-btn--line" href="https://laghavi.site/product/happy-subscription-pro/?attribute_sites=1+site">Buy Personal</a>
+      </div>
+      <div class="hs-price hs-price--pop">
+        <span class="hs-price__tag">Most popular</span>
+        <h3>Business</h3><div class="hs-price__sites">Up to 5 websites</div>
+        <div class="hs-price__amt">$99<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
+        <a class="hs-btn hs-btn--brand" href="https://laghavi.site/product/happy-subscription-pro/?attribute_sites=5+sites">Buy Business</a>
+      </div>
+      <div class="hs-price">
+        <h3>Agency</h3><div class="hs-price__sites">Unlimited websites</div>
+        <div class="hs-price__amt">$199<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Use on every client shop</li><li>Email support</li></ul>
+        <a class="hs-btn hs-btn--line" href="https://laghavi.site/product/happy-subscription-pro/?attribute_sites=Unlimited+sites">Buy Agency</a>
+      </div>
+    </div>
+    <p class="hs-price__fine">Prices in US dollars. Pro needs the free Happy Subscription plugin installed.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Questions</h2>
+    <div class="hs-faq">
+      <details><summary>Do I need another subscription plugin?</summary><p>No. Happy Subscription handles subscription products, renewals, emails and the customer’s account pages itself. WooCommerce is the only plugin it needs.</p></details>
+      <details><summary>Which payment methods can I use?</summary><p>Stripe charges renewals automatically. Any other WooCommerce payment method works with invoice renewals: on each renewal date the customer gets a “Pay now” email.</p></details>
+      <details><summary>Can customers cancel by themselves?</summary><p>Yes, from My Account (you can turn this off). Nothing is charged again, and they keep access until the end of the period they paid for.</p></details>
+      <details><summary>I sell plugins. How do license keys work?</summary><p>Tick “Sell a license” on the product and upload your zip. Each paid order gets a key, customers download from My Account, and your plugin activates the key and gets updates through the built-in license API.</p></details>
+      <details><summary>What does Pro add?</summary><p>Licenses for variable products (for example 1 site, 5 sites and unlimited at different prices), “Ask for price” products with contact page and WhatsApp buttons, and a currency switcher with exchange rates and per-country currencies.</p></details>
+      <details><summary>Can I cancel Pro?</summary><p>Yes, any time from My Account. Your subscription won’t renew, and your license keeps working until the end of the year you paid for.</p></details>
+      <details><summary>Is my data sent anywhere?</summary><p>Nothing is sent to Laghavi Digital. Payment details go to Stripe only when you use it, and the license API runs on your own site.</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>Who makes it</h2>
+    <div class="hs-maker">
+      <div class="hs-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, creator of Happy Subscription<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="hs-cta">
+    <h2>Start selling subscriptions today</h2>
+    <p>Install the free plugin and take your first recurring payment in minutes. Upgrade to Pro for plans by site, “Ask for price” and multi-currency.</p>
+    <div class="hs-hero__ctas">
+      <a class="hs-btn hs-btn--white" href="https://laghavi.site/wp-content/uploads/happy-subscription.zip" download>Download free plugin</a>
+      <a class="hs-btn hs-btn--ghost" href="https://laghavi.site/product/happy-subscription-pro/">Buy Pro</a>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,159 @@
+/* Happy Subscription – My Account > Licenses */
+.happysub-lic-licenses {
+	display: grid;
+	gap: 18px;
+}
+
+.happysub-lic-license {
+	padding: 20px;
+	border: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 10px;
+	background: #fff;
+}
+
+.happysub-lic-license__head {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: 12px;
+}
+
+.happysub-lic-license__head h3 {
+	margin: 0 0 2px;
+}
+
+.happysub-lic-version {
+	font-size: 13px;
+	opacity: 0.7;
+}
+
+.happysub-lic-badge {
+	padding: 3px 10px;
+	border-radius: 999px;
+	background: #f0f0f1;
+	font-size: 12px;
+	font-weight: 600;
+	white-space: nowrap;
+}
+
+.happysub-lic-badge--active { background: #e7f6ec; color: #116329; }
+.happysub-lic-badge--expired { background: #fff4e0; color: #8a5300; }
+.happysub-lic-badge--revoked { background: #fdecea; color: #a1221b; }
+
+.happysub-lic-key {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+	margin: 16px 0;
+}
+
+.happysub-lic-key__value {
+	flex: 1 1 260px;
+	padding: 10px 12px;
+	border-radius: 8px;
+	background: rgba(0, 0, 0, 0.04);
+	font-size: 15px;
+	letter-spacing: 0.04em;
+	overflow-wrap: anywhere;
+}
+
+.happysub-lic-facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+	margin: 0 0 14px;
+}
+
+.happysub-lic-facts div {
+	margin: 0;
+}
+
+.happysub-lic-facts dt {
+	margin: 0;
+	font-size: 12px;
+	opacity: 0.7;
+}
+
+.happysub-lic-facts dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.happysub-lic-sub {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 12px;
+	margin: 0 0 14px;
+	padding: 14px 16px;
+	border-radius: 8px;
+	background: #f6f7f9;
+}
+
+.happysub-lic-sub--pending-cancel { background: #fff8eb; }
+.happysub-lic-sub--on-hold { background: #fdecea; }
+
+.happysub-lic-sub__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.happysub-lic-sub__actions form {
+	display: inline;
+	margin: 0;
+}
+
+.happysub-lic-cancel.button {
+	border: 1px solid rgba(0, 0, 0, 0.2) !important;
+	background: #fff !important;
+	color: #a1221b !important;
+}
+
+.happysub-lic-sites {
+	margin: 0 0 12px;
+	padding: 0;
+	list-style: none;
+}
+
+.happysub-lic-sites li {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+	padding: 8px 0;
+	border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.happysub-lic-sites form {
+	margin: 0;
+}
+
+.happysub-lic-link {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #a1221b;
+	font-size: 13px;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.happysub-lic-help summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.happysub-lic-help ol {
+	margin: 8px 0 0 20px;
+}
+
+.happysub-lic-empty {
+	padding: 30px;
+	border: 1px dashed rgba(0, 0, 0, 0.15);
+	border-radius: 10px;
+	text-align: center;
+}
