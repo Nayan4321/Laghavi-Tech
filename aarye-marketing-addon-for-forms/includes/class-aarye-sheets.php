@@ -199,38 +199,39 @@ class AARYE_Sheets {
 	 */
 	public static function script() {
 		$secret = (string) AARYE_Settings::get( 'sheets_secret' );
-		return <<<JS
-// Aarye Marketing Addon for Forms – adds each form entry as a row in this spreadsheet.
-const SECRET = '{$secret}';
-
-function doPost(e) {
-  const data = JSON.parse(e.postData.contents);
-  if (data.secret !== SECRET) return reply({ ok: false, error: 'The secret does not match. Copy the script again from WordPress.' });
-  if (data.test) return reply({ ok: true });
-
-  const lock = LockService.getScriptLock();
-  lock.waitLock(20000);
-  try {
-    const book = SpreadsheetApp.getActiveSpreadsheet();
-    const sheet = book.getSheetByName(data.sheet) || book.insertSheet(data.sheet);
-    let headers = sheet.getLastColumn() ? sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0] : [];
-    data.headers.forEach(function (h) {
-      if (headers.indexOf(h) === -1) {
-        headers.push(h);
-        sheet.getRange(1, headers.length).setValue(h).setFontWeight('bold');
-      }
-    });
-    if (sheet.getFrozenRows() === 0) sheet.setFrozenRows(1);
-    sheet.appendRow(headers.map(function (h) { return data.row[h] !== undefined ? data.row[h] : ''; }));
-  } finally {
-    lock.releaseLock();
-  }
-  return reply({ ok: true });
-}
-
-function reply(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
-}
-JS;
+		$lines  = array(
+			'// Aarye Marketing Addon for Forms – adds each form entry as a row in this spreadsheet.',
+			'const SECRET = ' . wp_json_encode( $secret ) . ';',
+			'',
+			'function doPost(e) {',
+			'  const data = JSON.parse(e.postData.contents);',
+			'  if (data.secret !== SECRET) return reply({ ok: false, error: \'The secret does not match. Copy the script again from WordPress.\' });',
+			'  if (data.test) return reply({ ok: true });',
+			'',
+			'  const lock = LockService.getScriptLock();',
+			'  lock.waitLock(20000);',
+			'  try {',
+			'    const book = SpreadsheetApp.getActiveSpreadsheet();',
+			'    const sheet = book.getSheetByName(data.sheet) || book.insertSheet(data.sheet);',
+			'    let headers = sheet.getLastColumn() ? sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0] : [];',
+			'    data.headers.forEach(function (h) {',
+			'      if (headers.indexOf(h) === -1) {',
+			'        headers.push(h);',
+			'        sheet.getRange(1, headers.length).setValue(h).setFontWeight(\'bold\');',
+			'      }',
+			'    });',
+			'    if (sheet.getFrozenRows() === 0) sheet.setFrozenRows(1);',
+			'    sheet.appendRow(headers.map(function (h) { return data.row[h] !== undefined ? data.row[h] : \'\'; }));',
+			'  } finally {',
+			'    lock.releaseLock();',
+			'  }',
+			'  return reply({ ok: true });',
+			'}',
+			'',
+			'function reply(obj) {',
+			'  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);',
+			'}',
+		);
+		return implode( "\n", $lines ) . "\n";
 	}
 }

@@ -593,7 +593,12 @@ class AARYE_Admin {
 		foreach ( $rows as $row ) {
 			$line = array();
 			foreach ( array_keys( $heads ) as $h ) {
-				$line[] = isset( $row[ $h ] ) ? $row[ $h ] : '';
+				$value = isset( $row[ $h ] ) ? (string) $row[ $h ] : '';
+				// Excel shows the guard apostrophe, so drop it for plain numbers such as +971 50 123 4567.
+				if ( preg_match( '/^\'[+-][\d\s().-]+$/', $value ) ) {
+					$value = substr( $value, 1 );
+				}
+				$line[] = $value;
 			}
 			fputcsv( $out, $line );
 		}
@@ -700,10 +705,9 @@ class AARYE_Admin {
 	 */
 	public static function page_forms() {
 		global $wpdb;
-		$t      = AARYE_Entries::table();
 		$counts = array();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table.
-		foreach ( (array) $wpdb->get_results( "SELECT form_plugin, form_id, COUNT(*) AS n, MAX(created_at) AS last FROM {$t} GROUP BY form_plugin, form_id" ) as $row ) {
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
+		foreach ( (array) $wpdb->get_results( $wpdb->prepare( 'SELECT form_plugin, form_id, COUNT(*) AS n, MAX(created_at) AS last FROM %i GROUP BY form_plugin, form_id', AARYE_Entries::table() ) ) as $row ) {
 			$counts[ $row->form_plugin . ':' . $row->form_id ] = $row;
 		}
 		?>

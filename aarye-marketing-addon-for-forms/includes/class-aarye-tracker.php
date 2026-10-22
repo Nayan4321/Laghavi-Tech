@@ -95,7 +95,7 @@ class AARYE_Tracker {
 	public static function language( $page_lang = '' ) {
 		$lang = '';
 		if ( has_filter( 'wpml_current_language' ) ) {
-			$lang = (string) apply_filters( 'wpml_current_language', null ); // WPML.
+			$lang = (string) apply_filters( 'wpml_current_language', null ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
 		}
 		if ( '' === $lang && function_exists( 'pll_current_language' ) ) {
 			$lang = (string) pll_current_language(); // Polylang.

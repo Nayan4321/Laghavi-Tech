@@ -808,9 +808,8 @@ class AARYE_Integrations {
 	 */
 	private static function forms_seen( $key ) {
 		global $wpdb;
-		$t = AARYE_Entries::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT form_id, MAX(form_name) AS form_name FROM {$t} WHERE form_plugin = %s GROUP BY form_id", $key ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
+		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT form_id, MAX(form_name) AS form_name FROM %i WHERE form_plugin = %s GROUP BY form_id', AARYE_Entries::table(), $key ) );
 		$out  = array();
 		foreach ( (array) $rows as $row ) {
 			$out[] = array( 'id' => (string) $row->form_id, 'title' => '' !== $row->form_name ? $row->form_name : $row->form_id );

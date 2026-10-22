@@ -69,9 +69,8 @@ class AARYE_Privacy {
 	 */
 	private static function entries_for( $email, $page ) {
 		global $wpdb;
-		$t = AARYE_Entries::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return (array) $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE email = %s ORDER BY id LIMIT 50 OFFSET %d", $email, ( $page - 1 ) * 50 ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
+		return (array) $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE email = %s ORDER BY id LIMIT 50 OFFSET %d', AARYE_Entries::table(), $email, ( $page - 1 ) * 50 ) );
 	}
 
 	/**

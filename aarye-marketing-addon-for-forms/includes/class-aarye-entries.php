@@ -387,8 +387,7 @@ class AARYE_Entries {
 	 */
 	public static function get( $id ) {
 		global $wpdb;
-		$t = self::table();
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE id = %d", $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', self::table(), $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
 	}
 
 	/**
@@ -404,47 +403,50 @@ class AARYE_Entries {
 	}
 
 	/**
-	 * WHERE clause for the dashboard filters.
+	 * WHERE clause for the dashboard filters, with placeholders.
 	 *
-	 * @param array $f Filters: channel, source, form (plugin:id), lang, s, from, to (Y-m-d), bots.
-	 * @return string
+	 * @param array $f Filters: channel, not_channel, source, campaign, form (plugin:id), lang, s, from, to (Y-m-d), bots.
+	 * @return array{0: string, 1: array} SQL with %s placeholders, and their values.
 	 */
 	public static function where( $f ) {
 		global $wpdb;
-		$w = array( '1=1' );
-		if ( ! empty( $f['channel'] ) ) {
-			$w[] = $wpdb->prepare( 'channel = %s', $f['channel'] );
-		}
-		if ( ! empty( $f['not_channel'] ) ) {
-			$w[] = $wpdb->prepare( 'channel <> %s', $f['not_channel'] );
-		}
-		if ( ! empty( $f['source'] ) ) {
-			$w[] = $wpdb->prepare( 'source = %s', $f['source'] );
-		}
-		if ( ! empty( $f['campaign'] ) ) {
-			$w[] = $wpdb->prepare( 'campaign = %s', $f['campaign'] );
+		$sql  = array( '1=1' );
+		$args = array();
+		$map  = array(
+			'channel'     => 'channel = %s',
+			'not_channel' => 'channel <> %s',
+			'source'      => 'source = %s',
+			'campaign'    => 'campaign = %s',
+			'lang'        => 'language = %s',
+		);
+		foreach ( $map as $key => $clause ) {
+			if ( ! empty( $f[ $key ] ) ) {
+				$sql[]  = $clause;
+				$args[] = (string) $f[ $key ];
+			}
 		}
 		if ( ! empty( $f['form'] ) && false !== strpos( $f['form'], ':' ) ) {
 			list( $plugin, $form_id ) = explode( ':', $f['form'], 2 );
-			$w[]                     = $wpdb->prepare( 'form_plugin = %s AND form_id = %s', $plugin, $form_id );
-		}
-		if ( ! empty( $f['lang'] ) ) {
-			$w[] = $wpdb->prepare( 'language = %s', $f['lang'] );
+			$sql[]                    = 'form_plugin = %s AND form_id = %s';
+			array_push( $args, $plugin, $form_id );
 		}
 		if ( ! empty( $f['from'] ) ) {
-			$w[] = $wpdb->prepare( 'created_at >= %s', get_gmt_from_date( $f['from'] . ' 00:00:00' ) );
+			$sql[]  = 'created_at >= %s';
+			$args[] = get_gmt_from_date( $f['from'] . ' 00:00:00' );
 		}
 		if ( ! empty( $f['to'] ) ) {
-			$w[] = $wpdb->prepare( 'created_at <= %s', get_gmt_from_date( $f['to'] . ' 23:59:59' ) );
+			$sql[]  = 'created_at <= %s';
+			$args[] = get_gmt_from_date( $f['to'] . ' 23:59:59' );
 		}
 		if ( empty( $f['bots'] ) ) {
-			$w[] = 'is_bot = 0';
+			$sql[] = 'is_bot = 0';
 		}
 		if ( ! empty( $f['s'] ) ) {
-			$like = '%' . $wpdb->esc_like( $f['s'] ) . '%';
-			$w[]  = $wpdb->prepare( '(name LIKE %s OR email LIKE %s OR phone LIKE %s OR campaign LIKE %s OR ad LIKE %s OR form_name LIKE %s OR fields LIKE %s)', $like, $like, $like, $like, $like, $like, $like );
+			$like  = '%' . $wpdb->esc_like( $f['s'] ) . '%';
+			$sql[] = '(name LIKE %s OR email LIKE %s OR phone LIKE %s OR campaign LIKE %s OR ad LIKE %s OR form_name LIKE %s OR fields LIKE %s)';
+			$args  = array_merge( $args, array_fill( 0, 7, $like ) );
 		}
-		return implode( ' AND ', $w );
+		return array( implode( ' AND ', $sql ), $args );
 	}
 
 	/**
@@ -457,11 +459,10 @@ class AARYE_Entries {
 	 */
 	public static function query( $f, $limit = 50, $offset = 0 ) {
 		global $wpdb;
-		$t     = self::table();
-		$where = self::where( $f );
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table; $where is built with prepare().
-		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t} WHERE {$where}" );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE {$where} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d", $limit, $offset ) );
+		list( $where, $args ) = self::where( $f );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Our own table; $where only holds fixed SQL with placeholders, filled by prepare().
+		$total = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE {$where}", array_merge( array( self::table() ), $args ) ) );
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE {$where} ORDER BY created_at DESC, id DESC LIMIT %d OFFSET %d", array_merge( array( self::table() ), $args, array( $limit, $offset ) ) ) );
 		// phpcs:enable
 		return array(
 			'rows'  => $rows,
@@ -483,10 +484,9 @@ class AARYE_Entries {
 		if ( ! in_array( $column, $allowed, true ) ) {
 			return array();
 		}
-		$t     = self::table();
-		$where = self::where( $f );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Column is from the allow-list above.
-		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT {$column} AS k, COUNT(*) AS total FROM {$t} WHERE {$where} GROUP BY {$column} ORDER BY total DESC LIMIT %d", $limit ) );
+		list( $where, $args ) = self::where( $f );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Our own table; column from the allow-list above; $where only holds fixed SQL with placeholders, filled by prepare().
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT %i AS k, COUNT(*) AS total FROM %i WHERE {$where} GROUP BY %i ORDER BY total DESC LIMIT %d", array_merge( array( $column, self::table() ), $args, array( $column, $limit ) ) ) );
 		$out  = array();
 		foreach ( (array) $rows as $row ) {
 			$out[] = array(
