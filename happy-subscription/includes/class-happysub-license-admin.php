@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class HAPPYSUB_License_Admin {
 
-	const PAGE = 'happysub-lic-licenses';
+	const PAGE = 'happysub-licenses';
 
 	/**
 	 * Hook everything up.

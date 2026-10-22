@@ -217,7 +217,7 @@ class HAPPYSUB_License_Account {
 			echo '<div class="happysub-lic-empty"><p>' . esc_html__( 'You have no licenses yet.', 'happy-subscription' ) . '</p><a class="button" href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Browse plugins', 'happy-subscription' ) . '</a></div>';
 			return;
 		}
-		echo '<div class="happysub-lic-licenses">';
+		echo '<div class="happysub-licenses">';
 		foreach ( $licenses as $license ) {
 			$sites    = HAPPYSUB_Licenses::activations( $license->id );
 			$status   = HAPPYSUB_Licenses::status( $license );
