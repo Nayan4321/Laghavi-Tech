@@ -98,14 +98,17 @@ class HAPPYSUB_License_Admin {
 		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 		$paged  = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		// phpcs:enable
-		$where = '';
+		$offset = ( $paged - 1 ) * 50;
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom table.
 		if ( '' !== $search ) {
 			$like  = '%' . $wpdb->esc_like( $search ) . '%';
-			$where = $wpdb->prepare( 'WHERE license_key LIKE %s OR email LIKE %s OR order_id = %d', $like, $like, absint( ltrim( $search, '#' ) ) );
+			$order = absint( ltrim( $search, '#' ) );
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE license_key LIKE %s OR email LIKE %s OR order_id = %d', $t, $like, $like, $order ) );
+			$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE license_key LIKE %s OR email LIKE %s OR order_id = %d ORDER BY id DESC LIMIT 50 OFFSET %d', $t, $like, $like, $order, $offset ) );
+		} else {
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $t ) );
+			$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT 50 OFFSET %d', $t, $offset ) );
 		}
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom table; $where is prepared.
-		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t} {$where}" );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} {$where} ORDER BY id DESC LIMIT 50 OFFSET %d", ( $paged - 1 ) * 50 ) );
 		// phpcs:enable
 		$back     = add_query_arg( array( 's' => $search, 'paged' => $paged ), admin_url( 'admin.php?page=' . self::PAGE ) );
 		$products = get_posts(

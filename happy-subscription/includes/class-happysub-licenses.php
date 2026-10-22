@@ -150,8 +150,8 @@ class HAPPYSUB_Licenses {
 	public static function get_by_key( $key ) {
 		global $wpdb;
 		$t = self::tables()['licenses'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE license_key = %s", strtoupper( trim( (string) $key ) ) ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE license_key = %s', $t, strtoupper( trim( (string) $key ) ) ) );
 	}
 
 	/**
@@ -163,8 +163,8 @@ class HAPPYSUB_Licenses {
 	public static function get( $id ) {
 		global $wpdb;
 		$t = self::tables()['licenses'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE id = %d", $id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $t, $id ) );
 	}
 
 	/**
@@ -176,8 +176,8 @@ class HAPPYSUB_Licenses {
 	public static function for_order( $order_id ) {
 		global $wpdb;
 		$t = self::tables()['licenses'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE order_id = %d ORDER BY id", $order_id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE order_id = %d ORDER BY id', $t, $order_id ) );
 	}
 
 	/**
@@ -190,8 +190,8 @@ class HAPPYSUB_Licenses {
 	public static function for_customer( $user_id, $email ) {
 		global $wpdb;
 		$t = self::tables()['licenses'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE user_id = %d OR ( email <> '' AND email = %s ) ORDER BY id DESC", $user_id, $email ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE user_id = %d OR ( email <> '' AND email = %s ) ORDER BY id DESC", $t, $user_id, $email ) );
 	}
 
 	/**
@@ -214,8 +214,8 @@ class HAPPYSUB_Licenses {
 	public static function activations( $license_id ) {
 		global $wpdb;
 		$t = self::tables()['activations'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE license_id = %d ORDER BY id", $license_id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE license_id = %d ORDER BY id', $t, $license_id ) );
 	}
 
 	/**
@@ -245,8 +245,8 @@ class HAPPYSUB_Licenses {
 	public static function activation( $license_id, $site ) {
 		global $wpdb;
 		$t = self::tables()['activations'];
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE license_id = %d AND site = %s", $license_id, $site ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE license_id = %d AND site = %s', $t, $license_id, $site ) );
 	}
 
 	/**

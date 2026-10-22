@@ -92,7 +92,7 @@ class HAPPYSUB_Downloads {
 			JOIN {$wpdb->prefix}woocommerce_order_itemmeta qty ON qty.order_item_id = oi.order_item_id AND qty.meta_key = '_qty'
 			{$join}
 			WHERE oi.order_item_type = 'line_item' AND {$skip}";
-		$count = (int) $wpdb->get_var( $wpdb->prepare( $sql, array_merge( array( $product_id ), $statuses ) ) ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders are in $sql.
+		$count = (int) $wpdb->get_var( $wpdb->prepare( $sql, array_merge( array( $product_id ), $statuses ) ) ); // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $sql is fixed SQL built above with placeholders for every value.
 		// phpcs:enable
 		return max( 0, $count );
 	}

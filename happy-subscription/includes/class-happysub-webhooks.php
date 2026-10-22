@@ -173,7 +173,7 @@ class HAPPYSUB_Webhooks {
 			$stripe_sub = HAPPYSUB_Stripe_API::request( 'GET', 'subscriptions/' . rawurlencode( HAPPYSUB_Stripe_API::id( $session['subscription'] ) ) );
 			if ( is_wp_error( $stripe_sub ) ) {
 				delete_transient( $lock );
-				throw new RuntimeException( $stripe_sub->get_error_message() );
+				throw new RuntimeException( esc_html( $stripe_sub->get_error_message() ) );
 			}
 			$invoice_id = HAPPYSUB_Stripe_API::id( isset( $session['invoice'] ) ? $session['invoice'] : ( isset( $stripe_sub['latest_invoice'] ) ? $stripe_sub['latest_invoice'] : '' ) );
 			if ( '' !== $invoice_id ) {
@@ -309,7 +309,7 @@ class HAPPYSUB_Webhooks {
 		}
 		$order = HAPPYSUB_Manager::create_renewal_order( $sub, $amount );
 		if ( is_wp_error( $order ) ) {
-			throw new RuntimeException( $order->get_error_message() );
+			throw new RuntimeException( esc_html( $order->get_error_message() ) );
 		}
 		$order->update_meta_data( '_happysub_stripe_invoice', $invoice['id'] );
 		$order->save();

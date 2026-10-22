@@ -1,7 +1,7 @@
 === Happy Subscription ===
 Contributors: nayan4321
 Tags: subscriptions, recurring payments, stripe, license manager, woocommerce
-Requires at least: 6.0
+Requires at least: 6.2
 Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 1.0.0

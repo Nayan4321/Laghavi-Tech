@@ -139,6 +139,6 @@ $happysub_menu   = wc_get_account_menu_items();
 
 	<?php
 	/** This action is documented in WooCommerce's myaccount/dashboard.php. */
-	do_action( 'woocommerce_account_dashboard' );
+	do_action( 'woocommerce_account_dashboard' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WooCommerce's own hook.
 	?>
 </div>

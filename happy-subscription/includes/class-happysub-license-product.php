@@ -257,8 +257,30 @@ class HAPPYSUB_License_Product {
 			if ( '.zip' === strtolower( substr( $name, -4 ) ) && is_uploaded_file( $_FILES['happysub_license_zip']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP's temporary path.
 				$slug   = (string) get_post_meta( $product_id, '_happysub_license_slug', true );
 				$target = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-' . gmdate( 'YmdHis' ) . '.zip';
-				if ( move_uploaded_file( $_FILES['happysub_license_zip']['tmp_name'], HAPPYSUB_Licenses::private_dir() . $target ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-					update_post_meta( $product_id, '_happysub_license_file', $target );
+				$dir        = HAPPYSUB_Licenses::private_dir();
+				$to_private = static function ( $uploads ) use ( $dir ) {
+					$uploads['path']   = untrailingslashit( $dir );
+					$uploads['subdir'] = '';
+					$uploads['url']    = '';
+					return $uploads;
+				};
+				if ( ! function_exists( 'wp_handle_upload' ) ) {
+					require_once ABSPATH . 'wp-admin/includes/file.php';
+				}
+				add_filter( 'upload_dir', $to_private );
+				$result = wp_handle_upload(
+					$_FILES['happysub_license_zip'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checked by wp_handle_upload().
+					array(
+						'test_form'                => false,
+						'mimes'                    => array( 'zip' => 'application/zip' ),
+						'unique_filename_callback' => static function () use ( $target ) {
+							return $target;
+						},
+					)
+				);
+				remove_filter( 'upload_dir', $to_private );
+				if ( empty( $result['error'] ) && ! empty( $result['file'] ) ) {
+					update_post_meta( $product_id, '_happysub_license_file', basename( $result['file'] ) );
 				}
 			}
 		}

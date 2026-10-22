@@ -133,8 +133,8 @@ class HAPPYSUB_Subscriptions {
 	public static function get( $id ) {
 		global $wpdb;
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE id = %d", $id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE id = %d', $t, $id ) );
 	}
 
 	/**
@@ -149,8 +149,8 @@ class HAPPYSUB_Subscriptions {
 			return null;
 		}
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$t} WHERE gateway_subscription_id = %s", $gateway_id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE gateway_subscription_id = %s', $t, $gateway_id ) );
 	}
 
 	/**
@@ -174,8 +174,8 @@ class HAPPYSUB_Subscriptions {
 	public static function for_user( $user_id ) {
 		global $wpdb;
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE user_id = %d ORDER BY id DESC", $user_id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d ORDER BY id DESC', $t, $user_id ) );
 	}
 
 	/**
@@ -187,8 +187,8 @@ class HAPPYSUB_Subscriptions {
 	public static function for_order( $order_id ) {
 		global $wpdb;
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE parent_order_id = %d ORDER BY id", $order_id ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		return $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE parent_order_id = %d ORDER BY id', $t, $order_id ) );
 	}
 
 	/**
@@ -202,8 +202,8 @@ class HAPPYSUB_Subscriptions {
 	public static function query( $where = '1=1', $limit = 200, $offset = 0 ) {
 		global $wpdb;
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $where is prepared by callers.
-		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d", $limit, $offset ) );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $where is fixed SQL prepared by the callers in this plugin.
+		return $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d", $t, $limit, $offset ) );
 	}
 
 	/**
@@ -215,8 +215,8 @@ class HAPPYSUB_Subscriptions {
 	public static function count( $where = '1=1' ) {
 		global $wpdb;
 		$t = self::table();
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t} WHERE {$where}" );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- $where is fixed SQL prepared by the callers in this plugin.
+		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE {$where}", $t ) );
 	}
 
 	/**

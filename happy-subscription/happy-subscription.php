@@ -4,7 +4,7 @@
  * Plugin URI:           https://laghavi.site/happy-subscription/
  * Description:          Subscription products for WooCommerce with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, buyer-only reviews, download counts, and license keys with downloads and automatic updates for the plugins and software you sell.
  * Version:              1.0.0
- * Requires at least:    6.0
+ * Requires at least:    6.2
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
  * WC requires at least: 8.0

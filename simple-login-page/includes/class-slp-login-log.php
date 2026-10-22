@@ -195,12 +195,12 @@ class SLP_Login_Log {
 		$table = self::table();
 		$days  = max( 1, (int) SLP_Settings::get( 'log_retention_days' ) );
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom log table; the name is not user input.
-		$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS ) ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom log table.
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE created_at < %s', $table, gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS ) ) );
 
-		$cutoff = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$table} ORDER BY id DESC LIMIT 1 OFFSET %d", self::MAX_ROWS ) );
+		$cutoff = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i ORDER BY id DESC LIMIT 1 OFFSET %d', $table, self::MAX_ROWS ) );
 		if ( $cutoff ) {
-			$wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE id <= %d", $cutoff ) );
+			$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE id <= %d', $table, $cutoff ) );
 		}
 		// phpcs:enable
 	}
@@ -214,7 +214,7 @@ class SLP_Login_Log {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'simple-login-page' ) );
 		}
 		check_admin_referer( 'slp_clear_log' );
-		$wpdb->query( 'DELETE FROM ' . self::table() ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.NotPrepared -- Custom log table.
+		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i', self::table() ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom log table.
 		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE . '&cleared=1' ) );
 		exit;
 	}
@@ -418,8 +418,8 @@ class SLP_Login_Log {
 				}
 			}
 
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom log table.
-			$wpdb->query( $wpdb->prepare( 'UPDATE ' . self::table() . ' SET location = %s WHERE ip = %s AND location IS NULL', $location, $ip ) );
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom log table.
+			$wpdb->query( $wpdb->prepare( 'UPDATE %i SET location = %s WHERE ip = %s AND location IS NULL', self::table(), $location, $ip ) );
 			foreach ( $rows as $row ) {
 				if ( $row->ip === $ip && null === $row->location ) {
 					$row->location = $location;
@@ -461,13 +461,18 @@ class SLP_Login_Log {
 		$ip    = filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
 		// phpcs:enable
 
-		// phpcs:disable WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom log table; values are prepared.
-		$where = '' !== $ip ? $wpdb->prepare( 'WHERE ip = %s', $ip ) : '';
-		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table} {$where}" );
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} {$where} ORDER BY id DESC LIMIT %d OFFSET %d", self::PER_PAGE, ( $paged - 1 ) * self::PER_PAGE ) );
-		$day   = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE created_at >= %s", gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS ) ) );
-		$week  = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$table} WHERE created_at >= %s", gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
-		$top   = $wpdb->get_results( $wpdb->prepare( "SELECT ip, COUNT(*) AS attempts, MAX(location) AS location FROM {$table} WHERE created_at >= %s AND ip <> '' GROUP BY ip ORDER BY attempts DESC LIMIT 5", gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom log table.
+		$offset = ( $paged - 1 ) * self::PER_PAGE;
+		if ( '' !== $ip ) {
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE ip = %s', $table, $ip ) );
+			$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE ip = %s ORDER BY id DESC LIMIT %d OFFSET %d', $table, $ip, self::PER_PAGE, $offset ) );
+		} else {
+			$total = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
+			$rows  = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT %d OFFSET %d', $table, self::PER_PAGE, $offset ) );
+		}
+		$day  = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE created_at >= %s', $table, gmdate( 'Y-m-d H:i:s', time() - DAY_IN_SECONDS ) ) );
+		$week = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE created_at >= %s', $table, gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
+		$top  = $wpdb->get_results( $wpdb->prepare( "SELECT ip, COUNT(*) AS attempts, MAX(location) AS location FROM %i WHERE created_at >= %s AND ip <> '' GROUP BY ip ORDER BY attempts DESC LIMIT 5", $table, gmdate( 'Y-m-d H:i:s', time() - WEEK_IN_SECONDS ) ) );
 		// phpcs:enable
 
 		self::fill_locations( $rows );
