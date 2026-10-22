@@ -1,0 +1,63 @@
+/* Aarye Marketing Addon for Forms – admin */
+.aarye { --aarye-accent: #e11d48; --aarye-paid: #2563eb; --aarye-line: #e2e4e9; --aarye-muted: #646970; max-width: 1280px; }
+.aarye .aarye-lead { font-size: 14px; max-width: 820px; }
+.aarye .aarye-muted { color: var(--aarye-muted); }
+.aarye .aarye-break { word-break: break-all; }
+.aarye-card { background: #fff; border: 1px solid var(--aarye-line); border-radius: 10px; padding: 16px 20px; margin: 16px 0; box-sizing: border-box; }
+.aarye-card h2 { margin: 0 0 12px; font-size: 15px; }
+.aarye-card--paid { border-top: 3px solid var(--aarye-paid); }
+.aarye-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 12px 0; }
+.aarye-filters select, .aarye-filters input { max-width: 220px; }
+.aarye-kpis { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 16px 0; }
+.aarye-kpi { background: #fff; border: 1px solid var(--aarye-line); border-radius: 10px; padding: 16px 18px; }
+.aarye-kpi b { display: block; font-size: 26px; line-height: 1.2; }
+.aarye-kpi b.aarye-kpi__text { font-size: 17px; overflow-wrap: anywhere; }
+.aarye-kpi span { color: var(--aarye-muted); }
+.aarye-kpi--paid { border-color: var(--aarye-paid); background: #eff6ff; }
+.aarye-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.aarye-grid--entry { align-items: start; }
+.aarye-bars { margin: 0; }
+.aarye-bars li { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 2fr) auto; gap: 10px; align-items: center; margin: 0 0 8px; }
+.aarye-bars__label { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aarye-bars__bar { background: #f0f0f1; border-radius: 99px; height: 10px; overflow: hidden; }
+.aarye-bars__bar i { display: block; height: 100%; background: var(--aarye-accent); border-radius: 99px; }
+.aarye-card--paid .aarye-bars__bar i { background: var(--aarye-paid); }
+.aarye-badge { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; background: #f0f0f1; color: #1d2327; }
+.aarye-badge--paid { background: #dbeafe; color: #1e40af; }
+.aarye-badge--organic_search { background: #dcfce7; color: #166534; }
+.aarye-badge--organic_social { background: #fce7f3; color: #9d174d; }
+.aarye-badge--ai { background: #ede9fe; color: #5b21b6; }
+.aarye-badge--email { background: #fef3c7; color: #92400e; }
+.aarye-badge--referral { background: #e0f2fe; color: #075985; }
+.aarye-badge--bot { background: #fee2e2; color: #991b1b; margin-left: 6px; }
+.aarye-badge--ok { background: #dcfce7; color: #166534; font-size: 11px; vertical-align: middle; }
+.aarye-badge--off { background: #f0f0f1; color: #646970; font-size: 11px; vertical-align: middle; }
+.aarye-hint { font-size: 11px; color: #b45309; cursor: help; border-bottom: 1px dotted; }
+.aarye-adline { display: block; margin-top: 3px; font-size: 12px; color: #1d2327; overflow-wrap: anywhere; }
+.aarye-table td { vertical-align: top; }
+.aarye-details { width: 100%; border-collapse: collapse; }
+.aarye-details th { text-align: left; width: 38%; padding: 7px 10px 7px 0; vertical-align: top; color: var(--aarye-muted); font-weight: 500; }
+.aarye-details td { padding: 7px 0; vertical-align: top; overflow-wrap: anywhere; }
+.aarye-details tr + tr th, .aarye-details tr + tr td { border-top: 1px solid #f0f0f1; }
+.aarye-details--small th, .aarye-details--small td { padding: 4px 8px 4px 0; font-size: 12px; }
+.aarye-files { margin: 0; }
+.aarye-entry-source { font-size: 14px; }
+.aarye-entry-actions { display: flex; gap: 8px; align-items: center; margin: 8px 0 24px; }
+.aarye .aarye-danger { color: #b32d2e; border-color: #b32d2e; }
+.aarye-guide summary { cursor: pointer; list-style: none; }
+.aarye-guide summary::-webkit-details-marker { display: none; }
+.aarye-guide summary h2 { display: inline-block; margin: 0; }
+.aarye-guide summary::before { content: "▸ "; color: var(--aarye-accent); }
+.aarye-guide[open] summary::before { content: "▾ "; }
+.aarye-guide[open] summary { margin-bottom: 8px; }
+.aarye-copy { display: flex; gap: 8px; align-items: flex-start; background: #f6f7f7; border: 1px solid var(--aarye-line); border-radius: 8px; padding: 10px; }
+.aarye-copy code { flex: 1; background: none; padding: 0; overflow-wrap: anywhere; font-size: 12px; }
+.aarye-copy--block { display: block; position: relative; }
+.aarye-copy--block pre { margin: 0; max-height: 320px; overflow: auto; font-size: 12px; white-space: pre-wrap; }
+.aarye-copy--block .aarye-copy__btn { position: absolute; top: 8px; right: 8px; }
+.aarye-steps li { margin-bottom: 10px; }
+.aarye-test-result { margin-top: 12px; border-top: 1px solid var(--aarye-line); padding-top: 12px; }
+.aarye-plugin--off { opacity: 0.6; }
+@media (max-width: 1000px) {
+	.aarye-grid, .aarye-kpis { grid-template-columns: 1fr; }
+}
