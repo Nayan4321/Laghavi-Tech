@@ -547,3 +547,27 @@ body.lsub-no-quantity form.cart .qib-container,
 body.lsub-no-quantity form.cart .product-quantity {
 	display: none !important;
 }
+
+/* ---------- Reviews and download count ---------- */
+.lsub-review-bought {
+	margin: 2px 0 6px;
+	font-size: 13px;
+	color: #6b7280;
+}
+
+.lsub-downloads {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 14px;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: #eef2ff;
+	color: #3730a3;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.lsub-downloads svg {
+	flex: none;
+}

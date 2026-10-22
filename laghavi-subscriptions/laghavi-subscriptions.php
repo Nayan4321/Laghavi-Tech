@@ -47,6 +47,8 @@ require_once LSUB_DIR . 'includes/class-lsub-checkout.php';
 require_once LSUB_DIR . 'includes/class-lsub-ask-price.php';
 require_once LSUB_DIR . 'includes/class-lsub-admin.php';
 require_once LSUB_DIR . 'includes/class-lsub-currency.php';
+require_once LSUB_DIR . 'includes/class-lsub-reviews.php';
+require_once LSUB_DIR . 'includes/class-lsub-downloads.php';
 
 // HPOS (custom order tables) and block checkout are supported.
 add_action(
@@ -87,6 +89,8 @@ add_action(
 		LSUB_Checkout::init();
 		LSUB_Ask_Price::init();
 		LSUB_Admin::init();
+		LSUB_Reviews::init();
+		LSUB_Downloads::init();
 
 		add_action( 'woocommerce_blocks_payment_method_type_registration', array( 'LSUB_Gateway_Stripe', 'register_block_support' ) );
 	},

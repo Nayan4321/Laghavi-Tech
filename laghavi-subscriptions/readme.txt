@@ -56,6 +56,12 @@ Subscription products with automatic Stripe renewals, reminder emails, a better 
 * Switcher: floating in a corner, "Pay in USD · AED · EUR" on checkout, and the `[lsub_currency_switcher]` shortcode for your menu or header.
 * Prices, sign-up fees, fixed coupons and shipping convert. The order, its Stripe payment and every renewal stay in the currency the customer chose; renewal invoices for other payment methods are priced in that currency too. Admin screens and reports stay in your store currency, and monthly recurring revenue is converted back to it.
 
+**Reviews and download counts**
+
+* Only buyers can review: only logged-in customers who bought a product (or one of its variations) can leave a review for it. Everyone else sees a short note instead of the form, and reviews sent anyway are refused (WooCommerce > Settings > Subscriptions > Reviews).
+* Each review shows when the reviewer bought the product, as month and year only: "Purchased in March 2026".
+* Download count: tick "Show downloads" in a product's General tab to show "1,234 downloads" under its price. It counts paid orders (renewals and refunded or cancelled orders don't count). Use "Add to downloads" for downloads from elsewhere, e.g. WordPress.org. `[lsub_downloads]` or `[lsub_downloads id="123"]` shows it anywhere.
+
 **Admin**
 
 * WooCommerce > Subscriptions: counts, monthly recurring revenue, search and filter, and each subscription's details, orders and actions (cancel now / at period end, resume, send renewal invoice now, open in Stripe).

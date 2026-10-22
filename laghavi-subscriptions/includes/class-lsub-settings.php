@@ -51,6 +51,8 @@ class LSUB_Settings {
 			'lsub_currency_checkout'   => 'yes',
 			'lsub_currency_geo'        => 'no',
 			'lsub_rates_auto'          => 'no',
+			'lsub_reviews_buyers_only' => 'yes',
+			'lsub_reviews_bought_date' => 'yes',
 		);
 	}
 
@@ -252,6 +254,31 @@ class LSUB_Settings {
 			array(
 				'type' => 'sectionend',
 				'id'   => 'lsub_ask',
+			),
+
+			array(
+				'title' => __( 'Reviews', 'laghavi-subscriptions' ),
+				'type'  => 'title',
+				'desc'  => __( 'Product reviews must be turned on in WooCommerce > Settings > Products. To show how many times a product was downloaded, tick "Show downloads" on that product.', 'laghavi-subscriptions' ),
+				'id'    => 'lsub_reviews',
+			),
+			array(
+				'title'   => __( 'Only buyers can review', 'laghavi-subscriptions' ),
+				'desc'    => __( 'Only logged-in customers who bought the product can leave a review for it. Everyone else sees a short note instead of the review form.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_reviews_buyers_only',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_reviews_buyers_only'],
+			),
+			array(
+				'title'   => __( 'Show when they bought it', 'laghavi-subscriptions' ),
+				'desc'    => __( 'Show "Purchased in March 2026" (month and year only) under each reviewer\'s name.', 'laghavi-subscriptions' ),
+				'id'      => 'lsub_reviews_bought_date',
+				'type'    => 'checkbox',
+				'default' => $d['lsub_reviews_bought_date'],
+			),
+			array(
+				'type' => 'sectionend',
+				'id'   => 'lsub_reviews',
 			),
 
 			array(
