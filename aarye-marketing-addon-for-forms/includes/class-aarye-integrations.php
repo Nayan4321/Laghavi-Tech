@@ -271,13 +271,14 @@ class AARYE_Integrations {
 	 */
 	public static function elementor_early_files( $record, $handler ) {
 		try {
-			$files = array();
+			$files  = array();
+			$fields = (array) $record->get( 'fields' );
 			foreach ( (array) $record->get( 'files' ) as $id => $set ) {
 				$paths = isset( $set['path'] ) ? (array) $set['path'] : array();
 				$urls  = isset( $set['url'] ) && is_array( $set['url'] ) ? $set['url'] : array();
 				foreach ( $paths as $i => $path ) {
 					$files[] = array(
-						'label' => $id,
+						'label' => ! empty( $fields[ $id ]['title'] ) ? $fields[ $id ]['title'] : AARYE_Entries::humanize( (string) $id ),
 						'path'  => $path,
 						'url'   => isset( $urls[ $i ] ) && 'attached' !== $urls[ $i ] ? $urls[ $i ] : '',
 					);
@@ -367,6 +368,9 @@ class AARYE_Integrations {
 							);
 						}
 						continue;
+					}
+					if ( 'input_name' === $element && is_array( $value ) ) {
+						$value = implode( ' ', array_filter( array_map( 'strval', $value ), 'strlen' ) );
 					}
 					$fields[] = array(
 						'name'  => $name,
@@ -631,6 +635,9 @@ class AARYE_Integrations {
 				$fields = array();
 				$files  = array();
 				foreach ( jet_fb_context()->iterate_parsers() as $name => $parser ) {
+					if ( self::is_internal( (string) $name ) ) {
+						continue;
+					}
 					$type = method_exists( $parser, 'get_type' ) ? (string) $parser->get_type() : '';
 					if ( in_array( $type, array( 'submit-field', 'form-break-field', 'heading-field', 'group-break-field', 'progress-bar' ), true ) ) {
 						continue;
@@ -684,8 +691,12 @@ class AARYE_Integrations {
 		self::safely(
 			static function () use ( $form_id, $form_data, $attributes ) {
 				$map = array();
-				if ( class_exists( '\MetForm\Core\Entries\Action' ) ) {
-					$map = (array) \MetForm\Core\Entries\Action::instance()->get_fields( $form_id );
+				try {
+					if ( class_exists( '\MetForm\Core\Entries\Action' ) ) {
+						$map = (array) \MetForm\Core\Entries\Action::instance()->get_fields( $form_id );
+					}
+				} catch ( \Throwable $e ) {
+					$map = array(); // Field labels are optional: keep the values.
 				}
 				$fields = array();
 				foreach ( (array) $form_data as $name => $value ) {

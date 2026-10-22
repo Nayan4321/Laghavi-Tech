@@ -38,6 +38,7 @@ require_once AARYE_DIR . 'includes/class-aarye-sources.php';
 require_once AARYE_DIR . 'includes/class-aarye-tracker.php';
 require_once AARYE_DIR . 'includes/class-aarye-entries.php';
 require_once AARYE_DIR . 'includes/class-aarye-integrations.php';
+require_once AARYE_DIR . 'includes/class-aarye-async.php';
 require_once AARYE_DIR . 'includes/class-aarye-sheets.php';
 require_once AARYE_DIR . 'includes/class-aarye-guide.php';
 require_once AARYE_DIR . 'includes/class-aarye-admin.php';
@@ -51,6 +52,7 @@ add_action(
 		}
 		AARYE_Tracker::init();
 		AARYE_Integrations::init();
+		AARYE_Async::init();
 		AARYE_Sheets::init();
 		AARYE_Privacy::init();
 		if ( is_admin() ) {

@@ -218,8 +218,9 @@ class AARYE_Admin {
 	 * @param array  $rows  From AARYE_Entries::grouped().
 	 * @param string $link  Filter key to link each row to, or ''.
 	 * @param string $class Extra class.
+	 * @param string $empty Message when there are no rows.
 	 */
-	private static function bars( $title, $rows, $link = '', $class = '' ) {
+	private static function bars( $title, $rows, $link = '', $class = '', $empty = '' ) {
 		$max = 0;
 		foreach ( $rows as $row ) {
 			$max = max( $max, $row['total'] );
@@ -228,7 +229,7 @@ class AARYE_Admin {
 		<div class="aarye-card <?php echo esc_attr( $class ); ?>">
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<?php if ( ! $rows ) : ?>
-				<p class="aarye-muted"><?php esc_html_e( 'No entries yet.', 'aarye-marketing-addon-for-forms' ); ?></p>
+				<p class="aarye-muted"><?php echo esc_html( '' !== $empty ? $empty : __( 'No entries yet.', 'aarye-marketing-addon-for-forms' ) ); ?></p>
 			<?php else : ?>
 				<ul class="aarye-bars">
 					<?php foreach ( $rows as $row ) : ?>
@@ -282,8 +283,16 @@ class AARYE_Admin {
 				self::bars( __( 'Leads by source', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'channel', $f ), 'channel' );
 				self::bars( __( 'Leads from ads, by ad network', 'aarye-marketing-addon-for-forms' ), $networks, 'source', 'aarye-card--paid' );
 				self::bars( __( 'Ad campaigns', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'campaign', $paid_f ), 'campaign' );
-				self::bars( __( 'Ads', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'ad', $paid_f ) );
-				self::bars( __( 'Search, social, AI and other websites', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'source_label', array_merge( $f, array( 'channel' => '' ) ), 12 ) );
+				$ads = array_values(
+					array_filter(
+						AARYE_Entries::grouped( 'ad', $paid_f ),
+						static function ( $row ) {
+							return '' !== $row['key'];
+						}
+					)
+				);
+				self::bars( __( 'Ads', 'aarye-marketing-addon-for-forms' ), $ads, '', '', $paid['total'] ? __( 'Add utm_content (the ad name) to your ad links to see which ad brought each lead. See "Connect your ads".', 'aarye-marketing-addon-for-forms' ) : '' );
+				self::bars( __( 'Search, social, AI and other websites', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'source_label', array_merge( $f, array( 'channel' => '', 'not_channel' => 'paid' ) ), 12 ) );
 				self::bars( __( 'Forms', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'form_name', $f ) );
 				self::bars( __( 'Languages', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'language', $f ), 'lang' );
 				self::bars( __( 'Devices', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'device', $f ) );
@@ -352,7 +361,7 @@ class AARYE_Admin {
 							<strong><?php echo esc_html( '' !== $e->name ? $e->name : ( '' !== $e->email ? $e->email : '#' . $e->id ) ); ?></strong>
 							<?php if ( '' !== $e->email && '' !== $e->name ) : ?><br /><span class="aarye-muted"><?php echo esc_html( $e->email ); ?></span><?php endif; ?>
 							<?php if ( '' !== $e->phone ) : ?><br /><span class="aarye-muted"><?php echo esc_html( $e->phone ); ?></span><?php endif; ?>
-							<?php if ( $files ) : ?><br /><span class="aarye-muted">📎 <?php echo esc_html( (string) count( $files ) ); ?></span><?php endif; ?>
+							<?php if ( $files ) : ?><br /><span class="aarye-muted"><span class="dashicons dashicons-paperclip" aria-label="<?php esc_attr_e( 'Attachments', 'aarye-marketing-addon-for-forms' ); ?>"></span> <?php echo esc_html( (string) count( $files ) ); ?></span><?php endif; ?>
 							<?php if ( $e->is_bot ) : ?><span class="aarye-badge aarye-badge--bot"><?php esc_html_e( 'Bot?', 'aarye-marketing-addon-for-forms' ); ?></span><?php endif; ?>
 						</td>
 						<td><?php echo wp_kses_post( self::badge( $e ) ); ?></td>
@@ -417,7 +426,7 @@ class AARYE_Admin {
 						<h3><?php esc_html_e( 'Attachments', 'aarye-marketing-addon-for-forms' ); ?></h3>
 						<ul class="aarye-files">
 							<?php foreach ( $files as $i => $file ) : ?>
-								<li>📎 <a href="<?php echo esc_url( '' !== $file['stored'] ? self::file_url( $e->id, $i ) : $file['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $file['name'] ); ?></a><?php echo '' !== $file['label'] ? ' <span class="aarye-muted">(' . esc_html( $file['label'] ) . ')</span>' : ''; ?></li>
+								<li><span class="dashicons dashicons-paperclip" aria-hidden="true"></span> <a href="<?php echo esc_url( '' !== $file['stored'] ? self::file_url( $e->id, $i ) : $file['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $file['name'] ); ?></a><?php echo '' !== $file['label'] ? ' <span class="aarye-muted">(' . esc_html( $file['label'] ) . ')</span>' : ''; ?></li>
 							<?php endforeach; ?>
 						</ul>
 					<?php endif; ?>
@@ -493,8 +502,8 @@ class AARYE_Admin {
 						<?php endforeach; ?>
 					</select>
 				</label>
-				<button class="button button-primary" name="todo" value="status"><?php esc_html_e( 'Save', 'aarye-marketing-addon-for-forms' ); ?></button>
-				<button class="button aarye-danger" name="todo" value="delete" onclick="return confirm('<?php echo esc_js( __( 'Delete this entry and its files?', 'aarye-marketing-addon-for-forms' ) ); ?>')"><?php esc_html_e( 'Delete', 'aarye-marketing-addon-for-forms' ); ?></button>
+				<button type="submit" class="button button-primary" name="todo" value="status"><?php esc_html_e( 'Save', 'aarye-marketing-addon-for-forms' ); ?></button>
+				<button type="submit" class="button aarye-danger" name="todo" value="delete" data-confirm="<?php esc_attr_e( 'Delete this entry and its files?', 'aarye-marketing-addon-for-forms' ); ?>"><?php esc_html_e( 'Delete', 'aarye-marketing-addon-for-forms' ); ?></button>
 			</form>
 		</div>
 		<?php

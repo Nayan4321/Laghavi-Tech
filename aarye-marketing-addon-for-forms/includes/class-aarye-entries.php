@@ -415,6 +415,9 @@ class AARYE_Entries {
 		if ( ! empty( $f['channel'] ) ) {
 			$w[] = $wpdb->prepare( 'channel = %s', $f['channel'] );
 		}
+		if ( ! empty( $f['not_channel'] ) ) {
+			$w[] = $wpdb->prepare( 'channel <> %s', $f['not_channel'] );
+		}
 		if ( ! empty( $f['source'] ) ) {
 			$w[] = $wpdb->prepare( 'source = %s', $f['source'] );
 		}

@@ -1,6 +1,12 @@
-/* Aarye Marketing Addon for Forms – "Copy" buttons in the admin. */
+/* Aarye Marketing Addon for Forms – "Copy" buttons and confirmations in the admin. */
 ( function () {
 	'use strict';
+	document.addEventListener( 'click', function ( e ) {
+		var ask = e.target.closest ? e.target.closest( '[data-confirm]' ) : null;
+		if ( ask && ! window.confirm( ask.getAttribute( 'data-confirm' ) ) ) {
+			e.preventDefault();
+		}
+	} );
 	document.addEventListener( 'click', function ( e ) {
 		var btn = e.target.closest ? e.target.closest( '.aarye-copy__btn' ) : null;
 		if ( ! btn ) {

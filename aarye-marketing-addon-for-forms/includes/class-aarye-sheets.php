@@ -20,7 +20,7 @@ class AARYE_Sheets {
 	 */
 	public static function init() {
 		add_action( 'aarye_entry_saved', array( __CLASS__, 'on_entry' ), 20 );
-		add_action( 'aarye_hourly', array( __CLASS__, 'retry' ) );
+		add_action( 'aarye_async_run', array( __CLASS__, 'process' ) );
 	}
 
 	/**
@@ -33,7 +33,7 @@ class AARYE_Sheets {
 	}
 
 	/**
-	 * Send a new entry.
+	 * Queue a new entry; it is sent in the background so the form answers at once.
 	 *
 	 * @param int $id Entry ID.
 	 */
@@ -45,33 +45,54 @@ class AARYE_Sheets {
 		if ( ! $entry || ( $entry->is_bot && ! AARYE_Settings::on( 'sheets_bots' ) ) ) {
 			return;
 		}
-		if ( ! self::send( $entry ) ) {
-			$queue   = (array) get_option( self::QUEUE, array() );
-			$queue[] = array(
-				'id'    => (int) $id,
-				'tries' => 1,
-			);
-			update_option( self::QUEUE, array_slice( $queue, -500 ), false );
-		}
+		$queue   = (array) get_option( self::QUEUE, array() );
+		$queue[] = array(
+			'id'    => (int) $id,
+			'tries' => 0,
+		);
+		update_option( self::QUEUE, array_slice( $queue, -500 ), false );
+		AARYE_Async::kick();
 	}
 
 	/**
-	 * Try failed rows again (hourly, up to 24 times).
+	 * Send queued rows. A failed row is tried again after 5 minutes, then every hour, up to 24 times.
 	 */
-	public static function retry() {
-		$queue = (array) get_option( self::QUEUE, array() );
-		if ( ! $queue || ! self::enabled() ) {
+	public static function process() {
+		if ( ! self::enabled() || get_transient( 'aarye_sheets_lock' ) ) {
 			return;
 		}
-		$left = array();
+		$queue = array_values( (array) get_option( self::QUEUE, array() ) );
+		if ( ! $queue || ( isset( $queue[0]['next'] ) && $queue[0]['next'] > time() ) ) {
+			return;
+		}
+		set_transient( 'aarye_sheets_lock', 1, 120 );
+		$done   = array();
+		$failed = array();
 		foreach ( array_slice( $queue, 0, 50 ) as $item ) {
 			$entry = AARYE_Entries::get( $item['id'] );
-			if ( $entry && ! self::send( $entry ) && $item['tries'] < 24 ) {
-				$item['tries']++;
-				$left[] = $item;
+			if ( ! $entry || true === self::send( $entry ) ) {
+				$done[] = (int) $item['id'];
+			} elseif ( $item['tries'] >= 23 ) {
+				$done[] = (int) $item['id']; // Give up after a day.
+			} else {
+				$failed[ (int) $item['id'] ] = $item['tries'] + 1;
+				break; // Keep rows in order: stop at the first failure and try again later.
 			}
 		}
-		update_option( self::QUEUE, array_merge( $left, array_slice( $queue, 50 ) ), false );
+		// Re-read: new entries may have been queued meanwhile.
+		$left = array();
+		foreach ( (array) get_option( self::QUEUE, array() ) as $item ) {
+			if ( in_array( (int) $item['id'], $done, true ) ) {
+				continue;
+			}
+			if ( isset( $failed[ (int) $item['id'] ] ) ) {
+				$item['tries'] = $failed[ (int) $item['id'] ];
+				$item['next']  = time() + ( 1 === $item['tries'] ? 5 * MINUTE_IN_SECONDS : HOUR_IN_SECONDS );
+			}
+			$left[] = $item;
+		}
+		update_option( self::QUEUE, $left, false );
+		delete_transient( 'aarye_sheets_lock' );
 	}
 
 	/**
@@ -112,7 +133,8 @@ class AARYE_Sheets {
 		}
 		$links = array();
 		foreach ( AARYE_Entries::json( $entry, 'files' ) as $i => $file ) {
-			$links[] = '' !== $file['url'] ? $file['url'] : AARYE_Admin::file_url( $entry->id, $i );
+			// Public upload address when the form plugin keeps one, else the entry in WordPress (login needed).
+			$links[] = '' !== $file['url'] ? $file['url'] : admin_url( 'admin.php?page=aarye-leads-entries&entry=' . (int) $entry->id );
 		}
 		if ( $links ) {
 			$row['Files'] = implode( "\n", $links );
@@ -136,10 +158,9 @@ class AARYE_Sheets {
 	 * Post to the web app.
 	 *
 	 * @param object|null $entry Entry, or null for a connection test.
-	 * @param bool        $wait  Wait for the reply.
 	 * @return bool|string True on success, error message when waiting.
 	 */
-	public static function send( $entry, $wait = true ) {
+	public static function send( $entry ) {
 		$body = array( 'secret' => (string) AARYE_Settings::get( 'sheets_secret' ) );
 		if ( null === $entry ) {
 			$body['test'] = true;
@@ -153,15 +174,11 @@ class AARYE_Sheets {
 			(string) AARYE_Settings::get( 'sheets_url' ),
 			array(
 				'timeout'     => 15,
-				'blocking'    => $wait,
 				'redirection' => 5,
 				'headers'     => array( 'Content-Type' => 'application/json' ),
 				'body'        => wp_json_encode( $body ),
 			)
 		);
-		if ( ! $wait ) {
-			return true;
-		}
 		if ( is_wp_error( $response ) ) {
 			return null === $entry ? $response->get_error_message() : false;
 		}
