@@ -1,0 +1,373 @@
+<style>
+#aar-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#4f46e5;--brand2:#0891b2;--navy:#0b1430;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#aar-lp *,#aar-lp *::before,#aar-lp *::after{box-sizing:border-box}
+#aar-lp h1,#aar-lp h2,#aar-lp h3,#aar-lp p{margin:0}
+#aar-lp a{text-decoration:none}
+#aar-lp section{margin-top:56px}
+#aar-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#aar-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#aar-lp .ar-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#aar-lp .ar-btn:hover{transform:translateY(-1px)}
+#aar-lp .ar-btn svg{width:18px;height:18px;flex:none}
+#aar-lp .ar-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#aar-lp .ar-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#aar-lp .ar-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#aar-lp .ar-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(79,70,229,.3)}
+#aar-lp .ar-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#aar-lp .ar-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#aar-lp .ar-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(6,182,212,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(79,70,229,.4),transparent 60%),linear-gradient(135deg,#0b1430,#14295c);overflow:hidden}
+#aar-lp .ar-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#aar-lp .ar-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#aar-lp .ar-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#aar-lp .ar-hero p{color:#d3def5;margin-top:14px;font-size:16px;max-width:560px}
+#aar-lp .ar-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#aar-lp .ar-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#aar-lp .ar-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#aar-lp .ar-stats span{font-size:12.5px;color:#b4c3e6}
+
+/* Cards */
+#aar-lp .ar-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#aar-lp .ar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#aar-lp .ar-card__head{display:flex;gap:12px;align-items:center}
+#aar-lp .ar-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#aar-lp .ar-icon svg{width:20px;height:20px}
+#aar-lp .ar-card h3{font-size:16px;font-weight:700}
+#aar-lp .ar-card small{display:block;font-size:12px;color:var(--muted)}
+#aar-lp .ar-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#aar-lp .ar-card li{margin:4px 0}
+
+/* Install steps */
+#aar-lp .ar-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#aar-lp .ar-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#aar-lp .ar-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#aar-lp .ar-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#aar-lp .ar-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#aar-lp .ar-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#aar-lp .ar-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#aar-lp .ar-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#aar-lp .ar-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#aar-lp .ar-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#aar-lp .ar-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#aar-lp .ar-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#aar-lp .ar-table th:last-child,#aar-lp .ar-table td:last-child{background:rgba(79,70,229,.05)}
+#aar-lp .ar-table td.ar-yes{color:#16a34a;font-weight:700;font-size:16px}
+#aar-lp .ar-table td.ar-no{color:#c0c4d0}
+
+/* Pricing */
+#aar-lp .ar-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#aar-lp .ar-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#aar-lp .ar-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(79,70,229,.15)}
+#aar-lp .ar-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#aar-lp .ar-price h3{font-size:17px;font-weight:700}
+#aar-lp .ar-price__sites{font-size:13px;color:var(--muted)}
+#aar-lp .ar-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#aar-lp .ar-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#aar-lp .ar-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#aar-lp .ar-price li{padding:4px 0 4px 24px;position:relative}
+#aar-lp .ar-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#aar-lp .ar-price .ar-btn{justify-content:center}
+#aar-lp .ar-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#aar-lp .ar-faq{margin-top:20px;display:grid;gap:10px}
+#aar-lp .ar-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#aar-lp .ar-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#aar-lp .ar-faq summary::-webkit-details-marker{display:none}
+#aar-lp .ar-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#aar-lp .ar-faq details[open] summary::after{content:"–"}
+#aar-lp .ar-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#aar-lp .ar-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#aar-lp .ar-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#aar-lp .ar-maker p{font-size:14px;color:var(--muted)}
+#aar-lp .ar-maker b{color:var(--ink)}
+#aar-lp .ar-maker a{color:var(--brand)}
+#aar-lp .ar-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#ea580c,#db2777 60%,#9333ea)}
+#aar-lp .ar-cta h2{color:#fff}
+#aar-lp .ar-cta p{color:#fff1f2;margin:10px auto 0;max-width:560px}
+#aar-lp .ar-cta .ar-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #aar-lp .ar-hero__grid{grid-template-columns:1fr}
+ #aar-lp .ar-cards,#aar-lp .ar-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #aar-lp .ar-cards,#aar-lp .ar-steps,#aar-lp .ar-prices{grid-template-columns:1fr}
+ #aar-lp .ar-stats{grid-template-columns:repeat(2,1fr)}
+ #aar-lp .ar-hero__ctas .ar-btn{flex:1 1 100%;justify-content:center}
+ #aar-lp .ar-table{min-width:0;font-size:13px}
+ #aar-lp .ar-table th,#aar-lp .ar-table td{padding:11px 10px}
+ #aar-lp .ar-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#aar-lp h1,#aar-lp h2,#aar-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#aar-lp h2,#aar-lp h3{color:var(--ink)}
+#aar-lp .ar-hero h1,#aar-lp .ar-cta h2{color:#fff}
+#aar-lp p,#aar-lp li,#aar-lp td,#aar-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#aar-lp a{box-shadow:none;border-bottom:0}
+#aar-lp a:not(.ar-btn){color:var(--brand)}
+#aar-lp a.ar-btn{text-decoration:none!important}
+#aar-lp ul{margin-left:0;margin-right:0}
+#aar-lp .ar-card ul{list-style:disc}
+#aar-lp table,#aar-lp th,#aar-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#aar-lp th{border-top:0}
+#aar-lp table{margin:0;border:0;background:#fff}
+#aar-lp tr{background:none}
+#aar-lp details{margin:0}
+#aar-lp summary{color:var(--ink);background:none;border:0}
+#aar-lp section{display:block;padding:0}
+
+/* Aarye: hero entries mock-up */
+#aar-lp .ar-hero__grid>*{min-width:0}
+#aar-lp .ar-mock{background:#fff;border-radius:18px;padding:8px 0;color:var(--ink);box-shadow:0 30px 60px rgba(0,0,0,.35);max-width:380px;justify-self:end;width:100%}
+#aar-lp .ar-mock__title{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 8px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+#aar-lp .ar-mock__row{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-top:1px solid var(--line)}
+#aar-lp .ar-mock__av{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
+#aar-lp .ar-mock__who{flex:1;min-width:0}
+#aar-lp .ar-mock__who b{display:block;font-size:13.5px}
+#aar-lp .ar-mock__who small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#aar-lp .ar-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;line-height:1.4}
+#aar-lp .ar-tag--meta{background:#e7efff;color:#1d4ed8}
+#aar-lp .ar-tag--google{background:#e8f5e9;color:#15803d}
+#aar-lp .ar-tag--tiktok{background:#fdecf3;color:#be185d}
+#aar-lp .ar-tag--ai{background:#f1ecff;color:#6d28d9}
+#aar-lp .ar-tag--seo{background:#ecfeff;color:#0e7490}
+#aar-lp .ar-mock__foot{padding:10px 16px 6px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line)}
+/* Chips */
+#aar-lp .ar-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+#aar-lp .ar-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--ink)}
+#aar-lp .ar-chip i{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block}
+#aar-lp .ar-chip--muted{font-weight:500;color:var(--muted);background:var(--soft)}
+#aar-lp .ar-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+#aar-lp .ar-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+#aar-lp .ar-box h3{font-size:16px;font-weight:700}
+#aar-lp .ar-box p{font-size:14px;color:var(--muted);margin-top:6px}
+#aar-lp .ar-pro{background:linear-gradient(180deg,#f5f6ff,#fff);border:1px solid #dfe2fb;border-radius:22px;padding:clamp(20px,4vw,32px)}
+#aar-lp .ar-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--brand);color:#fff}
+#aar-lp .ar-hub{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center;margin-top:24px;background:#0b1430;color:#fff;border-radius:18px;padding:clamp(20px,4vw,28px)}
+#aar-lp .ar-hub h3{font-size:19px;font-weight:700;color:#fff}
+#aar-lp .ar-hub p{color:#b4c3e6;font-size:14.5px;margin-top:8px}
+#aar-lp .ar-hub__table{background:#fff;color:var(--ink);border-radius:14px;padding:6px 14px;font-size:13px}
+#aar-lp .ar-hub__table div{display:grid;grid-template-columns:1.3fr .8fr .8fr .9fr;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+#aar-lp .ar-hub__table div:first-child{border-top:0;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+#aar-lp .ar-hub__table b{color:#16a34a}
+@media (max-width:900px){#aar-lp .ar-cols,#aar-lp .ar-hub{grid-template-columns:1fr}#aar-lp .ar-mock{justify-self:stretch;max-width:none}}
+</style>
+
+<div id="aar-lp" class="ar-lp">
+
+  <!-- Hero -->
+  <section class="ar-hero">
+    <div class="ar-hero__grid">
+      <div>
+        <span class="ar-badge">Free WordPress plugin · Pro available</span>
+        <h1>Know which ad sent every lead</h1>
+        <p>Aarye Marketing Addon for Forms shows the ad network, campaign, ad and keyword behind every form entry, from Meta, Google, TikTok, LinkedIn and 20 more. One dashboard for all your forms, with every field and attachment.</p>
+        <div class="ar-hero__ctas">
+          <a class="ar-btn ar-btn--white" href="https://laghavi.site/wp-content/uploads/aarye-marketing-addon-for-forms.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Download free plugin</a>
+          <a class="ar-btn ar-btn--ghost" href="#pro">See Pro plans</a>
+        </div>
+        <div class="ar-stats">
+          <div><b>10</b><span>form plugins</span></div>
+          <div><b>24</b><span>ad networks recognised</span></div>
+          <div><b>8</b><span>CRMs and tools in Pro</span></div>
+          <div><b>0</b><span>changes to your forms</span></div>
+        </div>
+      </div>
+      <div class="ar-mock" aria-hidden="true">
+        <div class="ar-mock__title"><span>New leads</span><span>Today</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">SA</span><div class="ar-mock__who"><b>Sara Ali</b><small>Summer Sale › UAE 25-45 › Video Ad 1</small></div><span class="ar-tag ar-tag--meta">★ Meta Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">OK</span><div class="ar-mock__who"><b>Omar Khan</b><small>Brand Search · “plumber dubai”</small></div><span class="ar-tag ar-tag--google">★ Google Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">LH</span><div class="ar-mock__who"><b>Layla Haddad</b><small>Spring Launch › Clip 3</small></div><span class="ar-tag ar-tag--tiktok">★ TikTok Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">JM</span><div class="ar-mock__who"><b>John Miller</b><small>Asked for “best CRM consultant”</small></div><span class="ar-tag ar-tag--ai">ChatGPT</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">PR</span><div class="ar-mock__who"><b>Priya Rao</b><small>Landing page: /pricing/</small></div><span class="ar-tag ar-tag--seo">Google</span></div>
+        <div class="ar-mock__foot">4 of 5 leads came from ads this week</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works with -->
+  <section>
+    <h2>Works with the forms you already use</h2>
+    <p class="lead">Nothing to change in your forms. Install Aarye and every new entry is saved with where it came from, even from form plugins that keep no entries of their own.</p>
+    <div class="ar-chips">
+      <span class="ar-chip"><i></i>Contact Form 7</span><span class="ar-chip"><i></i>WPForms</span><span class="ar-chip"><i></i>Elementor Pro Forms</span><span class="ar-chip"><i></i>Fluent Forms</span><span class="ar-chip"><i></i>Gravity Forms</span><span class="ar-chip"><i></i>Forminator</span><span class="ar-chip"><i></i>Ninja Forms</span><span class="ar-chip"><i></i>Formidable Forms</span><span class="ar-chip"><i></i>JetFormBuilder</span><span class="ar-chip"><i></i>MetForm</span><span class="ar-chip"><i></i>Zoho Forms (Pro)</span>
+    </div>
+  </section>
+
+  <!-- Ad networks -->
+  <section>
+    <h2>Every ad network that can send you traffic</h2>
+    <p class="lead">Recognised by their click IDs and ad tags, with the campaign, ad set, ad and keyword. Visitors who did not come from an ad are sorted too.</p>
+    <div class="ar-chips">
+      <span class="ar-chip">Google Ads</span><span class="ar-chip">Performance Max</span><span class="ar-chip">YouTube Ads</span><span class="ar-chip">Meta Ads</span><span class="ar-chip">Instagram</span><span class="ar-chip">WhatsApp ads</span><span class="ar-chip">Microsoft Advertising</span><span class="ar-chip">TikTok Ads</span><span class="ar-chip">LinkedIn Ads</span><span class="ar-chip">X Ads</span><span class="ar-chip">Snapchat Ads</span><span class="ar-chip">Pinterest Ads</span><span class="ar-chip">Reddit Ads</span><span class="ar-chip">Quora Ads</span><span class="ar-chip">Amazon Ads</span><span class="ar-chip">Apple Search Ads</span><span class="ar-chip">Spotify Ads</span><span class="ar-chip">Yandex Direct</span><span class="ar-chip">Display &amp; Video 360</span><span class="ar-chip">Taboola</span><span class="ar-chip">Outbrain</span><span class="ar-chip">Criteo</span><span class="ar-chip">AdRoll</span><span class="ar-chip">StackAdapt</span><span class="ar-chip">The Trade Desk</span><span class="ar-chip">Baidu</span><span class="ar-chip">Naver</span>
+    </div>
+    <div class="ar-chips">
+      <span class="ar-chip ar-chip--muted">Search engines</span><span class="ar-chip ar-chip--muted">Social media</span><span class="ar-chip ar-chip--muted">ChatGPT, Perplexity, Gemini, Copilot, Claude</span><span class="ar-chip ar-chip--muted">Email</span><span class="ar-chip ar-chip--muted">Other websites</span><span class="ar-chip ar-chip--muted">Direct</span>
+    </div>
+  </section>
+
+  <!-- Free features -->
+  <section id="whats-inside">
+    <h2>What you get, free</h2>
+    <p class="lead">Everything you need to see which ads bring leads, at no cost.</p>
+    <div class="ar-cards">
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#4f46e5"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></span><div><h3>Source on every entry</h3><small>Ad, campaign, ad set, keyword</small></div></div>
+        <ul><li>First and last visit before the form was sent</li><li>Landing page, referrer, device and language</li><li>Number of visits and days to convert</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#0891b2"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><div><h3>One dashboard</h3><small>All entries from all forms</small></div></div>
+        <ul><li>Leads by source, ad network, campaign and ad</li><li>Filters by date, form, source and language</li><li>Export to CSV that opens in Excel</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#0f766e"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.3-2.3L16 7"/></svg></span><div><h3>Every field and file</h3><small>Custom fields and attachments</small></div></div>
+        <ul><li>A private copy of uploads, even when the form plugin deletes them</li><li>Lead status: new, contacted, qualified, won, lost</li><li>Name, email and phone found in any language</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#db2777"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span><div><h3>Connect your ads guide</h3><small>Step by step, inside WordPress</small></div></div>
+        <ul><li>Tracking templates to copy for Google, Meta, TikTok and more</li><li>Campaign and ad names fill in by themselves</li><li>“Test a link” shows how a lead will look</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#16a34a"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg></span><div><h3>Google Sheets</h3><small>Each lead as a row</small></div></div>
+        <ul><li>Source, campaign and ad in their own columns</li><li>Every form field in its own column</li><li>No Google password stored in WordPress</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><div><h3>Multilingual &amp; private</h3><small>WPML, Polylang, TranslatePress, Weglot</small></div></div>
+        <ul><li>Language of each lead, with a filter</li><li>First-party cookies only, cookie consent support</li><li>Nothing is sent to us</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="ar-install">
+    <h2>Up and running in minutes</h2>
+    <div class="ar-steps">
+      <div class="ar-step"><span class="ar-step__n">1</span><h3>Install</h3><p>Download the free plugin, then in WordPress go to Plugins → Add New → Upload Plugin and choose the zip. New entries now show their source.</p></div>
+      <div class="ar-step"><span class="ar-step__n">2</span><h3>Connect your ads</h3><p>Open Aarye Leads → Connect your ads and paste the tracking template into each ad account, once. Campaign and ad names then appear too.</p></div>
+      <div class="ar-step"><span class="ar-step__n">3</span><h3>See what works</h3><p>Open the dashboard: leads by ad network, campaign and ad. Spend more on the ads that bring real leads.</p></div>
+    </div>
+  </section>
+
+  <!-- Pro -->
+  <section class="ar-pro">
+    <span class="ar-pill">Pro</span>
+    <h2 style="margin-top:12px">Send every lead where you work, and see where forms lose people</h2>
+    <p class="lead">Aarye Pro sends each entry, with its ad source, to your CRM a few seconds after the form is sent, and tries again for 7 days if a service is down.</p>
+    <div class="ar-chips">
+      <span class="ar-chip"><i></i>Laghavi Ads Hub</span><span class="ar-chip"><i></i>Zoho CRM</span><span class="ar-chip"><i></i>Zoho Forms</span><span class="ar-chip"><i></i>HubSpot</span><span class="ar-chip"><i></i>Airtable</span><span class="ar-chip"><i></i>Notion</span><span class="ar-chip"><i></i>Your own MySQL database</span><span class="ar-chip"><i></i>Any CRM by webhook / API</span>
+    </div>
+    <div class="ar-cols">
+      <div class="ar-box"><h3>Form analytics</h3><p>Views, starts, submissions and abandons for every form, with conversion and completion rates, and conversion by source. See which field people give up at, so you know which question costs you leads.</p></div>
+      <div class="ar-box"><h3>Pages viewed, with IP address</h3><p>On every entry: the pages the visitor read before sending the form, how long they stayed on each, and their IP address.</p></div>
+      <div class="ar-box"><h3>Automations</h3><p>Rules like “when the lead came from Meta Ads and the budget is 5k+: mark it Qualified, email sales@ and send it to HubSpot”. Conditions on source, campaign, ad, form or any field.</p></div>
+      <div class="ar-box"><h3>Spam and bot protection</h3><p>Bots, throwaway emails, link spam, blocked words, emails and IP addresses, and repeat senders are kept as spam but never sent to your CRM or counted as leads.</p></div>
+    </div>
+    <div class="ar-hub">
+      <div>
+        <h3>Real leads in Laghavi Ads Hub</h3>
+        <p>Ad platforms count “leads” their own way. Connect Aarye Pro to Laghavi Ads Hub to compare what each network reports with the real form leads you got, and see the cost per real lead for every campaign and ad. Only the source of each lead is sent, never names, emails or messages.</p>
+      </div>
+      <div class="ar-hub__table" aria-hidden="true">
+        <div><span>Network</span><span>Reported</span><span>Real</span><span>Cost / lead</span></div>
+        <div><span>Meta Ads</span><span>64</span><b>41</b><span>$18.20</span></div>
+        <div><span>Google Ads</span><span>38</span><b>35</b><span>$24.70</span></div>
+        <div><span>TikTok Ads</span><span>52</span><b>19</b><span>$31.60</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free vs Pro -->
+  <section>
+    <h2>Free plugin vs Aarye Pro</h2>
+    <p class="lead">The free plugin tells you where every lead came from. Pro puts those leads to work.</p>
+    <div class="ar-table-wrap">
+      <table class="ar-table">
+        <thead><tr><th>Feature</th><th>Free plugin</th><th>Pro</th></tr></thead>
+        <tbody>
+          <tr><td>10 form plugins, one dashboard</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Ad network, campaign, ad and keyword on every entry</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Organic sources: search, social, AI assistants, email</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>All fields, custom fields and attachments</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Connect your ads guide and link tester</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Google Sheets and CSV export</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Multilingual forms</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Instant sending to CRMs and tools</td><td class="ar-no">—</td><td>Laghavi Ads Hub, Zoho CRM, Zoho Forms, HubSpot, Airtable, Notion, own database, webhook</td></tr>
+          <tr><td>Form analytics</td><td class="ar-no">—</td><td>Views, starts, abandons by field, conversion by source</td></tr>
+          <tr><td>Pages viewed and IP address</td><td class="ar-no">—</td><td>On every entry</td></tr>
+          <tr><td>Automations</td><td class="ar-no">—</td><td>Status, email and routing rules</td></tr>
+          <tr><td>Spam and bot protection</td><td>Bots flagged</td><td>Disposable emails, links, blocked words, emails and IPs</td></tr>
+          <tr><td>Updates &amp; support</td><td>Free updates</td><td>Automatic updates and email support</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pro pricing -->
+  <section id="pro">
+    <h2>Get Aarye Pro</h2>
+    <p class="lead">Yearly license with updates and support. Cancel any time and your license keeps working until the paid year ends.</p>
+    <div class="ar-prices">
+      <div class="ar-price">
+        <h3>Personal</h3><div class="ar-price__sites">1 website</div>
+        <div class="ar-price__amt">$59<span> / year</span></div>
+        <ul><li>All Pro features</li><li>All 8 connections</li><li>Email support</li></ul>
+        <a class="ar-btn ar-btn--line" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=1+site">Buy Personal</a>
+      </div>
+      <div class="ar-price ar-price--pop">
+        <span class="ar-price__tag">Most popular</span>
+        <h3>Business</h3><div class="ar-price__sites">Up to 5 websites</div>
+        <div class="ar-price__amt">$129<span> / year</span></div>
+        <ul><li>All Pro features</li><li>All 8 connections</li><li>Email support</li></ul>
+        <a class="ar-btn ar-btn--brand" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=5+sites">Buy Business</a>
+      </div>
+      <div class="ar-price">
+        <h3>Agency</h3><div class="ar-price__sites">Unlimited websites</div>
+        <div class="ar-price__amt">$249<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Use on every client site</li><li>Email support</li></ul>
+        <a class="ar-btn ar-btn--line" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=Unlimited+sites">Buy Agency</a>
+      </div>
+    </div>
+    <p class="ar-price__fine">Prices in US dollars. Pro needs the free Aarye Marketing Addon for Forms plugin installed.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Questions</h2>
+    <div class="ar-faq">
+      <details><summary>Do I have to change my forms?</summary><p>No. Aarye listens to each form plugin’s own “form sent” step. Your forms, emails and the form plugin’s own entries stay exactly as they are.</p></details>
+      <details><summary>Do I need UTM tags?</summary><p>Not to see the ad network: Google, Meta, Microsoft, TikTok, LinkedIn and others add a click ID to every ad click, and Aarye recognises it. To also see campaign, ad set and ad names, paste the tracking template from “Connect your ads” into your ad account once.</p></details>
+      <details><summary>Will it show leads from before I installed it?</summary><p>No, only new ones: the source of a visit can only be read while the visitor is on your site.</p></details>
+      <details><summary>Does it slow my site down?</summary><p>No. The tracking script is a few kilobytes and only reads the page address and referrer. Pro sends leads to your CRM in the background, so forms answer straight away.</p></details>
+      <details><summary>Does it work with caching and multilingual sites?</summary><p>Yes. The source is kept in a first-party cookie, so cached pages work, and the language of each lead is saved from WPML, Polylang, TranslatePress, Weglot or the page itself.</p></details>
+      <details><summary>Is personal data sent anywhere?</summary><p>The free plugin sends nothing to us. Pro sends leads only to the services you connect. Laghavi Ads Hub receives only the source of each lead, never names, emails, phone numbers or messages.</p></details>
+      <details><summary>Can I cancel Pro?</summary><p>Yes, any time from My Account. Your subscription won’t renew, and Pro keeps working until the end of the year you paid for.</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>Who makes it</h2>
+    <div class="ar-maker">
+      <div class="ar-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, creator of Aarye Marketing Addon for Forms<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="ar-cta">
+    <h2>Find out which ads really bring leads</h2>
+    <p>Install the free plugin and see the source of your next form entry. Upgrade to Pro to send every lead to your CRM and fix the forms that lose people.</p>
+    <div class="ar-hero__ctas">
+      <a class="ar-btn ar-btn--white" href="https://laghavi.site/wp-content/uploads/aarye-marketing-addon-for-forms.zip" download>Download free plugin</a>
+      <a class="ar-btn ar-btn--ghost" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/">Buy Pro</a>
+    </div>
+  </section>
+
+</div>
