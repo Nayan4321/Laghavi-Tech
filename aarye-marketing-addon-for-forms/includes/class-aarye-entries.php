@@ -135,6 +135,8 @@ class AARYE_Entries {
 				'source_entry_id' => '',
 				'fields'          => array(),
 				'files'           => array(),
+				'visit'           => null, // Attribution from elsewhere (an incoming webhook), else the visitor's cookie.
+				'user_agent'      => null,
 			)
 		);
 		$key  = $args['plugin'] . '|' . $args['form_id'] . '|' . ( '' !== (string) $args['source_entry_id'] ? $args['source_entry_id'] : md5( wp_json_encode( $args['fields'] ) ) );
@@ -142,12 +144,12 @@ class AARYE_Entries {
 			return self::$seen[ $key ];
 		}
 
-		$ua      = isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '';
+		$ua      = null !== $args['user_agent'] ? sanitize_text_field( (string) $args['user_agent'] ) : ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '' );
 		$is_bot  = AARYE_Tracker::is_bot( $ua );
 		if ( $is_bot && AARYE_Settings::on( 'skip_bots' ) ) {
 			return 0;
 		}
-		$visit   = AARYE_Tracker::read();
+		$visit   = is_array( $args['visit'] ) ? wp_parse_args( $args['visit'], array( 'first' => null, 'last' => null, 'visits' => 1, 'page' => '', 'lang' => '', 'visitor' => '' ) ) : AARYE_Tracker::read();
 		$touch   = $visit['last'] ? $visit['last'] : $visit['first'];
 		$source  = AARYE_Sources::classify( $touch ? $touch : array() );
 		$first   = $visit['first'] ? AARYE_Sources::classify( $visit['first'] ) : $source;
@@ -181,7 +183,7 @@ class AARYE_Entries {
 			'language'        => AARYE_Tracker::language( $visit['lang'] ),
 			'device'          => AARYE_Tracker::device( $ua ),
 			'browser'         => AARYE_Tracker::browser( $ua ),
-			'ip'              => AARYE_Settings::on( 'store_ip' ) ? self::ip() : '',
+			'ip'              => AARYE_Settings::on( 'store_ip' ) && ! is_array( $args['visit'] ) ? self::ip() : '',
 			'visitor_id'      => $visit['visitor'],
 			'visits'          => max( 1, $visit['visits'] ),
 			'first_seen'      => $visit['first'] && $visit['first']['time'] ? gmdate( 'Y-m-d H:i:s', $visit['first']['time'] ) : null,
