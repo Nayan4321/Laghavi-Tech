@@ -12,6 +12,7 @@ $aarye_settings = get_option( 'aarye_settings', array() );
 wp_clear_scheduled_hook( 'aarye_hourly' );
 delete_option( 'aarye_sheets_queue' );
 delete_transient( 'aarye_sheets_lock' );
+delete_transient( 'aarye_form_places' );
 
 if ( is_array( $aarye_settings ) && isset( $aarye_settings['delete_on_remove'] ) && 'yes' === $aarye_settings['delete_on_remove'] ) {
 	global $wpdb;

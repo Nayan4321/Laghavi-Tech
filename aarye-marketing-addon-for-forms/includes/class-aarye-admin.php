@@ -613,6 +613,31 @@ class AARYE_Admin {
 	}
 
 	/**
+	 * Pages where a form is used.
+	 *
+	 * @param string $plugin Plugin key.
+	 * @param string $form   Form ID.
+	 */
+	private static function used_on( $plugin, $form ) {
+		$posts = AARYE_Placements::of( $plugin, $form );
+		if ( ! $posts ) {
+			echo '<span class="aarye-muted">' . esc_html__( 'Not found on a page', 'aarye-marketing-addon-for-forms' ) . '</span>';
+			return;
+		}
+		$links = array();
+		foreach ( array_slice( $posts, 0, 3 ) as $post_id ) {
+			$title   = get_the_title( $post_id );
+			$url     = 'publish' === get_post_status( $post_id ) && is_post_type_viewable( get_post_type( $post_id ) ) ? get_permalink( $post_id ) : get_edit_post_link( $post_id );
+			$links[] = $url ? '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( '' !== $title ? $title : '#' . $post_id ) . '</a>' : esc_html( $title );
+		}
+		echo '<span class="aarye-muted">' . esc_html__( 'On:', 'aarye-marketing-addon-for-forms' ) . '</span> ' . wp_kses_post( implode( ', ', $links ) );
+		if ( count( $posts ) > 3 ) {
+			/* translators: %d: number of other pages. */
+			echo ' <span class="aarye-muted">' . esc_html( sprintf( _n( 'and %d more', 'and %d more', count( $posts ) - 3, 'aarye-marketing-addon-for-forms' ), count( $posts ) - 3 ) ) . '</span>';
+		}
+	}
+
+	/**
 	 * Ad setup guide, with a link tester.
 	 */
 	public static function page_guide() {
@@ -720,6 +745,7 @@ class AARYE_Admin {
 		<div class="wrap aarye">
 			<h1><?php esc_html_e( 'Forms', 'aarye-marketing-addon-for-forms' ); ?></h1>
 			<p class="aarye-lead"><?php esc_html_e( 'Every form of these plugins is captured automatically: no setup per form. Entries are saved in Aarye even if the form plugin doesn\'t keep entries itself.', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<p class="aarye-muted"><?php esc_html_e( '"On" shows the pages, posts, templates and popups where each form is placed (shortcodes, blocks and Elementor widgets).', 'aarye-marketing-addon-for-forms' ); ?></p>
 			<?php foreach ( AARYE_Integrations::plugins() as $key => $plugin ) : ?>
 				<?php $active = AARYE_Integrations::is_active( $key ); ?>
 				<div class="aarye-card aarye-plugin <?php echo $active ? '' : 'aarye-plugin--off'; ?>">
@@ -734,6 +760,7 @@ class AARYE_Admin {
 									<?php $c = isset( $counts[ $key . ':' . $form['id'] ] ) ? $counts[ $key . ':' . $form['id'] ] : null; ?>
 									<tr>
 										<td><?php echo esc_html( $form['title'] ); ?></td>
+										<td><?php self::used_on( $key, $form['id'] ); ?></td>
 										<td><?php echo $c ? '<a href="' . esc_url( self::url( 'entries', array( 'form' => $key . ':' . $form['id'], 'range' => 'all' ) ) ) . '">' . esc_html( sprintf( /* translators: %s: number. */ _n( '%s entry', '%s entries', (int) $c->n, 'aarye-marketing-addon-for-forms' ), number_format_i18n( (int) $c->n ) ) ) . '</a>' : '<span class="aarye-muted">' . esc_html__( 'No entries yet', 'aarye-marketing-addon-for-forms' ) . '</span>'; ?></td>
 										<td class="aarye-muted"><?php echo $c ? esc_html( sprintf( /* translators: %s: date. */ __( 'Last: %s', 'aarye-marketing-addon-for-forms' ), get_date_from_gmt( $c->last, get_option( 'date_format' ) ) ) ) : ''; ?></td>
 									</tr>

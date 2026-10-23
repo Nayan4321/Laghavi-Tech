@@ -757,39 +757,59 @@ class AARYE_Integrations {
 	 * @return array<int, array{id: string, title: string}>
 	 */
 	public static function forms( $key ) {
+		$out = self::plugin_forms( $key );
+		// Also forms that sent entries but are no longer in the plugin's list (deleted or renamed IDs).
+		$ids = wp_list_pluck( $out, 'id' );
+		foreach ( self::forms_seen( $key ) as $form ) {
+			if ( ! in_array( $form['id'], $ids, true ) ) {
+				$out[] = $form;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Every form the plugin itself has (drafts and inactive ones too).
+	 *
+	 * @param string $key Plugin key.
+	 * @return array<int, array{id: string, title: string}>
+	 */
+	private static function plugin_forms( $key ) {
 		$out = array();
 		try {
 			switch ( $key ) {
 				case 'cf7':
-					$posts = get_posts( array( 'post_type' => 'wpcf7_contact_form', 'numberposts' => 200 ) );
+					$posts = get_posts( array( 'post_type' => 'wpcf7_contact_form', 'numberposts' => -1, 'post_status' => array( 'publish', 'draft', 'private', 'future', 'pending' ) ) );
 					break;
 				case 'wpforms':
-					$posts = get_posts( array( 'post_type' => 'wpforms', 'numberposts' => 200 ) );
+					$posts = get_posts( array( 'post_type' => 'wpforms', 'numberposts' => -1, 'post_status' => array( 'publish', 'draft', 'private', 'future', 'pending' ) ) );
 					break;
 				case 'jetformbuilder':
-					$posts = get_posts( array( 'post_type' => 'jet-form-builder', 'numberposts' => 200 ) );
+					$posts = get_posts( array( 'post_type' => 'jet-form-builder', 'numberposts' => -1, 'post_status' => array( 'publish', 'draft', 'private', 'future', 'pending' ) ) );
 					break;
 				case 'metform':
-					$posts = get_posts( array( 'post_type' => 'metform-form', 'numberposts' => 200 ) );
+					$posts = get_posts( array( 'post_type' => 'metform-form', 'numberposts' => -1, 'post_status' => array( 'publish', 'draft', 'private', 'future', 'pending' ) ) );
 					break;
 				case 'forminator':
-					$posts = get_posts( array( 'post_type' => 'forminator_forms', 'numberposts' => 200 ) );
+					$posts = get_posts( array( 'post_type' => 'forminator_forms', 'numberposts' => -1, 'post_status' => array( 'publish', 'draft', 'private', 'future', 'pending' ) ) );
 					break;
 				case 'gravity':
-					foreach ( class_exists( 'GFAPI' ) ? (array) GFAPI::get_forms() : array() as $form ) {
+					foreach ( class_exists( 'GFAPI' ) ? (array) GFAPI::get_forms( null ) : array() as $form ) {
 						$out[] = array( 'id' => (string) $form['id'], 'title' => $form['title'] );
 					}
 					return $out;
 				case 'fluentform':
 					global $wpdb;
 					// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Fluent Forms' own table, read-only list.
-					foreach ( (array) $wpdb->get_results( "SELECT id, title FROM {$wpdb->prefix}fluentform_forms ORDER BY id DESC LIMIT 200" ) as $row ) {
+					foreach ( (array) $wpdb->get_results( "SELECT id, title FROM {$wpdb->prefix}fluentform_forms ORDER BY id DESC" ) as $row ) {
 						$out[] = array( 'id' => (string) $row->id, 'title' => $row->title );
 					}
 					return $out;
 				case 'formidable':
-					foreach ( class_exists( 'FrmForm' ) ? (array) FrmForm::get_published_forms() : array() as $form ) {
-						$out[] = array( 'id' => (string) $form->id, 'title' => $form->name );
+					foreach ( class_exists( 'FrmForm' ) ? (array) FrmForm::getAll( array( 'is_template' => 0, 'parent_form_id' => 0 ), 'name' ) : array() as $form ) {
+						if ( 'trash' !== $form->status ) {
+							$out[] = array( 'id' => (string) $form->id, 'title' => $form->name );
+						}
 					}
 					return $out;
 				case 'ninja':
@@ -798,15 +818,21 @@ class AARYE_Integrations {
 					}
 					return $out;
 				case 'elementor':
-					return self::forms_seen( 'elementor' );
+					return self::elementor_forms();
 				default:
-					return self::forms_seen( $key ); // Add-on sources: the forms that sent entries.
+					return array(); // Add-on sources: the forms that sent entries are added by forms().
 			}
 			foreach ( $posts as $post ) {
-				$out[] = array( 'id' => (string) $post->ID, 'title' => $post->post_title );
+				$title = $post->post_title;
+				if ( 'forminator' === $key ) {
+					// Forminator keeps the form's name in its settings; the post title is a slug.
+					$meta  = get_post_meta( $post->ID, 'forminator_form_meta', true );
+					$title = is_array( $meta ) && ! empty( $meta['settings']['formName'] ) ? (string) $meta['settings']['formName'] : $title;
+				}
+				$out[] = array( 'id' => (string) $post->ID, 'title' => '' !== $title ? $title : '#' . $post->ID );
 			}
 		} catch ( \Throwable $e ) {
-			return self::forms_seen( $key );
+			return array();
 		}
 		return $out;
 	}
@@ -826,6 +852,16 @@ class AARYE_Integrations {
 			$out[] = array( 'id' => (string) $row->form_id, 'title' => '' !== $row->form_name ? $row->form_name : $row->form_id );
 		}
 		return $out;
+	}
+
+	/**
+	 * Elementor Pro forms: Elementor keeps no list of forms, they live inside each page's design, so pages,
+	 * templates and popups are scanned (see AARYE_Placements).
+	 *
+	 * @return array<int, array{id: string, title: string}>
+	 */
+	public static function elementor_forms() {
+		return AARYE_Placements::scan()['elementor'];
 	}
 
 	/**
