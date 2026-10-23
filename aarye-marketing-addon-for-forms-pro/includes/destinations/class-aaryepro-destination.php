@@ -179,7 +179,20 @@ abstract class AARYEPRO_Destination {
 				$args['headers']['Content-Type'] = 'application/json';
 			}
 		}
+		// Allow the port of the address the user entered (for example n8n on :5678); local and private
+		// addresses stay blocked by wp_safe_remote_request().
+		$port  = (int) wp_parse_url( $url, PHP_URL_PORT );
+		$ports = static function ( $allowed ) use ( $port ) {
+			$allowed[] = $port;
+			return $allowed;
+		};
+		if ( $port ) {
+			add_filter( 'http_allowed_safe_ports', $ports );
+		}
 		$response = wp_safe_remote_request( $url, $args );
+		if ( $port ) {
+			remove_filter( 'http_allowed_safe_ports', $ports );
+		}
 		if ( is_wp_error( $response ) ) {
 			return array(
 				'status' => 0,

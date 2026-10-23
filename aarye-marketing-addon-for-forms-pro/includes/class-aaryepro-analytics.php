@@ -109,6 +109,14 @@ class AARYEPRO_Analytics {
 				continue;
 			}
 			$field = isset( $ev['fld'] ) ? mb_substr( sanitize_text_field( (string) $ev['fld'] ), 0, 100 ) : '';
+			if ( ! empty( $ev['k'] ) ) {
+				// Sent twice (when leaving, and again from the next page): count once.
+				$once = 'aaryepro_ev_' . md5( (string) $ev['k'] );
+				if ( get_transient( $once ) ) {
+					continue;
+				}
+				set_transient( $once, 1, 2 * HOUR_IN_SECONDS );
+			}
 			self::count( (string) $ev['t'], sanitize_key( $ev['p'] ), $form, $channel, $field );
 		}
 		if ( '' !== $visit['visitor'] && AARYE_Settings::on( 'pro_journey' ) ) {
@@ -173,9 +181,10 @@ class AARYEPRO_Analytics {
 				'name'     => '',
 			);
 		}
-		// Submissions are the real entries.
-		$f    = array( 'from' => $from, 'to' => $to, 'channel' => $channel );
-		$subs = self::submissions( $f );
+		// Submissions are the real entries, counted from the day form views started being counted.
+		$since = (string) get_option( 'aaryepro_tracking_since', $from );
+		$f     = array( 'from' => max( $from, $since ), 'to' => $to, 'channel' => $channel );
+		$subs  = self::submissions( $f );
 		foreach ( $subs as $k => $row ) {
 			if ( ! isset( $out[ $k ] ) ) {
 				$out[ $k ] = array(
@@ -302,7 +311,7 @@ class AARYEPRO_Analytics {
 				'submits' => 0,
 			);
 		}
-		foreach ( AARYE_Entries::grouped( 'channel', array( 'from' => $from, 'to' => $to, 'form' => $plugin . ':' . $form ) ) as $row ) {
+		foreach ( AARYE_Entries::grouped( 'channel', array( 'from' => max( $from, (string) get_option( 'aaryepro_tracking_since', $from ) ), 'to' => $to, 'form' => $plugin . ':' . $form ) ) as $row ) {
 			if ( ! isset( $out[ $row['key'] ] ) ) {
 				$out[ $row['key'] ] = array( 'views' => 0, 'submits' => 0 );
 			}
@@ -423,7 +432,12 @@ class AARYEPRO_Analytics {
 						<?php endforeach; ?>
 					</tbody>
 				</table>
-				<p class="aarye-muted"><?php esc_html_e( 'Conversion = sent ÷ views. Completion = sent ÷ started. "Most left at" is the last field people filled before leaving without sending.', 'aarye-marketing-addon-for-forms-pro' ); ?></p>
+				<p class="aarye-muted"><?php esc_html_e( 'Conversion = sent ÷ views. Completion = sent ÷ started. "Most left at" is the last field people filled before leaving without sending.', 'aarye-marketing-addon-for-forms-pro' ); ?>
+				<?php
+				/* translators: %s: date. */
+				echo esc_html( sprintf( __( 'Counted since %s.', 'aarye-marketing-addon-for-forms-pro' ), mysql2date( get_option( 'date_format' ), (string) get_option( 'aaryepro_tracking_since' ) ) ) );
+				?>
+				</p>
 			<?php endif; ?>
 			<?php
 			if ( '' !== $form && isset( $report[ $form ] ) ) {
@@ -529,6 +543,9 @@ class AARYEPRO_Analytics {
 				);
 			}
 			if ( ! $forms ) {
+				if ( $day === $yday ) {
+					update_option( 'aaryepro_hub_stats_final', $yday, false );
+				}
 				continue;
 			}
 			$res = $active['hub']->send_form_stats( $day, $forms );

@@ -179,6 +179,24 @@
 		Array.prototype.forEach.call( document.querySelectorAll( 'form' ), watch );
 	}
 
+	function store( body ) {
+		try {
+			if ( body ) {
+				// Leaving can run twice (hidden, then pagehide): add to what is already kept.
+				var kept = JSON.parse( window.sessionStorage.getItem( 'aaryeProPending' ) || 'null' );
+				if ( kept && kept.e ) {
+					body.e = kept.e.concat( body.e || [] ).slice( -30 );
+				}
+				window.sessionStorage.setItem( 'aaryeProPending', JSON.stringify( body ) );
+			} else {
+				var saved = window.sessionStorage.getItem( 'aaryeProPending' );
+				window.sessionStorage.removeItem( 'aaryeProPending' );
+				return saved ? JSON.parse( saved ) : null;
+			}
+		} catch ( e ) {}
+		return null;
+	}
+
 	function leave() {
 		forms.forEach( function ( st ) {
 			if ( st.started && ! st.sent && ! st.done ) {
@@ -194,10 +212,26 @@
 		if ( cfg.journey && cookie( 'aarye_vid' ) ) {
 			extra.lv = { u: location.href, s: Math.round( visible / 1000 ) };
 		}
+		// Events sent while leaving get a one-time key (k): they are sent twice (beacon, and again from the
+		// next page in case the beacon was cut off) but counted once.
+		var events = queue.slice( 0, 30 );
+		events.forEach( function ( ev ) {
+			if ( ! ev.k ) {
+				ev.k = Math.random().toString( 36 ).slice( 2 ) + Date.now().toString( 36 );
+			}
+		} );
+		if ( events.length || extra.lv ) {
+			// Beacons can be cut off when the next page loads: keep a copy for the next page to send.
+			store( { e: events, lv: extra.lv } );
+		}
 		flush( true, extra );
 	}
 
 	function start() {
+		var pending = store();
+		if ( pending ) {
+			send( pending, false );
+		}
 		scan();
 		if ( window.MutationObserver ) {
 			var mo = new MutationObserver( scan );

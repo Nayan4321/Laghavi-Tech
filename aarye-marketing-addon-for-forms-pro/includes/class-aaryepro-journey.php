@@ -119,7 +119,7 @@ class AARYEPRO_Journey {
 		if ( ! $p || ( ! empty( $p['host'] ) && strtolower( $p['host'] ) !== strtolower( (string) $host ) ) ) {
 			return '';
 		}
-		return ( isset( $p['path'] ) ? $p['path'] : '/' ) . ( isset( $p['query'] ) ? '?' . $p['query'] : '' );
+		return ( isset( $p['path'] ) ? $p['path'] : '/' ) . ( ! empty( $p['query'] ) ? '?' . $p['query'] : '' );
 	}
 
 	/**

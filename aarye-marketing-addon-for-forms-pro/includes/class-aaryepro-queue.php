@@ -62,7 +62,7 @@ class AARYEPRO_Queue {
 		$job = $wpdb->get_row( $wpdb->prepare( 'SELECT id FROM %i WHERE entry_id = %d AND dest = %s', $t, $entry_id, $dest ) );
 		if ( $job ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$wpdb->update( $t, array( 'status' => 'pending', 'tries' => 0, 'next_at' => $now, 'created_at' => $now, 'updated_at' => $now ), array( 'id' => $job->id ) );
+			$wpdb->update( $t, array( 'status' => 'pending', 'tries' => 0, 'next_at' => $now, 'created_at' => $now, 'updated_at' => $now, 'last_code' => '', 'last_message' => '' ), array( 'id' => $job->id ) );
 		} else {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			$wpdb->insert(
@@ -136,8 +136,9 @@ class AARYEPRO_Queue {
 		global $wpdb;
 		$t     = AARYEPRO_DB::table( 'jobs' );
 		$start = time();
-		foreach ( AARYEPRO_Connections::active() as $key => $dest ) {
-			if ( AARYEPRO_Connections::stopped( $key ) ) {
+		// Every set-up connection: jobs also come from automations for connections that do not take all entries.
+		foreach ( AARYEPRO_Connections::destinations() as $key => $dest ) {
+			if ( ! $dest->configured() || AARYEPRO_Connections::stopped( $key ) ) {
 				continue;
 			}
 			while ( time() - $start < 40 ) {

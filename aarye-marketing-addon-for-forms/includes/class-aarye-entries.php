@@ -290,7 +290,8 @@ class AARYE_Entries {
 	 * @return string
 	 */
 	public static function humanize( $name ) {
-		$name = trim( preg_replace( '/[_\-\[\]]+/', ' ', (string) $name ) );
+		$name = preg_replace( '/([a-z])([A-Z])/', '$1 $2', (string) $name ); // PhoneNumber → Phone Number.
+		$name = trim( preg_replace( '/[_\-\[\]]+/', ' ', $name ) );
 		$name = preg_replace( '/^(your|input|field|form)\s+/i', '', $name );
 		return ucfirst( strtolower( $name ) );
 	}

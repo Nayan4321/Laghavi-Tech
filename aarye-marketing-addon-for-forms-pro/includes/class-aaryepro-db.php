@@ -89,5 +89,9 @@ class AARYEPRO_DB {
 			) $c;"
 		);
 		update_option( 'aaryepro_db_version', self::VERSION );
+		if ( ! get_option( 'aaryepro_tracking_since' ) ) {
+			// Form analytics compare views with entries from this day on.
+			update_option( 'aaryepro_tracking_since', wp_date( 'Y-m-d' ), false );
+		}
 	}
 }

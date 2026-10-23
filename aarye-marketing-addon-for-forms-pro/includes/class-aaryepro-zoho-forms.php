@@ -151,7 +151,8 @@ class AARYEPRO_Zoho_Forms {
 			'ref'    => isset( $hidden['aarye_referrer'] ) ? esc_url_raw( $hidden['aarye_referrer'] ) : '',
 			'params' => $params,
 		);
-		$page    = isset( $hidden['aarye_page'] ) ? esc_url_raw( $hidden['aarye_page'] ) : '';
+		$page    = isset( $hidden['aarye_page'] ) ? (string) $hidden['aarye_page'] : '';
+		$page    = 0 === strpos( $page, '/' ) ? home_url( $page ) : esc_url_raw( $page );
 		$name    = isset( $data['form_name'] ) ? sanitize_text_field( (string) $data['form_name'] ) : ( isset( $data['formname'] ) ? sanitize_text_field( (string) $data['formname'] ) : AARYEPRO_Connections::get( self::KEY, 'form_name' ) );
 		$id      = AARYE_Entries::capture(
 			array(
