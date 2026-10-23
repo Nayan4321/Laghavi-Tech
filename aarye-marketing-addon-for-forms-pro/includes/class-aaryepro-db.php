@@ -56,10 +56,11 @@ class AARYEPRO_DB {
 			day date NOT NULL,
 			form_plugin varchar(32) NOT NULL,
 			form_id varchar(64) NOT NULL,
+			channel varchar(20) NOT NULL DEFAULT '',
 			views int(10) unsigned NOT NULL DEFAULT 0,
 			starts int(10) unsigned NOT NULL DEFAULT 0,
 			abandons int(10) unsigned NOT NULL DEFAULT 0,
-			PRIMARY KEY  (day,form_plugin,form_id)
+			PRIMARY KEY  (day,form_plugin,form_id,channel)
 			) $c;"
 		);
 		dbDelta(

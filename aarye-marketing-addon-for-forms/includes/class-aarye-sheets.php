@@ -42,7 +42,7 @@ class AARYE_Sheets {
 			return;
 		}
 		$entry = AARYE_Entries::get( $id );
-		if ( ! $entry || ( $entry->is_bot && ! AARYE_Settings::on( 'sheets_bots' ) ) ) {
+		if ( ! $entry || 'spam' === $entry->status || ( $entry->is_bot && ! AARYE_Settings::on( 'sheets_bots' ) ) ) {
 			return;
 		}
 		$queue   = (array) get_option( self::QUEUE, array() );

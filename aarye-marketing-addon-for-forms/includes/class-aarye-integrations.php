@@ -46,7 +46,12 @@ class AARYE_Integrations {
 	 * @return array<string, array{name: string}>
 	 */
 	public static function plugins() {
-		return array(
+		/**
+		 * Form plugins and other entry sources (add-ons add theirs).
+		 *
+		 * @param array $plugins Key => array( 'name' => Name ).
+		 */
+		return (array) apply_filters( 'aarye_form_plugins', array(
 			'cf7'            => array( 'name' => 'Contact Form 7' ),
 			'wpforms'        => array( 'name' => 'WPForms' ),
 			'elementor'      => array( 'name' => 'Elementor Pro Forms' ),
@@ -57,7 +62,7 @@ class AARYE_Integrations {
 			'formidable'     => array( 'name' => 'Formidable Forms' ),
 			'jetformbuilder' => array( 'name' => 'JetFormBuilder' ),
 			'metform'        => array( 'name' => 'MetForm' ),
-		);
+		) );
 	}
 
 	/**
@@ -89,7 +94,13 @@ class AARYE_Integrations {
 			case 'metform':
 				return class_exists( '\MetForm\Plugin' );
 		}
-		return false;
+		/**
+		 * Whether an add-on's entry source is active.
+		 *
+		 * @param bool   $active Active.
+		 * @param string $key    Source key.
+		 */
+		return (bool) apply_filters( 'aarye_form_plugin_active', false, $key );
 	}
 
 	/**
@@ -789,7 +800,7 @@ class AARYE_Integrations {
 				case 'elementor':
 					return self::forms_seen( 'elementor' );
 				default:
-					return $out;
+					return self::forms_seen( $key ); // Add-on sources: the forms that sent entries.
 			}
 			foreach ( $posts as $post ) {
 				$out[] = array( 'id' => (string) $post->ID, 'title' => $post->post_title );
@@ -806,7 +817,7 @@ class AARYE_Integrations {
 	 * @param string $key Plugin key.
 	 * @return array
 	 */
-	private static function forms_seen( $key ) {
+	public static function forms_seen( $key ) {
 		global $wpdb;
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
 		$rows = $wpdb->get_results( $wpdb->prepare( 'SELECT form_id, MAX(form_name) AS form_name FROM %i WHERE form_plugin = %s GROUP BY form_id', AARYE_Entries::table(), $key ) );

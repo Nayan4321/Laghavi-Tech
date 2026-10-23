@@ -407,7 +407,7 @@ class AARYE_Entries {
 	/**
 	 * WHERE clause for the dashboard filters, with placeholders.
 	 *
-	 * @param array $f Filters: channel, not_channel, source, campaign, form (plugin:id), lang, s, from, to (Y-m-d), bots.
+	 * @param array $f Filters: channel, not_channel, source, campaign, form (plugin:id), lang, status, s, from, to (Y-m-d), bots.
 	 * @return array{0: string, 1: array} SQL with %s placeholders, and their values.
 	 */
 	public static function where( $f ) {
@@ -442,6 +442,12 @@ class AARYE_Entries {
 		}
 		if ( empty( $f['bots'] ) ) {
 			$sql[] = 'is_bot = 0';
+		}
+		if ( ! empty( $f['status'] ) ) {
+			$sql[]  = 'status = %s';
+			$args[] = (string) $f['status'];
+		} elseif ( empty( $f['bots'] ) ) {
+			$sql[] = "status <> 'spam'"; // Spam is kept but not counted as a lead.
 		}
 		if ( ! empty( $f['s'] ) ) {
 			$like  = '%' . $wpdb->esc_like( $f['s'] ) . '%';

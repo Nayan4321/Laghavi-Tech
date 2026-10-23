@@ -128,7 +128,7 @@ class AARYE_Admin {
 	private static function filters() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only filters.
 		$f = array();
-		foreach ( array( 'channel', 'source', 'campaign', 'form', 'lang', 's', 'from', 'to', 'range' ) as $key ) {
+		foreach ( array( 'channel', 'source', 'campaign', 'form', 'lang', 'status', 's', 'from', 'to', 'range' ) as $key ) {
 			$f[ $key ] = isset( $_GET[ $key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) : '';
 		}
 		$f['bots'] = ! empty( $_GET['bots'] );
@@ -200,6 +200,12 @@ class AARYE_Admin {
 				<option value=""><?php esc_html_e( 'All forms', 'aarye-marketing-addon-for-forms' ); ?></option>
 				<?php foreach ( $forms as $form ) : ?>
 					<option value="<?php echo esc_attr( $form['plugin'] . ':' . $form['id'] ); ?>" <?php selected( $f['form'], $form['plugin'] . ':' . $form['id'] ); ?>><?php echo esc_html( $form['plugin_name'] . ' – ' . $form['title'] ); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<select name="status">
+				<option value=""><?php esc_html_e( 'All leads (not spam)', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<?php foreach ( AARYE_Entries::statuses() as $k => $label ) : ?>
+					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['status'], $k ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<input type="search" name="s" value="<?php echo esc_attr( $f['s'] ); ?>" placeholder="<?php esc_attr_e( 'Name, email, campaign…', 'aarye-marketing-addon-for-forms' ); ?>" />
