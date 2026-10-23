@@ -170,26 +170,86 @@ class AARYE_Sheets {
 			$body['headers'] = array_keys( $row );
 			$body['row']     = $row;
 		}
+		// Google runs the script on this POST, then redirects to the script's reply, which must be read
+		// with GET. Follow that redirect here, so it works whatever HTTP transport the site uses.
 		$response = wp_remote_post(
 			(string) AARYE_Settings::get( 'sheets_url' ),
 			array(
-				'timeout'     => 15,
-				'redirection' => 5,
+				'timeout'     => 20,
+				'redirection' => 0,
 				'headers'     => array( 'Content-Type' => 'application/json' ),
 				'body'        => wp_json_encode( $body ),
 			)
 		);
+		$code = (int) wp_remote_retrieve_response_code( $response );
+		if ( ! is_wp_error( $response ) && in_array( $code, array( 301, 302, 303, 307, 308 ), true ) ) {
+			$location = (string) wp_remote_retrieve_header( $response, 'location' );
+			if ( false !== strpos( $location, 'accounts.google.com' ) ) {
+				// Google wants a sign-in: the web app is not open to "Anyone".
+				return null === $entry ? self::explain( 401, $location ) : false;
+			}
+			if ( '' !== $location ) {
+				$response = wp_remote_get(
+					$location,
+					array(
+						'timeout'     => 20,
+						'redirection' => 3,
+					)
+				);
+				$code     = (int) wp_remote_retrieve_response_code( $response );
+			}
+		}
 		if ( is_wp_error( $response ) ) {
 			return null === $entry ? $response->get_error_message() : false;
 		}
-		$reply = json_decode( wp_remote_retrieve_body( $response ), true );
+		$text  = (string) wp_remote_retrieve_body( $response );
+		$reply = json_decode( $text, true );
 		if ( is_array( $reply ) && ! empty( $reply['ok'] ) ) {
 			return true;
 		}
 		if ( null === $entry ) {
-			return is_array( $reply ) && ! empty( $reply['error'] ) ? (string) $reply['error'] : __( 'Google did not answer as expected. Check that the web app is deployed with access "Anyone" and that you pasted the /exec address.', 'aarye-marketing-addon-for-forms' );
+			if ( is_array( $reply ) && ! empty( $reply['error'] ) ) {
+				return (string) $reply['error'];
+			}
+			return self::explain( $code, $text );
 		}
 		return false;
+	}
+
+	/**
+	 * Why Google's answer was not the script's reply, in words.
+	 *
+	 * @param int    $code HTTP status.
+	 * @param string $text Body.
+	 * @return string
+	 */
+	private static function explain( $code, $text ) {
+		$url = (string) AARYE_Settings::get( 'sheets_url' );
+		if ( false === strpos( $url, 'script.google.com' ) || '/exec' !== substr( untrailingslashit( (string) wp_parse_url( $url, PHP_URL_PATH ) ), -5 ) ) {
+			return __( 'This is not a web app address. In Apps Script use Deploy → Manage deployments and copy the "Web app URL": it starts with https://script.google.com/ and ends with /exec (not /dev, and not the editor\'s address).', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( false !== strpos( $url, '/a/macros/' ) && ( false !== stripos( $text, 'accounts.google.com' ) || false !== stripos( $text, 'ServiceLogin' ) || 401 === $code || 403 === $code ) ) {
+			return __( 'Your web app belongs to a Google Workspace (company) account, where "Anyone" can mean "anyone in your company". In Deploy → Manage deployments → edit, choose "Anyone" (the option without your domain name). If it is missing, your Workspace admin blocks public web apps: create the spreadsheet and script with a personal Gmail account instead.', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( false !== stripos( $text, 'Authorization is required' ) || false !== stripos( $text, 'authorization' ) && false !== stripos( $text, 'required' ) ) {
+			return __( 'The script was not authorised yet. In Apps Script, select the doPost function, click Run once and allow access, then Deploy → Manage deployments → edit → New version → Deploy.', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( false !== stripos( $text, 'accounts.google.com' ) || false !== stripos( $text, 'ServiceLogin' ) ) {
+			return __( 'Google asked for a sign-in: in Apps Script open Deploy → Manage deployments → edit (pencil), set "Who has access" to "Anyone" (not "Anyone with Google account"), and deploy.', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( false !== stripos( $text, 'doPost' ) ) {
+			return __( 'The web app does not have the script yet: paste the script again, click Save, then Deploy → Manage deployments → edit (pencil) → Version: New version → Deploy.', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( 404 === $code ) {
+			return __( 'Google says this web app address does not exist. Copy the "Web app URL" (ending in /exec) from Deploy → Manage deployments again.', 'aarye-marketing-addon-for-forms' );
+		}
+		if ( false !== stripos( $text, 'TypeError' ) || false !== stripos( $text, 'Exception' ) ) {
+			/* translators: %s: error from Google. */
+			return sprintf( __( 'The script stopped with an error: %s. Paste the script from this page again, save, and deploy a new version.', 'aarye-marketing-addon-for-forms' ), mb_substr( wp_strip_all_tags( $text ), 0, 200 ) );
+		}
+		$title = preg_match( '#<title[^>]*>(.*?)</title>#is', $text, $m ) ? trim( wp_strip_all_tags( html_entity_decode( $m[1] ) ) ) : trim( mb_substr( wp_strip_all_tags( $text ), 0, 120 ) );
+		/* translators: 1: HTTP status code, 2: what Google sent back. */
+		return sprintf( __( 'Google did not answer as expected (HTTP %1$d: "%2$s"). Check that the web app is deployed with access "Anyone", that you pasted the /exec address, and that you deployed a new version after pasting the script.', 'aarye-marketing-addon-for-forms' ), $code, '' !== $title ? $title : __( 'empty reply', 'aarye-marketing-addon-for-forms' ) );
 	}
 
 	/**
