@@ -157,6 +157,10 @@
 #aar-lp .ar-hub__table div{display:grid;grid-template-columns:1.3fr .8fr .8fr .9fr;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
 #aar-lp .ar-hub__table div:first-child{border-top:0;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
 #aar-lp .ar-hub__table b{color:#16a34a}
+#aar-lp .ar-list{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#aar-lp .ar-list li{margin:5px 0}
+#aar-lp .ar-list b{color:var(--ink)}
+#aar-lp .ar-install .ar-box{background:#fff}
 @media (max-width:900px){#aar-lp .ar-cols,#aar-lp .ar-hub{grid-template-columns:1fr}#aar-lp .ar-mock{justify-self:stretch;max-width:none}}
 </style>
 
@@ -213,6 +217,36 @@
     </div>
   </section>
 
+  <!-- How it works -->
+  <section id="how-it-works" class="ar-install">
+    <h2>How Aarye knows where each lead came from</h2>
+    <p class="lead">No connection to your ad accounts is needed. Aarye reads what every visit already carries, on your own website.</p>
+    <div class="ar-steps">
+      <div class="ar-step"><span class="ar-step__n">1</span><h3>A visitor arrives</h3><p>Ad platforms add a click ID to every ad click (gclid for Google, fbclid for Meta, ttclid for TikTok, msclkid for Microsoft…). Aarye reads it, plus any UTM tags and the website the visitor came from.</p></div>
+      <div class="ar-step"><span class="ar-step__n">2</span><h3>Aarye remembers it</h3><p>A small first-party cookie on your own site keeps the first and latest source for 90 days, so a visitor can click an ad today and fill in your form next week.</p></div>
+      <div class="ar-step"><span class="ar-step__n">3</span><h3>They send a form</h3><p>Any form of the 10 supported plugins. The entry is saved with its source: ad network, campaign, ad, keyword, landing page, device and language.</p></div>
+    </div>
+    <div class="ar-cols">
+      <div class="ar-box">
+        <h3>Right after you install</h3>
+        <ul class="ar-list">
+          <li><b>Ads:</b> Google, Meta, TikTok, Microsoft, LinkedIn, Snapchat and 18 more, by their click IDs</li>
+          <li><b>Search engines:</b> Google, Bing, DuckDuckGo, Yandex…</li>
+          <li><b>Social media</b> posts, <b>AI assistants</b> like ChatGPT and Perplexity, <b>email</b>, <b>other websites</b> and <b>direct</b> visits</li>
+        </ul>
+      </div>
+      <div class="ar-box">
+        <h3>After 2 minutes of setup per ad account</h3>
+        <ul class="ar-list">
+          <li>The <b>campaign, ad set, ad and keyword names</b> on every lead</li>
+          <li>Meta leads confirmed as ads (Facebook adds fbclid to normal posts too)</li>
+          <li>Paste the tracking template from <b>Aarye Leads → Connect your ads</b> into each ad account, once. Then use <b>Test a link</b> to check an ad.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="ar-note">Good to know: keep Google Ads auto-tagging on. Meta Instant Forms (lead forms inside Facebook) never reach your website, so only ads that send people to your site are tracked. Visitors who block cookies show as Direct.</p>
+  </section>
+
   <!-- Free features -->
   <section id="whats-inside">
     <h2>What you get, free</h2>
@@ -224,7 +258,7 @@
       </div>
       <div class="ar-card">
         <div class="ar-card__head"><span class="ar-icon" style="background:#0891b2"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><div><h3>One dashboard</h3><small>All entries from all forms</small></div></div>
-        <ul><li>Leads by source, ad network, campaign and ad</li><li>Filters by date, form, source and language</li><li>Export to CSV that opens in Excel</li></ul>
+        <ul><li>Leads by source, ad network, campaign and ad</li><li>Finds every form and shows the page it is on, Elementor forms included</li><li>Filters by date, form, source and language, and CSV export</li></ul>
       </div>
       <div class="ar-card">
         <div class="ar-card__head"><span class="ar-icon" style="background:#0f766e"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.3-2.3L16 7"/></svg></span><div><h3>Every field and file</h3><small>Custom fields and attachments</small></div></div>
@@ -342,6 +376,8 @@
     <h2>Questions</h2>
     <div class="ar-faq">
       <details><summary>Do I have to change my forms?</summary><p>No. Aarye listens to each form plugin’s own “form sent” step. Your forms, emails and the form plugin’s own entries stay exactly as they are.</p></details>
+      <details><summary>Do I have to connect my ad accounts?</summary><p>No. Aarye reads the click IDs and tags that ad platforms already add to every ad click, on your own website. Pasting the tracking template from “Connect your ads” once per ad account only adds the campaign, ad set and ad names.</p></details>
+      <details><summary>Does it track Facebook Instant Forms?</summary><p>No: those forms are filled in inside Facebook and never reach your website. Aarye tracks every visitor who comes to your site, including from ads that open your landing page.</p></details>
       <details><summary>Do I need UTM tags?</summary><p>Not to see the ad network: Google, Meta, Microsoft, TikTok, LinkedIn and others add a click ID to every ad click, and Aarye recognises it. To also see campaign, ad set and ad names, paste the tracking template from “Connect your ads” into your ad account once.</p></details>
       <details><summary>Will it show leads from before I installed it?</summary><p>No, only new ones: the source of a visit can only be read while the visitor is on your site.</p></details>
       <details><summary>Does it slow my site down?</summary><p>No. The tracking script is a few kilobytes and only reads the page address and referrer. Pro sends leads to your CRM in the background, so forms answer straight away.</p></details>
