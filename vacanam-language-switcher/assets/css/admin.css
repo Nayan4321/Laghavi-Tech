@@ -80,3 +80,7 @@ th.column-vacanam .vacanam-col-head,
 .vacanam-ready li { font-size: 14px; margin-bottom: 6px; }
 .vacanam-skip { text-align: center; }
 .vacanam-next { margin-top: 24px; }
+.vacanam-color-pick.is-empty { opacity: .35; }
+.vacanam-switcher-form select { max-width: 100%; }
+#vacanam-languages select,
+#vacanam-languages input[type="search"] { max-width: 100%; box-sizing: border-box; }

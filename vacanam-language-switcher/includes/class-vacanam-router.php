@@ -38,6 +38,13 @@ class Vacanam_Router {
 	private static $original_uri = null;
 
 	/**
+	 * PATH_INFO as requested (some servers pass the path there too).
+	 *
+	 * @var string|null
+	 */
+	private static $original_path_info = null;
+
+	/**
 	 * True while WordPress reads the address.
 	 *
 	 * @var bool
@@ -67,6 +74,7 @@ class Vacanam_Router {
 		add_filter( 'attachment_link', array( __CLASS__, 'page_link' ), 20, 2 );
 		add_filter( 'term_link', array( __CLASS__, 'term_link' ), 20, 3 );
 		add_filter( 'preview_post_link', array( __CLASS__, 'preview_link' ), 20, 2 );
+		add_filter( 'post_type_archive_link', array( __CLASS__, 'archive_link' ), 20 );
 
 		add_action( 'template_redirect', array( __CLASS__, 'canonical_language' ), 1 );
 		add_filter( 'get_search_form', array( __CLASS__, 'search_form' ) );
@@ -84,8 +92,8 @@ class Vacanam_Router {
 		if ( ! Vacanam_Languages::all() ) {
 			return;
 		}
-		self::$front = ! is_admin() || ( wp_doing_ajax() && self::ajax_from_front() );
-		if ( ! self::$front || ( defined( 'WP_CLI' ) && WP_CLI ) ) {
+		self::$front = ( ! is_admin() || ( wp_doing_ajax() && self::ajax_from_front() ) ) && ! ( defined( 'WP_CLI' ) && WP_CLI ) && ! wp_doing_cron();
+		if ( ! self::$front ) {
 			return;
 		}
 		$lang = '';
@@ -289,6 +297,12 @@ class Vacanam_Router {
 		 * @param string $lang     Language.
 		 */
 		$_SERVER['REQUEST_URI'] = apply_filters( 'vacanam_request_uri', $stripped, self::$from_url );
+		if ( ! empty( $_SERVER['PATH_INFO'] ) ) {
+			$info                     = $_SERVER['PATH_INFO']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Restored as it was.
+			self::$original_path_info = $info;
+			$info                     = preg_replace( '#^(' . preg_quote( $home, '#' ) . ')?/' . $slug . '(?=/|$)#i', '$1', $info, 1 );
+			$_SERVER['PATH_INFO']     = '' === $info ? '/' : (string) wp_parse_url( apply_filters( 'vacanam_request_uri', $info, self::$from_url ), PHP_URL_PATH ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Documented above.
+		}
 		self::$parsing          = true;
 		return $parse;
 	}
@@ -301,6 +315,10 @@ class Vacanam_Router {
 		if ( null !== self::$original_uri ) {
 			$_SERVER['REQUEST_URI'] = self::$original_uri;
 			self::$original_uri     = null;
+		}
+		if ( null !== self::$original_path_info ) {
+			$_SERVER['PATH_INFO']     = self::$original_path_info;
+			self::$original_path_info = null;
 		}
 	}
 
@@ -415,6 +433,11 @@ class Vacanam_Router {
 		if ( self::$parsing || ! self::$front || '' === self::$current || self::is_fixed_path( $path ) ) {
 			return $url;
 		}
+		// Query mode: WordPress adds slashes after home_url(), so only the home page gets ?lang= here;
+		// posts, terms and archives get it from their own link filters.
+		if ( 'query' === Vacanam_Settings::get( 'url_mode' ) && '' !== trim( (string) $path, '/' ) ) {
+			return $url;
+		}
 		return self::url_for( $url, self::$current );
 	}
 
@@ -493,6 +516,16 @@ class Vacanam_Router {
 			return $url;
 		}
 		return self::url_for( $url, self::link_lang( Vacanam_Model::term_lang( $term ) ) );
+	}
+
+	/**
+	 * Archive of a post type: in the language of the visit.
+	 *
+	 * @param string $url Address.
+	 * @return string
+	 */
+	public static function archive_link( $url ) {
+		return self::$front && '' !== self::$current ? self::url_for( $url, self::$current ) : $url;
 	}
 
 	/**

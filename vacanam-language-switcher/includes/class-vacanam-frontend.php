@@ -216,7 +216,7 @@ class Vacanam_Frontend {
 			}
 			// One page or post asked for by its ID or address: no filter.
 			foreach ( array( 'p', 'page_id', 'attachment_id', 'name', 'pagename', 'attachment', 'post__in', 'post_parent__in' ) as $key ) {
-				if ( ! empty( $q[ $key ] ) ) {
+				if ( ! empty( $q[ $key ] ) && ! $query->is_posts_page ) {
 					return;
 				}
 			}
@@ -225,7 +225,7 @@ class Vacanam_Frontend {
 			}
 			$lang = Vacanam_Router::current();
 		}
-		if ( ! self::all_translated( $query ) ) {
+		if ( '' === $lang || ! self::all_translated( $query ) ) {
 			return;
 		}
 		$tax = (array) $query->get( 'tax_query' );
@@ -309,7 +309,7 @@ class Vacanam_Frontend {
 			}
 			$lang = Vacanam_Router::current();
 		}
-		if ( ! $taxonomies ) {
+		if ( '' === $lang || ! $taxonomies ) {
 			return $args;
 		}
 		foreach ( (array) $taxonomies as $tax ) {

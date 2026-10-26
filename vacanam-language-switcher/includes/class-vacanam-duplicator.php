@@ -230,7 +230,9 @@ class Vacanam_Duplicator {
 		if ( $filtered ) {
 			kses_remove_filters();
 		}
+		add_filter( 'wp_revisions_to_keep', array( __CLASS__, 'no_revision' ), 99, 2 );
 		wp_update_post( array( 'ID' => $new ) );
+		remove_filter( 'wp_revisions_to_keep', array( __CLASS__, 'no_revision' ), 99 );
 		if ( $filtered ) {
 			kses_init_filters();
 		}
@@ -247,6 +249,17 @@ class Vacanam_Duplicator {
 		--self::$running;
 		self::$lang = $previous;
 		return (int) $new;
+	}
+
+	/**
+	 * No revision for the save that finishes a copy.
+	 *
+	 * @param int     $num  Revisions to keep.
+	 * @param WP_Post $post Post.
+	 * @return int
+	 */
+	public static function no_revision( $num, $post ) {
+		return $post && self::$running ? 0 : $num;
 	}
 
 	/**

@@ -96,7 +96,7 @@ class Vacanam_Admin {
 				),
 			)
 		);
-		$screens = array( 'toplevel_page_vacanam', 'languages_page_vacanam-copy', 'languages_page_vacanam-menus', 'languages_page_vacanam-strings', 'languages_page_vacanam-switcher', 'languages_page_vacanam-settings', 'admin_page_vacanam-setup' );
+		$screens = array( 'toplevel_page_vacanam', 'languages_page_vacanam-copy', 'languages_page_vacanam-menus', 'languages_page_vacanam-strings', 'languages_page_vacanam-switcher', 'languages_page_vacanam-settings' );
 		if ( in_array( $hook, $screens, true ) || false !== strpos( $hook, 'vacanam' ) ) {
 			wp_enqueue_style( 'vacanam-admin' );
 			wp_enqueue_script( 'vacanam-admin' );
@@ -116,7 +116,7 @@ class Vacanam_Admin {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Vacanam Language Switcher: another translation plugin is active (Polylang, WPML, TranslatePress or Weglot). Use only one translation plugin at a time.', 'vacanam-language-switcher' ) . '</p></div>';
 		}
 		$screen = get_current_screen();
-		if ( ! Vacanam_Languages::all() && $screen && 'admin_page_vacanam-setup' !== $screen->id ) {
+		if ( ! Vacanam_Languages::all() && $screen && false === strpos( $screen->id, 'vacanam-setup' ) ) {
 			echo '<div class="notice notice-info"><p><strong>' . esc_html__( 'Vacanam Language Switcher', 'vacanam-language-switcher' ) . '</strong> – ' . esc_html__( 'Add your languages in a few steps.', 'vacanam-language-switcher' ) . ' <a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup' ) ) . '">' . esc_html__( 'Start the setup', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Message after a redirect.

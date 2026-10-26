@@ -165,6 +165,16 @@
 				} );
 			} );
 		};
+		var marks = function () {
+			$all( '.vacanam-color-pick', form ).forEach( function ( pick ) {
+				pick.classList.toggle( 'is-empty', '' === document.getElementById( pick.getAttribute( 'data-for' ) ).value );
+			} );
+		};
+		form.addEventListener( 'input', marks );
+		form.addEventListener( 'click', function () {
+			setTimeout( marks, 0 );
+		} );
+		marks();
 		form.addEventListener( 'input', update );
 		form.addEventListener( 'change', update );
 		$all( '.vacanam-color-pick', form ).forEach( function ( pick ) {

@@ -138,4 +138,4 @@
 
 /* Menu items */
 .menu-item.vacanam-menu-item > a { display: inline-flex; align-items: center; gap: 6px; }
-.menu-item.vacanam-menu-item .vacanam-flag { display: inline-block; width: 20px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin: 0; }
+.menu-item.vacanam-menu-item .vacanam-flag { display: inline-block; margin-inline-end: 6px; width: 20px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin: 0; }

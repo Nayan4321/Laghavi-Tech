@@ -28,7 +28,15 @@ class Vacanam_Wizard {
 	 * Hidden page.
 	 */
 	public static function menu() {
-		add_submenu_page( '', __( 'Language setup', 'vacanam-language-switcher' ), '', Vacanam_Admin::cap(), self::PAGE, array( __CLASS__, 'page' ) );
+		add_submenu_page( Vacanam_Admin::SLUG, __( 'Language setup', 'vacanam-language-switcher' ), __( 'Setup', 'vacanam-language-switcher' ), Vacanam_Admin::cap(), self::PAGE, array( __CLASS__, 'page' ) );
+		add_action( 'admin_head', array( __CLASS__, 'hide_menu' ) );
+	}
+
+	/**
+	 * The setup is opened from the Languages screen, not from the menu.
+	 */
+	public static function hide_menu() {
+		remove_submenu_page( Vacanam_Admin::SLUG, self::PAGE );
 	}
 
 	/**
