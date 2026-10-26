@@ -72,7 +72,7 @@ class HAPPYSUB_License_Product {
 	}
 
 	/**
-	 * Clean a plugin slug the way WordPress names plugin folders: "Simple Login Page Pro" -> "simple-login-page-pro".
+	 * Clean a plugin slug the way WordPress names plugin folders: "Sarala Login Page Pro" -> "sarala-login-page-pro".
 	 *
 	 * @param string $slug Slug as typed.
 	 * @return string
@@ -83,7 +83,7 @@ class HAPPYSUB_License_Product {
 
 	/**
 	 * Whether two slugs name the same plugin, ignoring case, spaces and dashes
-	 * (so "simpleloginpagepro" saved by older versions still matches "simple-login-page-pro").
+	 * (so "saralaloginpagepro" saved by older versions still matches "sarala-login-page-pro").
 	 *
 	 * @param string $a Slug.
 	 * @param string $b Slug.
@@ -144,9 +144,9 @@ class HAPPYSUB_License_Product {
 					array(
 						'id'          => '_happysub_license_slug',
 						'label'       => __( 'Plugin slug', 'happy-subscription' ),
-						'description' => __( 'The plugin\'s folder name, e.g. simple-login-page-pro. Keys only activate in the plugin with this name.', 'happy-subscription' ),
+						'description' => __( 'The plugin\'s folder name, e.g. sarala-login-page-pro. Keys only activate in the plugin with this name.', 'happy-subscription' ),
 						'desc_tip'    => true,
-						'placeholder' => 'simple-login-page-pro',
+						'placeholder' => 'sarala-login-page-pro',
 						'value'       => $s['slug'],
 					)
 				);

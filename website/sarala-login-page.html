@@ -1,0 +1,352 @@
+<!--
+  Sarala Login Page – landing page for laghavi.site
+  Paste everything below into an Elementor "HTML" widget (Elementor > HTML, not "Text Editor").
+  Put it in a full-width container with no padding; the page centres itself at 1080px.
+  Before publishing, check the two links:
+    1. FREE DOWNLOAD: https://laghavi.site/wp-content/uploads/sarala-login-page.zip
+       (upload sarala-login-page.zip in Media > Add New, then copy its "File URL" here if it differs)
+    2. PRO PRODUCT:   https://laghavi.site/product/sarala-login-page-pro/
+       (open the product page and copy its address here if it differs)
+  Use Find & Replace in a text editor to change them everywhere.
+-->
+<style>
+#slp-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#4f46e5;--brand2:#7c3aed;--navy:#14185a;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#slp-lp *,#slp-lp *::before,#slp-lp *::after{box-sizing:border-box}
+#slp-lp h1,#slp-lp h2,#slp-lp h3,#slp-lp p{margin:0}
+#slp-lp a{text-decoration:none}
+#slp-lp section{margin-top:56px}
+#slp-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#slp-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#slp-lp .slp-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#slp-lp .slp-btn:hover{transform:translateY(-1px)}
+#slp-lp .slp-btn svg{width:18px;height:18px;flex:none}
+#slp-lp .slp-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#slp-lp .slp-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#slp-lp .slp-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#slp-lp .slp-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(79,70,229,.3)}
+#slp-lp .slp-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#slp-lp .slp-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#slp-lp .slp-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(124,58,237,.55),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(79,70,229,.45),transparent 60%),linear-gradient(135deg,#101447,#1b2070);overflow:hidden}
+#slp-lp .slp-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#slp-lp .slp-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#slp-lp .slp-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#slp-lp .slp-hero p{color:#d6d9f5;margin-top:14px;font-size:16px;max-width:560px}
+#slp-lp .slp-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#slp-lp .slp-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#slp-lp .slp-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#slp-lp .slp-stats span{font-size:12.5px;color:#b9bde8}
+/* Hero login mock-up */
+#slp-lp .slp-mock{background:#fff;border-radius:18px;padding:22px;color:var(--ink);box-shadow:0 30px 60px rgba(0,0,0,.35);max-width:340px;justify-self:end;width:100%}
+#slp-lp .slp-mock__title{font-weight:700;font-size:18px}
+#slp-lp .slp-mock__sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+#slp-lp .slp-mock__field{height:38px;border:1px solid var(--line);border-radius:9px;margin-top:12px;background:var(--soft)}
+#slp-lp .slp-mock__q{font-size:12px;color:var(--muted);margin-top:12px}
+#slp-lp .slp-mock__q + .slp-mock__field{width:45%;margin-top:6px}
+#slp-lp .slp-mock__login{height:40px;border-radius:9px;margin-top:14px;background:var(--navy);color:#fff;font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center}
+#slp-lp .slp-mock__or{display:flex;align-items:center;gap:8px;font-size:11px;color:#9aa1b3;margin:12px 0 4px}
+#slp-lp .slp-mock__or::before,#slp-lp .slp-mock__or::after{content:"";flex:1;height:1px;background:var(--line)}
+#slp-lp .slp-social{display:flex;align-items:center;justify-content:center;gap:8px;height:36px;border-radius:9px;margin-top:7px;font-size:13px;font-weight:600}
+#slp-lp .slp-social svg{width:16px;height:16px}
+#slp-lp .slp-social--g{border:1px solid var(--line);color:#1f2937}
+#slp-lp .slp-social--f{background:#1877f2;color:#fff}
+#slp-lp .slp-social--a{background:#000;color:#fff}
+#slp-lp .slp-social--m{border:1px solid var(--line);color:#374151}
+#slp-lp .slp-social--l{background:#0a66c2;color:#fff}
+
+/* Cards */
+#slp-lp .slp-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#slp-lp .slp-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#slp-lp .slp-card__head{display:flex;gap:12px;align-items:center}
+#slp-lp .slp-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#slp-lp .slp-icon svg{width:20px;height:20px}
+#slp-lp .slp-card h3{font-size:16px;font-weight:700}
+#slp-lp .slp-card small{display:block;font-size:12px;color:var(--muted)}
+#slp-lp .slp-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#slp-lp .slp-card li{margin:4px 0}
+
+/* Install steps */
+#slp-lp .slp-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#slp-lp .slp-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#slp-lp .slp-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#slp-lp .slp-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#slp-lp .slp-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#slp-lp .slp-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#slp-lp .slp-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#slp-lp .slp-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#slp-lp .slp-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#slp-lp .slp-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#slp-lp .slp-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#slp-lp .slp-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#slp-lp .slp-table th:last-child,#slp-lp .slp-table td:last-child{background:rgba(79,70,229,.04)}
+#slp-lp .slp-table td.slp-yes{color:#16a34a;font-weight:700;font-size:16px}
+#slp-lp .slp-table td.slp-no{color:#c0c4d0}
+
+/* Pricing */
+#slp-lp .slp-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#slp-lp .slp-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#slp-lp .slp-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(79,70,229,.15)}
+#slp-lp .slp-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#slp-lp .slp-price h3{font-size:17px;font-weight:700}
+#slp-lp .slp-price__sites{font-size:13px;color:var(--muted)}
+#slp-lp .slp-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#slp-lp .slp-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#slp-lp .slp-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#slp-lp .slp-price li{padding:4px 0 4px 24px;position:relative}
+#slp-lp .slp-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#slp-lp .slp-price .slp-btn{justify-content:center}
+#slp-lp .slp-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#slp-lp .slp-faq{margin-top:20px;display:grid;gap:10px}
+#slp-lp .slp-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#slp-lp .slp-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#slp-lp .slp-faq summary::-webkit-details-marker{display:none}
+#slp-lp .slp-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#slp-lp .slp-faq details[open] summary::after{content:"–"}
+#slp-lp .slp-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#slp-lp .slp-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#slp-lp .slp-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#slp-lp .slp-maker p{font-size:14px;color:var(--muted)}
+#slp-lp .slp-maker b{color:var(--ink)}
+#slp-lp .slp-maker a{color:var(--brand)}
+#slp-lp .slp-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#4f46e5,#7c3aed 60%,#a855f7)}
+#slp-lp .slp-cta h2{color:#fff}
+#slp-lp .slp-cta p{color:#e7e4ff;margin:10px auto 0;max-width:560px}
+#slp-lp .slp-cta .slp-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #slp-lp .slp-hero__grid{grid-template-columns:1fr}
+ #slp-lp .slp-mock{justify-self:start;max-width:100%}
+ #slp-lp .slp-cards,#slp-lp .slp-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #slp-lp .slp-cards,#slp-lp .slp-steps,#slp-lp .slp-prices{grid-template-columns:1fr}
+ #slp-lp .slp-stats{grid-template-columns:repeat(2,1fr)}
+ #slp-lp .slp-hero__ctas .slp-btn{flex:1 1 100%;justify-content:center}
+ #slp-lp .slp-mock{display:none}
+ #slp-lp .slp-table{min-width:0;font-size:13px}
+ #slp-lp .slp-table th,#slp-lp .slp-table td{padding:11px 10px}
+ #slp-lp .slp-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#slp-lp h1,#slp-lp h2,#slp-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#slp-lp h2,#slp-lp h3{color:var(--ink)}
+#slp-lp .slp-hero h1,#slp-lp .slp-cta h2{color:#fff}
+#slp-lp p,#slp-lp li,#slp-lp td,#slp-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#slp-lp a{box-shadow:none;border-bottom:0}
+#slp-lp a:not(.slp-btn){color:var(--brand)}
+#slp-lp a.slp-btn{text-decoration:none!important}
+#slp-lp ul{margin-left:0;margin-right:0}
+#slp-lp .slp-card ul{list-style:disc}
+#slp-lp table,#slp-lp th,#slp-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#slp-lp th{border-top:0}
+#slp-lp table{margin:0;border:0;background:#fff}
+#slp-lp tr{background:none}
+#slp-lp details{margin:0}
+#slp-lp summary{color:var(--ink);background:none;border:0}
+#slp-lp section{display:block;padding:0}
+</style>
+
+<div id="slp-lp" class="slp-lp">
+
+  <!-- Hero -->
+  <section class="slp-hero">
+    <div class="slp-hero__grid">
+      <div>
+        <span class="slp-badge">Free WordPress plugin</span>
+        <h1>Sarala Login Page</h1>
+        <p>Let people sign up and log in with Google, Facebook, Apple, Microsoft or LinkedIn in one click. Works with WooCommerce, stops bots with a simple math question, hides your login address and shows you every failed login.</p>
+        <div class="slp-hero__ctas">
+          <a class="slp-btn slp-btn--white" href="https://laghavi.site/wp-content/uploads/sarala-login-page.zip" download>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
+            Download free plugin
+          </a>
+          <a class="slp-btn slp-btn--ghost" href="https://laghavi.site/product/sarala-login-page-pro/">Buy Pro – from $49/year</a>
+        </div>
+        <div class="slp-stats">
+          <div><b>5</b><span>social logins</span></div>
+          <div><b>1-click</b><span>sign-up &amp; login</span></div>
+          <div><b>1</b><span>custom login URL</span></div>
+          <div><b>$0</b><span>free forever</span></div>
+        </div>
+      </div>
+      <div class="slp-mock" aria-hidden="true">
+        <div class="slp-mock__title">Welcome back</div>
+        <div class="slp-mock__sub">Log in to your account</div>
+        <div class="slp-mock__field"></div>
+        <div class="slp-mock__field"></div>
+        <div class="slp-mock__q">Security question: What is 7 + 9?</div>
+        <div class="slp-mock__field"></div>
+        <div class="slp-mock__login">Log In</div>
+        <div class="slp-mock__or">or</div>
+        <div class="slp-social slp-social--g"><svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.6 12.2c0-.8-.1-1.5-.2-2.2H12v4.2h5.9a5 5 0 0 1-2.2 3.3v2.7h3.6c2.1-1.9 3.3-4.8 3.3-8z"/><path fill="#34A853" d="M12 23c3 0 5.5-1 7.3-2.7l-3.6-2.7c-1 .7-2.2 1.1-3.7 1.1-2.9 0-5.3-1.9-6.2-4.5H2.1v2.8A11 11 0 0 0 12 23z"/><path fill="#FBBC05" d="M5.8 14.2a6.6 6.6 0 0 1 0-4.3V7.1H2.1a11 11 0 0 0 0 9.9l3.7-2.8z"/><path fill="#EA4335" d="M12 5.4c1.6 0 3.1.6 4.2 1.7l3.2-3.2A11 11 0 0 0 2.1 7.1l3.7 2.8C6.7 7.3 9.1 5.4 12 5.4z"/></svg>Continue with Google</div>
+        <div class="slp-social slp-social--f"><svg viewBox="0 0 24 24" fill="#fff"><path d="M24 12a12 12 0 1 0-13.9 11.9v-8.4h-3V12h3V9.4c0-3 1.8-4.7 4.5-4.7 1.3 0 2.7.2 2.7.2v3h-1.5c-1.5 0-2 .9-2 1.9V12h3.4l-.5 3.5h-2.9v8.4A12 12 0 0 0 24 12z"/></svg>Continue with Facebook</div>
+        <div class="slp-social slp-social--a"><svg viewBox="0 0 24 24" fill="#fff"><path d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9a4.8 4.8 0 0 0-3.8-2c-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9a5 5 0 0 0-4.2 2.6c-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8s2 .8 3.4.8c1.4 0 2.3-1.3 3.1-2.5.6-.9 1.1-1.8 1.4-2.8a4.6 4.6 0 0 1-2.6-4.2zM13.9 4.9A4.5 4.5 0 0 0 15 1.5a4.6 4.6 0 0 0-3 1.6 4.3 4.3 0 0 0-1.1 3.2c1.2.1 2.3-.5 3-1.4z"/></svg>Continue with Apple</div>
+        <div class="slp-social slp-social--m"><svg viewBox="0 0 24 24"><path fill="#F25022" d="M2 2h9.5v9.5H2z"/><path fill="#7FBA00" d="M12.5 2H22v9.5h-9.5z"/><path fill="#00A4EF" d="M2 12.5h9.5V22H2z"/><path fill="#FFB900" d="M12.5 12.5H22V22h-9.5z"/></svg>Continue with Microsoft</div>
+        <div class="slp-social slp-social--l"><svg viewBox="0 0 24 24" fill="#fff"><path d="M20.4 20.5h-3.6v-5.6c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9v5.7H9.4V9h3.4v1.6c.5-.9 1.6-1.8 3.4-1.8 3.6 0 4.3 2.4 4.3 5.5v6.2zM5.3 7.4a2.1 2.1 0 1 1 0-4.2 2.1 2.1 0 0 1 0 4.2zM7.1 20.5H3.6V9h3.5v11.5z"/></svg>Continue with LinkedIn</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free features -->
+  <section id="whats-inside">
+    <h2>What you get, free</h2>
+    <p class="lead">Everything a login page needs, without a single paid add-on. Install it, connect the providers you want, done.</p>
+    <div class="slp-cards">
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#4f46e5"><svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span><div><h3>Social login</h3><small>Sign up or log in instantly</small></div></div>
+        <ul>
+          <li>Google, Facebook, Apple, Microsoft and LinkedIn</li>
+          <li>Existing users log straight into their account</li>
+          <li>Buttons on login, register and anywhere with a shortcode</li>
+        </ul>
+      </div>
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#7c3aed"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h2l2.4 11.2a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.5L21 8H6"/><circle cx="10" cy="20" r="1.3"/><circle cx="17" cy="20" r="1.3"/></svg></span><div><h3>WooCommerce ready</h3><small>Made for online shops</small></div></div>
+        <ul>
+          <li>New sign-ups become customers automatically</li>
+          <li>Guests sign up at checkout and keep their cart</li>
+          <li>Works without WooCommerce too, using your default role</li>
+        </ul>
+      </div>
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#0f766e">7+9</span><div><h3>Stops bots</h3><small>A simple math question</small></div></div>
+        <ul>
+          <li>“What is 11 + 2?” style question on login and sign-up</li>
+          <li>No annoying image puzzles for real people</li>
+          <li>Turn it on or off for login and registration</li>
+        </ul>
+      </div>
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#ea580c"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></span><div><h3>Custom login URL</h3><small>Hide wp-login.php</small></div></div>
+        <ul>
+          <li>Choose your own address, e.g. yoursite.com/my-login</li>
+          <li>Bots looking for wp-login.php hit a dead end</li>
+          <li>Easy to change back at any time</li>
+        </ul>
+      </div>
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#dc2626"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 7v5c0 5 3.8 8.6 9 9.8 5.2-1.2 9-4.8 9-9.8V7l-9-4z"/><path d="M12 9v4m0 3h.01"/></svg></span><div><h3>Failed login log</h3><small>See who is trying to get in</small></div></div>
+        <ul>
+          <li>Every failed attempt with the username tried</li>
+          <li>IP address, device, browser and approximate location</li>
+          <li>Spot attacks before they become a problem</li>
+        </ul>
+      </div>
+      <div class="slp-card">
+        <div class="slp-card__head"><span class="slp-icon" style="background:#111827"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg></span><div><h3>Private and safe</h3><small>Your users stay yours</small></div></div>
+        <ul>
+          <li>Nothing is sent to Laghavi Digital</li>
+          <li>Accounts are only linked when the provider confirms the email</li>
+          <li>You can change any user's role at any time</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="slp-install">
+    <h2>Install in under a minute</h2>
+    <div class="slp-steps">
+      <div class="slp-step"><span class="slp-step__n">1</span><h3>Install</h3><p>Download the free plugin, then in WordPress go to Plugins → Add New → Upload Plugin and choose the zip.</p></div>
+      <div class="slp-step"><span class="slp-step__n">2</span><h3>Connect</h3><p>Open Sarala Login and paste the app keys for the providers you want. The settings page shows the exact address to give each provider.</p></div>
+      <div class="slp-step"><span class="slp-step__n">3</span><h3>Done</h3><p>The buttons and the security question appear on your login, registration and WooCommerce pages straight away.</p></div>
+    </div>
+    <p class="slp-note">Needs WordPress 5.8+ and PHP 7.4+. WooCommerce is optional.</p>
+  </section>
+
+  <!-- Free vs Pro -->
+  <section>
+    <h2>Free plugin vs Sarala Login Page Pro</h2>
+    <p class="lead">The free plugin is complete on its own. Pro adds a branded login page and full control over your admin area, for teams and agencies.</p>
+    <div class="slp-table-wrap">
+      <table class="slp-table">
+        <thead><tr><th>Feature</th><th>Free plugin</th><th>Pro</th></tr></thead>
+        <tbody>
+          <tr><td>Social login (5 providers)</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>WooCommerce &amp; checkout sign-up</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Math question against bots</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Custom login URL</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Failed login log</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Login page design</td><td>WordPress default</td><td>5 templates with your logo, colours, fonts, background images and text</td></tr>
+          <tr><td>Forgot &amp; reset password pages</td><td>WordPress default</td><td>Match your login template</td></tr>
+          <tr><td>Super admin</td><td class="slp-no">—</td><td>One owner who adds and manages all other admins</td></tr>
+          <tr><td>User activity</td><td class="slp-no">—</td><td>Every user's actions with IP, device and CSV export</td></tr>
+          <tr><td>Hide admin menus &amp; tools</td><td class="slp-no">—</td><td>Per role or per user</td></tr>
+          <tr><td>Hide blocks, fields, widgets &amp; editor panels</td><td class="slp-no">—</td><td>Per role or per user</td></tr>
+          <tr><td>Show or hide front-end content</td><td class="slp-no">—</td><td>For guests, members or specific roles</td></tr>
+          <tr><td>Updates &amp; support</td><td>Free updates</td><td>Automatic updates and email support</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pro pricing -->
+  <section id="pro">
+    <h2>Get Sarala Login Page Pro</h2>
+    <p class="lead">Yearly license with updates and support. Cancel any time and your license keeps working until the paid year ends.</p>
+    <div class="slp-prices">
+      <div class="slp-price">
+        <h3>Personal</h3><div class="slp-price__sites">1 website</div>
+        <div class="slp-price__amt">$49<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
+        <a class="slp-btn slp-btn--line" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=1+site">Buy Personal</a>
+      </div>
+      <div class="slp-price slp-price--pop">
+        <span class="slp-price__tag">Most popular</span>
+        <h3>Business</h3><div class="slp-price__sites">Up to 5 websites</div>
+        <div class="slp-price__amt">$99<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
+        <a class="slp-btn slp-btn--brand" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=5+sites">Buy Business</a>
+      </div>
+      <div class="slp-price">
+        <h3>Agency</h3><div class="slp-price__sites">Unlimited websites</div>
+        <div class="slp-price__amt">$199<span> / year</span></div>
+        <ul><li>All Pro features</li><li>Use on every client site</li><li>Email support</li></ul>
+        <a class="slp-btn slp-btn--line" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=Unlimited+sites">Buy Agency</a>
+      </div>
+    </div>
+    <p class="slp-price__fine">Prices in US dollars. Pay in AED, EUR or GBP with the currency switcher. Pro needs the free plugin installed.</p>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Questions</h2>
+    <div class="slp-faq">
+      <details><summary>Do I need WooCommerce?</summary><p>No. Without WooCommerce the buttons appear on the WordPress login and registration pages, and anywhere you add the shortcode. With WooCommerce, new sign-ups become customers and guests can sign up at checkout.</p></details>
+      <details><summary>Someone already has an account. What happens when they use Google?</summary><p>If Google (or another provider) confirms the same email address, they are logged into their existing account and Google is connected to it. If the email isn't verified, they log in with their password first, so nobody can take over an account.</p></details>
+      <details><summary>Do I need developer accounts with Google, Facebook and the others?</summary><p>Yes, a free app with each provider you want to use. You only enable the ones you need, and the settings page shows the exact address to paste into each provider.</p></details>
+      <details><summary>Is my data sent anywhere?</summary><p>Nothing is sent to Laghavi Digital. A visitor's browser only talks to the login provider they choose. To show the location of failed logins, the IP address is looked up with IPinfo.</p></details>
+      <details><summary>Does it slow my site down?</summary><p>No. Its small stylesheet only loads on pages that show the login buttons, and nothing runs on the rest of your site.</p></details>
+      <details><summary>What do I get with Pro?</summary><p>Five login page templates with your branding, matching forgot and reset password pages, a protected super admin, a full user activity log and per-role control over admin menus, editor blocks, custom fields, widgets and front-end content. You get the download and your license key in My Account straight after paying.</p></details>
+      <details><summary>Can I cancel Pro?</summary><p>Yes, any time from My Account. Your subscription won't renew, and your license keeps working until the end of the year you paid for.</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>Who makes it</h2>
+    <div class="slp-maker">
+      <div class="slp-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, creator of Sarala Login Page<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="slp-cta">
+    <h2>Ready for a better login page?</h2>
+    <p>Start with the free plugin today. Upgrade to Pro when you want your own design and full control over your admins.</p>
+    <div class="slp-hero__ctas">
+      <a class="slp-btn slp-btn--white" href="https://laghavi.site/wp-content/uploads/sarala-login-page.zip" download>Download free plugin</a>
+      <a class="slp-btn slp-btn--ghost" href="https://laghavi.site/product/sarala-login-page-pro/">Buy Pro</a>
+    </div>
+  </section>
+
+</div>

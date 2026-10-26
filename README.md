@@ -28,12 +28,12 @@ reuses the same `php/` backend; only the delivery mechanism changes.
 
 ## WordPress plugins by Laghavi Digital
 
-- [`simple-login-page/`](simple-login-page/readme.txt): free plugin for
+- [`sarala-login-page/`](sarala-login-page/readme.txt): free plugin for
   WordPress.org. Social login (Google, Facebook, Apple, Microsoft, LinkedIn)
   with WooCommerce support, a math question against login bots, a custom
   login URL, and a failed-login log. Zip the folder without `.wordpress-org/`
   (that folder holds the WordPress.org icon and banner).
-- [`simple-login-page-pro/`](simple-login-page-pro/readme.txt): paid add-on
+- [`sarala-login-page-pro/`](sarala-login-page-pro/readme.txt): paid add-on
   sold on laghavi.com. Super admin, user activity log, and per-role/per-user
   hiding of admin menus, editor blocks, panels, meta boxes and custom fields,
   plus front-end block and widget visibility. Needs the free plugin.

@@ -1,0 +1,279 @@
+/* Sarala Login Page Pro – admin screens */
+.slpp-inline-form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.slpp-actions form {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	align-items: center;
+}
+
+.slpp-transfer {
+	color: #b32d2e !important;
+}
+
+.slpp-filters {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+	margin: 16px 0;
+}
+
+.slpp-user-card {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+}
+
+.slpp-user-card h2,
+.slpp-user-card p {
+	margin: 0 0 4px;
+}
+
+.slpp-user-card img,
+.slpp-recent img {
+	border-radius: 50%;
+	vertical-align: middle;
+}
+
+.slpp-recent {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 8px 16px;
+	margin: 0;
+}
+
+.slpp-recent li {
+	margin: 0;
+}
+
+.slpp-recent .description {
+	display: block;
+	margin-left: 30px;
+}
+
+.slpp-rules details > summary {
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 600;
+}
+
+.slpp-rules details[open] > summary {
+	margin-bottom: 12px;
+}
+
+.slpp-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+	gap: 6px 16px;
+}
+
+.slpp-group {
+	padding: 8px 0;
+}
+
+.slpp-item {
+	display: block;
+	padding: 2px 0;
+}
+
+.slpp-item code {
+	font-size: 11px;
+	color: #646970;
+}
+
+.slpp-sub {
+	margin-left: 22px;
+}
+
+.slpp-summary {
+	margin: 0 0 0 18px;
+	list-style: disc;
+}
+
+/* Login page design */
+.slpp-templates {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+	gap: 14px;
+}
+
+.slpp-template {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: 10px;
+	border: 2px solid #dcdcde;
+	border-radius: 10px;
+	cursor: pointer;
+}
+
+.slpp-template.is-selected {
+	border-color: #2271b1;
+	box-shadow: 0 0 0 2px rgba(34, 113, 177, 0.2);
+}
+
+.slpp-template input {
+	position: absolute;
+	opacity: 0;
+}
+
+.slpp-mini {
+	display: flex;
+	height: 96px;
+	padding: 10px;
+	overflow: hidden;
+	border-radius: 6px;
+	background: var(--p);
+}
+
+.slpp-mini__brand {
+	flex: 1;
+	border-radius: 4px 0 0 4px;
+	background: linear-gradient(160deg, var(--a), var(--b));
+}
+
+.slpp-mini__form {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	justify-content: center;
+	gap: 5px;
+	padding: 8px;
+	border-radius: 0 4px 4px 0;
+	background: #fff;
+}
+
+.slpp-mini__form i {
+	display: block;
+	height: 7px;
+	border-radius: 3px;
+	background: #e5e7eb;
+}
+
+.slpp-mini__form b {
+	display: block;
+	height: 9px;
+	border-radius: 3px;
+	background: var(--c);
+}
+
+.slpp-mini--glass {
+	justify-content: center;
+	background: linear-gradient(135deg, var(--p), var(--c));
+}
+
+.slpp-mini--glass .slpp-mini__brand {
+	display: none;
+}
+
+.slpp-mini--glass .slpp-mini__form {
+	flex: 0 0 55%;
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.25);
+}
+
+.slpp-mini--split {
+	padding: 0;
+}
+
+.slpp-mini--split .slpp-mini__brand,
+.slpp-mini--split .slpp-mini__form {
+	border-radius: 0;
+}
+
+.slpp-mini--image {
+	flex-direction: row-reverse;
+}
+
+.slpp-mini--image .slpp-mini__brand {
+	border-radius: 0 4px 4px 0;
+	background: radial-gradient(circle at 40% 40%, #fff 0 20%, transparent 21%), var(--a);
+}
+
+.slpp-mini--image .slpp-mini__form {
+	border-radius: 4px 0 0 4px;
+	background: #f7f7f7;
+}
+
+.slpp-mini--gradient {
+	background: linear-gradient(135deg, var(--p), var(--b));
+}
+
+.slpp-mini--gradient .slpp-mini__form i {
+	border-radius: 99px;
+	background: #ede9fe;
+}
+
+.slpp-mini--wave .slpp-mini__brand {
+	position: relative;
+}
+
+.slpp-mini--wave .slpp-mini__brand::after {
+	content: "";
+	position: absolute;
+	top: 0;
+	right: -6px;
+	bottom: 0;
+	width: 14px;
+	border-radius: 50%;
+	background: #fff;
+}
+
+.slpp-image-field {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 8px;
+}
+
+.slpp-image-field__preview img {
+	display: block;
+	max-width: 120px;
+	max-height: 60px;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	background: repeating-conic-gradient(#f0f0f1 0 25%, #fff 0 50%) 50% / 12px 12px;
+}
+
+.slpp-previews {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 20px;
+	align-items: flex-start;
+}
+
+.slpp-preview {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.slpp-preview span {
+	font-weight: 600;
+}
+
+.slpp-preview iframe {
+	border: 1px solid #c3c4c7;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.slpp-preview--desktop iframe {
+	width: 1200px;
+	height: 760px;
+	zoom: 0.55;
+}
+
+.slpp-preview--mobile iframe {
+	width: 375px;
+	height: 720px;
+	zoom: 0.58;
+}

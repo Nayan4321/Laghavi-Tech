@@ -115,7 +115,7 @@ class LLM_Product {
 	}
 
 	/**
-	 * Clean a plugin slug the way WordPress names plugin folders: "Simple Login Page Pro" -> "simple-login-page-pro".
+	 * Clean a plugin slug the way WordPress names plugin folders: "Sarala Login Page Pro" -> "sarala-login-page-pro".
 	 *
 	 * @param string $slug Slug as typed.
 	 * @return string
@@ -126,7 +126,7 @@ class LLM_Product {
 
 	/**
 	 * Whether two slugs name the same plugin, ignoring case, spaces and dashes
-	 * (so "simpleloginpagepro" saved by older versions still matches "simple-login-page-pro").
+	 * (so "saralaloginpagepro" saved by older versions still matches "sarala-login-page-pro").
 	 *
 	 * @param string $a Slug.
 	 * @param string $b Slug.
@@ -187,9 +187,9 @@ class LLM_Product {
 					array(
 						'id'          => '_llm_slug',
 						'label'       => __( 'Plugin slug', 'laghavi-license-manager' ),
-						'description' => __( 'The plugin\'s folder name, e.g. simple-login-page-pro. Keys only activate in the plugin with this name.', 'laghavi-license-manager' ),
+						'description' => __( 'The plugin\'s folder name, e.g. sarala-login-page-pro. Keys only activate in the plugin with this name.', 'laghavi-license-manager' ),
 						'desc_tip'    => true,
-						'placeholder' => 'simple-login-page-pro',
+						'placeholder' => 'sarala-login-page-pro',
 						'value'       => $s['slug'],
 					)
 				);

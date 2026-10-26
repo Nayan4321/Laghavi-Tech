@@ -22,11 +22,11 @@ Install this on your shop (laghavi.site), next to WooCommerce. It is a normal Wo
 * **Admin screen.** WooCommerce > Licenses: search by key, email or order, revoke or restore, add a year, change the number of sites, remove a site, or create a key by hand.
 * **Brute-force protection.** More than 30 wrong keys from one IP in an hour are refused.
 
-== Setting up Simple Login Page Pro for sale ==
+== Setting up Sarala Login Page Pro for sale ==
 
 1. Install and activate this plugin on laghavi.site (WooCommerce must be active). Visit Settings > Permalinks once and click Save so the My Account > Licenses page works.
-2. Create a WooCommerce product "Simple Login Page Pro" (Simple product, Virtual + Downloadable not needed).
-3. In the product's **License** tab: tick "Sell a license", set Plugin slug to `simple-login-page-pro`, choose Sites per license and Updates for (days), set Latest version to `1.0.0`, and upload `simple-login-page-pro.zip`. To sell it as a subscription, also tick "Subscription" in the General tab (Laghavi Subscriptions); "Updates for (days)" is then ignored, because the subscription decides.
+2. Create a WooCommerce product "Sarala Login Page Pro" (Simple product, Virtual + Downloadable not needed).
+3. In the product's **License** tab: tick "Sell a license", set Plugin slug to `sarala-login-page-pro`, choose Sites per license and Updates for (days), set Latest version to `1.0.0`, and upload `sarala-login-page-pro.zip`. To sell it as a subscription, also tick "Subscription" in the General tab (Laghavi Subscriptions); "Updates for (days)" is then ignored, because the subscription decides.
 4. Publish the product. Buy it once yourself with a 100% coupon to test the key, the email and the activation.
 
 To release an update: build the new zip with a higher `Version:` in the plugin header, upload it on the product, and change "Latest version" to match. Licensed sites see it within 12 hours (or right away from Dashboard > Updates > Check again).
