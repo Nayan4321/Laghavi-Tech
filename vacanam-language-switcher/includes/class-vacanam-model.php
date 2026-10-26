@@ -308,6 +308,9 @@ class Vacanam_Model {
 	 * @param array $group Group.
 	 */
 	private static function write_group( $id, $group ) {
+		if ( ! get_post( $id ) ) {
+			return;
+		}
 		if ( count( $group ) > 1 ) {
 			update_post_meta( $id, self::TR_META, $group );
 		} else {

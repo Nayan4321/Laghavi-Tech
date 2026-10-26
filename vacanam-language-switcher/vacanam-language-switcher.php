@@ -57,6 +57,7 @@ add_action(
 		Vacanam_Duplicator::init();
 		Vacanam_Elementor::init();
 		Vacanam_Compat::init();
+		Vacanam_Admin_Content::init_always();
 		if ( is_admin() ) {
 			Vacanam_Admin::init();
 			Vacanam_Admin_Content::init();

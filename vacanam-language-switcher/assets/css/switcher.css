@@ -1,0 +1,141 @@
+/* Vacanam Language Switcher – switchers. Colours follow the theme unless set (CSS variables). */
+.vacanam-switcher {
+	--vacanam-flag: 20px;
+	--vacanam-radius: 6px;
+	position: relative;
+	display: inline-block;
+	font-size: var(--vacanam-font, inherit);
+	line-height: 1.3;
+	color: var(--vacanam-text, inherit);
+}
+.vacanam-switcher .vacanam-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+}
+.vacanam-switcher .vacanam-item { margin: 0; padding: 0; }
+.vacanam-switcher .vacanam-item::before { content: none; }
+.vacanam-switcher .vacanam-link,
+.vacanam-switcher .vacanam-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	padding: 6px 10px;
+	border-radius: var(--vacanam-radius);
+	color: var(--vacanam-text, inherit);
+	background: var(--vacanam-bg, transparent);
+	text-decoration: none;
+	white-space: nowrap;
+	transition: background-color .15s ease, color .15s ease;
+}
+.vacanam-switcher .vacanam-link:hover,
+.vacanam-switcher .vacanam-link:focus-visible,
+.vacanam-switcher .vacanam-toggle:hover {
+	color: var(--vacanam-hover-text, var(--vacanam-text, inherit));
+	background: var(--vacanam-hover-bg, rgba(127, 127, 127, .12));
+}
+.vacanam-switcher .vacanam-current-lang > .vacanam-link {
+	color: var(--vacanam-active-text, var(--vacanam-text, inherit));
+	background: var(--vacanam-active-bg, var(--vacanam-bg, transparent));
+	font-weight: 600;
+}
+.vacanam-switcher .vacanam-flag {
+	display: block;
+	flex: none;
+	width: var(--vacanam-flag);
+	height: calc(var(--vacanam-flag) * .75);
+	object-fit: cover;
+	border-radius: 2px;
+	box-shadow: 0 0 0 1px rgba(0, 0, 0, .08);
+	margin: 0;
+}
+.vacanam-flag-round .vacanam-flag,
+.vacanam-flag-square .vacanam-flag { height: var(--vacanam-flag); }
+.vacanam-flag-round .vacanam-flag { border-radius: 50%; }
+
+/* Side by side / list / pills / flags */
+.vacanam-style-vertical .vacanam-list { flex-direction: column; gap: 2px; }
+.vacanam-style-pills .vacanam-list {
+	gap: 0;
+	border: 1px solid var(--vacanam-border, currentColor);
+	border-radius: calc(var(--vacanam-radius) + 2px);
+	padding: 2px;
+}
+.vacanam-style-pills .vacanam-current-lang > .vacanam-link {
+	color: var(--vacanam-active-text, inherit);
+	background: var(--vacanam-active-bg, rgba(127, 127, 127, .22));
+}
+.vacanam-style-flags .vacanam-link { padding: 4px; }
+.vacanam-style-flags .vacanam-current-lang > .vacanam-link { box-shadow: inset 0 -2px 0 currentColor; }
+
+/* Dropdown */
+.vacanam-dropdown { position: relative; }
+.vacanam-dropdown > summary { list-style: none; cursor: pointer; border: 1px solid var(--vacanam-border, transparent); }
+.vacanam-dropdown > summary::-webkit-details-marker { display: none; }
+.vacanam-dropdown > summary::marker { content: ""; }
+.vacanam-caret {
+	width: 0;
+	height: 0;
+	border-inline: 4px solid transparent;
+	border-top: 5px solid currentColor;
+	margin-inline-start: 2px;
+	transition: transform .15s ease;
+}
+.vacanam-dropdown[open] .vacanam-caret { transform: rotate(180deg); }
+.vacanam-dropdown > .vacanam-list {
+	position: absolute;
+	z-index: 99999;
+	top: calc(100% + 4px);
+	inset-inline-start: 0;
+	min-width: 100%;
+	flex-direction: column;
+	gap: 0;
+	padding: 4px;
+	background: var(--vacanam-bg, #fff);
+	color: var(--vacanam-text, #1d2327);
+	border: 1px solid var(--vacanam-border, rgba(0, 0, 0, .12));
+	border-radius: var(--vacanam-radius);
+	box-shadow: 0 8px 24px rgba(0, 0, 0, .12);
+}
+.vacanam-dropdown > .vacanam-list .vacanam-link { display: flex; color: var(--vacanam-text, #1d2327); background: transparent; }
+
+/* Select */
+.vacanam-select {
+	padding: 6px 28px 6px 10px;
+	padding-inline: 10px 28px;
+	border-radius: var(--vacanam-radius);
+	border: 1px solid var(--vacanam-border, rgba(0, 0, 0, .2));
+	color: var(--vacanam-text, inherit);
+	background-color: var(--vacanam-bg, transparent);
+	font: inherit;
+	font-size: var(--vacanam-font, inherit);
+	max-width: 100%;
+}
+
+/* Floating */
+.vacanam-floating { position: fixed; z-index: 99998; }
+.vacanam-floating .vacanam-toggle,
+.vacanam-floating .vacanam-select,
+.vacanam-floating.vacanam-style-pills .vacanam-list {
+	background: var(--vacanam-bg, #fff);
+	color: var(--vacanam-text, #1d2327);
+	box-shadow: 0 4px 16px rgba(0, 0, 0, .18);
+}
+.vacanam-floating-bottom-end { bottom: 20px; inset-inline-end: 20px; }
+.vacanam-floating-bottom-start { bottom: 20px; inset-inline-start: 20px; }
+.vacanam-floating-top-end { top: 80px; inset-inline-end: 20px; }
+.vacanam-floating-top-start { top: 80px; inset-inline-start: 20px; }
+.vacanam-floating-bottom-end .vacanam-dropdown > .vacanam-list,
+.vacanam-floating-bottom-start .vacanam-dropdown > .vacanam-list { top: auto; bottom: calc(100% + 6px); }
+.vacanam-floating-bottom-end .vacanam-dropdown > .vacanam-list,
+.vacanam-floating-top-end .vacanam-dropdown > .vacanam-list { inset-inline-start: auto; inset-inline-end: 0; }
+@media (max-width: 767px) {
+	.vacanam-hide-mobile { display: none; }
+}
+
+/* Menu items */
+.menu-item.vacanam-menu-item > a { display: inline-flex; align-items: center; gap: 6px; }
+.menu-item.vacanam-menu-item .vacanam-flag { display: inline-block; width: 20px; height: 15px; object-fit: cover; border-radius: 2px; vertical-align: middle; margin: 0; }

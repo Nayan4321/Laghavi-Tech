@@ -62,6 +62,10 @@ class Vacanam_Settings {
 		if ( null === self::$cache ) {
 			$saved       = get_option( self::OPTION, array() );
 			self::$cache = array_merge( self::defaults(), is_array( $saved ) ? $saved : array() );
+			// Language folders need pretty permalinks; plain ones use ?lang=.
+			if ( 'directory' === self::$cache['url_mode'] && ! get_option( 'permalink_structure' ) ) {
+				self::$cache['url_mode'] = 'query';
+			}
 		}
 		return self::$cache;
 	}
@@ -93,9 +97,10 @@ class Vacanam_Settings {
 	 * @param array $values Values to change.
 	 */
 	public static function update( $values ) {
-		$all = array_merge( self::all(), $values );
+		$saved = get_option( self::OPTION, array() );
+		$all   = array_merge( self::defaults(), is_array( $saved ) ? $saved : array(), $values );
 		update_option( self::OPTION, $all );
-		self::$cache = $all;
+		self::$cache = null;
 	}
 
 	/**

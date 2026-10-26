@@ -1,0 +1,82 @@
+/* Vacanam Language Switcher – admin. Logical properties: works in right-to-left admins too. */
+.vacanam-wrap .vacanam-title,
+.vacanam-wizard .vacanam-title { display: flex; align-items: center; gap: 8px; }
+.vacanam-title .dashicons { font-size: 28px; width: 28px; height: 28px; color: #7c3aed; }
+.vacanam-tabs { margin-bottom: 16px; }
+.vacanam-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	padding: 4px 20px 16px;
+	margin-bottom: 16px;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, .04);
+}
+.vacanam-columns { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.vacanam-col-form { flex: 0 1 380px; min-width: 300px; }
+.vacanam-col-list { flex: 1 1 520px; min-width: 300px; }
+.vacanam-admin-flag { width: 20px; height: 15px; object-fit: cover; vertical-align: middle; border-radius: 2px; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); }
+.vacanam-badge { display: inline-block; font-size: 11px; line-height: 1; padding: 4px 7px; border-radius: 20px; background: #f0f0f1; color: #50575e; margin-inline-start: 6px; vertical-align: middle; }
+.vacanam-badge-main { background: #ede9fe; color: #5b21b6; }
+.vacanam-actions a { text-decoration: none; }
+.vacanam-actions .vacanam-delete { color: #b32d2e; }
+.vacanam-overview { margin-top: 8px; }
+.vacanam-chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid #dcdcde; border-radius: 20px; margin: 0 6px 8px 0; background: #fff; cursor: pointer; }
+.vacanam-chip:has(input:checked) { border-color: #7c3aed; background: #f5f3ff; }
+.vacanam-progress { margin-top: 12px; }
+.vacanam-bar { height: 12px; background: #f0f0f1; border-radius: 6px; overflow: hidden; }
+.vacanam-bar span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, #7c3aed, #a855f7); transition: width .3s ease; }
+.vacanam-progress.is-done .vacanam-bar span { background: #00a32a; }
+.vacanam-progress-errors { color: #b32d2e; }
+.vacanam-strings .vacanam-original { white-space: pre-wrap; color: #50575e; }
+.vacanam-filter { margin: 8px 0 12px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.vacanam-preview-stage { padding: 30px 20px 120px; background: repeating-conic-gradient(#f6f7f7 0 25%, #fff 0 50%) 0 0 / 20px 20px; border-radius: 6px; display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.vacanam-howto li { margin-bottom: 8px; }
+.vacanam-color-row { display: flex; align-items: center; gap: 8px; }
+.vacanam-color-row input[type="color"] { width: 40px; height: 30px; padding: 0; border: 1px solid #c3c4c7; border-radius: 4px; }
+.vacanam-color-text { max-width: 160px; }
+
+/* Lists */
+.column-vacanam { width: auto; white-space: nowrap; }
+th.column-vacanam .vacanam-col-head,
+.vacanam-cell { display: inline-flex; justify-content: center; width: 26px; }
+.vacanam-cell .dashicons { font-size: 18px; width: 18px; height: 18px; }
+.vacanam-cell-own { color: #7c3aed; }
+.vacanam-cell-draft .dashicons,
+.vacanam-cell-pending .dashicons { color: #996800; }
+.vacanam-cell-add { color: #8c8f94; }
+.vacanam-cell-add:hover { color: #7c3aed; }
+
+/* Editor box */
+.vacanam-box { width: 100%; border-collapse: collapse; }
+.vacanam-box td { padding: 3px 0; vertical-align: middle; }
+.vacanam-box-flag { width: 26px; }
+.vacanam-box-action { width: 24px; text-align: end; }
+.vacanam-box-action a { text-decoration: none; }
+.vacanam-link-field { position: relative; }
+.vacanam-link-results { position: absolute; z-index: 1000; inset-inline: 0; top: 100%; margin: 2px 0 0; background: #fff; border: 1px solid #c3c4c7; border-radius: 4px; max-height: 220px; overflow: auto; box-shadow: 0 4px 12px rgba(0, 0, 0, .1); }
+.vacanam-link-results li { margin: 0; }
+.vacanam-link-results button { display: block; width: 100%; text-align: start; padding: 6px 8px; border: 0; background: none; cursor: pointer; }
+.vacanam-link-results button:hover { background: #f0f0f1; }
+.vacanam-term-box td { padding: 4px 8px 4px 0; }
+
+/* Setup */
+.vacanam-wizard { max-width: 900px; }
+.vacanam-steps { display: flex; gap: 0; margin: 16px 0; padding: 0; list-style: none; counter-reset: step; }
+.vacanam-steps li { flex: 1; margin: 0; padding: 10px; text-align: center; background: #f0f0f1; color: #50575e; position: relative; counter-increment: step; font-weight: 500; }
+.vacanam-steps li::before { content: counter(step) ". "; }
+.vacanam-steps li:first-child { border-start-start-radius: 6px; border-end-start-radius: 6px; }
+.vacanam-steps li:last-child { border-start-end-radius: 6px; border-end-end-radius: 6px; }
+.vacanam-steps li.done { background: #ede9fe; color: #5b21b6; }
+.vacanam-steps li.current { background: #7c3aed; color: #fff; }
+.vacanam-wizard-card { padding: 8px 28px 24px; }
+.vacanam-detected { background: #f0fdf4; border: 1px solid #bbf7d0; padding: 10px 14px; border-radius: 6px; }
+.vacanam-big-select { min-width: 320px; font-size: 15px; }
+.vacanam-lang-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+.vacanam-lang-tile { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border: 1px solid #dcdcde; border-radius: 8px; cursor: pointer; background: #fff; }
+.vacanam-lang-tile span { display: flex; flex-direction: column; }
+.vacanam-lang-tile small { color: #646970; }
+.vacanam-lang-tile:has(input:checked) { border-color: #7c3aed; background: #f5f3ff; }
+.vacanam-lang-tile.is-added { opacity: .7; }
+.vacanam-ready li { font-size: 14px; margin-bottom: 6px; }
+.vacanam-skip { text-align: center; }
+.vacanam-next { margin-top: 24px; }
