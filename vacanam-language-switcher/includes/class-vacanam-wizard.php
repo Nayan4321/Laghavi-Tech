@@ -304,7 +304,7 @@ class Vacanam_Wizard {
 			$info = $catalog[ $suggest['locale'] ];
 			if ( $suggest['detected'] ) {
 				/* translators: %s: language name */
-				echo '<p class="vacanam-detected"><span class="dashicons dashicons-search"></span> ' . esc_html( sprintf( __( 'We read your home page: it is written in %s. We suggest it as the main language of your site.', 'vacanam-language-switcher' ), $info[2] . ' (' . $info[1] . ')' ) ) . '</p>';
+				echo '<p class="vacanam-detected"><span class="dashicons dashicons-search"></span> ' . esc_html( sprintf( __( 'We read your home page: it is written in %s. We suggest it as the main language of your site.', 'vacanam-language-switcher' ), $info[2] === $info[1] ? $info[2] : $info[2] . ' (' . $info[1] . ')' ) ) . '</p>';
 			}
 			echo '<p>' . esc_html__( 'The language your site is written in now. Its pages keep their addresses.', 'vacanam-language-switcher' ) . '</p>';
 			echo '<p><select name="main" class="vacanam-big-select">';
@@ -318,7 +318,7 @@ class Vacanam_Wizard {
 		echo '<h2>' . esc_html__( 'Other languages', 'vacanam-language-switcher' ) . '</h2><p>' . esc_html__( 'Choose the languages to translate your site into. You can add more later.', 'vacanam-language-switcher' ) . '</p><div class="vacanam-lang-grid">';
 		$have = wp_list_pluck( $langs, 'locale' );
 		foreach ( $popular as $key ) {
-			if ( ! isset( $catalog[ $key ] ) || ( $main && $main['locale'] === $key ) ) {
+			if ( ! isset( $catalog[ $key ] ) || $key === $locale ) {
 				continue;
 			}
 			$item = $catalog[ $key ];

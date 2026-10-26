@@ -1,0 +1,333 @@
+<style>
+#vac-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#7c3aed;--brand2:#0d9488;--navy:#1e0b3b;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#vac-lp *,#vac-lp *::before,#vac-lp *::after{box-sizing:border-box}
+#vac-lp h1,#vac-lp h2,#vac-lp h3,#vac-lp p{margin:0}
+#vac-lp a{text-decoration:none}
+#vac-lp section{margin-top:56px}
+#vac-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#vac-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#vac-lp .vc-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#vac-lp .vc-btn:hover{transform:translateY(-1px)}
+#vac-lp .vc-btn svg{width:18px;height:18px;flex:none}
+#vac-lp .vc-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#vac-lp .vc-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#vac-lp .vc-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#vac-lp .vc-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(124,58,237,.3)}
+#vac-lp .vc-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#vac-lp .vc-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#vac-lp .vc-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(13,148,136,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(124,58,237,.4),transparent 60%),linear-gradient(135deg,#1e0b3b,#3b1a6e);overflow:hidden}
+#vac-lp .vc-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#vac-lp .vc-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#vac-lp .vc-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#vac-lp .vc-hero p{color:#e4dafa;margin-top:14px;font-size:16px;max-width:560px}
+#vac-lp .vc-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#vac-lp .vc-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#vac-lp .vc-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#vac-lp .vc-stats span{font-size:12.5px;color:#c9b8ec}
+
+/* Cards */
+#vac-lp .vc-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#vac-lp .vc-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#vac-lp .vc-card__head{display:flex;gap:12px;align-items:center}
+#vac-lp .vc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#vac-lp .vc-icon svg{width:20px;height:20px}
+#vac-lp .vc-card h3{font-size:16px;font-weight:700}
+#vac-lp .vc-card small{display:block;font-size:12px;color:var(--muted)}
+#vac-lp .vc-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#vac-lp .vc-card li{margin:4px 0}
+
+/* Install steps */
+#vac-lp .vc-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#vac-lp .vc-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#vac-lp .vc-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#vac-lp .vc-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#vac-lp .vc-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#vac-lp .vc-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#vac-lp .vc-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#vac-lp .vc-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#vac-lp .vc-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#vac-lp .vc-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#vac-lp .vc-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#vac-lp .vc-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#vac-lp .vc-table th:last-child,#vac-lp .vc-table td:last-child{background:rgba(124,58,237,.05)}
+#vac-lp .vc-table td.vc-yes{color:#16a34a;font-weight:700;font-size:16px}
+#vac-lp .vc-table td.vc-no{color:#c0c4d0}
+
+/* Pricing */
+#vac-lp .vc-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#vac-lp .vc-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#vac-lp .vc-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(124,58,237,.15)}
+#vac-lp .vc-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#vac-lp .vc-price h3{font-size:17px;font-weight:700}
+#vac-lp .vc-price__sites{font-size:13px;color:var(--muted)}
+#vac-lp .vc-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#vac-lp .vc-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#vac-lp .vc-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#vac-lp .vc-price li{padding:4px 0 4px 24px;position:relative}
+#vac-lp .vc-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#vac-lp .vc-price .vc-btn{justify-content:center}
+#vac-lp .vc-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#vac-lp .vc-faq{margin-top:20px;display:grid;gap:10px}
+#vac-lp .vc-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#vac-lp .vc-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#vac-lp .vc-faq summary::-webkit-details-marker{display:none}
+#vac-lp .vc-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#vac-lp .vc-faq details[open] summary::after{content:"–"}
+#vac-lp .vc-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#vac-lp .vc-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#vac-lp .vc-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#vac-lp .vc-maker p{font-size:14px;color:var(--muted)}
+#vac-lp .vc-maker b{color:var(--ink)}
+#vac-lp .vc-maker a{color:var(--brand)}
+#vac-lp .vc-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#ea580c,#db2777 60%,#9333ea)}
+#vac-lp .vc-cta h2{color:#fff}
+#vac-lp .vc-cta p{color:#fff1f2;margin:10px auto 0;max-width:560px}
+#vac-lp .vc-cta .vc-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #vac-lp .vc-hero__grid{grid-template-columns:1fr}
+ #vac-lp .vc-cards,#vac-lp .vc-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #vac-lp .vc-cards,#vac-lp .vc-steps,#vac-lp .vc-prices{grid-template-columns:1fr}
+ #vac-lp .vc-stats{grid-template-columns:repeat(2,1fr)}
+ #vac-lp .vc-hero__ctas .vc-btn{flex:1 1 100%;justify-content:center}
+ #vac-lp .vc-table{min-width:0;font-size:13px}
+ #vac-lp .vc-table th,#vac-lp .vc-table td{padding:11px 10px}
+ #vac-lp .vc-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#vac-lp h1,#vac-lp h2,#vac-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#vac-lp h2,#vac-lp h3{color:var(--ink)}
+#vac-lp .vc-hero h1,#vac-lp .vc-cta h2{color:#fff}
+#vac-lp p,#vac-lp li,#vac-lp td,#vac-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#vac-lp a{box-shadow:none;border-bottom:0}
+#vac-lp a:not(.vc-btn){color:var(--brand)}
+#vac-lp a.vc-btn{text-decoration:none!important}
+#vac-lp ul{margin-left:0;margin-right:0}
+#vac-lp .vc-card ul{list-style:disc}
+#vac-lp table,#vac-lp th,#vac-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#vac-lp th{border-top:0}
+#vac-lp table{margin:0;border:0;background:#fff}
+#vac-lp tr{background:none}
+#vac-lp details{margin:0}
+#vac-lp summary{color:var(--ink);background:none;border:0}
+#vac-lp section{display:block;padding:0}
+
+#vac-lp .vc-hero__grid>*{min-width:0}
+/* Chips */
+#vac-lp .vc-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+#vac-lp .vc-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--ink)}
+#vac-lp .vc-chip i{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block}
+#vac-lp .vc-chip--muted{font-weight:500;color:var(--muted);background:var(--soft)}
+#vac-lp .vc-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+#vac-lp .vc-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+#vac-lp .vc-box h3{font-size:16px;font-weight:700}
+#vac-lp .vc-box p{font-size:14px;color:var(--muted);margin-top:6px}
+#vac-lp .vc-pro{background:linear-gradient(180deg,#f7f3ff,#fff);border:1px solid #e6dcfb;border-radius:22px;padding:clamp(20px,4vw,32px)}
+#vac-lp .vc-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--brand);color:#fff}
+#vac-lp .vc-list{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#vac-lp .vc-list li{margin:5px 0}
+#vac-lp .vc-list b{color:var(--ink)}
+#vac-lp .vc-install .vc-box{background:#fff}
+
+/* Vacanam: hero page mock-up */
+#vac-lp .vc-hero__grid>*{min-width:0}
+#vac-lp .vc-mock{background:#fff;border-radius:18px;overflow:hidden;color:var(--ink);box-shadow:0 30px 60px rgba(0,0,0,.35);max-width:400px;justify-self:end;width:100%}
+#vac-lp .vc-mock__bar{display:flex;align-items:center;gap:6px;padding:10px 14px;background:#f3f0fa;border-bottom:1px solid var(--line)}
+#vac-lp .vc-mock__bar span{width:9px;height:9px;border-radius:50%;background:#d8d0ea}
+#vac-lp .vc-mock__bar em{margin-left:8px;font-style:normal;font-size:12px;color:var(--muted);background:#fff;border-radius:6px;padding:3px 10px;flex:1}
+#vac-lp .vc-mock__page{padding:16px 18px 20px;text-align:right;font-family:Tahoma,"Segoe UI",Arial,sans-serif}
+#vac-lp .vc-mock__nav{display:flex;justify-content:space-between;align-items:center;font-size:13px;margin-bottom:18px}
+#vac-lp .vc-mock__switch{position:relative;border:1px solid var(--line);border-radius:8px;padding:4px 8px;font-size:12px;background:#fff}
+#vac-lp .vc-mock__switch i{position:absolute;top:calc(100% + 4px);left:0;display:flex;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:8px;box-shadow:0 8px 20px rgba(0,0,0,.12);font-style:normal;padding:4px;min-width:100%;z-index:1}
+#vac-lp .vc-mock__switch u{text-decoration:none;padding:4px 6px;white-space:nowrap;direction:ltr;text-align:left}
+#vac-lp .vc-mock__page h3{font-size:22px;font-weight:800;color:var(--ink);margin-top:34px}
+#vac-lp .vc-mock__page p{font-size:13.5px;color:var(--muted);margin-top:8px}
+#vac-lp .vc-mock__btn{display:inline-block;margin-top:14px;background:var(--brand);color:#fff;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700}
+#vac-lp .vc-mock__foot{display:flex;flex-wrap:wrap;gap:6px;padding:10px 14px;border-top:1px solid var(--line);background:#fbfaff}
+#vac-lp .vc-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#f1ecff;color:#6d28d9;white-space:nowrap}
+#vac-lp .vc-tag--ok{background:#e7f8ef;color:#15803d}
+#vac-lp code{font-size:12.5px;background:var(--soft);padding:1px 5px;border-radius:5px}
+@media (max-width:900px){#vac-lp .vc-mock{justify-self:stretch;max-width:none}}
+</style>
+
+<div id="vac-lp" class="vc-lp">
+
+  <!-- Hero -->
+  <section class="vc-hero">
+    <div class="vc-hero__grid">
+      <div>
+        <span class="vc-badge">Free WordPress plugin · Arabic &amp; RTL ready</span>
+        <h1>Your website in Arabic, English and every language</h1>
+        <p>Vacanam Language Switcher copies every page into a new language with its design (Elementor, blocks, page builders), connects each copy as its translation, and adds a language switcher that matches your theme. You only change the text. Right to left for Arabic, and SEO done right.</p>
+        <div class="vc-hero__ctas">
+          <a class="vc-btn vc-btn--white" href="https://laghavi.site/wp-content/uploads/vacanam-language-switcher.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Download free plugin</a>
+          <a class="vc-btn vc-btn--ghost" href="#how-it-works">How it works</a>
+        </div>
+        <div class="vc-stats">
+          <div><b>130+</b><span>languages</span></div>
+          <div><b>1 click</b><span>to copy a page with its design</span></div>
+          <div><b>RTL</b><span>Arabic, Hebrew, Persian, Urdu</span></div>
+          <div><b>0</b><span>changes to your current addresses</span></div>
+        </div>
+      </div>
+      <div class="vc-mock" aria-hidden="true">
+        <div class="vc-mock__bar"><span></span><span></span><span></span><em>example.com/ar/</em></div>
+        <div class="vc-mock__page" dir="rtl">
+          <div class="vc-mock__nav"><b>عيادة أكمي</b><span class="vc-mock__switch">🇦🇪 العربية ▾<i><u>🇺🇸 English</u><u>🇫🇷 Français</u></i></span></div>
+          <h3>ابتسامة صحية لعائلتك</h3>
+          <p>نقدم أفضل رعاية للأسنان لك ولعائلتك، بأحدث التقنيات.</p>
+          <span class="vc-mock__btn">احجز موعدك</span>
+        </div>
+        <div class="vc-mock__foot"><span class="vc-tag vc-tag--ok">✓ Copied with Elementor design</span><span class="vc-tag">hreflang ar · en · fr</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="vc-install">
+    <h2>Multilingual in five steps</h2>
+    <p class="lead">A setup opens when you activate the plugin. Most sites are ready to translate in a few minutes.</p>
+    <div class="vc-steps">
+      <div class="vc-step"><span class="vc-step__n">1</span><h3>Your main language is found</h3><p>Vacanam reads your home page, recognises the language it is written in and suggests it as the main language. Then tick Arabic, English, French or any of 130+ languages.</p></div>
+      <div class="vc-step"><span class="vc-step__n">2</span><h3>Your content keeps its place</h3><p>Every existing page, post and category is marked as the main language. Its addresses do not change, so your Google rankings stay.</p></div>
+      <div class="vc-step"><span class="vc-step__n">3</span><h3>Your site is copied</h3><p>Pages, posts, categories and menus are copied into each new language with their design, and connected to their originals. The home page copy becomes the home page of its language.</p></div>
+      <div class="vc-step"><span class="vc-step__n">4</span><h3>A switcher is added</h3><p>In your menu as a dropdown or side by side, or as a floating button. Elementor, block and widget switchers too.</p></div>
+      <div class="vc-step"><span class="vc-step__n">5</span><h3>You change the text</h3><p>Open each copy (Elementor pages open in Elementor), replace the text, publish. Links between pages already lead to the pages of the same language.</p></div>
+    </div>
+  </section>
+
+  <!-- Arabic -->
+  <section>
+    <h2>Made for Arabic websites</h2>
+    <p class="lead">Most multilingual plugins treat Arabic as an afterthought. Vacanam starts with it.</p>
+    <div class="vc-cols">
+      <div class="vc-box"><h3>Right to left everywhere</h3><p><code>&lt;html dir="rtl" lang="ar"&gt;</code>, WordPress's RTL styles and your theme's and Elementor's RTL layouts, even if WordPress's own Arabic translation is not installed. English pages stay left to right on the same site.</p></div>
+      <div class="vc-box"><h3>Arabic of every country</h3><p>Arabic with the Arab League flag, or Arabic for the UAE, Saudi Arabia, Egypt, Qatar, Kuwait, Bahrain, Oman, Jordan, Lebanon, Iraq, Morocco and Algeria, each with its own flag and search-engine code.</p></div>
+      <div class="vc-box"><h3>Write Arabic comfortably</h3><p>Arabic pages are edited right to left in the block editor, even when your admin is in English. Translation fields for Arabic texts are right to left too.</p></div>
+      <div class="vc-box"><h3>Switchers that mirror</h3><p>Dropdowns, menus and the floating button move to the other side in Arabic, automatically. Hebrew, Persian, Urdu, Pashto, Kurdish and Uyghur work the same way.</p></div>
+    </div>
+  </section>
+
+  <!-- Copy with design -->
+  <section>
+    <h2>Copies with the same design, connected for you</h2>
+    <p class="lead">No rebuilding pages. Every copy keeps everything, and Vacanam keeps the translations linked.</p>
+    <div class="vc-chips">
+      <span class="vc-chip"><i></i>Elementor &amp; Elementor Pro</span><span class="vc-chip"><i></i>Block editor</span><span class="vc-chip"><i></i>Other page builders</span><span class="vc-chip"><i></i>Custom fields</span><span class="vc-chip"><i></i>Yoast SEO &amp; Rank Math texts</span><span class="vc-chip"><i></i>Featured images</span><span class="vc-chip"><i></i>Categories &amp; tags</span><span class="vc-chip"><i></i>Parent pages</span><span class="vc-chip"><i></i>Menus</span><span class="vc-chip"><i></i>Elementor headers, footers &amp; popups</span><span class="vc-chip"><i></i>WooCommerce products</span>
+    </div>
+    <div class="vc-cols">
+      <div class="vc-box"><h3>Connected automatically</h3><p>Each copy is linked to its original as its translation. The language switcher, hreflang and menus use these links.</p></div>
+      <div class="vc-box"><h3>Change the connection any time</h3><p>In the Languages box of the editor, type the title of another page to connect it instead, or clear it to disconnect.</p></div>
+      <div class="vc-box"><h3>Links follow the language</h3><p>Buttons and links to your other pages inside the copy lead to the pages of the same language, in Elementor designs and blocks alike.</p></div>
+      <div class="vc-box"><h3>Flags in your page lists</h3><p>✓ the language of each page, ✎ edit its translation, + copy it into a language. Copy many pages at once with a bulk action.</p></div>
+    </div>
+  </section>
+
+  <!-- Switchers -->
+  <section>
+    <h2>A language switcher that matches your theme</h2>
+    <p class="lead">Put it anywhere, in any style, with your colours.</p>
+    <div class="vc-chips">
+      <span class="vc-chip">Menu item (theme's own style)</span><span class="vc-chip">Elementor widget</span><span class="vc-chip">Block</span><span class="vc-chip">Widget</span><span class="vc-chip">Shortcode</span><span class="vc-chip">Floating button</span><span class="vc-chip">PHP function</span>
+    </div>
+    <div class="vc-chips">
+      <span class="vc-chip vc-chip--muted">Dropdown</span><span class="vc-chip vc-chip--muted">Side by side</span><span class="vc-chip vc-chip--muted">List</span><span class="vc-chip vc-chip--muted">Pills</span><span class="vc-chip vc-chip--muted">Flags only</span><span class="vc-chip vc-chip--muted">Select box</span><span class="vc-chip vc-chip--muted">Names, codes (EN · AR) or flags</span><span class="vc-chip vc-chip--muted">Round, square or rectangle flags</span><span class="vc-chip vc-chip--muted">Text, background, hover, current and border colours</span><span class="vc-chip vc-chip--muted">Opens on click or hover</span>
+    </div>
+    <p class="vc-note">The switcher leads to the translation of the page being read, or to the home page of the language when the page is not translated yet.</p>
+  </section>
+
+  <!-- SEO -->
+  <section>
+    <h2>Multilingual SEO that doesn't break your rankings</h2>
+    <p class="lead">Each language version is its own page for Google, linked to the others.</p>
+    <div class="vc-cols">
+      <div class="vc-box"><h3>hreflang &amp; x-default</h3><p>On pages, posts, categories, archives and the home page, so Google shows the Arabic page to Arabic searchers and the English page to English searchers.</p></div>
+      <div class="vc-box"><h3>One address per page</h3><p>A page opened with the wrong language code gets a 301 redirect to its right address. Your current addresses stay as they are.</p></div>
+      <div class="vc-box"><h3>Sitemaps with every language</h3><p>WordPress, Yoast SEO, Rank Math and SEOPress sitemaps list each translation at its own address. Canonical, breadcrumbs and Open Graph follow the language.</p></div>
+      <div class="vc-box"><h3>No hidden translations</h3><p>Copies never keep a canonical address pointing to the original, and each translation has its own SEO title and description. Search engines are never redirected by browser language.</p></div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section>
+    <h2>Everything a multilingual site needs, free</h2>
+    <div class="vc-table-wrap">
+      <table class="vc-table">
+        <thead><tr><th>Feature</th><th>Vacanam Language Switcher</th></tr></thead>
+        <tbody>
+          <tr><td>Addresses</td><td>Language folders (example.com/ar/) or ?lang=ar; the main language with or without its code</td></tr>
+          <tr><td>Browser language</td><td>Home page in the visitor's language on the first visit, choice remembered</td></tr>
+          <tr><td>Media</td><td>Translated titles, alt texts and captions; one file for all languages</td></tr>
+          <tr><td>Custom post types &amp; taxonomies</td><td>Products, portfolios, Elementor templates, any custom type</td></tr>
+          <tr><td>Synchronization</td><td>Categories, featured image, parent, template, order, comments, sticky, format, date, custom fields</td></tr>
+          <tr><td>Menus</td><td>Menu per language and location, menu copies, Elementor menus swapped automatically</td></tr>
+          <tr><td>Texts</td><td>Site title, tagline, date formats, widget titles, theme and plugin texts</td></tr>
+          <tr><td>Widgets</td><td>Show a widget in one language only</td></tr>
+          <tr><td>Hidden languages</td><td>Prepare a language while only editors see it</td></tr>
+          <tr><td>Themes for Polylang or WPML</td><td>Their language functions keep working</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pro -->
+  <section id="pro">
+    <div class="vc-pro">
+      <span class="vc-pill">Coming soon</span>
+      <h2 style="margin-top:12px">Vacanam Pro: translate with AI</h2>
+      <p class="lead">A separate add-on that translates your pages for you, then you review them.</p>
+      <ul class="vc-list">
+        <li><b>Claude, ChatGPT or Gemini</b>, with your own key: pages, Elementor designs, SEO titles and descriptions, categories, menus and texts.</li>
+        <li><b>As many languages as you want</b>, a page, a selection or the whole site at once.</li>
+        <li><b>Your glossary</b>: brand names that are never translated, and your own words for key terms.</li>
+        <li><b>Shared and translated slugs</b>, and one domain or sub-domain per language.</li>
+      </ul>
+      <p class="vc-note">Install the free plugin now: Pro adds to it, nothing to redo.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Questions</h2>
+    <div class="vc-faq">
+      <details><summary>Will my current pages change address?</summary><p>No. The main language keeps its addresses (example.com/about/). Translations get a language code (example.com/ar/about-ar/), which you can change on each page.</p></details>
+      <details><summary>Does it really copy Elementor pages with their design?</summary><p>Yes. All Elementor data (sections, containers, widgets and their settings) is copied exactly, and links inside the design lead to the pages of the same language. Open the copy in Elementor and change the text.</p></details>
+      <details><summary>What about my Elementor header and footer?</summary><p>Copy them like pages: visitors of Arabic pages see the Arabic header. Menus inside them are swapped for their Arabic copy automatically. Or keep one header with the Language switcher widget.</p></details>
+      <details><summary>Does it work with Yoast SEO and Rank Math?</summary><p>Yes. Each translation has its own SEO title and description; canonical addresses, sitemaps and Open Graph follow the language, and Vacanam adds the hreflang links.</p></details>
+      <details><summary>My theme was made for Polylang. Will it work?</summary><p>Yes. Vacanam provides the language functions themes made for Polylang use (pll__, pll_the_languages…). Use only one translation plugin at a time.</p></details>
+      <details><summary>Can I translate WooCommerce products?</summary><p>Yes: tick products and product categories in Languages › Settings, then copy them like pages.</p></details>
+      <details><summary>Does it slow my site down?</summary><p>No. The language is read from the address; no external service is called while visitors browse. The switcher's style sheet is a few kilobytes.</p></details>
+      <details><summary>What if I delete the plugin?</summary><p>Your pages and posts are never deleted. Settings are removed only if you choose so in Languages › Settings.</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>Who makes it</h2>
+    <div class="vc-maker">
+      <div class="vc-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, creator of Vacanam Language Switcher<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="vc-cta">
+    <h2>Open your website to Arabic and the world</h2>
+    <p>Install the free plugin, let the setup copy your site, and publish your first translated page today.</p>
+    <div class="vc-hero__ctas">
+      <a class="vc-btn vc-btn--white" href="https://laghavi.site/wp-content/uploads/vacanam-language-switcher.zip" download>Download free plugin</a>
+    </div>
+  </section>
+
+</div>
