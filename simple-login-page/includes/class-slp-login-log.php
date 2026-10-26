@@ -86,19 +86,18 @@ class SLP_Login_Log {
 	public static function record_password_failure( $username, $error = null ) {
 		global $pagenow;
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Only detecting which form was used.
+		$wc_nonce = isset( $_POST['woocommerce-login-nonce'] ) ? sanitize_key( wp_unslash( $_POST['woocommerce-login-nonce'] ) ) : '';
 		if ( defined( 'XMLRPC_REQUEST' ) && XMLRPC_REQUEST ) {
 			$source = 'xmlrpc';
 		} elseif ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			$source = 'rest';
-		} elseif ( isset( $_POST['woocommerce-login-nonce'] ) ) {
+		} elseif ( '' !== $wc_nonce && wp_verify_nonce( $wc_nonce, 'woocommerce-login' ) ) {
 			$source = 'woocommerce';
 		} elseif ( 'wp-login.php' === $pagenow ) {
 			$source = 'wp-login';
 		} else {
 			$source = 'other';
 		}
-		// phpcs:enable
 
 		$reason = is_wp_error( $error ) ? $error->get_error_code() : 'failed';
 		$user   = is_email( $username ) ? get_user_by( 'email', $username ) : get_user_by( 'login', $username );
@@ -215,7 +214,7 @@ class SLP_Login_Log {
 		}
 		check_admin_referer( 'slp_clear_log' );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i', self::table() ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom log table.
-		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE . '&cleared=1' ) );
+		wp_safe_redirect( add_query_arg( array( 'cleared' => 1, '_slpnonce' => wp_create_nonce( 'slp_log' ) ), admin_url( 'admin.php?page=' . self::PAGE ) ) );
 		exit;
 	}
 
@@ -455,11 +454,13 @@ class SLP_Login_Log {
 		}
 
 		$table = self::table();
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only filters and paging.
-		$paged = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
-		$ip    = isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '';
-		$ip    = filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
-		// phpcs:enable
+		// Filters and paging come from this screen's own links, which carry a nonce.
+		$nonce   = isset( $_GET['_slpnonce'] ) ? sanitize_key( wp_unslash( $_GET['_slpnonce'] ) ) : '';
+		$valid   = '' !== $nonce && wp_verify_nonce( $nonce, 'slp_log' );
+		$paged   = $valid && isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+		$ip      = $valid && isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '';
+		$ip      = filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
+		$cleared = $valid && ! empty( $_GET['cleared'] );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom log table.
 		$offset = ( $paged - 1 ) * self::PER_PAGE;
@@ -477,7 +478,8 @@ class SLP_Login_Log {
 
 		self::fill_locations( $rows );
 		$pages    = max( 1, (int) ceil( $total / self::PER_PAGE ) );
-		$base_url = admin_url( 'admin.php?page=' . self::PAGE );
+		$all_url  = admin_url( 'admin.php?page=' . self::PAGE );
+		$base_url = add_query_arg( '_slpnonce', wp_create_nonce( 'slp_log' ), $all_url );
 		?>
 		<div class="wrap slp-admin slp-log">
 			<h1><?php esc_html_e( 'Failed logins', 'simple-login-page' ); ?></h1>
@@ -492,7 +494,7 @@ class SLP_Login_Log {
 				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . SLP_Settings::PAGE . '#slp-log-settings' ) ); ?>"><?php esc_html_e( 'Log settings', 'simple-login-page' ); ?></a>
 			</p>
 
-			<?php if ( ! empty( $_GET['cleared'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
+			<?php if ( $cleared ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'The log was cleared.', 'simple-login-page' ); ?></p></div>
 			<?php endif; ?>
 			<?php if ( ! SLP_Settings::get( 'log_failed_logins' ) ) : ?>
@@ -530,7 +532,7 @@ class SLP_Login_Log {
 					/* translators: %s: IP address. */
 					echo esc_html( sprintf( __( 'Showing attempts from %s.', 'simple-login-page' ), $ip ) );
 					?>
-					<a href="<?php echo esc_url( $base_url ); ?>"><?php esc_html_e( 'Show all', 'simple-login-page' ); ?></a>
+					<a href="<?php echo esc_url( $all_url ); ?>"><?php esc_html_e( 'Show all', 'simple-login-page' ); ?></a>
 				</p>
 			<?php endif; ?>
 
@@ -590,7 +592,7 @@ class SLP_Login_Log {
 						echo wp_kses_post(
 							paginate_links(
 								array(
-									'base'    => add_query_arg( 'paged', '%#%' ),
+									'base'    => add_query_arg( 'paged', '%#%', '' !== $ip ? add_query_arg( 'ip', $ip, $base_url ) : $base_url ),
 									'format'  => '',
 									'current' => $paged,
 									'total'   => $pages,

@@ -53,8 +53,9 @@ class SLP_Buttons {
 	 */
 	public static function wp_login_form() {
 		if ( SLP_Settings::get( 'show_wp_login' ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reading where to go after login, as wp-login.php does.
-			$redirect = isset( $_REQUEST['redirect_to'] ) ? esc_url_raw( wp_unslash( $_REQUEST['redirect_to'] ) ) : '';
+			// wp-login.php has already read where to go after logging in.
+			$redirect = isset( $GLOBALS['redirect_to'] ) && is_string( $GLOBALS['redirect_to'] ) ? esc_url_raw( $GLOBALS['redirect_to'] ) : '';
+			$redirect = admin_url() === $redirect ? '' : $redirect;
 			self::output( self::render( $redirect, 'wp-login' ) );
 		}
 	}
@@ -126,10 +127,8 @@ class SLP_Buttons {
 		}
 
 		$html = '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! slp_is_woocommerce_active() && ! empty( $_GET['slp_error'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
-			$code  = sanitize_key( wp_unslash( $_GET['slp_error'] ) );
+		$code = SLP_Auth::message( 'error' );
+		if ( ! slp_is_woocommerce_active() && '' !== $code ) {
 			$html .= '<div class="slp-message slp-message--error" role="alert">' . esc_html( SLP_Auth::error_message( $code ) ) . '</div>';
 		}
 
@@ -143,11 +142,10 @@ class SLP_Buttons {
 	 * @return WP_Error
 	 */
 	public static function wp_login_messages( $errors ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! empty( $_GET['slp_error'] ) ) {
-			$errors->add( 'slp_error', esc_html( SLP_Auth::error_message( sanitize_key( wp_unslash( $_GET['slp_error'] ) ) ) ) );
+		$code = SLP_Auth::message( 'error' );
+		if ( '' !== $code ) {
+			$errors->add( 'slp_error', esc_html( SLP_Auth::error_message( $code ) ) );
 		}
-		// phpcs:enable
 		return $errors;
 	}
 
@@ -161,14 +159,14 @@ class SLP_Buttons {
 		if ( ! is_account_page() && ! is_checkout() ) {
 			return;
 		}
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! empty( $_GET['slp_error'] ) ) {
-			wc_add_notice( SLP_Auth::error_message( sanitize_key( wp_unslash( $_GET['slp_error'] ) ) ), 'error' );
+		$error  = SLP_Auth::message( 'error' );
+		$notice = SLP_Auth::message( 'notice' );
+		if ( '' !== $error ) {
+			wc_add_notice( SLP_Auth::error_message( $error ), 'error' );
 		}
-		if ( ! empty( $_GET['slp_notice'] ) ) {
-			wc_add_notice( SLP_Auth::notice_message( sanitize_key( wp_unslash( $_GET['slp_notice'] ) ) ), 'success' );
+		if ( '' !== $notice ) {
+			wc_add_notice( SLP_Auth::notice_message( $notice ), 'success' );
 		}
-		// phpcs:enable
 	}
 
 	/**

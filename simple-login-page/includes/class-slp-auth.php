@@ -18,6 +18,18 @@ class SLP_Auth {
 	const BIND_COOKIE = 'slp_oauth';
 
 	/**
+	 * Cookie carrying a message to show after a redirect (an error or notice code, never free text).
+	 */
+	const MESSAGE_COOKIE = 'slp_message';
+
+	/**
+	 * Message read from the cookie on this request: array( type, code ).
+	 *
+	 * @var array|null
+	 */
+	private static $message = null;
+
+	/**
 	 * How long a login attempt may take, start to finish.
 	 */
 	const STATE_TTL = 15 * MINUTE_IN_SECONDS;
@@ -26,6 +38,7 @@ class SLP_Auth {
 	 * Hook everything up.
 	 */
 	public static function init() {
+		add_action( 'init', array( __CLASS__, 'read_message' ), 1 );
 		add_action( 'init', array( __CLASS__, 'maybe_start' ) );
 		add_action( 'rest_api_init', array( __CLASS__, 'register_routes' ) );
 	}
@@ -49,14 +62,14 @@ class SLP_Auth {
 	 * @return string
 	 */
 	public static function login_url( $provider, $redirect_to = '', $from = '' ) {
-		$args = array( 'slp_login' => $provider );
+		$args = array();
 		if ( '' !== $redirect_to ) {
 			$args['redirect_to'] = $redirect_to;
 		}
 		if ( '' !== $from ) {
 			$args['slp_from'] = $from;
 		}
-		return add_query_arg( array_map( 'rawurlencode', $args ), home_url( '/' ) );
+		return add_query_arg( array_map( 'rawurlencode', $args ), rest_url( 'simple-login-page/v1/start/' . rawurlencode( $provider ) ) );
 	}
 
 	/**
@@ -88,43 +101,63 @@ class SLP_Auth {
 		$home = wp_parse_url( home_url() );
 		$host = $home['host'] . ( isset( $home['port'] ) ? ':' . $home['port'] : '' );
 		$url  = ( is_ssl() ? 'https://' : 'http://' ) . $host . $uri;
-		return remove_query_arg( array( 'slp_error', 'slp_notice' ), $url );
+		return $url;
 	}
 
 	/**
-	 * Start a login when a social button is clicked: save the state and send the visitor to the provider.
+	 * Start connecting a provider to the logged-in user's account (link from the profile or My Account).
 	 */
 	public static function maybe_start() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Login links are public; linking checks its nonce below.
-		if ( empty( $_GET['slp_login'] ) ) {
+		if ( ! isset( $_GET['slp_login'], $_GET['_wpnonce'] ) ) {
 			return;
 		}
-
 		$provider = sanitize_key( wp_unslash( $_GET['slp_login'] ) );
-		$mode     = isset( $_GET['slp_mode'] ) && 'link' === $_GET['slp_mode'] ? 'link' : 'login';
-		$from     = isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), '' ) : '';
-		$redirect = isset( $_GET['redirect_to'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['redirect_to'] ) ), '' ) : '';
-		// phpcs:enable
-
-		if ( '' === $from ) {
-			$from = 'link' === $mode ? self::default_link_page() : self::default_login_page();
+		$nonce    = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
+		if ( ! wp_verify_nonce( $nonce, 'slp_link_' . $provider ) || ! is_user_logged_in() ) {
+			self::redirect( self::with_message( self::default_link_page(), 'error', 'expired' ) );
 		}
+		$from = isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), '' ) : '';
+		$from = '' !== $from ? $from : self::default_link_page();
+		if ( ! SLP_Providers::is_enabled( $provider ) ) {
+			self::redirect( self::with_message( $from, 'error', 'provider_disabled' ) );
+		}
+		self::redirect_to_provider( $provider, 'link', get_current_user_id(), '', $from );
+	}
+
+	/**
+	 * Start a login (or sign-up) when a social button is clicked. A public REST endpoint, like the
+	 * callback: the visitor is not logged in yet, and the attempt is protected by the one-time state
+	 * value and the browser-bound cookie checked in callback().
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return WP_REST_Response
+	 */
+	public static function start( $request ) {
+		$provider = sanitize_key( $request['provider'] );
+		$from     = wp_validate_redirect( esc_url_raw( (string) $request->get_param( 'slp_from' ) ), '' );
+		$redirect = wp_validate_redirect( esc_url_raw( (string) $request->get_param( 'redirect_to' ) ), '' );
+		$from     = '' !== $from ? $from : self::default_login_page();
 
 		if ( ! SLP_Providers::is_enabled( $provider ) ) {
-			self::redirect( add_query_arg( 'slp_error', 'provider_disabled', $from ) );
+			return self::redirect_response( self::with_message( $from, 'error', 'provider_disabled' ) );
 		}
+		$response = new WP_REST_Response( null, 302 );
+		$response->header( 'Location', self::provider_redirect_url( $provider, 'login', 0, $redirect, $from ) );
+		$response->header( 'Cache-Control', 'no-store, no-cache, must-revalidate' );
+		return $response;
+	}
 
-		$user_id = 0;
-		if ( 'link' === $mode ) {
-			$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-			if ( ! is_user_logged_in() || ! wp_verify_nonce( $nonce, 'slp_link_' . $provider ) ) {
-				self::redirect( add_query_arg( 'slp_error', 'expired', $from ) );
-			}
-			$user_id = get_current_user_id();
-		} elseif ( is_user_logged_in() ) {
-			self::redirect( '' !== $redirect ? $redirect : home_url( '/' ) );
-		}
-
+	/**
+	 * Save the state of a login attempt and return the provider's sign-in address.
+	 *
+	 * @param string $provider Provider ID.
+	 * @param string $mode     login or link.
+	 * @param int    $user_id  User being linked (link mode).
+	 * @param string $redirect Where to go after a login.
+	 * @param string $from     Page to return to if something goes wrong.
+	 * @return string
+	 */
+	private static function provider_redirect_url( $provider, $mode, $user_id, $redirect, $from ) {
 		$state = wp_generate_password( 40, false, false );
 		$bind  = wp_generate_password( 40, false, false );
 
@@ -141,9 +174,22 @@ class SLP_Auth {
 			self::STATE_TTL
 		);
 		self::set_bind_cookie( $bind, time() + self::STATE_TTL );
+		return SLP_Providers::authorize_url( $provider, $state );
+	}
 
+	/**
+	 * Send the browser to the provider (link mode, from a normal page load).
+	 *
+	 * @param string $provider Provider ID.
+	 * @param string $mode     login or link.
+	 * @param int    $user_id  User being linked.
+	 * @param string $redirect Where to go after a login.
+	 * @param string $from     Page to return to.
+	 */
+	private static function redirect_to_provider( $provider, $mode, $user_id, $redirect, $from ) {
+		$url = self::provider_redirect_url( $provider, $mode, $user_id, $redirect, $from );
 		nocache_headers();
-		wp_redirect( SLP_Providers::authorize_url( $provider, $state ) ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Redirects to the provider's own domain.
+		wp_redirect( $url ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- Redirects to the provider's own domain.
 		exit;
 	}
 
@@ -151,6 +197,16 @@ class SLP_Auth {
 	 * Register the callback endpoint providers send the visitor back to.
 	 */
 	public static function register_routes() {
+		register_rest_route(
+			'simple-login-page/v1',
+			'/start/(?P<provider>[a-z]+)',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( __CLASS__, 'start' ),
+				// Public by design: login buttons are shown to visitors who are not logged in.
+				'permission_callback' => '__return_true',
+			)
+		);
 		register_rest_route(
 			'simple-login-page/v1',
 			'/callback/(?P<provider>[a-z]+)',
@@ -183,7 +239,7 @@ class SLP_Auth {
 		self::set_bind_cookie( '', time() - YEAR_IN_SECONDS );
 
 		if ( ! is_array( $data ) || $data['provider'] !== $provider || '' === $bind || ! hash_equals( $data['bind'], hash( 'sha256', $bind ) ) ) {
-			return self::redirect_response( add_query_arg( 'slp_error', 'expired', self::default_login_page() ) );
+			return self::redirect_response( self::with_message( self::default_login_page(), 'error', 'expired' ) );
 		}
 
 		$from = $data['from'];
@@ -192,13 +248,13 @@ class SLP_Auth {
 		// parameter before it reaches us, so its absence is the reliable signal.)
 		$code = (string) $request->get_param( 'code' );
 		if ( '' === $code ) {
-			return self::redirect_response( add_query_arg( 'slp_error', 'cancelled', $from ) );
+			return self::redirect_response( self::with_message( $from, 'error', 'cancelled' ) );
 		}
 
 		$profile = SLP_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
 		if ( is_wp_error( $profile ) ) {
 			self::log( $provider, $profile );
-			return self::redirect_response( add_query_arg( 'slp_error', 'failed', $from ) );
+			return self::redirect_response( self::with_message( $from, 'error', 'failed' ) );
 		}
 
 		if ( 'link' === $data['mode'] ) {
@@ -215,7 +271,7 @@ class SLP_Auth {
 			 * @param string $email    Email shared by the provider.
 			 */
 			do_action( 'slp_social_login_failed', $provider, $user->get_error_code(), $profile['email'] );
-			return self::redirect_response( add_query_arg( 'slp_error', $user->get_error_code(), $from ) );
+			return self::redirect_response( self::with_message( $from, 'error', $user->get_error_code() ) );
 		}
 
 		/** This filter is documented in wp-includes/user.php. Lets plugins such as user-approval plugins block the login. */
@@ -223,7 +279,7 @@ class SLP_Auth {
 		if ( is_wp_error( $checked ) ) {
 			/** This action is documented above. */
 			do_action( 'slp_social_login_failed', $provider, 'blocked', $profile['email'] );
-			return self::redirect_response( add_query_arg( 'slp_error', 'blocked', $from ) );
+			return self::redirect_response( self::with_message( $from, 'error', 'blocked' ) );
 		}
 
 		wp_set_current_user( $user->ID );
@@ -251,16 +307,16 @@ class SLP_Auth {
 	 */
 	private static function link( $user_id, $provider, $profile, $from ) {
 		if ( ! $user_id || ! get_userdata( $user_id ) ) {
-			return add_query_arg( 'slp_error', 'expired', $from );
+			return self::with_message( $from, 'error', 'expired' );
 		}
 
 		$owner = self::user_by_provider_id( $provider, $profile['id'] );
 		if ( $owner && $owner->ID !== $user_id ) {
-			return add_query_arg( 'slp_error', 'already_linked', $from );
+			return self::with_message( $from, 'error', 'already_linked' );
 		}
 
 		self::save_link( $user_id, $provider, $profile );
-		return add_query_arg( 'slp_notice', 'linked', $from );
+		return self::with_message( $from, 'notice', 'linked' );
 	}
 
 	/**
@@ -545,7 +601,63 @@ class SLP_Auth {
 	}
 
 	/**
-	 * Text for an error code passed back in the URL.
+	 * Remember a message to show on the next page (an error or notice code, set as a short cookie).
+	 *
+	 * @param string $url  Page the visitor goes to.
+	 * @param string $type error or notice.
+	 * @param string $code Message code.
+	 * @return string The same URL.
+	 */
+	public static function with_message( $url, $type, $code ) {
+		if ( ! headers_sent() ) {
+			setcookie(
+				self::MESSAGE_COOKIE,
+				( 'notice' === $type ? 'notice' : 'error' ) . '.' . sanitize_key( $code ),
+				array(
+					'expires'  => time() + 5 * MINUTE_IN_SECONDS,
+					'path'     => COOKIEPATH ? COOKIEPATH : '/',
+					'domain'   => COOKIE_DOMAIN ? COOKIE_DOMAIN : '',
+					'secure'   => is_ssl(),
+					'httponly' => true,
+					'samesite' => 'Lax',
+				)
+			);
+		}
+		return $url;
+	}
+
+	/**
+	 * Read the message cookie once, then remove it so the message is shown only once.
+	 */
+	public static function read_message() {
+		self::$message = array( '', '' );
+		if ( ! isset( $_COOKIE[ self::MESSAGE_COOKIE ] ) ) {
+			return;
+		}
+		$value = sanitize_text_field( wp_unslash( $_COOKIE[ self::MESSAGE_COOKIE ] ) );
+		if ( preg_match( '/^(error|notice)\.([a-z_]+)$/', $value, $m ) ) {
+			self::$message = array( $m[1], $m[2] );
+		}
+		if ( ! headers_sent() && ! wp_doing_ajax() && ! ( defined( 'REST_REQUEST' ) && REST_REQUEST ) ) {
+			setcookie( self::MESSAGE_COOKIE, '', time() - YEAR_IN_SECONDS, COOKIEPATH ? COOKIEPATH : '/', COOKIE_DOMAIN ? COOKIE_DOMAIN : '' );
+		}
+	}
+
+	/**
+	 * Message code to show on this page.
+	 *
+	 * @param string $type error or notice.
+	 * @return string '' when there is none.
+	 */
+	public static function message( $type ) {
+		if ( null === self::$message ) {
+			self::read_message();
+		}
+		return self::$message[0] === $type ? self::$message[1] : '';
+	}
+
+	/**
+	 * Text for an error code.
 	 *
 	 * @param string $code Error code.
 	 * @return string
@@ -566,7 +678,7 @@ class SLP_Auth {
 	}
 
 	/**
-	 * Text for a success code passed back in the URL.
+	 * Text for a success code.
 	 *
 	 * @param string $code Notice code.
 	 * @return string

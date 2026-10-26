@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Tags: social login, google login, woocommerce login, apple login, facebook login
 Requires at least: 6.2
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.0.0
 License: GPLv2 or later
@@ -107,6 +107,8 @@ When a visitor clicks a button, their browser is sent to the provider's login pa
 * **LinkedIn** – www.linkedin.com, api.linkedin.com. [Terms](https://www.linkedin.com/legal/user-agreement), [Privacy](https://www.linkedin.com/legal/privacy-policy)
 
 The plugin stores the visitor's provider account ID and email on their WordPress user so they can log in again. This data is deleted when the plugin is deleted.
+
+**IPinfo (ipinfo.io)** – optional, off by default. Only when you tick "Look up city and country for each IP" in Simple Login Page > Settings, the plugin sends the IP address of each failed login attempt (and your IPinfo token, if you entered one) to ipinfo.io, when an administrator opens the Failed logins screen, to show the approximate city, region and country. Each result is kept for a week, so an address is looked up at most once a week. [Terms](https://ipinfo.io/terms-of-service), [Privacy](https://ipinfo.io/privacy-policy)
 
 == Screenshots ==
 

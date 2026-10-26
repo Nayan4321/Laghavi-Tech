@@ -110,11 +110,25 @@ class SLP_Captcha {
 	 * @return bool
 	 */
 	private static function posted_answer_is_correct() {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- The login/registration form's own handling does nonce checks; this only adds a question.
+		$nonce = isset( $_POST['slp_captcha_nonce'] ) ? sanitize_key( wp_unslash( $_POST['slp_captcha_nonce'] ) ) : '';
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'slp_captcha' ) ) {
+			return false;
+		}
 		$token  = isset( $_POST['slp_captcha_token'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_token'] ) ) : '';
 		$answer = isset( $_POST['slp_captcha_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_answer'] ) ) : '';
-		// phpcs:enable
 		return self::verify( $token, $answer );
+	}
+
+	/**
+	 * Was WooCommerce's own form sent (checked with WooCommerce's nonce)?
+	 *
+	 * @param string $form login or register.
+	 * @return bool
+	 */
+	private static function is_wc_form( $form ) {
+		$field = 'woocommerce-' . $form . '-nonce';
+		$nonce = isset( $_POST[ $field ] ) ? sanitize_key( wp_unslash( $_POST[ $field ] ) ) : '';
+		return '' !== $nonce && (bool) wp_verify_nonce( $nonce, 'woocommerce-' . $form );
 	}
 
 	/**
@@ -139,6 +153,7 @@ class SLP_Captcha {
 			<label for="slp_captcha_answer"><?php esc_html_e( 'Security question:', 'simple-login-page' ); ?> <?php echo esc_html( $text ); ?></label>
 			<input type="text" name="slp_captcha_answer" id="slp_captcha_answer" class="input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" size="5" required />
 			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+			<?php wp_nonce_field( 'slp_captcha', 'slp_captcha_nonce', false ); ?>
 		</p>
 		<?php
 	}
@@ -154,6 +169,7 @@ class SLP_Captcha {
 			<label for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Security question:', 'simple-login-page' ); ?> <?php echo esc_html( $text ); ?>&nbsp;<span class="required" aria-hidden="true">*</span></label>
 			<input type="text" name="slp_captcha_answer" id="<?php echo esc_attr( $id ); ?>" class="woocommerce-Input input-text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-required="true" />
 			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+			<?php wp_nonce_field( 'slp_captcha', 'slp_captcha_nonce', false ); ?>
 		</p>
 		<?php
 	}
@@ -169,10 +185,9 @@ class SLP_Captcha {
 	public static function check_login( $user ) {
 		global $pagenow;
 
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Detecting which form was submitted.
-		$is_wp_form = 'wp-login.php' === $pagenow && isset( $_POST['log'] );
-		$is_wc_form = isset( $_POST['woocommerce-login-nonce'] );
-		// phpcs:enable
+		$method     = isset( $_SERVER['REQUEST_METHOD'] ) ? strtoupper( sanitize_key( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) : '';
+		$is_wp_form = 'wp-login.php' === $pagenow && 'POST' === $method;
+		$is_wc_form = self::is_wc_form( 'login' );
 
 		if ( ! $is_wp_form && ! $is_wc_form ) {
 			return $user;
@@ -205,8 +220,7 @@ class SLP_Captcha {
 	 * @return WP_Error
 	 */
 	public static function check_wc_register( $errors ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Detecting which form was submitted.
-		if ( isset( $_POST['woocommerce-register-nonce'] ) && ! self::posted_answer_is_correct() ) {
+		if ( self::is_wc_form( 'register' ) && ! self::posted_answer_is_correct() ) {
 			$errors->add( 'slp_captcha', self::error()->get_error_message() );
 		}
 		return $errors;

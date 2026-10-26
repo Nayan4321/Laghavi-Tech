@@ -92,8 +92,9 @@ class SLP_Login_Url {
 		$path = untrailingslashit( (string) wp_parse_url( $uri, PHP_URL_PATH ) );
 		$home = untrailingslashit( (string) wp_parse_url( home_url(), PHP_URL_PATH ) );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Routing only.
-		$by_query = ! get_option( 'permalink_structure' ) && isset( $_GET[ $slug ] ) && $path === $home;
+		$query = array();
+		wp_parse_str( (string) wp_parse_url( $uri, PHP_URL_QUERY ), $query );
+		$by_query = ! get_option( 'permalink_structure' ) && isset( $query[ $slug ] ) && $path === $home;
 
 		if ( $path === $home . '/' . $slug || $by_query ) {
 			self::$is_custom = true;
@@ -120,8 +121,10 @@ class SLP_Login_Url {
 		}
 
 		if ( self::$is_wp_login ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Routing only.
-			$action = isset( $_GET['action'] ) ? sanitize_key( wp_unslash( $_GET['action'] ) ) : '';
+			$query = array();
+			$uri   = isset( $_SERVER['REQUEST_URI'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REQUEST_URI'] ) ) : '';
+			wp_parse_str( (string) wp_parse_url( $uri, PHP_URL_QUERY ), $query );
+			$action = isset( $query['action'] ) ? sanitize_key( $query['action'] ) : '';
 			// Password-protected posts submit to wp-login.php?action=postpass; logged-in users have nothing to hide from.
 			if ( 'postpass' !== $action && ! is_user_logged_in() ) {
 				self::block();

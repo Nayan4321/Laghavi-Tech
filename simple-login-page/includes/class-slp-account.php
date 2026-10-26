@@ -45,27 +45,26 @@ class SLP_Account {
 	 * Disconnect a provider when the user clicks "Disconnect".
 	 */
 	public static function maybe_unlink() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce checked below.
-		if ( empty( $_GET['slp_unlink'] ) ) {
+		if ( ! isset( $_GET['slp_unlink'], $_GET['_wpnonce'] ) ) {
 			return;
 		}
 		$provider = sanitize_key( wp_unslash( $_GET['slp_unlink'] ) );
 		$user_id  = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : get_current_user_id();
-		$nonce    = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) ) : '';
-		$from     = isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), home_url( '/' ) ) : home_url( '/' );
-		// phpcs:enable
+		$nonce    = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
+		$valid    = wp_verify_nonce( $nonce, 'slp_unlink_' . $provider . '_' . $user_id );
+		$from     = $valid && isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), home_url( '/' ) ) : home_url( '/' );
 
-		if ( ! is_user_logged_in() || ! SLP_Providers::exists( $provider ) || ! wp_verify_nonce( $nonce, 'slp_unlink_' . $provider . '_' . $user_id ) ) {
-			wp_safe_redirect( add_query_arg( 'slp_error', 'expired', $from ) );
+		if ( ! $valid || ! is_user_logged_in() || ! SLP_Providers::exists( $provider ) ) {
+			wp_safe_redirect( SLP_Auth::with_message( $from, 'error', 'expired' ) );
 			exit;
 		}
 		if ( get_current_user_id() !== $user_id && ! current_user_can( 'edit_user', $user_id ) ) {
-			wp_safe_redirect( add_query_arg( 'slp_error', 'failed', $from ) );
+			wp_safe_redirect( SLP_Auth::with_message( $from, 'error', 'failed' ) );
 			exit;
 		}
 
 		SLP_Auth::unlink( $user_id, $provider );
-		wp_safe_redirect( add_query_arg( 'slp_notice', 'unlinked', $from ) );
+		wp_safe_redirect( SLP_Auth::with_message( $from, 'notice', 'unlinked' ) );
 		exit;
 	}
 
@@ -217,13 +216,13 @@ class SLP_Account {
 		if ( 'profile.php' !== $pagenow && 'user-edit.php' !== $pagenow ) {
 			return;
 		}
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
-		if ( ! empty( $_GET['slp_error'] ) ) {
-			printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::error_message( sanitize_key( wp_unslash( $_GET['slp_error'] ) ) ) ) );
-		} elseif ( ! empty( $_GET['slp_notice'] ) ) {
-			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::notice_message( sanitize_key( wp_unslash( $_GET['slp_notice'] ) ) ) ) );
+		$error  = SLP_Auth::message( 'error' );
+		$notice = SLP_Auth::message( 'notice' );
+		if ( '' !== $error ) {
+			printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::error_message( $error ) ) );
+		} elseif ( '' !== $notice ) {
+			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::notice_message( $notice ) ) );
 		}
-		// phpcs:enable
 	}
 
 	/**
