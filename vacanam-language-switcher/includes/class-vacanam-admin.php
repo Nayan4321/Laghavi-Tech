@@ -88,7 +88,9 @@ class Vacanam_Admin {
 				'catalog'   => Vacanam_Languages::catalog(),
 				'flags'     => VACANAM_URL . 'assets/flags/',
 				'i18n'      => array(
+					/* translators: 1: copies done, 2: copies to make */
 					'working'  => __( 'Copying… %1$d of %2$d', 'vacanam-language-switcher' ),
+					/* translators: %d: number of copies */
 					'done'     => __( 'Done: %d copies made. They are ready to translate.', 'vacanam-language-switcher' ),
 					'error'    => __( 'Something went wrong. Click the button again to continue where it stopped.', 'vacanam-language-switcher' ),
 					'noChoice' => __( 'Choose at least one language and one kind of content.', 'vacanam-language-switcher' ),
@@ -122,7 +124,7 @@ class Vacanam_Admin {
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Message after a redirect.
 		$msg = isset( $_GET['vacanam_msg'] ) ? sanitize_key( wp_unslash( $_GET['vacanam_msg'] ) ) : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$err = isset( $_GET['vacanam_err'] ) ? sanitize_text_field( wp_unslash( rawurldecode( (string) $_GET['vacanam_err'] ) ) ) : '';
+		$err = isset( $_GET['vacanam_err'] ) ? sanitize_text_field( wp_unslash( $_GET['vacanam_err'] ) ) : '';
 		$messages = array(
 			'saved'    => __( 'Saved.', 'vacanam-language-switcher' ),
 			'added'    => __( 'Language added.', 'vacanam-language-switcher' ),

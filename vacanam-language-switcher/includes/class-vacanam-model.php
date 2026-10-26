@@ -519,13 +519,12 @@ class Vacanam_Model {
 			return 0;
 		}
 		$types_in = implode( ',', array_fill( 0, count( $types ), '%s' ) );
-		$tt_in    = $tt ? implode( ',', array_map( 'intval', $tt ) ) : '0';
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders and integers built above.
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE p.post_type IN ($types_in) AND p.post_status NOT IN ('auto-draft','trash','inherit') AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($tt_in))", $types ) );
+		$tt       = $tt ? array_values( array_map( 'intval', $tt ) ) : array( 0 );
+		$tt_in    = implode( ',', array_fill( 0, count( $tt ), '%d' ) );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery -- Placeholders built above.
+		$count = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE p.post_type IN ($types_in) AND p.post_status NOT IN ('auto-draft','trash','inherit') AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($tt_in))", array_merge( $types, $tt ) ) );
 		if ( in_array( 'attachment', $types, true ) ) {
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
-			$count += (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE p.post_type = 'attachment' AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($tt_in))" );
+			$count += (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->posts} p WHERE p.post_type = 'attachment' AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($tt_in))", $tt ) );
 		}
 		// phpcs:enable
 		return $count + self::count_terms_without_language();
@@ -543,7 +542,7 @@ class Vacanam_Model {
 			return 0;
 		}
 		$in = implode( ',', array_fill( 0, count( $taxes ), '%s' ) );
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber
 		return (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->term_taxonomy} tt WHERE tt.taxonomy IN ($in) AND NOT EXISTS (SELECT 1 FROM {$wpdb->termmeta} m WHERE m.term_id = tt.term_id AND m.meta_key = %s)", array_merge( $taxes, array( self::TERM_LANG ) ) ) );
 	}
 
@@ -560,10 +559,11 @@ class Vacanam_Model {
 		if ( ! $tt_id || ! $types ) {
 			return 0;
 		}
-		$all_tt   = implode( ',', array_map( 'intval', self::language_terms() ) );
+		$all_tt   = array_values( array_map( 'intval', self::language_terms() ) );
+		$all_in   = implode( ',', array_fill( 0, count( $all_tt ), '%d' ) );
 		$types_in = implode( ',', array_fill( 0, count( $types ), '%s' ) );
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery -- Placeholders and integers built above.
-		$done = (int) $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) SELECT p.ID, %d, 0 FROM {$wpdb->posts} p WHERE p.post_type IN ($types_in) AND p.post_status NOT IN ('auto-draft','trash') AND (p.post_status <> 'inherit' OR p.post_type = 'attachment') AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($all_tt))", array_merge( array( $tt_id ), $types ) ) );
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery -- Placeholders built above.
+		$done  = (int) $wpdb->query( $wpdb->prepare( "INSERT IGNORE INTO {$wpdb->term_relationships} (object_id, term_taxonomy_id, term_order) SELECT p.ID, %d, 0 FROM {$wpdb->posts} p WHERE p.post_type IN ($types_in) AND p.post_status NOT IN ('auto-draft','trash') AND (p.post_status <> 'inherit' OR p.post_type = 'attachment') AND NOT EXISTS (SELECT 1 FROM {$wpdb->term_relationships} r WHERE r.object_id = p.ID AND r.term_taxonomy_id IN ($all_in))", array_merge( array( $tt_id ), $types, $all_tt ) ) );
 		$taxes = self::taxonomies();
 		if ( $taxes ) {
 			$tax_in = implode( ',', array_fill( 0, count( $taxes ), '%s' ) );

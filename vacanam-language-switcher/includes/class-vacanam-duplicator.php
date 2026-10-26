@@ -120,6 +120,9 @@ class Vacanam_Duplicator {
 		if ( ! $post || ! Vacanam_Model::is_translated_type( $post->post_type ) || ! Vacanam_Languages::exists( $lang ) ) {
 			return new WP_Error( 'vacanam_post', __( 'This content cannot be translated.', 'vacanam-language-switcher' ) );
 		}
+		if ( 'elementor_library' === $post->post_type && 'kit' === get_post_meta( $post->ID, '_elementor_template_type', true ) ) {
+			return new WP_Error( 'vacanam_kit', __( 'Elementor\'s site settings (kit) are shared by all languages.', 'vacanam-language-switcher' ) );
+		}
 		$from_lang = Vacanam_Model::post_lang( $post );
 		if ( '' === $from_lang ) {
 			$from_lang = Vacanam_Languages::default_slug();
@@ -279,7 +282,7 @@ class Vacanam_Duplicator {
 		}
 		$in = implode( ',', array_fill( 0, count( $keys ), '%s' ) );
 		// Fields added by other plugins while the copy was created are replaced by the original's.
-		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.DirectDatabaseQuery -- Placeholders built above.
+		// phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber, WordPress.DB.DirectDatabaseQuery -- Placeholders built above.
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key IN ($in)", array_merge( array( $to ), $keys ) ) );
 		$wpdb->query( $wpdb->prepare( "INSERT INTO {$wpdb->postmeta} (post_id, meta_key, meta_value) SELECT %d, meta_key, meta_value FROM {$wpdb->postmeta} WHERE post_id = %d AND meta_key IN ($in) ORDER BY meta_id", array_merge( array( $to, $from ), $keys ) ) );
 		// phpcs:enable
@@ -719,7 +722,7 @@ class Vacanam_Duplicator {
 		}
 		if ( $types ) {
 			$in = implode( ',', array_fill( 0, count( $types ), '%s' ) );
-			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare -- Placeholders built above.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQLPlaceholders.UnfinishedPrepare, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- Placeholders built above.
 			$ids = $wpdb->get_col( $wpdb->prepare( "SELECT p.ID FROM {$wpdb->posts} p INNER JOIN {$wpdb->term_relationships} r ON r.object_id = p.ID AND r.term_taxonomy_id = %d WHERE p.post_type IN ($in) AND p.post_status IN ('publish','draft','pending','private','future') ORDER BY p.post_parent ASC, p.menu_order ASC, p.ID ASC", array_merge( array( $default_tt ), $types ) ) );
 			foreach ( $ids as $id ) {
 				foreach ( $langs as $lang ) {

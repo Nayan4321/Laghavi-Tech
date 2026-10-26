@@ -288,7 +288,7 @@ class Vacanam_Elementor_Widget extends \Elementor\Widget_Base {
 	 */
 	protected function render() {
 		$s = $this->get_settings_for_display();
-		echo Vacanam_Switcher::render( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in render().
+		$html = Vacanam_Switcher::render(
 			array(
 				'style'        => $s['style'],
 				'names'        => $s['names'],
@@ -301,5 +301,6 @@ class Vacanam_Elementor_Widget extends \Elementor\Widget_Base {
 			),
 			false
 		);
+		echo $html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in render().
 	}
 }
