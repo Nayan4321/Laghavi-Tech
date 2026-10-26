@@ -24,6 +24,20 @@ class AARYE_Integrations {
 	private static $elementor_files = array();
 
 	/**
+	 * While importing past entries: extra capture() arguments (imported, created_at, visit, ip…).
+	 *
+	 * @var array|null
+	 */
+	public static $import = null;
+
+	/**
+	 * ID returned by the last capture (0 when skipped).
+	 *
+	 * @var int
+	 */
+	public static $last_id = 0;
+
+	/**
 	 * Hook into every form plugin (hooks of missing plugins simply never fire).
 	 */
 	public static function init() {
@@ -124,9 +138,13 @@ class AARYE_Integrations {
 	 */
 	private static function safely( $build ) {
 		try {
-			$args = call_user_func( $build );
+			self::$last_id = 0;
+			$args          = call_user_func( $build );
 			if ( is_array( $args ) ) {
-				AARYE_Entries::capture( $args );
+				if ( is_array( self::$import ) ) {
+					$args = array_merge( $args, self::$import );
+				}
+				self::$last_id = (int) AARYE_Entries::capture( $args );
 			}
 		} catch ( \Throwable $e ) {
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {

@@ -210,6 +210,9 @@ class AARYEPRO_Automations {
 	 * @return array
 	 */
 	public static function before_save( $row, $args ) {
+		if ( ! empty( $args['imported'] ) ) {
+			return $row; // Past entries: no spam checks or rules (nothing is sent for them).
+		}
 		$attr    = json_decode( (string) $row['attribution'], true );
 		$attr    = is_array( $attr ) ? $attr : array();
 		$reason  = self::spam_reason( $row );

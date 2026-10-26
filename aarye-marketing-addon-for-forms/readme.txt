@@ -31,6 +31,10 @@ It works with the form plugins you already use, and keeps all entries from all o
 
 Nothing to change in your forms: install, and every new entry is saved with its source.
 
+**Theme and custom forms too.** Forms made by your theme (for example Houzez property enquiries), by a page builder or by hand are saved as well, when they have an email or phone field. Logins, searches, carts, checkouts, comments and payment forms are never saved.
+
+**Past entries.** Import the entries your form plugins saved before Aarye was installed: Gravity Forms, Fluent Forms, WPForms Pro, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder, MetForm, Elementor Pro Forms, Contact Form 7 (through Flamingo) and the Houzez CRM. They keep their original dates; their source is read from the saved page address when it carries ad tags.
+
 = Knows where each lead came from =
 
 * **Ads**, recognised by their click IDs and ad tags: Google Ads (gclid, gbraid, wbraid, Performance Max), Meta Ads (Facebook, Instagram, Messenger, WhatsApp), Microsoft Advertising (Bing), TikTok Ads, LinkedIn Ads, X (Twitter) Ads, Snapchat Ads, Pinterest Ads, Reddit Ads, Quora Ads, Yandex Direct, Google Display & Video 360, Amazon Ads, Apple Search Ads, Spotify Ads, Taboola, Outbrain, Criteo, AdRoll, StackAdapt, The Trade Desk, Baidu, Naver and any other network that uses UTM tags.
@@ -87,7 +91,11 @@ No. Aarye listens to each form plugin's own "form sent" event. Your forms, email
 
 = Will it show entries sent before I installed it? =
 
-No, only new entries, because the source of a visit can only be read while the visitor is on your site.
+Yes: open Aarye Leads → Import past entries. Form plugins that save entries are imported with their original dates, fields and files. Their source is known only when the page address saved with them carries ad tags (gclid, fbclid, utm_…); the others show as "Not tracked (imported)". Imported entries are not sent to Google Sheets, and entries already in Aarye are skipped.
+
+= My theme has its own forms (Houzez, real estate or booking themes). Are they saved? =
+
+Yes, when they have an email or phone field: Aarye saves them under "Other forms" with their source when the visitor clicks send. If the form rejects the message and the visitor corrects it, the same entry is updated. To ignore a form, add its CSS selector in Aarye Leads → Settings.
 
 = Do I need UTM tags? =
 

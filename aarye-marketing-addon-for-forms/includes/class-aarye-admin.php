@@ -52,6 +52,7 @@ class AARYE_Admin {
 		add_submenu_page( self::SLUG, __( 'All entries', 'aarye-marketing-addon-for-forms' ), __( 'All entries', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-entries', array( __CLASS__, 'page_entries' ) );
 		add_submenu_page( self::SLUG, __( 'Connect your ads', 'aarye-marketing-addon-for-forms' ), __( 'Connect your ads', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-guide', array( __CLASS__, 'page_guide' ) );
 		add_submenu_page( self::SLUG, __( 'Forms', 'aarye-marketing-addon-for-forms' ), __( 'Forms', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-forms', array( __CLASS__, 'page_forms' ) );
+		add_submenu_page( self::SLUG, __( 'Import past entries', 'aarye-marketing-addon-for-forms' ), __( 'Import past entries', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-import', array( __CLASS__, 'page_import' ) );
 		add_submenu_page( self::SLUG, __( 'Google Sheets', 'aarye-marketing-addon-for-forms' ), __( 'Google Sheets', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-sheets', array( __CLASS__, 'page_sheets' ) );
 		/**
 		 * Add more screens under Aarye Leads (Aarye Pro).
@@ -85,7 +86,20 @@ class AARYE_Admin {
 		}
 		wp_enqueue_style( 'aarye-admin', AARYE_URL . 'assets/css/admin.css', array(), aarye_asset_version( 'assets/css/admin.css' ) );
 		wp_enqueue_script( 'aarye-admin', AARYE_URL . 'assets/js/admin.js', array(), aarye_asset_version( 'assets/js/admin.js' ), true );
-		wp_localize_script( 'aarye-admin', 'aaryeAdmin', array( 'copied' => __( 'Copied', 'aarye-marketing-addon-for-forms' ) ) );
+		wp_localize_script(
+			'aarye-admin',
+			'aaryeAdmin',
+			array(
+				'copied'   => __( 'Copied', 'aarye-marketing-addon-for-forms' ),
+				'ajax'     => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( 'aarye_import' ),
+				/* translators: 1: entries handled, 2: total. */
+				'progress' => __( 'Working… %1$s of %2$s', 'aarye-marketing-addon-for-forms' ),
+				/* translators: 1: imported, 2: already in Aarye. */
+				'done'     => __( 'Done: %1$s imported, %2$s were already in Aarye.', 'aarye-marketing-addon-for-forms' ),
+				'error'    => __( 'The import stopped:', 'aarye-marketing-addon-for-forms' ),
+			)
+		);
 	}
 
 	/**
@@ -610,6 +624,47 @@ class AARYE_Admin {
 		}
 		fclose( $out ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 		exit;
+	}
+
+	/**
+	 * Import past entries.
+	 */
+	public static function page_import() {
+		$sources = AARYE_Import::sources();
+		?>
+		<div class="wrap aarye">
+			<h1><?php esc_html_e( 'Import past entries', 'aarye-marketing-addon-for-forms' ); ?></h1>
+			<p class="aarye-lead"><?php esc_html_e( 'Bring in the entries your form plugins saved before Aarye was installed, with their original dates, fields and files.', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<div class="aarye-card">
+				<ul class="aarye-steps">
+					<li><?php esc_html_e( 'The source of a past entry is known only when the page address saved with it carries ad tags (gclid, fbclid, utm_…). Other past entries show as "Not tracked (imported)": everything sent from now on is tracked.', 'aarye-marketing-addon-for-forms' ); ?></li>
+					<li><?php esc_html_e( 'Imported entries are not sent to Google Sheets or any connection, so nobody is contacted again.', 'aarye-marketing-addon-for-forms' ); ?></li>
+					<li><?php esc_html_e( 'Entries already in Aarye are skipped, so you can run an import again at any time.', 'aarye-marketing-addon-for-forms' ); ?></li>
+				</ul>
+			</div>
+			<?php if ( ! $sources ) : ?>
+				<div class="aarye-card"><p><?php esc_html_e( 'None of your form plugins has saved entries that can be imported.', 'aarye-marketing-addon-for-forms' ); ?></p></div>
+			<?php else : ?>
+				<table class="widefat striped aarye-table aarye-import">
+					<thead><tr><th><?php esc_html_e( 'Form plugin', 'aarye-marketing-addon-for-forms' ); ?></th><th><?php esc_html_e( 'Saved entries', 'aarye-marketing-addon-for-forms' ); ?></th><th></th></tr></thead>
+					<tbody>
+						<?php foreach ( $sources as $key => $src ) : ?>
+							<tr>
+								<td><b><?php echo esc_html( $src['name'] ); ?></b><?php echo '' !== $src['note'] ? '<br /><span class="aarye-muted">' . esc_html( $src['note'] ) . '</span>' : ''; ?></td>
+								<td><?php echo esc_html( number_format_i18n( $src['total'] ) ); ?></td>
+								<td>
+									<?php if ( $src['total'] > 0 ) : ?>
+										<button type="button" class="button button-primary aarye-import__go" data-source="<?php echo esc_attr( $key ); ?>" data-total="<?php echo esc_attr( (string) $src['total'] ); ?>"><?php esc_html_e( 'Import', 'aarye-marketing-addon-for-forms' ); ?></button>
+										<span class="aarye-import__status aarye-muted" aria-live="polite"></span>
+									<?php endif; ?>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
+		</div>
+		<?php
 	}
 
 	/**

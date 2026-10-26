@@ -137,6 +137,10 @@ class AARYE_Entries {
 				'files'           => array(),
 				'visit'           => null, // Attribution from elsewhere (an incoming webhook), else the visitor's cookie.
 				'user_agent'      => null,
+				'imported'        => false, // An entry from before Aarye was installed (see AARYE_Import).
+				'created_at'      => '', // UTC date of an imported entry.
+				'ip'              => '',
+				'page'            => '', // Page the form was sent from, when the caller knows it.
 			)
 		);
 		$key  = $args['plugin'] . '|' . $args['form_id'] . '|' . ( '' !== (string) $args['source_entry_id'] ? $args['source_entry_id'] : md5( wp_json_encode( $args['fields'] ) ) );
@@ -144,22 +148,37 @@ class AARYE_Entries {
 			return self::$seen[ $key ];
 		}
 
+		if ( $args['imported'] && self::exists( $args ) ) {
+			return -1; // Already in Aarye (captured live or imported before).
+		}
+
 		$ua      = null !== $args['user_agent'] ? sanitize_text_field( (string) $args['user_agent'] ) : ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '' );
-		$is_bot  = AARYE_Tracker::is_bot( $ua );
+		$is_bot  = ( '' !== $ua || ! $args['imported'] ) && AARYE_Tracker::is_bot( $ua ); // Old entries often have no browser info.
 		if ( $is_bot && AARYE_Settings::on( 'skip_bots' ) ) {
 			return 0;
 		}
 		$visit   = is_array( $args['visit'] ) ? wp_parse_args( $args['visit'], array( 'first' => null, 'last' => null, 'visits' => 1, 'page' => '', 'lang' => '', 'visitor' => '' ) ) : AARYE_Tracker::read();
 		$touch   = $visit['last'] ? $visit['last'] : $visit['first'];
 		$source  = AARYE_Sources::classify( $touch ? $touch : array() );
+		if ( $args['imported'] && 'direct' === $source['channel'] ) {
+			// Sent before Aarye was installed and its page address carries no ad tags: the source is unknown.
+			$source = array_merge(
+				$source,
+				array(
+					'channel' => 'unknown',
+					'source'  => 'unknown',
+					'label'   => __( 'Not tracked (imported)', 'aarye-marketing-addon-for-forms' ),
+				)
+			);
+		}
 		$first   = $visit['first'] ? AARYE_Sources::classify( $visit['first'] ) : $source;
 		$fields  = self::clean_fields( $args['fields'] );
 		$contact = self::contact( $fields );
 		$files   = self::prepare_files( $args['files'] );
-		$page    = '' !== $visit['page'] ? $visit['page'] : ( isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '' );
+		$page    = '' !== $args['page'] ? esc_url_raw( $args['page'] ) : ( '' !== $visit['page'] ? $visit['page'] : ( isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : '' ) );
 
 		$row = array(
-			'created_at'      => current_time( 'mysql', true ),
+			'created_at'      => '' !== $args['created_at'] ? gmdate( 'Y-m-d H:i:s', (int) strtotime( $args['created_at'] . ' UTC' ) ) : current_time( 'mysql', true ),
 			'form_plugin'     => sanitize_key( $args['plugin'] ),
 			'form_id'         => mb_substr( sanitize_text_field( (string) $args['form_id'] ), 0, 64 ),
 			'form_name'       => mb_substr( sanitize_text_field( (string) $args['form_name'] ), 0, 255 ),
@@ -183,7 +202,7 @@ class AARYE_Entries {
 			'language'        => AARYE_Tracker::language( $visit['lang'] ),
 			'device'          => AARYE_Tracker::device( $ua ),
 			'browser'         => AARYE_Tracker::browser( $ua ),
-			'ip'              => AARYE_Settings::on( 'store_ip' ) && ! is_array( $args['visit'] ) ? self::ip() : '',
+			'ip'              => AARYE_Settings::on( 'store_ip' ) ? ( $args['imported'] || is_array( $args['visit'] ) ? ( filter_var( $args['ip'], FILTER_VALIDATE_IP ) ? $args['ip'] : '' ) : self::ip() ) : '',
 			'visitor_id'      => $visit['visitor'],
 			'visits'          => max( 1, $visit['visits'] ),
 			'first_seen'      => $visit['first'] && $visit['first']['time'] ? gmdate( 'Y-m-d H:i:s', $visit['first']['time'] ) : null,
@@ -196,6 +215,7 @@ class AARYE_Entries {
 					'last'         => $visit['last'],
 					'first_source' => $first,
 					'user_agent'   => mb_substr( $ua, 0, 300 ),
+					'imported'     => (bool) $args['imported'],
 				)
 			),
 		);
@@ -209,7 +229,15 @@ class AARYE_Entries {
 		$wpdb->insert( self::table(), $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table.
 		$id = (int) $wpdb->insert_id;
 		self::$seen[ $key ] = $id;
-		if ( $id ) {
+		if ( $id && $args['imported'] ) {
+			/**
+			 * A past entry was imported (not sent to Google Sheets or connections).
+			 *
+			 * @param int   $id  Entry ID.
+			 * @param array $row Entry.
+			 */
+			do_action( 'aarye_entry_imported', $id, $row );
+		} elseif ( $id ) {
 			/**
 			 * A new entry was saved (Google Sheets and add-ons send it on from here).
 			 *
@@ -219,6 +247,33 @@ class AARYE_Entries {
 			do_action( 'aarye_entry_saved', $id, $row );
 		}
 		return $id;
+	}
+
+	/**
+	 * Whether an imported entry is already saved: same form entry ID, or (for form plugins without entry
+	 * IDs) the same form within two minutes of the same time.
+	 *
+	 * @param array $args capture() arguments.
+	 * @return bool
+	 */
+	private static function exists( $args ) {
+		global $wpdb;
+		$plugin = sanitize_key( $args['plugin'] );
+		$form   = (string) $args['form_id'];
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Our own table.
+		if ( '' !== (string) $args['source_entry_id'] ) {
+			$found = $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM %i WHERE form_plugin = %s AND form_id = %s AND source_entry_id = %s LIMIT 1', self::table(), $plugin, $form, (string) $args['source_entry_id'] ) );
+			if ( $found ) {
+				return true;
+			}
+		}
+		if ( '' === (string) $args['created_at'] ) {
+			return false;
+		}
+		$time  = (int) strtotime( $args['created_at'] . ' UTC' );
+		$found = $wpdb->get_var( $wpdb->prepare( "SELECT id FROM %i WHERE form_plugin = %s AND form_id = %s AND created_at BETWEEN %s AND %s AND ( source_entry_id = '' OR source_entry_id = %s ) LIMIT 1", self::table(), $plugin, $form, gmdate( 'Y-m-d H:i:s', $time - 120 ), gmdate( 'Y-m-d H:i:s', $time + 120 ), (string) $args['source_entry_id'] ) );
+		// phpcs:enable
+		return (bool) $found;
 	}
 
 	/**

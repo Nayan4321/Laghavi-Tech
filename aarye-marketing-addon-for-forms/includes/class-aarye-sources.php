@@ -27,6 +27,7 @@ class AARYE_Sources {
 			'email'          => __( 'Email', 'aarye-marketing-addon-for-forms' ),
 			'referral'       => __( 'Other websites', 'aarye-marketing-addon-for-forms' ),
 			'direct'         => __( 'Direct', 'aarye-marketing-addon-for-forms' ),
+			'unknown'        => __( 'Not tracked (imported)', 'aarye-marketing-addon-for-forms' ),
 		);
 	}
 
@@ -509,6 +510,16 @@ class AARYE_Sources {
 			return array_merge( $out, array( 'channel' => 'organic_social', 'source' => 'social', 'label' => $name ) );
 		}
 		return array_merge( $out, array( 'channel' => 'referral', 'source' => 'referral', 'label' => $host ) );
+	}
+
+	/**
+	 * Whether an address is on this website.
+	 *
+	 * @param string $url Address.
+	 * @return bool
+	 */
+	public static function is_own( $url ) {
+		return '' !== self::host( (string) $url ) && self::host( (string) $url ) === self::host( home_url() );
 	}
 
 	/**
