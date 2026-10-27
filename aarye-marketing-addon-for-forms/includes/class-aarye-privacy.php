@@ -28,7 +28,7 @@ class AARYE_Privacy {
 		if ( ! function_exists( 'wp_add_privacy_policy_content' ) ) {
 			return;
 		}
-		$text = '<p>' . __( 'When you visit this website we store a first-party cookie (aarye_attr) with how you arrived: the ad, search engine or website that sent you, the advertising tags in the link (such as utm_campaign or a click ID) and the first page you saw. A second cookie (aarye_vid) holds a random visitor number. When you send a form, this information is saved with your entry so we know which of our ads or channels brought you. The cookies expire after 90 days and are not shared with anyone by this plugin.', 'aarye-marketing-addon-for-forms' ) . '</p>';
+		$text = '<p>' . __( 'When you visit this website we store a first-party cookie (aarye_attr) with how you arrived: the ad, search engine or website that sent you, the advertising tags in the link (such as utm_campaign or a click ID) and the first page you saw. It also holds signs that a person is using the page, used only to tell real enquiries from spam: the number of pages viewed, when the current page was opened, whether the mouse, touch screen or keyboard was used, whether the browser is controlled by automation software, the time zone and the screen size. A second cookie (aarye_vid) holds a random visitor number. When you send a form, this information is saved with your entry so we know which of our ads or channels brought you. The cookies expire after 90 days and are not shared with anyone by this plugin.', 'aarye-marketing-addon-for-forms' ) . '</p>';
 		wp_add_privacy_policy_content( 'Aarye Marketing Addon for Forms', wp_kses_post( $text ) );
 	}
 

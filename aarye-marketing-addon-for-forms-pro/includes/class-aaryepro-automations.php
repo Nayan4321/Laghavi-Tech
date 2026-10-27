@@ -68,6 +68,7 @@ class AARYEPRO_Automations {
 				'emails'     => '',
 				'ips'        => '',
 				'bots'       => 'yes',
+				'check'      => 'no',
 			)
 		);
 	}
@@ -340,6 +341,10 @@ class AARYEPRO_Automations {
 		if ( 'yes' === $s['bots'] && ! empty( $row['is_bot'] ) ) {
 			return __( 'Sent by a bot (its browser said so).', 'aarye-marketing-addon-for-forms-pro' );
 		}
+		if ( 'yes' === $s['check'] && isset( $row['quality'] ) && 'spam' === $row['quality'] ) {
+			/* translators: %d: spam score. */
+			return sprintf( __( 'The spam check scored it %d (likely spam).', 'aarye-marketing-addon-for-forms-pro' ), isset( $row['spam_score'] ) ? (int) $row['spam_score'] : 0 );
+		}
 		foreach ( array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', mb_strtolower( (string) $s['emails'] ) ) ) ) as $blocked ) {
 			if ( $email === $blocked || ( '' !== $domain && ( '@' . $domain === $blocked || $domain === ltrim( $blocked, '@' ) ) ) ) {
 				/* translators: %s: email or domain. */
@@ -483,6 +488,7 @@ class AARYEPRO_Automations {
 						<?php wp_nonce_field( 'aaryepro_spam' ); ?>
 						<p class="aarye-muted"><?php esc_html_e( 'Entries caught here are saved with status Spam (so nothing is lost), but are not sent to your CRM, database or webhook, and not counted as leads.', 'aarye-marketing-addon-for-forms-pro' ); ?></p>
 						<p><label><input type="checkbox" name="bots" value="yes" <?php checked( $spam['bots'], 'yes' ); ?> /> <?php esc_html_e( 'Mark entries from bots and scripts as spam', 'aarye-marketing-addon-for-forms-pro' ); ?></label></p>
+						<p><label><input type="checkbox" name="check" value="yes" <?php checked( $spam['check'], 'yes' ); ?> /> <?php esc_html_e( 'Mark entries the spam check calls "Likely spam" as spam (no mouse or keys, sent in seconds, posted without the page, faked source…)', 'aarye-marketing-addon-for-forms-pro' ); ?></label></p>
 						<p><label><input type="checkbox" name="disposable" value="yes" <?php checked( $spam['disposable'], 'yes' ); ?> /> <?php esc_html_e( 'Mark disposable email addresses (Mailinator, Yopmail, 10 Minute Mail…) as spam', 'aarye-marketing-addon-for-forms-pro' ); ?></label></p>
 						<p><label><?php esc_html_e( 'Spam when the message has this many links or more (0 = off)', 'aarye-marketing-addon-for-forms-pro' ); ?> <input type="number" min="0" max="50" class="small-text" name="links" value="<?php echo esc_attr( (string) $spam['links'] ); ?>" /></label></p>
 						<p><label><?php esc_html_e( 'Spam when the same email sends more than this many times in an hour (0 = off)', 'aarye-marketing-addon-for-forms-pro' ); ?> <input type="number" min="0" max="100" class="small-text" name="repeat" value="<?php echo esc_attr( (string) $spam['repeat'] ); ?>" /></label></p>
@@ -738,6 +744,7 @@ class AARYEPRO_Automations {
 			self::SPAM,
 			array(
 				'bots'       => isset( $_POST['bots'] ) ? 'yes' : 'no',
+				'check'      => isset( $_POST['check'] ) ? 'yes' : 'no',
 				'disposable' => isset( $_POST['disposable'] ) ? 'yes' : 'no',
 				'links'      => isset( $_POST['links'] ) ? min( 50, absint( $_POST['links'] ) ) : 3,
 				'repeat'     => isset( $_POST['repeat'] ) ? min( 100, absint( $_POST['repeat'] ) ) : 5,

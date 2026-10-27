@@ -3,7 +3,7 @@
  * Plugin Name:       Aarye Marketing Addon for Forms
  * Plugin URI:        https://laghavi.site/aarye-marketing-addon-for-forms/
  * Description:       See which ad, campaign or source every form entry came from. Works with Contact Form 7, WPForms, Elementor Pro Forms, Fluent Forms, Gravity Forms, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder and MetForm: one dashboard for all entries, attachments and custom fields, a setup guide for every ad network, and Google Sheets.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYE_VERSION', '1.0.0' );
+define( 'AARYE_VERSION', '1.1.0' );
 define( 'AARYE_FILE', __FILE__ );
 define( 'AARYE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYE_URL', plugin_dir_url( __FILE__ ) );
@@ -37,6 +37,7 @@ require_once AARYE_DIR . 'includes/class-aarye-settings.php';
 require_once AARYE_DIR . 'includes/class-aarye-sources.php';
 require_once AARYE_DIR . 'includes/class-aarye-tracker.php';
 require_once AARYE_DIR . 'includes/class-aarye-entries.php';
+require_once AARYE_DIR . 'includes/class-aarye-evidence.php';
 require_once AARYE_DIR . 'includes/class-aarye-integrations.php';
 require_once AARYE_DIR . 'includes/class-aarye-placements.php';
 require_once AARYE_DIR . 'includes/class-aarye-import.php';
@@ -63,6 +64,9 @@ add_action(
 		AARYE_Privacy::init();
 		if ( is_admin() ) {
 			AARYE_Admin::init();
+			if ( get_option( 'aarye_rescore' ) ) {
+				add_action( 'admin_init', array( 'AARYE_Entries', 'score_unchecked' ) );
+			}
 		}
 		if ( ! wp_next_scheduled( 'aarye_hourly' ) ) {
 			wp_schedule_event( time() + 300, 'hourly', 'aarye_hourly' );

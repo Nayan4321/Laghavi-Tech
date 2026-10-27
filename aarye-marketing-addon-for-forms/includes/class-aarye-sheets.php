@@ -102,28 +102,33 @@ class AARYE_Sheets {
 	 * @return array<string, string>
 	 */
 	public static function row( $entry ) {
-		$row = array(
-			'Entry ID'    => (string) $entry->id,
-			'Date'        => get_date_from_gmt( $entry->created_at, 'Y-m-d H:i:s' ),
-			'Form'        => $entry->form_name,
-			'Name'        => $entry->name,
-			'Email'       => $entry->email,
-			'Phone'       => $entry->phone,
-			'Source'      => $entry->source_label,
-			'Channel'     => AARYE_Sources::channel_label( $entry->channel ),
-			'From an ad'  => 'paid' === $entry->channel ? 'Yes' : 'No',
-			'Campaign'    => $entry->campaign,
+		$row                       = array(
+			'Entry ID'          => (string) $entry->id,
+			'Date'              => get_date_from_gmt( $entry->created_at, 'Y-m-d H:i:s' ),
+			'Form'              => $entry->form_name,
+			'Name'              => $entry->name,
+			'Email'             => $entry->email,
+			'Phone'             => $entry->phone,
+			'Source'            => $entry->source_label,
+			'Channel'           => AARYE_Sources::channel_label( $entry->channel ),
+			'From an ad'        => 'paid' === $entry->channel ? 'Yes' : 'No',
+			'Campaign'          => $entry->campaign,
 			'Ad set / ad group' => $entry->ad_group,
-			'Ad'          => $entry->ad,
-			'Keyword'     => $entry->keyword,
-			'Click ID'    => '' !== $entry->click_id ? $entry->click_param . '=' . $entry->click_id : '',
-			'Landing page' => (string) $entry->landing_page,
-			'Referrer'    => (string) $entry->referrer,
-			'Form page'   => (string) $entry->page_url,
-			'Language'    => $entry->language,
-			'Device'      => $entry->device,
-			'Visits before'  => (string) $entry->visits,
+			'Ad'                => $entry->ad,
+			'Keyword'           => $entry->keyword,
+			'Click ID'          => '' !== $entry->click_id ? $entry->click_param . '=' . $entry->click_id : '',
+			'Landing page'      => (string) $entry->landing_page,
+			'Referrer'          => (string) $entry->referrer,
+			'Form page'         => (string) $entry->page_url,
+			'Language'          => $entry->language,
+			'Device'            => $entry->device,
+			'Visits before'     => (string) $entry->visits,
 		);
+		$check                     = AARYE_Evidence::analyse( $entry );
+		$row['Source proof']       = $check['proof']['label'];
+		$row['Spam check']         = $check['label'];
+		$row['Spam score']         = (string) $check['score'];
+		$row['Spam check reasons'] = implode( '; ', $check['reasons'] );
 		foreach ( AARYE_Entries::json( $entry, 'fields' ) as $field ) {
 			$title = '' !== $field['label'] ? $field['label'] : $field['name'];
 			if ( isset( $row[ $title ] ) ) {
@@ -181,7 +186,7 @@ class AARYE_Sheets {
 				'body'        => wp_json_encode( $body ),
 			)
 		);
-		$code = (int) wp_remote_retrieve_response_code( $response );
+		$code     = (int) wp_remote_retrieve_response_code( $response );
 		if ( ! is_wp_error( $response ) && in_array( $code, array( 301, 302, 303, 307, 308 ), true ) ) {
 			$location = (string) wp_remote_retrieve_header( $response, 'location' );
 			if ( false !== strpos( $location, 'accounts.google.com' ) ) {

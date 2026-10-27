@@ -23,7 +23,16 @@ class AARYE_Tracker {
 	 * Add the tracker to every front-end page.
 	 */
 	public static function enqueue() {
-		wp_enqueue_script( 'aarye-tracker', AARYE_URL . 'assets/js/tracker.js', array(), aarye_asset_version( 'assets/js/tracker.js' ), array( 'in_footer' => false, 'strategy' => 'defer' ) );
+		wp_enqueue_script(
+			'aarye-tracker',
+			AARYE_URL . 'assets/js/tracker.js',
+			array(),
+			aarye_asset_version( 'assets/js/tracker.js' ),
+			array(
+				'in_footer' => false,
+				'strategy'  => 'defer',
+			)
+		);
 		wp_add_inline_script(
 			'aarye-tracker',
 			'window.aaryeTrack=' . wp_json_encode(
@@ -68,7 +77,7 @@ class AARYE_Tracker {
 	/**
 	 * What the tracker remembered about the current visitor.
 	 *
-	 * @return array{first: array|null, last: array|null, visits: int, page: string, lang: string, visitor: string}
+	 * @return array{first: array|null, last: array|null, visits: int, page: string, lang: string, extra: array, visitor: string}
 	 */
 	public static function read() {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON, every field is cleaned below.
@@ -82,6 +91,14 @@ class AARYE_Tracker {
 			'visits'  => isset( $data['n'] ) ? absint( $data['n'] ) : 0,
 			'page'    => '' !== $page && '/' === $page[0] ? esc_url_raw( home_url( $page ) ) : '',
 			'lang'    => isset( $data['lg'] ) ? sanitize_text_field( (string) $data['lg'] ) : '',
+			'extra'   => array(
+				'pv' => isset( $data['pv'] ) ? absint( $data['pv'] ) : null,
+				'pt' => isset( $data['pt'] ) ? absint( $data['pt'] ) : 0,
+				'ia' => isset( $data['ia'] ) ? absint( $data['ia'] ) : null,
+				'wd' => isset( $data['wd'] ) ? absint( $data['wd'] ) : null,
+				'tz' => isset( $data['tz'] ) ? sanitize_text_field( (string) $data['tz'] ) : '',
+				'sc' => isset( $data['sc'] ) ? sanitize_text_field( (string) $data['sc'] ) : '',
+			),
 			'visitor' => isset( $_COOKIE['aarye_vid'] ) ? preg_replace( '/[^a-z0-9]/', '', strtolower( sanitize_text_field( wp_unslash( $_COOKIE['aarye_vid'] ) ) ) ) : '',
 		);
 	}
@@ -138,16 +155,16 @@ class AARYE_Tracker {
 	 */
 	public static function browser( $ua ) {
 		$map = array(
-			'Edg/'     => 'Edge',
-			'OPR/'     => 'Opera',
-			'SamsungB' => 'Samsung Internet',
-			'Firefox/' => 'Firefox',
-			'CriOS'    => 'Chrome',
-			'Chrome/'  => 'Chrome',
-			'FBAN'     => 'Facebook app',
-			'FBAV'     => 'Facebook app',
+			'Edg/'      => 'Edge',
+			'OPR/'      => 'Opera',
+			'SamsungB'  => 'Samsung Internet',
+			'Firefox/'  => 'Firefox',
+			'CriOS'     => 'Chrome',
+			'Chrome/'   => 'Chrome',
+			'FBAN'      => 'Facebook app',
+			'FBAV'      => 'Facebook app',
 			'Instagram' => 'Instagram app',
-			'Safari/'  => 'Safari',
+			'Safari/'   => 'Safari',
 		);
 		foreach ( $map as $needle => $name ) {
 			if ( false !== stripos( $ua, $needle ) ) {

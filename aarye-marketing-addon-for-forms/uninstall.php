@@ -11,6 +11,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 $aarye_settings = get_option( 'aarye_settings', array() );
 wp_clear_scheduled_hook( 'aarye_hourly' );
 delete_option( 'aarye_sheets_queue' );
+delete_option( 'aarye_rescore' );
 delete_transient( 'aarye_sheets_lock' );
 delete_transient( 'aarye_form_places' );
 

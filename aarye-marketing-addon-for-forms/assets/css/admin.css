@@ -62,3 +62,22 @@
 @media (max-width: 1000px) {
 	.aarye-grid, .aarye-kpis { grid-template-columns: 1fr; }
 }
+
+/* Visit evidence. */
+.aarye-proof, .aarye-spam { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; white-space: nowrap; cursor: help; }
+.aarye-proof--ok, .aarye-spam--ok { background: #dcfce7; color: #166534; }
+.aarye-proof--info { background: #f1f5f9; color: #475569; }
+.aarye-proof--warn, .aarye-spam--doubt { background: #fef3c7; color: #92400e; }
+.aarye-spam--spam { background: #fee2e2; color: #991b1b; }
+.aarye-reasons { display: block; margin-top: 4px; font-size: 11px; color: var(--aarye-muted); max-width: 240px; }
+.aarye-evidence h3 { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 13px; margin: 18px 0 6px; }
+.aarye-evidence h3:first-of-type { margin-top: 4px; }
+.aarye-checks { width: 100%; border-collapse: collapse; }
+.aarye-checks th, .aarye-checks td { padding: 8px 8px 8px 0; vertical-align: top; text-align: left; border-top: 1px solid #f0f0f1; font-size: 13px; }
+.aarye-checks th { width: 34%; font-weight: 600; }
+.aarye-check__value { font-weight: 400; color: var(--aarye-muted); overflow-wrap: anywhere; }
+.aarye-check__icon { width: 22px; }
+.aarye-check__icon::before { content: ""; display: inline-block; width: 10px; height: 10px; margin-top: 4px; border-radius: 50%; background: #cbd5e1; }
+.aarye-check--ok .aarye-check__icon::before { background: #16a34a; }
+.aarye-check--warn .aarye-check__icon::before { background: #f59e0b; }
+.aarye-check--bad .aarye-check__icon::before { background: #dc2626; }

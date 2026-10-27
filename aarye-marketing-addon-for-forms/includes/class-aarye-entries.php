@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class AARYE_Entries {
 
-	const DB_VERSION = '1';
+	const DB_VERSION = '2';
 
 	/**
 	 * Entries captured in this request, so a form that fires two hooks is stored once.
@@ -70,6 +70,8 @@ class AARYE_Entries {
 				visits int(11) NOT NULL DEFAULT 0,
 				first_seen datetime NULL,
 				is_bot tinyint(1) NOT NULL DEFAULT 0,
+				spam_score tinyint(3) unsigned NOT NULL DEFAULT 0,
+				quality varchar(10) NOT NULL DEFAULT '',
 				status varchar(20) NOT NULL DEFAULT 'new',
 				fields longtext NULL,
 				files longtext NULL,
@@ -80,11 +82,37 @@ class AARYE_Entries {
 				KEY source (source),
 				KEY form (form_plugin, form_id),
 				KEY email (email),
-				KEY visitor_id (visitor_id)
+				KEY visitor_id (visitor_id),
+				KEY quality (quality)
 			) {$wpdb->get_charset_collate()};"
 		);
 		update_option( 'aarye_db_version', self::DB_VERSION );
 		self::protect_dir();
+		update_option( 'aarye_rescore', 1, false ); // Spam check of older entries, on the next admin page.
+	}
+
+	/**
+	 * Run the spam check on entries saved before it existed.
+	 *
+	 * @param int $limit Entries per run.
+	 */
+	public static function score_unchecked( $limit = 2000 ) {
+		global $wpdb;
+		delete_option( 'aarye_rescore' );
+		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Our own table.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE quality = '' ORDER BY id DESC LIMIT %d", self::table(), $limit ) );
+		foreach ( (array) $rows as $row ) {
+			$result = AARYE_Evidence::analyse( $row );
+			$wpdb->update(
+				self::table(),
+				array(
+					'spam_score' => $result['score'],
+					'quality'    => $result['verdict'],
+				),
+				array( 'id' => (int) $row->id )
+			);
+		}
+		// phpcs:enable
 	}
 
 	/**
@@ -152,14 +180,24 @@ class AARYE_Entries {
 			return -1; // Already in Aarye (captured live or imported before).
 		}
 
-		$ua      = null !== $args['user_agent'] ? sanitize_text_field( (string) $args['user_agent'] ) : ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '' );
-		$is_bot  = ( '' !== $ua || ! $args['imported'] ) && AARYE_Tracker::is_bot( $ua ); // Old entries often have no browser info.
+		$ua     = null !== $args['user_agent'] ? sanitize_text_field( (string) $args['user_agent'] ) : ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '' );
+		$is_bot = ( '' !== $ua || ! $args['imported'] ) && AARYE_Tracker::is_bot( $ua ); // Old entries often have no browser info.
 		if ( $is_bot && AARYE_Settings::on( 'skip_bots' ) ) {
 			return 0;
 		}
-		$visit   = is_array( $args['visit'] ) ? wp_parse_args( $args['visit'], array( 'first' => null, 'last' => null, 'visits' => 1, 'page' => '', 'lang' => '', 'visitor' => '' ) ) : AARYE_Tracker::read();
-		$touch   = $visit['last'] ? $visit['last'] : $visit['first'];
-		$source  = AARYE_Sources::classify( $touch ? $touch : array() );
+		$visit  = is_array( $args['visit'] ) ? wp_parse_args(
+			$args['visit'],
+			array(
+				'first'   => null,
+				'last'    => null,
+				'visits'  => 1,
+				'page'    => '',
+				'lang'    => '',
+				'visitor' => '',
+			)
+		) : AARYE_Tracker::read();
+		$touch  = $visit['last'] ? $visit['last'] : $visit['first'];
+		$source = AARYE_Sources::classify( $touch ? $touch : array() );
 		if ( $args['imported'] && 'direct' === $source['channel'] ) {
 			// Sent before Aarye was installed and its page address carries no ad tags: the source is unknown.
 			$source = array_merge(
@@ -225,9 +263,18 @@ class AARYE_Entries {
 		 * @param array $row  Database row.
 		 * @param array $args What the form integration passed.
 		 */
-		$row = (array) apply_filters( 'aarye_entry_before_save', $row, $args );
+		// Visit evidence: signals of this request, and the spam check.
+		if ( ! $args['imported'] && ! is_array( $args['visit'] ) ) {
+			$attr               = json_decode( $row['attribution'], true );
+			$attr['evidence']   = AARYE_Evidence::collect( $visit, $row );
+			$row['attribution'] = wp_json_encode( $attr );
+		}
+		$check             = AARYE_Evidence::analyse( (object) $row );
+		$row['spam_score'] = $check['score'];
+		$row['quality']    = $check['verdict'];
+		$row               = (array) apply_filters( 'aarye_entry_before_save', $row, $args );
 		$wpdb->insert( self::table(), $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table.
-		$id = (int) $wpdb->insert_id;
+		$id                 = (int) $wpdb->insert_id;
 		self::$seen[ $key ] = $id;
 		if ( $id && $args['imported'] ) {
 			/**
@@ -390,7 +437,7 @@ class AARYE_Entries {
 		if ( '' === $out['name'] ) {
 			$out['name'] = trim( $first . ' ' . $last );
 		}
-		$out['name'] = sanitize_text_field( $out['name'] );
+		$out['name']  = sanitize_text_field( $out['name'] );
 		$out['phone'] = sanitize_text_field( $out['phone'] );
 		return $out;
 	}
@@ -498,6 +545,10 @@ class AARYE_Entries {
 		}
 		if ( empty( $f['bots'] ) ) {
 			$sql[] = 'is_bot = 0';
+		}
+		if ( ! empty( $f['quality'] ) && in_array( $f['quality'], array( 'ok', 'doubt', 'spam' ), true ) ) {
+			$sql[]  = 'quality = %s';
+			$args[] = (string) $f['quality'];
 		}
 		if ( ! empty( $f['status'] ) ) {
 			$sql[]  = 'status = %s';

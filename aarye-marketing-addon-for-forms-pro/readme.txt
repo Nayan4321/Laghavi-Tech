@@ -5,7 +5,7 @@ Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: aarye-marketing-addon-for-forms
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -73,6 +73,9 @@ No. The hub receives the lead's ID, date, status, form name, pages, device and i
 Pro connects only to the services you set up under Connections, and sends each new entry to them as described there: Laghavi Ads Hub (your hub address), Zoho (accounts.zoho.* and zohoapis.*), HubSpot (api.hubapi.com), Airtable (api.airtable.com), Notion (api.notion.com), your database server and your webhook address. License checks and updates use laghavi.site (license key, site address, plugin version).
 
 == Changelog ==
+
+= 1.0.1 =
+* New spam protection option: mark entries that the free plugin's Spam check calls "Likely spam" as spam (needs Aarye 1.1).
 
 = 1.0.0 =
 * First release.

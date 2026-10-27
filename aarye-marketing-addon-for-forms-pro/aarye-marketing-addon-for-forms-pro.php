@@ -3,7 +3,7 @@
  * Plugin Name:       Aarye Marketing Addon for Forms Pro
  * Plugin URI:        https://laghavi.site/aarye-marketing-addon-for-forms/
  * Description:       Pro add-on for Aarye Marketing Addon for Forms: send every entry instantly to Laghavi Ads Hub, Zoho CRM, Zoho Forms, HubSpot, Airtable, Notion, your own database or any CRM by webhook; form analytics with abandonment by field; the pages each visitor viewed; automations and spam rules.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Requires Plugins:  aarye-marketing-addon-for-forms
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYEPRO_VERSION', '1.0.0' );
+define( 'AARYEPRO_VERSION', '1.0.1' );
 define( 'AARYEPRO_FILE', __FILE__ );
 define( 'AARYEPRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYEPRO_URL', plugin_dir_url( __FILE__ ) );

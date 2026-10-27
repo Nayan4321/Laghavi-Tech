@@ -4,7 +4,7 @@ Tags: utm, lead tracking, contact form 7, form entries, google sheets
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,6 +32,8 @@ It works with the form plugins you already use, and keeps all entries from all o
 Nothing to change in your forms: install, and every new entry is saved with its source.
 
 **Theme and custom forms too.** Forms made by your theme (for example Houzez property enquiries), by a page builder or by hand are saved as well, when they have an email or phone field. Logins, searches, carts, checkouts, comments and payment forms are never saved.
+
+**Can you trust the lead?** Each entry shows a **Source proof**: confirmed by an ad click ID, confirmed by the browser (the website it really came from), or only claimed by the tags in the link (utm_source), which anyone can add, for example a spammer pretending to come from a directory you're listed on. Next to it, a **Spam check** with a score and the reasons in plain words: the page script never ran (posted directly by a bot), no mouse, touch or keys on the page, sent within seconds, browser controlled by automation software, form not sent from your website, links and sales-pitch words in the message, repeated entries. It explains, it never deletes: filter by it, mark spam yourself, or let Aarye Pro do it.
 
 **Past entries.** Import the entries your form plugins saved before Aarye was installed: Gravity Forms, Fluent Forms, WPForms Pro, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder, MetForm, Elementor Pro Forms, Contact Form 7 (through Flamingo) and the Houzez CRM. They keep their original dates; their source is read from the saved page address when it carries ad tags.
 
@@ -129,7 +131,7 @@ Entries and files are kept unless you tick "Also delete all saved entries and fi
 
 This plugin connects to an external service only if you set up the Google Sheets connection.
 
-**Google Apps Script (Google Sheets)**: used to add each new form entry as a row in a Google Sheet that you own. You create a small script in your spreadsheet and paste its web app address into Aarye Leads > Google Sheets. After that, each time a form is sent, the plugin sends to that address: the entry's fields as filled in by the visitor (for example name, email, phone, message and any other field), the form name, date, source, channel, campaign, ad set, ad, keyword, click ID, landing page, referrer, form page, language, device and number of visits, links to attachments, and the secret you set. When you click "Test connection", only the secret is sent. Nothing is sent while the connection is not set up.
+**Google Apps Script (Google Sheets)**: used to add each new form entry as a row in a Google Sheet that you own. You create a small script in your spreadsheet and paste its web app address into Aarye Leads > Google Sheets. After that, each time a form is sent, the plugin sends to that address: the entry's fields as filled in by the visitor (for example name, email, phone, message and any other field), the form name, date, source, channel, campaign, ad set, ad, keyword, click ID, landing page, referrer, form page, language, device, number of visits, source proof and spam check, links to attachments, and the secret you set. When you click "Test connection", only the secret is sent. Nothing is sent while the connection is not set up.
 The service is provided by Google: [Terms of Service](https://policies.google.com/terms), [Privacy Policy](https://policies.google.com/privacy), [Apps Script terms](https://developers.google.com/apps-script/terms).
 
 The plugin also makes a background request to your own website (wp-admin/admin-post.php) to send Google Sheets rows without making the visitor wait. This request stays on your server.
@@ -144,10 +146,19 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 
 == Changelog ==
 
+= 1.1.0 =
+* New: Source proof for every entry. Shows whether the source is confirmed by the browser (referrer), only claimed by the tags in the link (utm_source), or contradicted by the browser, with an explanation.
+* New: Spam check with a score and plain-language reasons: page script never ran, no mouse/touch/keys, sent within seconds, browser controlled by automation software, submission not sent from your website, links and sales-pitch words in the message, repeated entries, faked referral tags.
+* New: "Source proof" and "Spam check" columns in All entries, a Spam check filter, and the same columns in CSV export and Google Sheets.
+* Older entries get the spam check from the information they already have.
+
 = 1.0.0 =
 * First release.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds Source proof and a Spam check with plain-language reasons to every entry.
 
 = 1.0.0 =
 First release.

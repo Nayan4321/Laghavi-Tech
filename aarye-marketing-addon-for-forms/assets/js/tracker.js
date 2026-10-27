@@ -101,7 +101,17 @@
 		}
 		data.pg = cut( location.pathname + location.search, 300 );
 		data.lg = cut( document.documentElement.lang || '', 20 );
+		// Signs that a person, not a script, is using the page (shown with each entry as evidence).
+		data.pv = ( parseInt( data.pv, 10 ) || 0 ) + 1;
+		data.pt = now;
+		data.ia = 0;
+		data.wd = navigator.webdriver ? 1 : 0;
+		try {
+			data.tz = cut( Intl.DateTimeFormat().resolvedOptions().timeZone || '', 60 );
+		} catch ( e ) {}
+		data.sc = screen.width + 'x' + screen.height;
 		writeCookie( COOKIE, JSON.stringify( data ) );
+		watchInteraction( data );
 
 		if ( ! readCookie( VISITOR ) ) {
 			var id = '';
@@ -110,6 +120,27 @@
 			}
 			writeCookie( VISITOR, id );
 		}
+	}
+
+	// The first mouse move, touch, scroll or key press on this page.
+	function watchInteraction( data ) {
+		var events = [ 'pointermove', 'pointerdown', 'touchstart', 'keydown', 'scroll', 'wheel' ];
+		function seen() {
+			events.forEach( function ( type ) {
+				window.removeEventListener( type, seen, true );
+			} );
+			var latest = data;
+			try {
+				latest = JSON.parse( readCookie( COOKIE ) || '{}' ) || data;
+			} catch ( e ) {}
+			if ( latest.pt === data.pt ) {
+				latest.ia = 1;
+				writeCookie( COOKIE, JSON.stringify( latest ) );
+			}
+		}
+		events.forEach( function ( type ) {
+			window.addEventListener( type, seen, { capture: true, passive: true } );
+		} );
 	}
 
 	run();
