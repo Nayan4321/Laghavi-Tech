@@ -107,5 +107,12 @@ html.mnh-lock,html.mnh-lock body{overflow:hidden}
 .mnh-kind-bar .mnh-highlight>.mnh-row>.mnh-link{padding:10px 20px;border-radius:var(--mnh-radius);background:var(--mnh-accent);color:var(--mnh-accent-text)}
 .mnh-kind-bar .mnh-highlight>.mnh-row>.mnh-link:hover{color:var(--mnh-accent-text);filter:brightness(1.07)}
 
+/* Right to left: arrows and sliding submenus follow the reading direction. */
+html[dir=rtl] .mnh:not(.mnh-kind-bar):not(.mnh-t-dropdown) .mnh-sub-toggle .mnh-icon,html[dir=rtl] .mnh .mnh-back .mnh-icon{transform:scaleX(-1)}
+html[dir=rtl] .mnh:not(.mnh-kind-bar):not(.mnh-t-dropdown):not(.mnh-submenu-drilldown) .mnh-sub-open>.mnh-row>.mnh-sub-toggle .mnh-icon,html[dir=rtl] .mnh-subs-open:not(.mnh-kind-bar):not(.mnh-t-dropdown) .mnh-sub-toggle .mnh-icon{transform:rotate(90deg)}
+html[dir=rtl] .mnh-submenu-drilldown .mnh-sub-wrap{transform:translateX(-100%)}
+html[dir=rtl] .mnh-submenu-drilldown .mnh-sub-open>.mnh-sub-wrap{transform:none}
+html[dir=rtl] .mnh-kind-bar:not(.mnh-t-vertical) .mnh-sub .mnh-sub-toggle .mnh-icon{transform:scaleX(-1)}
+
 .mnh-missing{padding:8px 12px;border:1px dashed #c3c4c7;color:#646970;font-size:13px}
 @media (prefers-reduced-motion:reduce){.mnh *,.mnh{transition-duration:1ms!important;transition-delay:0s!important;animation:none!important}}

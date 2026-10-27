@@ -1,0 +1,345 @@
+<style>
+#mnh-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#0f766e;--brand2:#f59e0b;--navy:#062b27;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#mnh-lp *,#mnh-lp *::before,#mnh-lp *::after{box-sizing:border-box}
+#mnh-lp h1,#mnh-lp h2,#mnh-lp h3,#mnh-lp p{margin:0}
+#mnh-lp a{text-decoration:none}
+#mnh-lp section{margin-top:56px}
+#mnh-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#mnh-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#mnh-lp .mh-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#mnh-lp .mh-btn:hover{transform:translateY(-1px)}
+#mnh-lp .mh-btn svg{width:18px;height:18px;flex:none}
+#mnh-lp .mh-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#mnh-lp .mh-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#mnh-lp .mh-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#mnh-lp .mh-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(15,118,110,.3)}
+#mnh-lp .mh-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#mnh-lp .mh-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#mnh-lp .mh-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(245,158,11,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(15,118,110,.4),transparent 60%),linear-gradient(135deg,#062b27,#0f4c45);overflow:hidden}
+#mnh-lp .mh-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#mnh-lp .mh-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#mnh-lp .mh-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#mnh-lp .mh-hero p{color:#d5efe9;margin-top:14px;font-size:16px;max-width:560px}
+#mnh-lp .mh-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#mnh-lp .mh-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#mnh-lp .mh-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#mnh-lp .mh-stats span{font-size:12.5px;color:#a7d6cc}
+
+/* Cards */
+#mnh-lp .mh-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#mnh-lp .mh-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#mnh-lp .mh-card__head{display:flex;gap:12px;align-items:center}
+#mnh-lp .mh-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#mnh-lp .mh-icon svg{width:20px;height:20px}
+#mnh-lp .mh-card h3{font-size:16px;font-weight:700}
+#mnh-lp .mh-card small{display:block;font-size:12px;color:var(--muted)}
+#mnh-lp .mh-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#mnh-lp .mh-card li{margin:4px 0}
+
+/* Install steps */
+#mnh-lp .mh-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#mnh-lp .mh-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#mnh-lp .mh-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#mnh-lp .mh-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#mnh-lp .mh-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#mnh-lp .mh-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#mnh-lp .mh-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#mnh-lp .mh-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#mnh-lp .mh-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#mnh-lp .mh-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#mnh-lp .mh-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#mnh-lp .mh-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#mnh-lp .mh-table th:last-child,#mnh-lp .mh-table td:last-child{background:rgba(15,118,110,.05)}
+#mnh-lp .mh-table td.mh-yes{color:#16a34a;font-weight:700;font-size:16px}
+#mnh-lp .mh-table td.mh-no{color:#c0c4d0}
+
+/* Pricing */
+#mnh-lp .mh-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#mnh-lp .mh-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#mnh-lp .mh-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(15,118,110,.15)}
+#mnh-lp .mh-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#mnh-lp .mh-price h3{font-size:17px;font-weight:700}
+#mnh-lp .mh-price__sites{font-size:13px;color:var(--muted)}
+#mnh-lp .mh-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#mnh-lp .mh-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#mnh-lp .mh-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#mnh-lp .mh-price li{padding:4px 0 4px 24px;position:relative}
+#mnh-lp .mh-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#mnh-lp .mh-price .mh-btn{justify-content:center}
+#mnh-lp .mh-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#mnh-lp .mh-faq{margin-top:20px;display:grid;gap:10px}
+#mnh-lp .mh-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#mnh-lp .mh-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#mnh-lp .mh-faq summary::-webkit-details-marker{display:none}
+#mnh-lp .mh-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#mnh-lp .mh-faq details[open] summary::after{content:"–"}
+#mnh-lp .mh-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#mnh-lp .mh-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#mnh-lp .mh-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#mnh-lp .mh-maker p{font-size:14px;color:var(--muted)}
+#mnh-lp .mh-maker b{color:var(--ink)}
+#mnh-lp .mh-maker a{color:var(--brand)}
+#mnh-lp .mh-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#0f766e,#0d9488 55%,#f59e0b)}
+#mnh-lp .mh-cta h2{color:#fff}
+#mnh-lp .mh-cta p{color:#fff1f2;margin:10px auto 0;max-width:560px}
+#mnh-lp .mh-cta .mh-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #mnh-lp .mh-hero__grid{grid-template-columns:1fr}
+ #mnh-lp .mh-cards,#mnh-lp .mh-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #mnh-lp .mh-cards,#mnh-lp .mh-steps,#mnh-lp .mh-prices{grid-template-columns:1fr}
+ #mnh-lp .mh-stats{grid-template-columns:repeat(2,1fr)}
+ #mnh-lp .mh-hero__ctas .mh-btn{flex:1 1 100%;justify-content:center}
+ #mnh-lp .mh-table{min-width:0;font-size:13px}
+ #mnh-lp .mh-table th,#mnh-lp .mh-table td{padding:11px 10px}
+ #mnh-lp .mh-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#mnh-lp h1,#mnh-lp h2,#mnh-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#mnh-lp h2,#mnh-lp h3{color:var(--ink)}
+#mnh-lp .mh-hero h1,#mnh-lp .mh-cta h2{color:#fff}
+#mnh-lp p,#mnh-lp li,#mnh-lp td,#mnh-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#mnh-lp a{box-shadow:none;border-bottom:0}
+#mnh-lp a:not(.mh-btn){color:var(--brand)}
+#mnh-lp a.mh-btn{text-decoration:none!important}
+#mnh-lp ul{margin-left:0;margin-right:0}
+#mnh-lp .mh-card ul{list-style:disc}
+#mnh-lp table,#mnh-lp th,#mnh-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#mnh-lp th{border-top:0}
+#mnh-lp table{margin:0;border:0;background:#fff}
+#mnh-lp tr{background:none}
+#mnh-lp details{margin:0}
+#mnh-lp summary{color:var(--ink);background:none;border:0}
+#mnh-lp section{display:block;padding:0}
+
+#mnh-lp .mh-hero__grid>*{min-width:0}
+/* Chips */
+#mnh-lp .mh-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+#mnh-lp .mh-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--ink)}
+#mnh-lp .mh-chip i{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block}
+#mnh-lp .mh-chip--muted{font-weight:500;color:var(--muted);background:var(--soft)}
+#mnh-lp .mh-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+#mnh-lp .mh-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+#mnh-lp .mh-box h3{font-size:16px;font-weight:700}
+#mnh-lp .mh-box p{font-size:14px;color:var(--muted);margin-top:6px}
+#mnh-lp .mh-pro{background:linear-gradient(180deg,#effaf7,#fff);border:1px solid #cdeee6;border-radius:22px;padding:clamp(20px,4vw,32px)}
+#mnh-lp .mh-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--brand);color:#fff}
+#mnh-lp .mh-list{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#mnh-lp .mh-list li{margin:5px 0}
+#mnh-lp .mh-list b{color:var(--ink)}
+#mnh-lp .mh-install .mh-box{background:#fff}
+
+#mnh-lp .mh-hero__grid>*{min-width:0}
+#mnh-lp code{font-size:12.5px;background:var(--soft);padding:1px 5px;border-radius:5px}
+
+/* Manohara: phone mock-up */
+#mnh-lp .mh-hero__grid>*{min-width:0}
+#mnh-lp .mh-phone{justify-self:end;width:290px;max-width:100%;border-radius:38px;padding:10px;background:#0b1513;box-shadow:0 30px 60px rgba(0,0,0,.4),inset 0 0 0 2px rgba(255,255,255,.08)}
+#mnh-lp .mh-phone__screen{border-radius:30px;overflow:hidden;background:#fff;color:#0b3540;height:540px;display:flex;flex-direction:column}
+#mnh-lp .mh-phone__bar{display:flex;align-items:center;justify-content:space-between;padding:22px 18px 14px;font-size:15px;box-shadow:0 8px 16px -14px rgba(0,0,0,.5)}
+#mnh-lp .mh-x{position:relative;width:18px;height:18px}
+#mnh-lp .mh-x i{position:absolute;top:8px;left:0;width:18px;height:2px;border-radius:2px;background:#0b3540;transform:rotate(45deg)}
+#mnh-lp .mh-x i+i{transform:rotate(-45deg)}
+#mnh-lp .mh-phone__panel{flex:1;display:flex;flex-direction:column;padding:14px 16px 0;animation:mh-drop .9s cubic-bezier(.22,1,.36,1) both}
+@keyframes mh-drop{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+#mnh-lp .mh-phone__btn{display:block;text-align:center;border:2px solid #f9a40d;border-radius:999px;padding:8px;font-size:12.5px;font-weight:700;margin-bottom:8px}
+#mnh-lp .mh-phone__btn--fill{background:#f9a40d}
+#mnh-lp .mh-phone ul{list-style:none;margin:8px 0 0;padding:0;font-size:14px}
+#mnh-lp .mh-phone li{display:flex;justify-content:space-between;align-items:center;padding:8px 2px}
+#mnh-lp .mh-phone li em{font-style:normal;width:22px;height:22px;border-radius:50%;background:#b5e2a8;display:inline-flex;align-items:center;justify-content:center;transform:rotate(90deg);font-size:14px;line-height:1}
+#mnh-lp .mh-phone li.mh-sub{padding:5px 2px 5px 16px;font-size:13px;color:#466771}
+#mnh-lp .mh-phone__extra{margin:auto -16px 0;background:#f2f4f5;padding:12px 16px 18px;display:flex;flex-direction:column;gap:6px;font-size:11.5px;font-weight:700}
+/* Devices and templates */
+#mnh-lp .mh-devices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#mnh-lp .mh-device{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+#mnh-lp .mh-device__icon{font-size:26px;line-height:1}
+#mnh-lp .mh-device h3{font-size:16px;font-weight:700;margin-top:10px}
+#mnh-lp .mh-device p{font-size:14px;color:var(--muted);margin-top:6px}
+#mnh-lp .mh-templates{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+#mnh-lp .mh-tpl{background:#fff;border:1px solid var(--line);border-radius:16px;padding:12px;transition:transform .2s,box-shadow .2s}
+#mnh-lp .mh-tpl:hover{transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(15,23,42,.45)}
+#mnh-lp .mh-tpl svg{display:block;width:100%;height:auto;border-radius:10px}
+#mnh-lp .mh-tpl h3{font-size:15px;font-weight:700;margin-top:10px}
+#mnh-lp .mh-tpl p{font-size:13px;color:var(--muted);margin-top:4px}
+#mnh-lp .mh-tpl__best{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+#mnh-lp .mh-tpl__best span{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#e6f6f2;color:#0f766e;border-radius:999px;padding:2px 8px}
+#mnh-lp code{font-size:12.5px;background:var(--soft);padding:1px 5px;border-radius:5px}
+@media (max-width:900px){#mnh-lp .mh-phone{justify-self:center}#mnh-lp .mh-templates{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:640px){#mnh-lp .mh-devices{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){#mnh-lp .mh-phone__panel{animation:none}}
+</style>
+
+<div id="mnh-lp" class="mh-lp">
+
+  <!-- Hero -->
+  <section class="mh-hero">
+    <div class="mh-hero__grid">
+      <div>
+        <span class="mh-badge">Free WordPress plugin · Any theme · Any page builder</span>
+        <h1>A beautiful menu on every device</h1>
+        <p>Manohara Menu Design gives your menu a modern, smoothly animated design without touching your theme. Keep your desktop menu and only redesign the mobile menu, or give desktop, tablet and mobile each their own design and even their own menu. Your colours, your font, no code.</p>
+        <div class="mh-hero__ctas">
+          <a class="mh-btn mh-btn--white" href="https://laghavi.site/wp-content/uploads/manohara-menu-design.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Download free plugin</a>
+          <a class="mh-btn mh-btn--ghost" href="#templates">See the templates</a>
+        </div>
+        <div class="mh-stats">
+          <div><b>7</b><span>free templates</span></div>
+          <div><b>3</b><span>devices, each with its own design</span></div>
+          <div><b>~7 KB</b><span>script, no jQuery</span></div>
+          <div><b>0</b><span>code to write</span></div>
+        </div>
+      </div>
+      <div class="mh-phone" aria-hidden="true">
+        <div class="mh-phone__screen">
+          <div class="mh-phone__bar"><b>Acme Homes</b><span class="mh-x"><i></i><i></i></span></div>
+          <div class="mh-phone__panel">
+            <span class="mh-phone__btn">Find a solution</span>
+            <span class="mh-phone__btn mh-phone__btn--fill">Become a partner</span>
+            <ul>
+              <li>Buy</li>
+              <li class="mh-has">Rent <em>›</em></li>
+              <li class="mh-sub">Apartments</li>
+              <li class="mh-sub">Villas</li>
+              <li>Sell</li>
+              <li>Contact</li>
+            </ul>
+            <div class="mh-phone__extra"><span>About</span><span>Careers</span><span>Login</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Per device -->
+  <section id="devices">
+    <h2>Change only the menu you want</h2>
+    <p class="lead">Each device is set on its own: keep the theme's design, or choose a Manohara template. Any combination works.</p>
+    <div class="mh-devices">
+      <div class="mh-device"><span class="mh-device__icon">🖥️</span><h3>Desktop</h3><p>Keep your theme's menu, or switch to Classic with an animated underline, Pills or a side drawer.</p></div>
+      <div class="mh-device"><span class="mh-device__icon">📱</span><h3>Tablet</h3><p>Copy the desktop or the mobile setup in one click, or give tablets a design of their own.</p></div>
+      <div class="mh-device"><span class="mh-device__icon">📲</span><h3>Mobile</h3><p>A slide-down panel, full-screen overlay, dropdown list or side drawer, with its own header bar and logo.</p></div>
+    </div>
+    <div class="mh-cols">
+      <div class="mh-box"><h3>A different menu per device</h3><p>Show a short menu on phones and the full menu on desktop. Each device picks its own menu from Appearance › Menus, plus a second menu of extra links (About, Careers, Login…) under the main one.</p></div>
+      <div class="mh-box"><h3>Works with page caching</h3><p>All devices are in the page and CSS shows the right one by screen width. Nothing is detected on the server, so cached pages are the same for everyone. Set your own tablet and mobile widths.</p></div>
+    </div>
+  </section>
+
+  <!-- Templates -->
+  <section id="templates">
+    <h2>7 templates, free</h2>
+    <p class="lead">Every template opens and closes smoothly, and takes your colours and font.</p>
+    <div class="mh-templates">
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="30" y="2" width="40" height="56" rx="6" fill="#fff" stroke="#d1d5db"/><rect x="34" y="6" width="12" height="4" rx="2" fill="#0b3540"/><rect x="34" y="14" width="32" height="5" rx="2.5" fill="none" stroke="#f9a40d"/><rect x="34" y="21" width="32" height="5" rx="2.5" fill="#f9a40d"/><rect x="34" y="30" width="20" height="3" rx="1.5" fill="#0b3540"/><circle cx="64" cy="31.5" r="2.4" fill="#b5e2a8"/><rect x="34" y="37" width="18" height="3" rx="1.5" fill="#0b3540"/><circle cx="64" cy="38.5" r="2.4" fill="#b5e2a8"/><rect x="30" y="45" width="40" height="13" fill="#f2f4f5"/><rect x="34" y="48" width="12" height="2" rx="1" fill="#0b3540"/><rect x="34" y="52" width="10" height="2" rx="1" fill="#0b3540"/></svg><h3>Slide-down panel</h3><p>The menu slides down under the header: buttons on top, round arrows for submenus, extra links below.</p><div class="mh-tpl__best"><span>Mobile</span><span>Tablet</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="30" y="2" width="40" height="56" rx="6" fill="#1f6f66"/><path d="M60 8l5 5M65 8l-5 5" stroke="#fff" stroke-width="1.6"/><rect x="36" y="18" width="18" height="3" rx="1.5" fill="#fff"/><rect x="36" y="26" width="22" height="3" rx="1.5" fill="#fff"/><rect x="36" y="34" width="16" height="3" rx="1.5" fill="#fff"/><rect x="36" y="42" width="20" height="3" rx="1.5" fill="#fff"/><path d="M62 26l2 1.5-2 1.5M62 34l2 1.5-2 1.5" stroke="#f6a623" fill="none"/></svg><h3>Full-screen overlay</h3><p>The menu fills the screen with a smooth fade; submenus slide in.</p><div class="mh-tpl__best"><span>Mobile</span><span>Tablet</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="30" y="2" width="40" height="56" rx="6" fill="#f3f4f6"/><rect x="30" y="2" width="40" height="10" rx="6" fill="#fff"/><rect x="33" y="12" width="34" height="34" fill="#fff"/><rect x="42" y="16" width="16" height="3" rx="1.5" fill="#6b7280"/><rect x="40" y="23" width="20" height="3" rx="1.5" fill="#6b7280"/><rect x="43" y="30" width="14" height="3" rx="1.5" fill="#6b7280"/><rect x="33" y="36" width="34" height="9" fill="#d5eff1"/><rect x="40" y="39" width="20" height="3" rx="1.5" fill="#0e7490"/></svg><h3>Dropdown list</h3><p>A centred list drops down under the header, with dividers and a highlighted last item.</p><div class="mh-tpl__best"><span>Mobile</span><span>Tablet</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="30" y="2" width="40" height="56" rx="6" fill="#9ca3af"/><rect x="44" y="2" width="26" height="56" rx="0" fill="#111827"/><rect x="48" y="12" width="16" height="3" rx="1.5" fill="#fff"/><rect x="48" y="20" width="18" height="3" rx="1.5" fill="#fff"/><rect x="48" y="28" width="14" height="3" rx="1.5" fill="#fff"/><rect x="48" y="46" width="18" height="6" rx="3" fill="#22c55e"/></svg><h3>Side drawer</h3><p>A panel slides in from the side over a dimmed page.</p><div class="mh-tpl__best"><span>Mobile</span><span>Tablet</span><span>Desktop</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="6" y="10" width="20" height="6" rx="2" fill="#d1d5db"/><rect x="40" y="11" width="14" height="4" rx="2" fill="#6b7280"/><rect x="58" y="11" width="14" height="4" rx="2" fill="#6b7280"/><rect x="76" y="11" width="14" height="4" rx="2" fill="#6b7280"/><rect x="40" y="18" width="14" height="2" rx="1" fill="#7c3aed"/><rect x="56" y="24" width="30" height="26" rx="4" fill="#fff" stroke="#d1d5db"/><rect x="60" y="29" width="20" height="3" rx="1.5" fill="#d1d5db"/><rect x="60" y="36" width="16" height="3" rx="1.5" fill="#d1d5db"/><rect x="60" y="43" width="18" height="3" rx="1.5" fill="#d1d5db"/></svg><h3>Classic</h3><p>Items side by side with an animated underline and smooth dropdowns.</p><div class="mh-tpl__best"><span>Desktop</span><span>Tablet</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="6" y="10" width="20" height="6" rx="2" fill="#d1d5db"/><rect x="36" y="8" width="18" height="10" rx="5" fill="#7c3aed"/><rect x="58" y="11" width="12" height="4" rx="2" fill="#6b7280"/><rect x="74" y="11" width="12" height="4" rx="2" fill="#6b7280"/><rect x="6" y="28" width="88" height="26" rx="4" fill="#f3f4f6"/></svg><h3>Pills</h3><p>Rounded buttons; the current page is highlighted and hover glides between items.</p><div class="mh-tpl__best"><span>Desktop</span><span>Tablet</span></div></div>
+      <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="10" y="6" width="44" height="48" rx="5" fill="#fff" stroke="#d1d5db"/><rect x="16" y="12" width="26" height="4" rx="2" fill="#7c3aed"/><rect x="16" y="22" width="30" height="4" rx="2" fill="#6b7280"/><rect x="16" y="32" width="24" height="4" rx="2" fill="#6b7280"/><rect x="16" y="42" width="28" height="4" rx="2" fill="#6b7280"/><path d="M47 13l2 1.5-2 1.5" stroke="#6b7280" fill="none"/><rect x="60" y="6" width="34" height="48" rx="4" fill="#f3f4f6"/></svg><h3>Vertical list</h3><p>A stacked menu for sidebars and footers, with arrows that open submenus.</p><div class="mh-tpl__best"><span>Desktop</span><span>Tablet</span><span>Mobile</span></div></div>
+    </div>
+    <p class="mh-note">More templates, icons and mega menus are coming in Manohara Menu Design Pro.</p>
+  </section>
+
+  <!-- Design -->
+  <section>
+    <h2>Make it yours, with a live preview</h2>
+    <p class="lead">A clear editor: sections on the left, settings in the middle, the menu of desktop, tablet or mobile on the right, updated as you change it.</p>
+    <div class="mh-chips">
+      <span class="mh-chip"><i></i>12 colours</span><span class="mh-chip"><i></i>Template colour presets</span><span class="mh-chip"><i></i>Theme font or built-in font stacks</span><span class="mh-chip"><i></i>Text size, weight, letter spacing</span><span class="mh-chip"><i></i>UPPERCASE or as written</span><span class="mh-chip"><i></i>Spacing and roundness</span><span class="mh-chip"><i></i>Animation speed</span><span class="mh-chip"><i></i>Smooth, springy or even movement</span><span class="mh-chip"><i></i>Different look on one device</span>
+    </div>
+    <div class="mh-cols">
+      <div class="mh-box"><h3>Header bar with your logo</h3><p>On devices with a menu button, Manohara can show its own header bar: your site logo or another image, an optional search button, a soft shadow, and it stays at the top when scrolling. The theme's header is hidden on that device.</p></div>
+      <div class="mh-box"><h3>Buttons and extra links</h3><p>Add an outline and a filled button to the menu panel ("Get a quote", "Book a call"), show the last menu item as a button, and a row of smaller links under the menu.</p></div>
+      <div class="mh-box"><h3>Submenus your way</h3><p>Open below their item like an accordion, or slide in over the menu with a back button. Submenus can also be shown open. On desktop, dropdowns open on hover or click.</p></div>
+      <div class="mh-box"><h3>Reset any time</h3><p>Reset one section to the template defaults, or the whole design. Your menus and where the design applies are kept.</p></div>
+    </div>
+  </section>
+
+  <!-- Anywhere -->
+  <section>
+    <h2>Works with every theme and page builder</h2>
+    <p class="lead">Replace your theme's menu where it is, or place the design anywhere.</p>
+    <div class="mh-table-wrap">
+      <table class="mh-table">
+        <thead><tr><th>Where</th><th>How</th></tr></thead>
+        <tbody>
+          <tr><td>Theme menu location</td><td>Choose the location in the design: it replaces the theme's menu there, on the devices you choose</td></tr>
+          <tr><td>Elementor</td><td>The "Manohara menu" widget, in any header, footer or page</td></tr>
+          <tr><td>Block editor &amp; site editor</td><td>The "Manohara menu" block, also in a block theme's header</td></tr>
+          <tr><td>Divi, Beaver Builder, Bricks, Oxygen, WPBakery…</td><td>The shortcode <code>[manohara_menu id="1"]</code></td></tr>
+          <tr><td>Theme developers</td><td><code>&lt;?php manohara_menu( 1 ); ?&gt;</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Speed -->
+  <section>
+    <h2>Light, so your pages stay fast</h2>
+    <div class="mh-cols">
+      <div class="mh-box"><h3>Only what you use</h3><p>One small script without jQuery or libraries, and only the styles of the templates your designs use. Nothing is loaded from other websites, no fonts, no tracking.</p></div>
+      <div class="mh-box"><h3>Smooth on every phone</h3><p>Animations use CSS transforms, the browser's fastest path. Visitors who ask their device for less motion get instant menus.</p></div>
+      <div class="mh-box"><h3>Accessible</h3><p>Keyboard friendly: Esc closes, focus stays inside full-screen menus and returns to the menu button, every button has a label for screen readers.</p></div>
+      <div class="mh-box"><h3>Right to left</h3><p>Drawers and arrows follow the reading direction, for Arabic, Hebrew, Persian and Urdu sites.</p></div>
+    </div>
+  </section>
+
+  <!-- Pro -->
+  <section id="pro">
+    <div class="mh-pro">
+      <span class="mh-pill">Coming soon</span>
+      <h2 style="margin-top:12px">Manohara Menu Design Pro</h2>
+      <p class="lead">An add-on to the free plugin, with more ways to design your menu.</p>
+      <ul class="mh-list">
+        <li><b>More templates</b> for desktop, tablet and mobile.</li>
+        <li><b>Icons on menu items</b>: WordPress icons, or your own SVG, PNG or AVIF images, and icon-only items.</li>
+        <li><b>Mega menus</b>: wide dropdowns with columns, horizontal and vertical.</li>
+      </ul>
+      <p class="mh-note">Install the free plugin now: Pro adds to it, nothing to redo.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>Questions</h2>
+    <div class="mh-faq">
+      <details><summary>Can I change only my mobile menu?</summary><p>Yes. Leave Desktop and Tablet on "Theme design" and choose a template for Mobile. Your theme's menu stays as it is on the larger screens.</p></details>
+      <details><summary>Can each device show a different menu?</summary><p>Yes. Each device has its own "Menu on this device" setting. Make the menus in Appearance › Menus.</p></details>
+      <details><summary>Does it work with my theme?</summary><p>Yes. It works with classic themes through their menu locations, with block themes through the block, and with any theme through the shortcode or the Elementor widget. When a device shows Manohara's own header bar, the theme's header is hidden on that device; the common themes are covered, and you can add your theme's header selector in the settings.</p></details>
+      <details><summary>Does it slow my site down?</summary><p>No. The script is about 7 KB without jQuery, only the styles of the templates you use are loaded, and nothing is loaded from other websites.</p></details>
+      <details><summary>Does it work with page caching?</summary><p>Yes. Devices are told apart by screen width in CSS, so cached pages are the same for everyone.</p></details>
+      <details><summary>What if I delete the plugin?</summary><p>Your theme's menu comes back. Your designs are removed only if you choose so in the settings.</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>Who makes it</h2>
+    <div class="mh-maker">
+      <div class="mh-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, creator of Manohara Menu Design<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="mh-cta">
+    <h2>Give your visitors a menu they enjoy</h2>
+    <p>Install the free plugin, choose a template for mobile, and see it live in a few minutes.</p>
+    <div class="mh-hero__ctas">
+      <a class="mh-btn mh-btn--white" href="https://laghavi.site/wp-content/uploads/manohara-menu-design.zip" download>Download free plugin</a>
+    </div>
+  </section>
+
+</div>

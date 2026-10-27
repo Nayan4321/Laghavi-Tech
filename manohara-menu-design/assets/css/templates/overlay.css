@@ -8,7 +8,7 @@ body.admin-bar .mnh-t-overlay .mnh-panel{top:var(--wp-admin--admin-bar--height,0
 .mnh-t-overlay .mnh-list .mnh-link{padding:10px 0;font-size:calc(var(--mnh-size) * 1.08)}
 .mnh-t-overlay .mnh-sub .mnh-link{font-size:var(--mnh-sub-size)}
 .mnh-t-overlay .mnh-sub-toggle{--mnh-b-color:var(--mnh-accent);font-size:20px;width:34px;height:34px}
-.mnh.mnh-t-overlay .mnh-sub{padding:0 0 8px 16px}
+.mnh.mnh-t-overlay .mnh-sub{padding:0 0 8px;padding-inline-start:16px}
 .mnh.mnh-t-overlay.mnh-submenu-drilldown .mnh-sub{padding:0}
 .mnh-t-overlay .mnh-list>li{transform:translateX(-14px)}
 .mnh-t-overlay.mnh-open .mnh-list>li{transform:none}

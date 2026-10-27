@@ -8,7 +8,7 @@
 .mnh-t-slide-down .mnh-list .mnh-link{padding:10px 0}
 .mnh-t-slide-down .mnh-sub-toggle{width:26px;height:26px;border-radius:50%;--mnh-b-bg:var(--mnh-bubble);--mnh-b-color:var(--mnh-text);font-size:15px}
 .mnh-t-slide-down .mnh-sub-toggle:hover{filter:brightness(.95)}
-.mnh.mnh-t-slide-down .mnh-sub{padding:0 20px 8px 36px}
+.mnh.mnh-t-slide-down .mnh-sub{padding:0 0 8px;padding-inline:36px 20px}
 .mnh-t-slide-down.mnh-submenu-drilldown .mnh-sub-wrap{padding:0 20px}
 .mnh.mnh-t-slide-down.mnh-submenu-drilldown .mnh-sub{padding:0 0 8px}
 .mnh-t-slide-down .mnh-sub .mnh-row{padding:0}

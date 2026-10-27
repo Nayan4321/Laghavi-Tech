@@ -8,10 +8,14 @@ body.admin-bar .mnh-t-drawer .mnh-panel{top:var(--wp-admin--admin-bar--height,0)
 .mnh-t-drawer .mnh-list>li>.mnh-row{border-radius:min(var(--mnh-radius),12px);margin-bottom:var(--mnh-gap);transition:background-color var(--mnh-dur)}
 .mnh-t-drawer .mnh-list>li>.mnh-row:hover,.mnh-t-drawer .mnh-list>li.mnh-current>.mnh-row{background:var(--mnh-bubble)}
 .mnh-t-drawer .mnh-list .mnh-link{padding:11px 12px}
-.mnh.mnh-t-drawer .mnh-sub{padding:0 0 6px 14px}
+.mnh.mnh-t-drawer .mnh-sub{padding:0 0 6px;padding-inline-start:14px}
 .mnh.mnh-t-drawer.mnh-submenu-drilldown .mnh-sub{padding:0}
 .mnh-t-drawer.mnh-submenu-drilldown .mnh-sub-wrap{padding:0 12px}
 .mnh-t-drawer .mnh-list>li{transform:translateX(16px)}
 .mnh-t-drawer.mnh-side-left .mnh-list>li{transform:translateX(-16px)}
 .mnh-t-drawer.mnh-open .mnh-list>li{transform:none}
 .mnh-t-drawer .mnh-buttons{margin-top:auto}
+/* Right to left: "end" is the left side. */
+html[dir=rtl] .mnh-t-drawer.mnh-side-right .mnh-panel{right:auto;left:0;transform:translateX(-100%);box-shadow:20px 0 40px -20px rgba(0,0,0,.5)}
+html[dir=rtl] .mnh-t-drawer.mnh-side-left .mnh-panel{left:auto;right:0;transform:translateX(100%);box-shadow:-20px 0 40px -20px rgba(0,0,0,.5)}
+html[dir=rtl] .mnh-t-drawer.mnh-open .mnh-panel{transform:none}
