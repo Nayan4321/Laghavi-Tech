@@ -357,6 +357,24 @@ class Manohara_Admin {
 					<p class="description"><?php esc_html_e( 'Each device can show a different menu (in its own section).', 'manohara-menu-design' ); ?></p>
 				</div>
 			</div>
+			<div class="mnh-field">
+				<span class="mnh-label"><?php esc_html_e( 'Social icons', 'manohara-menu-design' ); ?></span>
+				<div>
+					<div class="mnh-social-fields">
+						<?php foreach ( Manohara_Store::social_networks() as $key => $label ) : ?>
+							<?php
+							$hints = array(
+								'email'    => 'info@example.com',
+								'phone'    => '+971 50 123 4567',
+								'whatsapp' => __( 'Number or https://wa.me/…', 'manohara-menu-design' ),
+							);
+							?>
+							<label><span><?php echo esc_html( $label ); ?></span><input type="text" name="social[<?php echo esc_attr( $key ); ?>]" value="<?php echo esc_attr( isset( $design['social'][ $key ] ) ? $design['social'][ $key ] : '' ); ?>" placeholder="<?php echo esc_attr( isset( $hints[ $key ] ) ? $hints[ $key ] : 'https://' ); ?>" data-preview="1" /></label>
+						<?php endforeach; ?>
+					</div>
+					<p class="description"><?php esc_html_e( 'Fill the ones you use: their icons show in the mobile menus (slide-down, overlay, dropdown, drawer), after the menu or at the bottom.', 'manohara-menu-design' ); ?></p>
+				</div>
+			</div>
 			<?php if ( $design['id'] ) : ?>
 				<div class="mnh-field">
 					<span class="mnh-label"><?php esc_html_e( 'Place it anywhere', 'manohara-menu-design' ); ?></span>
@@ -409,6 +427,11 @@ class Manohara_Admin {
 				'btn1_url'       => '',
 				'btn2_text'      => '',
 				'btn2_url'       => '',
+				'buttons_pos'    => 'bottom',
+				'social'         => 1,
+				'social_pos'     => 'menu',
+				'cta_text'       => '',
+				'cta_url'        => '',
 				'logo'           => 'site',
 				'logo_url'       => '',
 				'search'         => 0,
@@ -529,11 +552,28 @@ class Manohara_Admin {
 				?>
 				<div class="mnh-field" data-group="buttons">
 					<span class="mnh-label"><?php esc_html_e( 'Buttons', 'manohara-menu-design' ); ?></span>
+					<div>
 					<div class="mnh-buttons-fields">
 						<input type="text" name="<?php echo esc_attr( $o_name ); ?>[btn1_text]" value="<?php echo esc_attr( $o['btn1_text'] ); ?>" placeholder="<?php esc_attr_e( 'Outline button text, e.g. Find a solution', 'manohara-menu-design' ); ?>" data-preview="1" />
-						<input type="url" name="<?php echo esc_attr( $o_name ); ?>[btn1_url]" value="<?php echo esc_attr( $o['btn1_url'] ); ?>" placeholder="https://" />
+						<input type="text" name="<?php echo esc_attr( $o_name ); ?>[btn1_url]" value="<?php echo esc_attr( $o['btn1_url'] ); ?>" placeholder="<?php esc_attr_e( 'Link: https://…, tel:+971…, mailto:…', 'manohara-menu-design' ); ?>" />
 						<input type="text" name="<?php echo esc_attr( $o_name ); ?>[btn2_text]" value="<?php echo esc_attr( $o['btn2_text'] ); ?>" placeholder="<?php esc_attr_e( 'Filled button text, e.g. Become a partner', 'manohara-menu-design' ); ?>" data-preview="1" />
-						<input type="url" name="<?php echo esc_attr( $o_name ); ?>[btn2_url]" value="<?php echo esc_attr( $o['btn2_url'] ); ?>" placeholder="https://" />
+						<input type="text" name="<?php echo esc_attr( $o_name ); ?>[btn2_url]" value="<?php echo esc_attr( $o['btn2_url'] ); ?>" placeholder="<?php esc_attr_e( 'Link: https://…, tel:+971…, mailto:…', 'manohara-menu-design' ); ?>" />
+					</div>
+					<p class="description"><?php esc_html_e( 'Your own text and link, e.g. "Contact us", "Call now" with tel:+971501234567, "WhatsApp us" with https://wa.me/971501234567. Leave the text empty to hide a button.', 'manohara-menu-design' ); ?></p>
+					<p><label><?php esc_html_e( 'Place:', 'manohara-menu-design' ); ?> <select name="<?php echo esc_attr( $o_name ); ?>[buttons_pos]" data-preview="1">
+						<option value="top" <?php selected( $o['buttons_pos'], 'top' ); ?>><?php esc_html_e( 'Above the menu', 'manohara-menu-design' ); ?></option>
+						<option value="bottom" <?php selected( $o['buttons_pos'], 'bottom' ); ?>><?php esc_html_e( 'Below the menu', 'manohara-menu-design' ); ?></option>
+					</select></label></p>
+					</div>
+				</div>
+				<div class="mnh-field" data-group="social">
+					<span class="mnh-label"><?php esc_html_e( 'Social icons', 'manohara-menu-design' ); ?></span>
+					<div>
+						<label class="mnh-check"><input type="checkbox" name="<?php echo esc_attr( $o_name ); ?>[social]" value="1" <?php checked( $o['social'] ); ?> data-preview="1" /> <?php esc_html_e( 'Show the social icons (links are set in General)', 'manohara-menu-design' ); ?></label>
+						<select name="<?php echo esc_attr( $o_name ); ?>[social_pos]" data-preview="1">
+							<option value="menu" <?php selected( $o['social_pos'], 'menu' ); ?>><?php esc_html_e( 'Right after the menu items', 'manohara-menu-design' ); ?></option>
+							<option value="bottom" <?php selected( $o['social_pos'], 'bottom' ); ?>><?php esc_html_e( 'At the bottom of the menu', 'manohara-menu-design' ); ?></option>
+						</select>
 					</div>
 				</div>
 				<div class="mnh-field" data-group="bar">
@@ -547,6 +587,11 @@ class Manohara_Admin {
 						<span class="mnh-logo-custom">
 							<input type="url" name="<?php echo esc_attr( $o_name ); ?>[logo_url]" value="<?php echo esc_attr( $o['logo_url'] ); ?>" class="regular-text mnh-logo-url" placeholder="https://" data-preview="1" />
 							<button type="button" class="button mnh-pick-logo"><?php esc_html_e( 'Choose image', 'manohara-menu-design' ); ?></button>
+						</span>
+						<span class="mnh-sub-label"><?php esc_html_e( 'A button in the bar (optional)', 'manohara-menu-design' ); ?></span>
+						<span class="mnh-cta-fields">
+							<input type="text" name="<?php echo esc_attr( $o_name ); ?>[cta_text]" value="<?php echo esc_attr( $o['cta_text'] ); ?>" placeholder="<?php esc_attr_e( 'Button in the bar, e.g. Contact us', 'manohara-menu-design' ); ?>" data-preview="1" />
+							<input type="text" name="<?php echo esc_attr( $o_name ); ?>[cta_url]" value="<?php echo esc_attr( $o['cta_url'] ); ?>" placeholder="<?php esc_attr_e( 'Link: https://…, tel:+971…, mailto:…', 'manohara-menu-design' ); ?>" />
 						</span>
 						<label class="mnh-check"><input type="checkbox" name="<?php echo esc_attr( $o_name ); ?>[search]" value="1" <?php checked( $o['search'] ); ?> data-preview="1" /> <?php esc_html_e( 'Search button', 'manohara-menu-design' ); ?></label>
 						<label class="mnh-check"><input type="checkbox" name="<?php echo esc_attr( $o_name ); ?>[sticky]" value="1" <?php checked( $o['sticky'] ); ?> /> <?php esc_html_e( 'Stays at the top when scrolling', 'manohara-menu-design' ); ?></label>
@@ -726,6 +771,34 @@ class Manohara_Admin {
 	}
 
 	/**
+	 * A link typed by the site owner: a web address, phone number, e-mail address or WhatsApp number.
+	 *
+	 * @param string $value Typed value.
+	 * @param string $kind  Social network, or '' for a button.
+	 * @return string
+	 */
+	public static function clean_link( $value, $kind = '' ) {
+		$value = trim( wp_strip_all_tags( $value ) );
+		if ( '' === $value ) {
+			return '';
+		}
+		$digits = preg_replace( '/[^0-9+]/', '', $value );
+		if ( 'whatsapp' === $kind && preg_match( '/^\+?[0-9 ()\-]{6,}$/', $value ) ) {
+			return 'https://wa.me/' . ltrim( $digits, '+' );
+		}
+		if ( ( 'phone' === $kind || '' === $kind ) && preg_match( '/^\+?[0-9 ()\-]{6,}$/', $value ) ) {
+			return 'tel:' . $digits;
+		}
+		if ( is_email( $value ) ) {
+			return 'mailto:' . sanitize_email( $value );
+		}
+		if ( ! preg_match( '#^[a-z][a-z0-9+.\-]*:#i', $value ) && '/' !== $value[0] && '#' !== $value[0] ) {
+			$value = 'https://' . $value;
+		}
+		return esc_url_raw( $value, array( 'http', 'https', 'mailto', 'tel', 'sms', 'whatsapp' ) );
+	}
+
+	/**
 	 * A design from the form.
 	 *
 	 * @param array $in Raw form ($_POST, unslashed).
@@ -739,8 +812,15 @@ class Manohara_Admin {
 			'location' => isset( $in['location'] ) && isset( $locations[ $in['location'] ] ) ? sanitize_key( $in['location'] ) : '',
 			'menu'     => isset( $in['menu'] ) ? absint( $in['menu'] ) : 0,
 			'style'    => self::clean_style( isset( $in['style'] ) ? $in['style'] : array() ),
+			'social'   => array(),
 			'devices'  => array(),
 		);
+		foreach ( array_keys( Manohara_Store::social_networks() ) as $key ) {
+			$value = isset( $in['social'][ $key ] ) && is_scalar( $in['social'][ $key ] ) ? self::clean_link( (string) $in['social'][ $key ], $key ) : '';
+			if ( '' !== $value ) {
+				$design['social'][ $key ] = $value;
+			}
+		}
 		foreach ( array_keys( Manohara_Store::devices() ) as $device ) {
 			$raw      = isset( $in['devices'][ $device ] ) && is_array( $in['devices'][ $device ] ) ? $in['devices'][ $device ] : array();
 			$template = isset( $raw['template'] ) && Manohara_Templates::get( $raw['template'] ) ? sanitize_key( $raw['template'] ) : 'slide-down';
@@ -750,9 +830,11 @@ class Manohara_Admin {
 				$value = isset( $opts_in[ $key ] ) && is_scalar( $opts_in[ $key ] ) ? (string) $opts_in[ $key ] : '';
 				if ( is_int( $default ) ) {
 					$opts[ $key ] = '' !== $value ? 1 : 0;
-				} elseif ( in_array( $key, array( 'btn1_url', 'btn2_url', 'logo_url' ), true ) ) {
+				} elseif ( 'logo_url' === $key ) {
 					$opts[ $key ] = esc_url_raw( $value );
-				} elseif ( in_array( $key, array( 'btn1_text', 'btn2_text' ), true ) ) {
+				} elseif ( in_array( $key, array( 'btn1_url', 'btn2_url', 'cta_url' ), true ) ) {
+					$opts[ $key ] = self::clean_link( $value );
+				} elseif ( in_array( $key, array( 'btn1_text', 'btn2_text', 'cta_text' ), true ) ) {
 					$opts[ $key ] = sanitize_text_field( $value );
 				} else {
 					$allowed      = array(
@@ -762,6 +844,8 @@ class Manohara_Admin {
 						'submenu'      => array( 'accordion', 'drilldown' ),
 						'side'         => array( 'right', 'left' ),
 						'logo'         => array( 'site', 'custom', 'none' ),
+						'buttons_pos'  => array( 'top', 'bottom' ),
+						'social_pos'   => array( 'menu', 'bottom' ),
 					);
 					$opts[ $key ] = isset( $allowed[ $key ] ) && in_array( $value, $allowed[ $key ], true ) ? $value : $default;
 				}
@@ -810,6 +894,7 @@ class Manohara_Admin {
 			$fresh['name']     = $design['name'];
 			$fresh['location'] = $design['location'];
 			$fresh['menu']     = $design['menu'];
+			$fresh['social']   = $design['social'];
 			$design            = $fresh;
 		}
 		$id      = Manohara_Store::save( $design );

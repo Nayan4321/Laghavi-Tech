@@ -38,7 +38,9 @@ Manohara Menu Design gives your site's menu a modern look without touching your 
 * Font (your theme's font, a font your site already loads, or a built-in font stack – nothing is loaded from outside), text size, weight, letter spacing, upper case, spacing and roundness.
 * Animation speed and movement (smooth, springy, ease, even).
 * Use different colours and fonts on one device only.
-* A header bar with your logo (or another image), an optional search button, stays at the top when scrolling.
+* Call-to-action buttons in the menu with your own text and link ("Contact us", "Call now", "WhatsApp us"), above or below the menu. Links can be web addresses, phone numbers, e-mail addresses or WhatsApp numbers.
+* Social icons (Facebook, Instagram, X, LinkedIn, YouTube, TikTok, Pinterest, WhatsApp, Telegram, e-mail, phone) right after the menu items or at the bottom of the menu.
+* A header bar with your logo (or another image), an optional button such as "Contact" or "Call", an optional search button, stays at the top when scrolling.
 * Live preview of desktop, tablet and mobile while you design.
 
 **Works everywhere**
@@ -87,6 +89,10 @@ When a device uses its own header bar, the plugin hides the theme's header on th
 
 Yes. All devices are in the page and CSS shows the right one by screen width, so cached pages are the same for everyone.
 
+= Can I add a "Contact us" or "Call now" button and social icons? =
+
+Yes. In a device's section, Buttons takes two buttons with your own text and link (a page, a phone number, an e-mail address or a WhatsApp link), above or below the menu, and Header bar takes one more button next to the menu button. Social links are set once in General and show on every mobile menu, right after the menu items or at the bottom.
+
 = Where do I set the screen sizes of tablet and mobile? =
 
 In Appearance > Manohara Menu > Screen sizes. By default mobile is up to 767 px and tablet up to 1024 px.
@@ -106,4 +112,4 @@ No. The plugin does not connect to any external service and does not load fonts 
 == Changelog ==
 
 = 1.0.0 =
-* First release: 7 templates, a design per device, a menu per device, colours, typography, animation, live preview, theme location, Elementor widget, block and shortcode.
+* First release: 7 templates, a design per device, a menu per device, call-to-action buttons, social icons, colours, typography, animation, live preview, theme location, Elementor widget, block and shortcode.

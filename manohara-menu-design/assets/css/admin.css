@@ -81,6 +81,11 @@
 .mnh-override-toggle{margin-bottom:12px}
 .mnh-override{border-inline-start:3px solid var(--mnh-a-accent);padding-inline-start:16px}
 
+.mnh-social-fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px 12px}
+.mnh-social-fields label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--mnh-a-muted)}
+.mnh-cta-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 8px}
+.mnh-buttons-fields input,.mnh-cta-fields input,.mnh-social-fields input{width:100%;min-width:0;max-width:none}
+.mnh-sub-label{display:block;margin-top:12px;font-size:12px;color:var(--mnh-a-muted)}
 /* Colours and typography. */
 .mnh-colours{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 16px}
 .mnh-colour{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--mnh-a-muted)}

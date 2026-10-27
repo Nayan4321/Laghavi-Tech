@@ -79,7 +79,7 @@ class Manohara_Templates {
 				'kind'    => 'toggle',
 				'best'    => array( 'mobile', 'tablet' ),
 				'desc'    => __( 'The menu slides down under the header: buttons on top, round arrows for submenus, extra links below.', 'manohara-menu-design' ),
-				'options' => array( 'buttons', 'secondary', 'submenu', 'bar' ),
+				'options' => array( 'buttons', 'social', 'secondary', 'submenu', 'bar' ),
 				'style'   => array(
 					'bar_bg'         => '#ffffff',
 					'bar_text'       => '#0b3540',
@@ -101,7 +101,7 @@ class Manohara_Templates {
 				'kind'    => 'toggle',
 				'best'    => array( 'mobile', 'tablet' ),
 				'desc'    => __( 'The menu fills the screen with a smooth fade; submenus slide in.', 'manohara-menu-design' ),
-				'options' => array( 'buttons', 'secondary', 'submenu', 'bar' ),
+				'options' => array( 'buttons', 'social', 'secondary', 'submenu', 'bar' ),
 				'style'   => array(
 					'bar_bg'         => '#ffffff',
 					'bar_text'       => '#1f6f66',
@@ -124,7 +124,7 @@ class Manohara_Templates {
 				'kind'    => 'toggle',
 				'best'    => array( 'mobile', 'tablet' ),
 				'desc'    => __( 'A centred list drops down under the header, with dividers and a highlighted last item.', 'manohara-menu-design' ),
-				'options' => array( 'buttons', 'highlight_last', 'submenu_open', 'bar' ),
+				'options' => array( 'buttons', 'social', 'highlight_last', 'submenu_open', 'bar' ),
 				'style'   => array(
 					'bar_bg'      => '#ffffff',
 					'bar_text'    => '#1f2937',
@@ -144,7 +144,7 @@ class Manohara_Templates {
 				'kind'    => 'toggle',
 				'best'    => array( 'mobile', 'tablet', 'desktop' ),
 				'desc'    => __( 'A panel slides in from the side over a dimmed page.', 'manohara-menu-design' ),
-				'options' => array( 'side', 'buttons', 'secondary', 'submenu', 'bar' ),
+				'options' => array( 'side', 'buttons', 'social', 'secondary', 'submenu', 'bar' ),
 				'style'   => array(
 					'bar_bg'         => '#ffffff',
 					'bar_text'       => '#111827',
@@ -220,10 +220,15 @@ class Manohara_Templates {
 			'side'           => array( 'side' => 'right' ),
 			'secondary'      => array(),
 			'buttons'        => array(
-				'btn1_text' => '',
-				'btn1_url'  => '',
-				'btn2_text' => '',
-				'btn2_url'  => '',
+				'btn1_text'   => '',
+				'btn1_url'    => '',
+				'btn2_text'   => '',
+				'btn2_url'    => '',
+				'buttons_pos' => 'bottom',
+			),
+			'social'         => array(
+				'social'     => 1,
+				'social_pos' => 'menu',
 			),
 			'bar'            => array(
 				'logo'     => 'site',
@@ -231,6 +236,8 @@ class Manohara_Templates {
 				'search'   => 0,
 				'sticky'   => 1,
 				'shadow'   => 1,
+				'cta_text' => '',
+				'cta_url'  => '',
 			),
 		);
 	}
@@ -255,6 +262,9 @@ class Manohara_Templates {
 		}
 		if ( 'dropdown' === $key ) {
 			$out['highlight_last'] = 1;
+		}
+		if ( 'slide-down' === $key ) {
+			$out['buttons_pos'] = 'top';
 		}
 		if ( 'overlay' === $key ) {
 			$out['submenu'] = 'drilldown';

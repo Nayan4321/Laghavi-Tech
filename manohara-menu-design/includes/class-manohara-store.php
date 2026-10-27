@@ -125,6 +125,27 @@ class Manohara_Store {
 	}
 
 	/**
+	 * Social networks for the icons in menus.
+	 *
+	 * @return array key => label.
+	 */
+	public static function social_networks() {
+		return array(
+			'facebook'  => 'Facebook',
+			'instagram' => 'Instagram',
+			'x'         => 'X (Twitter)',
+			'linkedin'  => 'LinkedIn',
+			'youtube'   => 'YouTube',
+			'tiktok'    => 'TikTok',
+			'pinterest' => 'Pinterest',
+			'whatsapp'  => 'WhatsApp',
+			'telegram'  => 'Telegram',
+			'email'     => __( 'Email', 'manohara-menu-design' ),
+			'phone'     => __( 'Phone', 'manohara-menu-design' ),
+		);
+	}
+
+	/**
 	 * A new design.
 	 *
 	 * @return array
@@ -214,18 +235,20 @@ class Manohara_Store {
 	 * @return array
 	 */
 	public static function normalize( $design, $id ) {
-		$design          = array_merge(
+		$design           = array_merge(
 			array(
 				'name'     => '',
 				'location' => '',
 				'menu'     => 0,
 				'style'    => array(),
+				'social'   => array(),
 				'devices'  => array(),
 			),
 			$design
 		);
-		$design['id']    = (int) $id;
-		$design['style'] = array_merge( self::default_style(), (array) $design['style'] );
+		$design['id']     = (int) $id;
+		$design['social'] = array_intersect_key( array_filter( (array) $design['social'], 'is_string' ), self::social_networks() );
+		$design['style']  = array_merge( self::default_style(), (array) $design['style'] );
 		foreach ( array_keys( self::devices() ) as $device ) {
 			$set = isset( $design['devices'][ $device ] ) && is_array( $design['devices'][ $device ] ) ? $design['devices'][ $device ] : array();
 			$set = array_merge( self::default_device(), $set );

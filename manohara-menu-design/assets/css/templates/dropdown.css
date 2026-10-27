@@ -13,3 +13,5 @@
 .mnh-t-dropdown .mnh-highlight{background:var(--mnh-accent);border-bottom:0}
 .mnh-t-dropdown .mnh-highlight>.mnh-row>.mnh-link{color:var(--mnh-accent-text);font-weight:700}
 .mnh-t-dropdown .mnh-buttons{padding:14px 16px}
+.mnh-t-dropdown .mnh-social{padding:14px 16px}
+.mnh.mnh-t-dropdown .mnh-social ul{justify-content:center}

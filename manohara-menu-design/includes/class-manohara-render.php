@@ -195,6 +195,7 @@ class Manohara_Render {
 			'back'    => '<path d="M15 6l-6 6 6 6"/>',
 			'search'  => '<circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/>',
 			'close'   => '<path d="M6 6l12 12M18 6L6 18"/>',
+			'phone'   => '<path d="M5 4h3.5l1.5 4.5-2.2 1.4a11 11 0 0 0 4.3 4.3l1.4-2.2 4.5 1.5V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
 		);
 		return '<svg class="mnh-icon mnh-icon-' . esc_attr( $name ) . '" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' . $paths[ $name ] . '</svg>';
 	}
@@ -355,6 +356,10 @@ class Manohara_Render {
 		$search = ! empty( $opts['search'] );
 		if ( $bar ) {
 			$html .= '<div class="mnh-bar">' . self::logo( $opts ) . '<div class="mnh-bar-actions">';
+			if ( ! empty( $opts['cta_text'] ) ) {
+				$cta   = self::href( isset( $opts['cta_url'] ) ? $opts['cta_url'] : '' );
+				$html .= '<a class="mnh-bar-cta" href="' . esc_url( $cta ) . '">' . ( 0 === strpos( $cta, 'tel:' ) ? self::icon( 'phone' ) : '' ) . '<span>' . esc_html( $opts['cta_text'] ) . '</span></a>';
+			}
 			if ( $search ) {
 				$html .= '<button type="button" class="mnh-search-toggle" aria-expanded="false">' . self::icon( 'search' ) . '<span class="mnh-sr">' . esc_html__( 'Search', 'manohara-menu-design' ) . '</span></button>';
 			}
@@ -375,16 +380,22 @@ class Manohara_Render {
 			$html .= self::search_form();
 		}
 		$buttons = self::buttons( $opts );
-		if ( 'slide-down' === $key ) {
+		$top     = isset( $opts['buttons_pos'] ) ? 'top' === $opts['buttons_pos'] : 'slide-down' === $key;
+		$social  = ! empty( $opts['social'] ) && Manohara_Templates::has( $key, 'social' ) ? self::social( $design ) : '';
+		$under   = isset( $opts['social_pos'] ) && 'bottom' === $opts['social_pos'] ? 'bottom' : 'menu';
+		if ( $top ) {
 			$html .= $buttons;
 		}
-		$html .= '<div class="mnh-scroller">' . self::items( $tree, 0, $opts ) . '</div>';
-		if ( 'slide-down' !== $key ) {
+		$html .= '<div class="mnh-scroller">' . self::items( $tree, 0, $opts ) . ( 'menu' === $under ? $social : '' ) . '</div>';
+		if ( ! $top ) {
 			$html .= $buttons;
 		}
 		$secondary = ! empty( $set['menu2'] ) && is_nav_menu( (int) $set['menu2'] ) && Manohara_Templates::has( $key, 'secondary' ) ? self::tree( (int) $set['menu2'] ) : array();
 		if ( $secondary ) {
 			$html .= '<div class="mnh-secondary">' . self::items( $secondary, 0, array(), 0, 'mnh-secondary-list' ) . '</div>';
+		}
+		if ( 'bottom' === $under && '' !== $social ) {
+			$html .= str_replace( 'class="mnh-social"', 'class="mnh-social mnh-social-bottom"', $social );
 		}
 		$html .= '</div>';
 		if ( in_array( $key, array( 'overlay', 'drawer' ), true ) || ! $bar ) {
@@ -430,10 +441,69 @@ class Manohara_Render {
 			$text = isset( $opts[ 'btn' . $n . '_text' ] ) ? trim( (string) $opts[ 'btn' . $n . '_text' ] ) : '';
 			$url  = isset( $opts[ 'btn' . $n . '_url' ] ) ? (string) $opts[ 'btn' . $n . '_url' ] : '';
 			if ( '' !== $text ) {
-				$html .= '<a class="mnh-btn mnh-btn-' . $n . '" href="' . esc_url( '' !== $url ? $url : home_url( '/' ) ) . '">' . esc_html( $text ) . '</a>';
+				$html .= '<a class="mnh-btn mnh-btn-' . $n . '" href="' . esc_url( self::href( $url ) ) . '">' . esc_html( $text ) . '</a>';
 			}
 		}
 		return '' !== $html ? '<div class="mnh-buttons">' . $html . '</div>' : '';
+	}
+
+	/**
+	 * Address of a button: a web address, or a phone number, e-mail or WhatsApp link.
+	 *
+	 * @param string $url Saved address.
+	 * @return string
+	 */
+	public static function href( $url ) {
+		$url = trim( (string) $url );
+		return '' !== $url ? $url : home_url( '/' );
+	}
+
+	/**
+	 * Social icons of a design.
+	 *
+	 * @param array $design Design.
+	 * @return string
+	 */
+	public static function social( $design ) {
+		$links = isset( $design['social'] ) ? (array) $design['social'] : array();
+		$html  = '';
+		foreach ( Manohara_Store::social_networks() as $key => $label ) {
+			if ( empty( $links[ $key ] ) ) {
+				continue;
+			}
+			$url   = (string) $links[ $key ];
+			$out   = 0 === strpos( $url, 'http' ) ? ' target="_blank" rel="noopener"' : '';
+			$html .= '<li><a class="mnh-social-link mnh-social-' . esc_attr( $key ) . '" href="' . esc_url( $url ) . '"' . $out . ' aria-label="' . esc_attr( $label ) . '">' . self::brand_icon( $key ) . '</a></li>';
+		}
+		return '' !== $html ? '<div class="mnh-social"><ul>' . $html . '</ul></div>' : '';
+	}
+
+	/**
+	 * Social network icon.
+	 *
+	 * @param string $key Network.
+	 * @return string SVG.
+	 */
+	private static function brand_icon( $key ) {
+		$fill   = array(
+			'facebook'  => '<path d="M13.5 21v-7.5H16l.4-3h-2.9V8.6c0-.9.3-1.5 1.5-1.5h1.5V4.4c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8v2.4H8.1v3h2.5V21z"/>',
+			'x'         => '<path d="M17.2 3.5h3l-6.5 7.4 7.6 9.6h-6l-4.6-6-5.4 6h-3l7-7.9L2 3.5h6.1l4.2 5.5zm-1 15.3h1.7L7.9 5.1H6.1z"/>',
+			'linkedin'  => '<path d="M4.5 9h3.3v11H4.5zM6.2 3.5a1.9 1.9 0 1 1 0 3.8 1.9 1.9 0 0 1 0-3.8M10 9h3.2v1.5c.5-.9 1.6-1.8 3.3-1.8 3.5 0 4.1 2.3 4.1 5.2V20h-3.3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V20H10z"/>',
+			'youtube'   => '<path fill-rule="evenodd" d="M21.6 7.2a2.7 2.7 0 0 0-1.9-1.9C18 4.8 12 4.8 12 4.8s-6 0-7.7.5a2.7 2.7 0 0 0-1.9 1.9C2 8.9 2 12 2 12s0 3.1.4 4.8a2.7 2.7 0 0 0 1.9 1.9c1.7.5 7.7.5 7.7.5s6 0 7.7-.5a2.7 2.7 0 0 0 1.9-1.9c.4-1.7.4-4.8.4-4.8s0-3.1-.4-4.8zM10 15.2V8.8l5.3 3.2z"/>',
+			'tiktok'    => '<path d="M16.6 3c.4 2.1 1.7 3.6 3.9 3.8v3.2c-1.5 0-2.8-.4-3.9-1.1v6.3a5.8 5.8 0 1 1-5.8-5.8c.3 0 .6 0 .9.1v3.3a2.6 2.6 0 1 0 1.7 2.4V3z"/>',
+			'pinterest' => '<path d="M12 2.5a9.5 9.5 0 0 0-3.5 18.3c0-.8 0-1.8.2-2.6l1.3-5.4s-.3-.6-.3-1.6c0-1.5.9-2.6 1.9-2.6.9 0 1.3.7 1.3 1.5 0 .9-.6 2.3-.9 3.5-.3 1.1.5 1.9 1.6 1.9 1.9 0 3.2-2.4 3.2-5.3 0-2.2-1.5-3.8-4.2-3.8a4.8 4.8 0 0 0-5 4.8c0 .9.3 1.5.7 2 .2.2.2.3.1.5l-.2.9c-.1.3-.3.4-.6.3-1.4-.6-2-2.1-2-3.8 0-2.8 2.4-6.2 7.1-6.2 3.8 0 6.3 2.8 6.3 5.7 0 3.9-2.2 6.8-5.4 6.8-1.1 0-2.1-.6-2.4-1.2l-.7 2.6c-.2.8-.7 1.7-1.1 2.3A9.5 9.5 0 1 0 12 2.5"/>',
+			'telegram'  => '<path d="M20.7 4.3 2.9 11.2c-1.2.5-1.2 1.2-.2 1.5l4.6 1.4 1.8 5.4c.2.6.4.8.9.8.4 0 .6-.2.9-.4l2.2-2.1 4.6 3.4c.8.5 1.4.2 1.6-.8l3-14.2c.3-1.2-.5-1.8-1.6-1.4zM9.8 14.5l-.4 3.6-1.4-4.4 9.5-6z"/>',
+		);
+		$stroke = array(
+			'instagram' => '<rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r=".6" fill="currentColor"/>',
+			'whatsapp'  => '<path d="M3.5 20.5l1.3-4.3A8.6 8.6 0 1 1 8 19.3z"/><path d="M9 8.3c-.4 2.9 3.2 6.6 6.4 6.3l.9-1.3-2-1.1-.9.8c-1-.4-2-1.4-2.4-2.4l.8-.9-1-2.1z" fill="currentColor" stroke="none"/>',
+			'email'     => '<rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/>',
+			'phone'     => '<path d="M5 4h3.5l1.5 4.5-2.2 1.4a11 11 0 0 0 4.3 4.3l1.4-2.2 4.5 1.5V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/>',
+		);
+		if ( isset( $fill[ $key ] ) ) {
+			return '<svg class="mnh-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="currentColor">' . $fill[ $key ] . '</svg>';
+		}
+		return '<svg class="mnh-icon mnh-icon-line" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' . ( isset( $stroke[ $key ] ) ? $stroke[ $key ] : '' ) . '</svg>';
 	}
 
 	/**
