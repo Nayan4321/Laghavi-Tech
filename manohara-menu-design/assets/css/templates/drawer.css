@@ -1,0 +1,17 @@
+/* Side drawer. */
+.mnh-t-drawer .mnh-panel{position:fixed;top:0;bottom:0;right:0;width:min(86vw,360px);display:flex;flex-direction:column;overflow-y:auto;transform:translateX(100%);transition:transform var(--mnh-dur) var(--mnh-ease),visibility 0s linear var(--mnh-dur);box-shadow:-20px 0 40px -20px rgba(0,0,0,.5)}
+.mnh-t-drawer.mnh-side-left .mnh-panel{right:auto;left:0;transform:translateX(-100%);box-shadow:20px 0 40px -20px rgba(0,0,0,.5)}
+body.admin-bar .mnh-t-drawer .mnh-panel{top:var(--wp-admin--admin-bar--height,0)}
+.mnh-t-drawer.mnh-open .mnh-panel{transform:none;transition:transform var(--mnh-dur) var(--mnh-ease)}
+.mnh-t-drawer .mnh-panel-head .mnh-logo{color:var(--mnh-text)}
+.mnh-t-drawer .mnh-scroller{padding:6px 12px 12px;flex:1}
+.mnh-t-drawer .mnh-list>li>.mnh-row{border-radius:min(var(--mnh-radius),12px);margin-bottom:var(--mnh-gap);transition:background-color var(--mnh-dur)}
+.mnh-t-drawer .mnh-list>li>.mnh-row:hover,.mnh-t-drawer .mnh-list>li.mnh-current>.mnh-row{background:var(--mnh-bubble)}
+.mnh-t-drawer .mnh-list .mnh-link{padding:11px 12px}
+.mnh.mnh-t-drawer .mnh-sub{padding:0 0 6px 14px}
+.mnh.mnh-t-drawer.mnh-submenu-drilldown .mnh-sub{padding:0}
+.mnh-t-drawer.mnh-submenu-drilldown .mnh-sub-wrap{padding:0 12px}
+.mnh-t-drawer .mnh-list>li{transform:translateX(16px)}
+.mnh-t-drawer.mnh-side-left .mnh-list>li{transform:translateX(-16px)}
+.mnh-t-drawer.mnh-open .mnh-list>li{transform:none}
+.mnh-t-drawer .mnh-buttons{margin-top:auto}

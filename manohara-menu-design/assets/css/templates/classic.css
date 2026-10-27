@@ -1,0 +1,7 @@
+/* Classic: animated underline. */
+.mnh-kind-bar.mnh-t-classic>.mnh-list{column-gap:calc(14px + var(--mnh-gap))}
+.mnh-t-classic>.mnh-list>li:not(.mnh-highlight)>.mnh-row>.mnh-link{position:relative;padding:12px 2px}
+.mnh-t-classic.mnh-hover-effect-underline>.mnh-list>li:not(.mnh-highlight)>.mnh-row>.mnh-link::after{content:"";position:absolute;left:0;right:0;bottom:6px;height:2px;border-radius:2px;background:var(--mnh-accent);transform:scaleX(0);transform-origin:right;transition:transform var(--mnh-dur) var(--mnh-ease)}
+.mnh-t-classic.mnh-hover-effect-underline>.mnh-list>li>.mnh-row>.mnh-link:hover::after,.mnh-t-classic.mnh-hover-effect-underline>.mnh-list>li.mnh-current>.mnh-row>.mnh-link::after,.mnh-t-classic.mnh-hover-effect-underline>.mnh-list>li.mnh-current-parent>.mnh-row>.mnh-link::after{transform:scaleX(1);transform-origin:left}
+.mnh-t-classic.mnh-hover-effect-background>.mnh-list>li:not(.mnh-highlight)>.mnh-row>.mnh-link{padding:9px 14px;border-radius:min(var(--mnh-radius),10px)}
+.mnh-t-classic.mnh-hover-effect-background>.mnh-list>li:not(.mnh-highlight)>.mnh-row>.mnh-link:hover,.mnh-t-classic.mnh-hover-effect-background>.mnh-list>li.mnh-current>.mnh-row>.mnh-link{background:var(--mnh-bubble)}

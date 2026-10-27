@@ -1,0 +1,17 @@
+/* Full-screen overlay. */
+.mnh-t-overlay .mnh-panel{position:fixed;inset:0;display:flex;flex-direction:column;overflow-y:auto;opacity:0;transform:scale(1.03);transition:opacity var(--mnh-dur) var(--mnh-ease),transform var(--mnh-dur) var(--mnh-ease),visibility 0s linear var(--mnh-dur)}
+body.admin-bar .mnh-t-overlay .mnh-panel{top:var(--wp-admin--admin-bar--height,0)}
+.mnh-t-overlay.mnh-open .mnh-panel{opacity:1;transform:none;transition:opacity var(--mnh-dur) var(--mnh-ease),transform var(--mnh-dur) var(--mnh-ease)}
+.mnh-t-overlay .mnh-panel-head .mnh-logo{color:var(--mnh-text)}
+.mnh-t-overlay .mnh-scroller{flex:1;padding:8px 24px 16px;min-height:50vh}
+.mnh-t-overlay .mnh-list>li>.mnh-row{margin-bottom:var(--mnh-gap)}
+.mnh-t-overlay .mnh-list .mnh-link{padding:10px 0;font-size:calc(var(--mnh-size) * 1.08)}
+.mnh-t-overlay .mnh-sub .mnh-link{font-size:var(--mnh-sub-size)}
+.mnh-t-overlay .mnh-sub-toggle{--mnh-b-color:var(--mnh-accent);font-size:20px;width:34px;height:34px}
+.mnh.mnh-t-overlay .mnh-sub{padding:0 0 8px 16px}
+.mnh.mnh-t-overlay.mnh-submenu-drilldown .mnh-sub{padding:0}
+.mnh-t-overlay .mnh-list>li{transform:translateX(-14px)}
+.mnh-t-overlay.mnh-open .mnh-list>li{transform:none}
+.mnh-t-overlay .mnh-buttons{padding:8px 24px 24px}
+.mnh-t-overlay .mnh-secondary{padding:16px 24px 28px}
+.mnh-t-overlay.mnh-submenu-drilldown .mnh-sub-wrap{padding:8px 24px}

@@ -1,0 +1,11 @@
+/* Vertical list: a card of stacked links. */
+.mnh-t-vertical{max-width:100%;background:var(--mnh-panel-bg);border-radius:min(var(--mnh-radius),16px);box-shadow:0 14px 34px -22px rgba(15,23,42,.45),0 0 0 1px rgba(15,23,42,.05);padding:6px 0}
+.mnh-t-vertical .mnh-list>li{border-bottom:1px solid var(--mnh-divider)}
+.mnh-t-vertical .mnh-list>li:last-child{border-bottom:0}
+.mnh-t-vertical .mnh-row{padding:0 10px 0 0}
+.mnh-t-vertical .mnh-link{flex:1;position:relative;padding:13px 20px;min-width:0}
+.mnh-t-vertical .mnh-list>li>.mnh-row>.mnh-link::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:0 3px 3px 0;background:var(--mnh-accent);transform:scaleY(0);transition:transform var(--mnh-dur) var(--mnh-ease)}
+.mnh-t-vertical .mnh-list>li>.mnh-row>.mnh-link:hover::before,.mnh-t-vertical .mnh-list>li.mnh-current>.mnh-row>.mnh-link::before{transform:scaleY(1)}
+.mnh.mnh-t-vertical .mnh-sub{padding:0 0 8px}
+.mnh-t-vertical .mnh-sub .mnh-link{padding:8px 20px 8px 34px}
+.mnh-t-vertical .mnh-sub-toggle{--mnh-b-color:var(--mnh-text)}

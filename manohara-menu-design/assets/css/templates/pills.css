@@ -1,0 +1,6 @@
+/* Pills: rounded buttons. */
+.mnh.mnh-t-pills>.mnh-list{padding:4px;border-radius:var(--mnh-radius);background:var(--mnh-panel-bg)}
+.mnh-t-pills>.mnh-list>li>.mnh-row>.mnh-link{padding:9px 18px;border-radius:var(--mnh-radius)}
+.mnh-t-pills>.mnh-list>li>.mnh-row>.mnh-link:hover{background:var(--mnh-bubble)}
+.mnh-t-pills>.mnh-list>li.mnh-current>.mnh-row>.mnh-link,.mnh-t-pills>.mnh-list>li.mnh-current-parent>.mnh-row>.mnh-link{background:var(--mnh-accent);color:var(--mnh-accent-text)}
+.mnh-t-pills>.mnh-list>li.mnh-has-sub>.mnh-row>.mnh-link{padding-inline-end:10px}

@@ -1,0 +1,15 @@
+/* Dropdown list: centred items with dividers. */
+.mnh-t-dropdown .mnh-panel{position:fixed;left:12px;right:12px;top:var(--mnh-top);max-height:calc(100vh - var(--mnh-top) - 12px);overflow-y:auto;border-radius:0 0 min(var(--mnh-radius),14px) min(var(--mnh-radius),14px);box-shadow:0 22px 40px -20px rgba(0,0,0,.4);opacity:0;transform:translateY(-10px);transition:opacity var(--mnh-dur) var(--mnh-ease),transform var(--mnh-dur) var(--mnh-ease),visibility 0s linear var(--mnh-dur)}
+.mnh-t-dropdown.mnh-with-bar .mnh-panel{position:absolute;top:100%;left:0;right:0;border-radius:0}
+.mnh-t-dropdown.mnh-open .mnh-panel{opacity:1;transform:none;transition:opacity var(--mnh-dur) var(--mnh-ease),transform var(--mnh-dur) var(--mnh-ease)}
+.mnh-t-dropdown .mnh-list>li{border-bottom:1px solid var(--mnh-divider);transform:none}
+.mnh-t-dropdown .mnh-row{justify-content:center;position:relative}
+.mnh-t-dropdown .mnh-list .mnh-link{flex:0 1 auto;justify-content:center;padding:14px 16px;text-align:center}
+.mnh-t-dropdown .mnh-sub-toggle{position:absolute;inset-inline-end:12px}
+.mnh-t-dropdown .mnh-sub-toggle .mnh-icon{transform:rotate(90deg)}
+.mnh-t-dropdown .mnh-sub-open>.mnh-row>.mnh-sub-toggle .mnh-icon{transform:rotate(-90deg)}
+.mnh.mnh-t-dropdown .mnh-sub{padding:0 0 10px}
+.mnh-t-dropdown .mnh-sub .mnh-link{padding:8px 16px}
+.mnh-t-dropdown .mnh-highlight{background:var(--mnh-accent);border-bottom:0}
+.mnh-t-dropdown .mnh-highlight>.mnh-row>.mnh-link{color:var(--mnh-accent-text);font-weight:700}
+.mnh-t-dropdown .mnh-buttons{padding:14px 16px}
