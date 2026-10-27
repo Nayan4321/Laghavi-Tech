@@ -331,8 +331,8 @@ class AARYE_Evidence {
 				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon-for-forms' ), (string) wp_parse_url( $ev['post_ref'], PHP_URL_PATH ), 'ok', __( 'Sent from a page of your website, as expected.', 'aarye-marketing-addon-for-forms' ) );
 			}
 			if ( null !== $ev['pages'] ) {
-				/* translators: %1$d: pages; %d: visits. */
-				$add( 'pages', __( 'Pages viewed', 'aarye-marketing-addon-for-forms' ), sprintf( _n( '%1$d page', '%1$d pages', (int) $ev['pages'], 'aarye-marketing-addon-for-forms' ), (int) $ev['pages'] ) . ' · ' . sprintf( _n( '%d visit', '%d visits', max( 1, (int) $e->visits ), 'aarye-marketing-addon-for-forms' ), max( 1, (int) $e->visits ) ) $e->visits ) ), 'info', (int) $ev['pages'] <= 1 ? __( 'Opened only the page with the form. Normal for ad landing pages; also typical of spam.', 'aarye-marketing-addon-for-forms' ) : __( 'Looked around the website before sending.', 'aarye-marketing-addon-for-forms' ) );
+				/* translators: %d: number of pages or visits. */
+				$add( 'pages', __( 'Pages viewed', 'aarye-marketing-addon-for-forms' ), sprintf( _n( '%d page', '%d pages', (int) $ev['pages'], 'aarye-marketing-addon-for-forms' ), (int) $ev['pages'] ) . ' · ' . sprintf( _n( '%d visit', '%d visits', max( 1, (int) $e->visits ), 'aarye-marketing-addon-for-forms' ), max( 1, (int) $e->visits ) ), 'info', (int) $ev['pages'] <= 1 ? __( 'Opened only the page with the form. Normal for ad landing pages; also typical of spam.', 'aarye-marketing-addon-for-forms' ) : __( 'Looked around the website before sending.', 'aarye-marketing-addon-for-forms' ) );
 			}
 			if ( ! empty( $ev['repeat'] ) ) {
 				/* translators: %d: number of entries. */
