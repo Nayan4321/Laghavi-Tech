@@ -656,7 +656,7 @@ class SLPP_Login_Design {
 	 */
 	private static function check( $key, $label ) {
 		printf(
-			'<label class="slp-check"><input type="checkbox" name="design[%1$s]" value="1" %2$s /> %3$s</label>',
+			'<label class="saralopa-check"><input type="checkbox" name="design[%1$s]" value="1" %2$s /> %3$s</label>',
 			esc_attr( $key ),
 			checked( 1, (int) self::get( $key ), false ),
 			esc_html( $label )
@@ -673,7 +673,7 @@ class SLPP_Login_Design {
 		$current = self::get( 'template' );
 		$login   = wp_login_url();
 		?>
-		<div class="wrap slp-admin slpp-design">
+		<div class="wrap saralopa-admin slpp-design">
 			<h1><?php esc_html_e( 'Login page design', 'sarala-login-page-pro' ); ?></h1>
 			<p class="description"><?php esc_html_e( 'Applies to the login, registration, forgot-password and reset-password screens (including your custom login address).', 'sarala-login-page-pro' ); ?></p>
 			<?php if ( ! empty( $_GET['saved'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended ?>
@@ -684,11 +684,11 @@ class SLPP_Login_Design {
 				<input type="hidden" name="action" value="slpp_login_design" />
 				<?php wp_nonce_field( 'slpp_login_design' ); ?>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<?php self::check( 'enabled', __( 'Use a custom design for the login page', 'sarala-login-page-pro' ) ); ?>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Template', 'sarala-login-page-pro' ); ?></h2>
 					<div class="slpp-templates">
 						<?php foreach ( self::templates() as $key => $template ) : ?>
@@ -705,7 +705,7 @@ class SLPP_Login_Design {
 					</div>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Logo and images', 'sarala-login-page-pro' ); ?></h2>
 					<table class="form-table" role="presentation">
 						<?php self::image_row( 'logo', __( 'Logo', 'sarala-login-page-pro' ), __( 'PNG or SVG with a transparent background works best. Without a logo, the site name is shown.', 'sarala-login-page-pro' ) ); ?>
@@ -723,7 +723,7 @@ class SLPP_Login_Design {
 					</table>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Colours and style', 'sarala-login-page-pro' ); ?></h2>
 					<p class="description"><?php esc_html_e( 'Leave a colour empty to use the template\'s own colour.', 'sarala-login-page-pro' ); ?></p>
 					<table class="form-table" role="presentation">
@@ -757,7 +757,7 @@ class SLPP_Login_Design {
 					</table>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Text', 'sarala-login-page-pro' ); ?></h2>
 					<p class="description"><?php esc_html_e( '{year} and {site} are replaced with the current year and your site name.', 'sarala-login-page-pro' ); ?></p>
 					<table class="form-table" role="presentation">
@@ -777,7 +777,7 @@ class SLPP_Login_Design {
 					</table>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Hide', 'sarala-login-page-pro' ); ?></h2>
 					<div class="slpp-grid">
 						<?php

@@ -13,7 +13,7 @@ defined( 'ABSPATH' ) || exit;
  * Every provider returns the same normalized profile:
  * id, email, email_verified, first_name, last_name, display_name.
  */
-class SLP_Providers {
+class SARALOPA_Providers {
 
 	/**
 	 * Tenant ID Microsoft uses for personal (outlook.com, hotmail.com) accounts.
@@ -83,7 +83,7 @@ class SLP_Providers {
 	 * @return array
 	 */
 	public static function config( $id ) {
-		$providers = SLP_Settings::get( 'providers' );
+		$providers = SARALOPA_Settings::get( 'providers' );
 		return isset( $providers[ $id ] ) ? $providers[ $id ] : array();
 	}
 
@@ -242,7 +242,7 @@ class SLP_Providers {
 				$profile = self::linkedin( $code );
 				break;
 			default:
-				return new WP_Error( 'slp_unknown_provider', 'Unknown provider.' );
+				return new WP_Error( 'saralopa_unknown_provider', 'Unknown provider.' );
 		}
 
 		if ( is_wp_error( $profile ) ) {
@@ -262,7 +262,7 @@ class SLP_Providers {
 		);
 
 		if ( '' === (string) $profile['id'] ) {
-			return new WP_Error( 'slp_no_id', 'The provider did not return a user ID.' );
+			return new WP_Error( 'saralopa_no_id', 'The provider did not return a user ID.' );
 		}
 
 		$profile['id']         = (string) $profile['id'];
@@ -320,7 +320,7 @@ class SLP_Providers {
 	 * @return string
 	 */
 	private static function facebook_version() {
-		return apply_filters( 'slp_facebook_graph_version', 'v23.0' );
+		return apply_filters( 'saralopa_facebook_graph_version', 'v23.0' );
 	}
 
 	/**
@@ -457,7 +457,7 @@ class SLP_Providers {
 		}
 		$tenant = isset( $claims['tid'] ) ? $claims['tid'] : '';
 		if ( ! isset( $claims['iss'] ) || 'https://login.microsoftonline.com/' . $tenant . '/v2.0' !== $claims['iss'] ) {
-			return new WP_Error( 'slp_bad_token', 'Microsoft ID token has an unexpected issuer.' );
+			return new WP_Error( 'saralopa_bad_token', 'Microsoft ID token has an unexpected issuer.' );
 		}
 
 		$me = self::get_json( 'https://graph.microsoft.com/v1.0/me?$select=givenName,surname,displayName,mail,userPrincipalName', $token['access_token'] );
@@ -532,7 +532,7 @@ class SLP_Providers {
 	public static function apple_client_secret( $config ) {
 		$key = openssl_pkey_get_private( $config['private_key'] );
 		if ( false === $key ) {
-			return new WP_Error( 'slp_apple_key', 'The Apple private key could not be read.' );
+			return new WP_Error( 'saralopa_apple_key', 'The Apple private key could not be read.' );
 		}
 
 		$now    = time();
@@ -551,12 +551,12 @@ class SLP_Providers {
 		$input = self::base64url_encode( wp_json_encode( $header ) ) . '.' . self::base64url_encode( wp_json_encode( $claims ) );
 		$der   = '';
 		if ( ! openssl_sign( $input, $der, $key, OPENSSL_ALGO_SHA256 ) ) {
-			return new WP_Error( 'slp_apple_key', 'Signing the Apple client secret failed.' );
+			return new WP_Error( 'saralopa_apple_key', 'Signing the Apple client secret failed.' );
 		}
 
 		$signature = self::der_to_jose( $der );
 		if ( false === $signature ) {
-			return new WP_Error( 'slp_apple_key', 'Signing the Apple client secret failed.' );
+			return new WP_Error( 'saralopa_apple_key', 'Signing the Apple client secret failed.' );
 		}
 
 		return $input . '.' . self::base64url_encode( $signature );
@@ -608,28 +608,28 @@ class SLP_Providers {
 	 */
 	public static function id_token_claims( $token, $issuer, $audience ) {
 		if ( empty( $token['id_token'] ) || ! is_string( $token['id_token'] ) ) {
-			return new WP_Error( 'slp_bad_token', 'The provider did not return an ID token.' );
+			return new WP_Error( 'saralopa_bad_token', 'The provider did not return an ID token.' );
 		}
 
 		$parts = explode( '.', $token['id_token'] );
 		if ( 3 !== count( $parts ) ) {
-			return new WP_Error( 'slp_bad_token', 'The ID token is malformed.' );
+			return new WP_Error( 'saralopa_bad_token', 'The ID token is malformed.' );
 		}
 
 		$claims = json_decode( self::base64url_decode( $parts[1] ), true );
 		if ( ! is_array( $claims ) ) {
-			return new WP_Error( 'slp_bad_token', 'The ID token is malformed.' );
+			return new WP_Error( 'saralopa_bad_token', 'The ID token is malformed.' );
 		}
 
 		$aud = isset( $claims['aud'] ) ? (array) $claims['aud'] : array();
 		if ( ! in_array( $audience, $aud, true ) ) {
-			return new WP_Error( 'slp_bad_token', 'The ID token was issued for a different app.' );
+			return new WP_Error( 'saralopa_bad_token', 'The ID token was issued for a different app.' );
 		}
 		if ( '' !== $issuer && ( ! isset( $claims['iss'] ) || $issuer !== $claims['iss'] ) ) {
-			return new WP_Error( 'slp_bad_token', 'The ID token has an unexpected issuer.' );
+			return new WP_Error( 'saralopa_bad_token', 'The ID token has an unexpected issuer.' );
 		}
 		if ( ! isset( $claims['exp'] ) || (int) $claims['exp'] < time() - MINUTE_IN_SECONDS ) {
-			return new WP_Error( 'slp_bad_token', 'The ID token has expired.' );
+			return new WP_Error( 'saralopa_bad_token', 'The ID token has expired.' );
 		}
 
 		return $claims;
@@ -703,11 +703,11 @@ class SLP_Providers {
 					$detail = $data['error'];
 				}
 			}
-			return new WP_Error( 'slp_http', trim( sprintf( 'Provider request failed (HTTP %d). %s', $status, $detail ) ) );
+			return new WP_Error( 'saralopa_http', trim( sprintf( 'Provider request failed (HTTP %d). %s', $status, $detail ) ) );
 		}
 
 		if ( $want_token && ( empty( $data['access_token'] ) || ! is_string( $data['access_token'] ) ) ) {
-			return new WP_Error( 'slp_http', 'The provider did not return an access token.' );
+			return new WP_Error( 'saralopa_http', 'The provider did not return an access token.' );
 		}
 
 		return $data;

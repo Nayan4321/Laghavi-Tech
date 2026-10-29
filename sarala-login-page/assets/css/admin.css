@@ -1,9 +1,9 @@
 /* Sarala Login Page – settings page */
-.slp-admin {
+.saralopa-admin {
 	max-width: 900px;
 }
 
-.slp-admin__header {
+.saralopa-admin__header {
 	display: flex;
 	align-items: center;
 	gap: 20px;
@@ -13,23 +13,23 @@
 	border-radius: 8px;
 }
 
-.slp-admin__header h1 {
+.saralopa-admin__header h1 {
 	margin: 0 0 4px;
 	padding: 0;
 	color: #2f55a6;
 }
 
-.slp-admin__header p {
+.saralopa-admin__header p {
 	margin: 0;
 	color: #3c434a;
 }
 
-.slp-admin__logo {
+.saralopa-admin__logo {
 	width: 140px;
 	height: auto;
 }
 
-.slp-card {
+.saralopa-card {
 	margin: 0 0 16px;
 	padding: 16px 20px;
 	background: #fff;
@@ -37,20 +37,20 @@
 	border-radius: 8px;
 }
 
-.slp-card h2 {
+.saralopa-card h2 {
 	margin-top: 0;
 }
 
-.slp-check {
+.saralopa-check {
 	display: block;
 	margin: 8px 0;
 }
 
-.slp-section-title {
+.saralopa-section-title {
 	margin-top: 28px;
 }
 
-.slp-provider summary {
+.saralopa-provider summary {
 	display: flex;
 	align-items: center;
 	gap: 10px;
@@ -59,11 +59,11 @@
 	font-weight: 600;
 }
 
-.slp-provider[open] summary {
+.saralopa-provider[open] summary {
 	margin-bottom: 12px;
 }
 
-.slp-provider__icon {
+.saralopa-provider__icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -73,16 +73,16 @@
 	border: 1px solid #dcdcde;
 }
 
-.slp-provider__icon svg {
+.saralopa-provider__icon svg {
 	width: 18px;
 	height: 18px;
 }
 
-.slp-provider__icon.slp-button--facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
-.slp-provider__icon.slp-button--apple { background: #000; color: #fff; border-color: #000; }
-.slp-provider__icon.slp-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
+.saralopa-provider__icon.saralopa-button--facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
+.saralopa-provider__icon.saralopa-button--apple { background: #000; color: #fff; border-color: #000; }
+.saralopa-provider__icon.saralopa-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
 
-.slp-badge {
+.saralopa-badge {
 	margin-left: auto;
 	padding: 2px 10px;
 	border-radius: 999px;
@@ -92,67 +92,67 @@
 	font-weight: 500;
 }
 
-.slp-badge--on {
+.saralopa-badge--on {
 	background: #edfaef;
 	color: #007017;
 }
 
-.slp-badge--warn {
+.saralopa-badge--warn {
 	background: #fcf9e8;
 	color: #8a6116;
 }
 
-.slp-copy {
+.saralopa-copy {
 	display: flex;
 	gap: 6px;
 	flex-wrap: wrap;
 }
 
-.slp-copy input {
+.saralopa-copy input {
 	flex: 1 1 320px;
 	background: #f6f7f7;
 }
 
-.slp-steps {
+.saralopa-steps {
 	margin-top: 8px;
 	padding: 12px 16px;
 	background: #f6f7f7;
 	border-radius: 6px;
 }
 
-.slp-steps ol {
+.saralopa-steps ol {
 	margin: 8px 0 8px 20px;
 }
 
-.slp-admin__credit {
+.saralopa-admin__credit {
 	color: #646970;
 }
 
-.slp-slug {
+.saralopa-slug {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 4px;
 }
 
-.slp-slug__prefix {
+.saralopa-slug__prefix {
 	color: #50575e;
 	font-family: Consolas, Monaco, monospace;
 }
 
 /* Failed logins */
-.slp-log {
+.saralopa-log {
 	max-width: none;
 }
 
-.slp-stats {
+.saralopa-stats {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 12px;
 	margin: 16px 0;
 }
 
-.slp-stat {
+.saralopa-stat {
 	display: flex;
 	flex-direction: column;
 	gap: 4px;
@@ -163,34 +163,34 @@
 	border-radius: 8px;
 }
 
-.slp-stat--wide {
+.saralopa-stat--wide {
 	flex: 1 1 320px;
 }
 
-.slp-stat__value {
+.saralopa-stat__value {
 	font-size: 28px;
 	font-weight: 600;
 	line-height: 1.1;
 	color: #2f55a6;
 }
 
-.slp-stat__label {
+.saralopa-stat__label {
 	color: #50575e;
 }
 
-.slp-top {
+.saralopa-top {
 	margin: 4px 0 0 18px;
 }
 
-.slp-log__table td {
+.saralopa-log__table td {
 	vertical-align: top;
 }
 
-.slp-log__user {
+.saralopa-log__user {
 	font-size: 12px;
 }
 
-.slp-log__footer {
+.saralopa-log__footer {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;

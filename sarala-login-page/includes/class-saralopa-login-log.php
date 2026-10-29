@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Failed login log.
  */
-class SLP_Login_Log {
+class SARALOPA_Login_Log {
 
 	const DB_VERSION = '1';
 	const PAGE       = 'sarala-login-page-log';
@@ -21,21 +21,21 @@ class SLP_Login_Log {
 	 * Hook everything up.
 	 */
 	public static function init() {
-		if ( get_option( 'slp_log_db_version' ) !== self::DB_VERSION ) {
+		if ( get_option( 'saralopa_log_db_version' ) !== self::DB_VERSION ) {
 			self::install();
 		}
 
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'privacy_text' ) );
-		add_action( 'admin_post_slp_clear_log', array( __CLASS__, 'clear' ) );
-		add_action( 'slp_prune_log', array( __CLASS__, 'prune' ) );
-		if ( ! wp_next_scheduled( 'slp_prune_log' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'slp_prune_log' );
+		add_action( 'admin_post_saralopa_clear_log', array( __CLASS__, 'clear' ) );
+		add_action( 'saralopa_prune_log', array( __CLASS__, 'prune' ) );
+		if ( ! wp_next_scheduled( 'saralopa_prune_log' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'saralopa_prune_log' );
 		}
 
-		if ( SLP_Settings::get( 'log_failed_logins' ) ) {
+		if ( SARALOPA_Settings::get( 'log_failed_logins' ) ) {
 			add_action( 'wp_login_failed', array( __CLASS__, 'record_password_failure' ), 10, 2 );
-			add_action( 'slp_social_login_failed', array( __CLASS__, 'record_social_failure' ), 10, 3 );
+			add_action( 'saralopa_social_login_failed', array( __CLASS__, 'record_social_failure' ), 10, 3 );
 		}
 	}
 
@@ -46,7 +46,7 @@ class SLP_Login_Log {
 	 */
 	public static function table() {
 		global $wpdb;
-		return $wpdb->prefix . 'slp_login_log';
+		return $wpdb->prefix . 'saralopa_login_log';
 	}
 
 	/**
@@ -74,7 +74,7 @@ class SLP_Login_Log {
 				KEY ip (ip)
 			) {$charset};"
 		);
-		update_option( 'slp_log_db_version', self::DB_VERSION );
+		update_option( 'saralopa_log_db_version', self::DB_VERSION );
 	}
 
 	/**
@@ -171,7 +171,7 @@ class SLP_Login_Log {
 			'forwarded'  => 'HTTP_X_FORWARDED_FOR',
 			'real_ip'    => 'HTTP_X_REAL_IP',
 		);
-		$source  = SLP_Settings::get( 'ip_source' );
+		$source  = SARALOPA_Settings::get( 'ip_source' );
 		$ip      = '';
 
 		if ( isset( $headers[ $source ], $_SERVER[ $headers[ $source ] ] ) ) {
@@ -192,7 +192,7 @@ class SLP_Login_Log {
 	public static function prune() {
 		global $wpdb;
 		$table = self::table();
-		$days  = max( 1, (int) SLP_Settings::get( 'log_retention_days' ) );
+		$days  = max( 1, (int) SARALOPA_Settings::get( 'log_retention_days' ) );
 
 		// phpcs:disable WordPress.DB.DirectDatabaseQuery -- Custom log table.
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE created_at < %s', $table, gmdate( 'Y-m-d H:i:s', time() - $days * DAY_IN_SECONDS ) ) );
@@ -212,9 +212,17 @@ class SLP_Login_Log {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'sarala-login-page' ) );
 		}
-		check_admin_referer( 'slp_clear_log' );
+		check_admin_referer( 'saralopa_clear_log' );
 		$wpdb->query( $wpdb->prepare( 'DELETE FROM %i', self::table() ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Custom log table.
-		wp_safe_redirect( add_query_arg( array( 'cleared' => 1, '_slpnonce' => wp_create_nonce( 'slp_log' ) ), admin_url( 'admin.php?page=' . self::PAGE ) ) );
+		wp_safe_redirect(
+			add_query_arg(
+				array(
+					'cleared'        => 1,
+					'_saralopanonce' => wp_create_nonce( 'saralopa_log' ),
+				),
+				admin_url( 'admin.php?page=' . self::PAGE )
+			)
+		);
 		exit;
 	}
 
@@ -239,7 +247,7 @@ class SLP_Login_Log {
 	 */
 	public static function menu() {
 		add_submenu_page(
-			SLP_Settings::PAGE,
+			SARALOPA_Settings::PAGE,
 			__( 'Failed logins', 'sarala-login-page' ),
 			__( 'Failed logins', 'sarala-login-page' ),
 			'manage_options',
@@ -260,18 +268,18 @@ class SLP_Login_Log {
 		}
 
 		$scripts = array(
-			'curl'            => 'curl',
-			'wget'            => 'Wget',
-			'python'          => 'Python script',
-			'go-http-client'  => 'Go script',
-			'okhttp'          => 'OkHttp',
-			'java/'           => 'Java',
-			'libwww-perl'     => 'Perl script',
-			'wordpress/'      => 'WordPress',
-			'bot'             => 'Bot',
-			'spider'          => 'Bot',
-			'crawler'         => 'Bot',
-			'headlesschrome'  => 'Headless Chrome',
+			'curl'           => 'curl',
+			'wget'           => 'Wget',
+			'python'         => 'Python script',
+			'go-http-client' => 'Go script',
+			'okhttp'         => 'OkHttp',
+			'java/'          => 'Java',
+			'libwww-perl'    => 'Perl script',
+			'wordpress/'     => 'WordPress',
+			'bot'            => 'Bot',
+			'spider'         => 'Bot',
+			'crawler'        => 'Bot',
+			'headlesschrome' => 'Headless Chrome',
 		);
 		$lower   = strtolower( $ua );
 		foreach ( $scripts as $needle => $label ) {
@@ -301,16 +309,16 @@ class SLP_Login_Log {
 		}
 
 		$systems = array(
-			'iPhone'     => 'iPhone',
-			'iPad'       => 'iPad',
-			'Android'    => 'Android',
-			'Windows'    => 'Windows',
-			'Mac OS X'   => 'macOS',
-			'Macintosh'  => 'macOS',
-			'CrOS'       => 'ChromeOS',
-			'Linux'      => 'Linux',
+			'iPhone'    => 'iPhone',
+			'iPad'      => 'iPad',
+			'Android'   => 'Android',
+			'Windows'   => 'Windows',
+			'Mac OS X'  => 'macOS',
+			'Macintosh' => 'macOS',
+			'CrOS'      => 'ChromeOS',
+			'Linux'     => 'Linux',
 		);
-		$os       = '';
+		$os      = '';
 		foreach ( $systems as $needle => $label ) {
 			if ( false !== strpos( $ua, $needle ) ) {
 				$os = $label;
@@ -339,18 +347,18 @@ class SLP_Login_Log {
 	 */
 	public static function reason_label( $code ) {
 		$labels = array(
-			'incorrect_password'          => __( 'Wrong password', 'sarala-login-page' ),
-			'invalid_username'            => __( 'Unknown username', 'sarala-login-page' ),
-			'invalid_email'               => __( 'Unknown email', 'sarala-login-page' ),
-			'empty_username'              => __( 'Username left empty', 'sarala-login-page' ),
-			'empty_password'              => __( 'Password left empty', 'sarala-login-page' ),
-			'slp_captcha'                 => __( 'Wrong security answer', 'sarala-login-page' ),
-			'spammer_account'             => __( 'Account marked as spam', 'sarala-login-page' ),
-			'social_email_unverified'     => __( 'Social login: email not verified', 'sarala-login-page' ),
+			'incorrect_password'           => __( 'Wrong password', 'sarala-login-page' ),
+			'invalid_username'             => __( 'Unknown username', 'sarala-login-page' ),
+			'invalid_email'                => __( 'Unknown email', 'sarala-login-page' ),
+			'empty_username'               => __( 'Username left empty', 'sarala-login-page' ),
+			'empty_password'               => __( 'Password left empty', 'sarala-login-page' ),
+			'saralopa_captcha'             => __( 'Wrong security answer', 'sarala-login-page' ),
+			'spammer_account'              => __( 'Account marked as spam', 'sarala-login-page' ),
+			'social_email_unverified'      => __( 'Social login: email not verified', 'sarala-login-page' ),
 			'social_registration_disabled' => __( 'Social login: sign-ups off', 'sarala-login-page' ),
-			'social_no_email'             => __( 'Social login: no email shared', 'sarala-login-page' ),
-			'social_blocked'              => __( 'Social login: account blocked', 'sarala-login-page' ),
-			'social_failed'               => __( 'Social login: failed', 'sarala-login-page' ),
+			'social_no_email'              => __( 'Social login: no email shared', 'sarala-login-page' ),
+			'social_blocked'               => __( 'Social login: account blocked', 'sarala-login-page' ),
+			'social_failed'                => __( 'Social login: failed', 'sarala-login-page' ),
 		);
 		return isset( $labels[ $code ] ) ? $labels[ $code ] : $code;
 	}
@@ -363,7 +371,7 @@ class SLP_Login_Log {
 	 */
 	public static function source_label( $source ) {
 		if ( 0 === strpos( $source, 'social-' ) ) {
-			return SLP_Providers::label( substr( $source, 7 ) );
+			return SARALOPA_Providers::label( substr( $source, 7 ) );
 		}
 		$labels = array(
 			'wp-login'    => __( 'Login page', 'sarala-login-page' ),
@@ -384,7 +392,7 @@ class SLP_Login_Log {
 	 */
 	private static function fill_locations( $rows ) {
 		global $wpdb;
-		if ( ! SLP_Settings::get( 'geo_lookup' ) ) {
+		if ( ! SARALOPA_Settings::get( 'geo_lookup' ) ) {
 			return;
 		}
 
@@ -395,12 +403,12 @@ class SLP_Login_Log {
 			}
 		}
 
-		$token = (string) SLP_Settings::get( 'geo_token' );
+		$token = (string) SARALOPA_Settings::get( 'geo_token' );
 		foreach ( array_slice( array_keys( $ips ), 0, 15 ) as $ip ) {
 			if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
 				$location = __( 'Private network', 'sarala-login-page' );
 			} else {
-				$cached = get_transient( 'slp_geo_' . md5( $ip ) );
+				$cached = get_transient( 'saralopa_geo_' . md5( $ip ) );
 				if ( false !== $cached ) {
 					$location = $cached;
 				} else {
@@ -413,7 +421,7 @@ class SLP_Login_Log {
 					}
 					$parts    = array_filter( array( isset( $data['city'] ) ? $data['city'] : '', isset( $data['region'] ) ? $data['region'] : '', isset( $data['country'] ) ? $data['country'] : '' ) );
 					$location = sanitize_text_field( implode( ', ', array_unique( $parts ) ) );
-					set_transient( 'slp_geo_' . md5( $ip ), $location, WEEK_IN_SECONDS );
+					set_transient( 'saralopa_geo_' . md5( $ip ), $location, WEEK_IN_SECONDS );
 				}
 			}
 
@@ -455,8 +463,8 @@ class SLP_Login_Log {
 
 		$table = self::table();
 		// Filters and paging come from this screen's own links, which carry a nonce.
-		$nonce   = isset( $_GET['_slpnonce'] ) ? sanitize_key( wp_unslash( $_GET['_slpnonce'] ) ) : '';
-		$valid   = '' !== $nonce && wp_verify_nonce( $nonce, 'slp_log' );
+		$nonce   = isset( $_GET['_saralopanonce'] ) ? sanitize_key( wp_unslash( $_GET['_saralopanonce'] ) ) : '';
+		$valid   = '' !== $nonce && wp_verify_nonce( $nonce, 'saralopa_log' );
 		$paged   = $valid && isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		$ip      = $valid && isset( $_GET['ip'] ) ? sanitize_text_field( wp_unslash( $_GET['ip'] ) ) : '';
 		$ip      = filter_var( $ip, FILTER_VALIDATE_IP ) ? $ip : '';
@@ -479,35 +487,35 @@ class SLP_Login_Log {
 		self::fill_locations( $rows );
 		$pages    = max( 1, (int) ceil( $total / self::PER_PAGE ) );
 		$all_url  = admin_url( 'admin.php?page=' . self::PAGE );
-		$base_url = add_query_arg( '_slpnonce', wp_create_nonce( 'slp_log' ), $all_url );
+		$base_url = add_query_arg( '_saralopanonce', wp_create_nonce( 'saralopa_log' ), $all_url );
 		?>
-		<div class="wrap slp-admin slp-log">
+		<div class="wrap saralopa-admin saralopa-log">
 			<h1><?php esc_html_e( 'Failed logins', 'sarala-login-page' ); ?></h1>
 			<p class="description">
 				<?php
 				printf(
 					/* translators: %d: number of days. */
 					esc_html__( 'Every failed login attempt on this site, with where it came from. Entries are kept for %d days.', 'sarala-login-page' ),
-					(int) SLP_Settings::get( 'log_retention_days' )
+					(int) SARALOPA_Settings::get( 'log_retention_days' )
 				);
 				?>
-				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . SLP_Settings::PAGE . '#slp-log-settings' ) ); ?>"><?php esc_html_e( 'Log settings', 'sarala-login-page' ); ?></a>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . SARALOPA_Settings::PAGE . '#saralopa-log-settings' ) ); ?>"><?php esc_html_e( 'Log settings', 'sarala-login-page' ); ?></a>
 			</p>
 
 			<?php if ( $cleared ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'The log was cleared.', 'sarala-login-page' ); ?></p></div>
 			<?php endif; ?>
-			<?php if ( ! SLP_Settings::get( 'log_failed_logins' ) ) : ?>
+			<?php if ( ! SARALOPA_Settings::get( 'log_failed_logins' ) ) : ?>
 				<div class="notice notice-warning inline"><p><?php esc_html_e( 'Logging is turned off, so new failed logins are not being recorded.', 'sarala-login-page' ); ?></p></div>
 			<?php endif; ?>
 
-			<div class="slp-stats">
-				<div class="slp-stat"><span class="slp-stat__value"><?php echo esc_html( number_format_i18n( $day ) ); ?></span><span class="slp-stat__label"><?php esc_html_e( 'Last 24 hours', 'sarala-login-page' ); ?></span></div>
-				<div class="slp-stat"><span class="slp-stat__value"><?php echo esc_html( number_format_i18n( $week ) ); ?></span><span class="slp-stat__label"><?php esc_html_e( 'Last 7 days', 'sarala-login-page' ); ?></span></div>
-				<div class="slp-stat slp-stat--wide">
-					<span class="slp-stat__label"><?php esc_html_e( 'Most attempts this week', 'sarala-login-page' ); ?></span>
+			<div class="saralopa-stats">
+				<div class="saralopa-stat"><span class="saralopa-stat__value"><?php echo esc_html( number_format_i18n( $day ) ); ?></span><span class="saralopa-stat__label"><?php esc_html_e( 'Last 24 hours', 'sarala-login-page' ); ?></span></div>
+				<div class="saralopa-stat"><span class="saralopa-stat__value"><?php echo esc_html( number_format_i18n( $week ) ); ?></span><span class="saralopa-stat__label"><?php esc_html_e( 'Last 7 days', 'sarala-login-page' ); ?></span></div>
+				<div class="saralopa-stat saralopa-stat--wide">
+					<span class="saralopa-stat__label"><?php esc_html_e( 'Most attempts this week', 'sarala-login-page' ); ?></span>
 					<?php if ( $top ) : ?>
-						<ol class="slp-top">
+						<ol class="saralopa-top">
 							<?php foreach ( $top as $item ) : ?>
 								<li>
 									<a href="<?php echo esc_url( add_query_arg( 'ip', $item->ip, $base_url ) ); ?>"><code><?php echo esc_html( $item->ip ); ?></code></a>
@@ -536,7 +544,7 @@ class SLP_Login_Log {
 				</p>
 			<?php endif; ?>
 
-			<table class="widefat striped slp-log__table">
+			<table class="widefat striped saralopa-log__table">
 				<thead>
 					<tr>
 						<th scope="col"><?php esc_html_e( 'Time', 'sarala-login-page' ); ?></th>
@@ -569,7 +577,7 @@ class SLP_Login_Log {
 							<td>
 								<?php echo esc_html( '' !== $row->username ? $row->username : '—' ); ?>
 								<?php if ( $row->user_id && get_userdata( $row->user_id ) ) : ?>
-									<br /><a href="<?php echo esc_url( get_edit_user_link( $row->user_id ) ); ?>" class="slp-log__user"><?php esc_html_e( 'Real account', 'sarala-login-page' ); ?></a>
+									<br /><a href="<?php echo esc_url( get_edit_user_link( $row->user_id ) ); ?>" class="saralopa-log__user"><?php esc_html_e( 'Real account', 'sarala-login-page' ); ?></a>
 								<?php endif; ?>
 							</td>
 							<td><?php echo esc_html( self::reason_label( $row->reason ) ); ?></td>
@@ -585,7 +593,7 @@ class SLP_Login_Log {
 				</tbody>
 			</table>
 
-			<div class="slp-log__footer">
+			<div class="saralopa-log__footer">
 				<?php if ( $pages > 1 ) : ?>
 					<div class="tablenav-pages">
 						<?php
@@ -604,14 +612,14 @@ class SLP_Login_Log {
 				<?php endif; ?>
 				<?php if ( $total ) : ?>
 					<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-						<input type="hidden" name="action" value="slp_clear_log" />
-						<?php wp_nonce_field( 'slp_clear_log' ); ?>
+						<input type="hidden" name="action" value="saralopa_clear_log" />
+						<?php wp_nonce_field( 'saralopa_clear_log' ); ?>
 						<button type="submit" class="button" onclick="return confirm( this.dataset.confirm );" data-confirm="<?php esc_attr_e( 'Delete every entry in the log?', 'sarala-login-page' ); ?>"><?php esc_html_e( 'Clear log', 'sarala-login-page' ); ?></button>
 					</form>
 				<?php endif; ?>
 			</div>
 
-			<?php if ( SLP_Settings::get( 'geo_lookup' ) ) : ?>
+			<?php if ( SARALOPA_Settings::get( 'geo_lookup' ) ) : ?>
 				<p class="description"><?php echo wp_kses_post( __( 'Location data by <a href="https://ipinfo.io/" target="_blank" rel="noopener noreferrer">IPinfo</a>. Locations are approximate.', 'sarala-login-page' ) ); ?></p>
 			<?php endif; ?>
 		</div>

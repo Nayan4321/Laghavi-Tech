@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Math security question.
  */
-class SLP_Captcha {
+class SARALOPA_Captcha {
 
 	/**
 	 * How long a question shown on a page stays valid.
@@ -35,12 +35,12 @@ class SLP_Captcha {
 	 * Hook everything up.
 	 */
 	public static function init() {
-		if ( SLP_Settings::get( 'captcha_login' ) ) {
+		if ( SARALOPA_Settings::get( 'captcha_login' ) ) {
 			add_action( 'login_form', array( __CLASS__, 'field_wp' ), 10 );
 			add_action( 'woocommerce_login_form', array( __CLASS__, 'field_wc' ) );
 			add_filter( 'authenticate', array( __CLASS__, 'check_login' ), 99 );
 		}
-		if ( SLP_Settings::get( 'captcha_register' ) ) {
+		if ( SARALOPA_Settings::get( 'captcha_register' ) ) {
 			add_action( 'register_form', array( __CLASS__, 'field_wp' ), 10 );
 			add_filter( 'registration_errors', array( __CLASS__, 'check_wp_register' ) );
 			add_action( 'woocommerce_register_form', array( __CLASS__, 'field_wc' ) );
@@ -73,7 +73,7 @@ class SLP_Captcha {
 	 * @return string
 	 */
 	private static function sign( $index, $time ) {
-		return substr( hash_hmac( 'sha256', 'slp_captcha|' . $index . '|' . $time, wp_salt( 'nonce' ) ), 0, 32 );
+		return substr( hash_hmac( 'sha256', 'saralopa_captcha|' . $index . '|' . $time, wp_salt( 'nonce' ) ), 0, 32 );
 	}
 
 	/**
@@ -110,12 +110,12 @@ class SLP_Captcha {
 	 * @return bool
 	 */
 	private static function posted_answer_is_correct() {
-		$nonce = isset( $_POST['slp_captcha_nonce'] ) ? sanitize_key( wp_unslash( $_POST['slp_captcha_nonce'] ) ) : '';
-		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'slp_captcha' ) ) {
+		$nonce = isset( $_POST['saralopa_captcha_nonce'] ) ? sanitize_key( wp_unslash( $_POST['saralopa_captcha_nonce'] ) ) : '';
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, 'saralopa_captcha' ) ) {
 			return false;
 		}
-		$token  = isset( $_POST['slp_captcha_token'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_token'] ) ) : '';
-		$answer = isset( $_POST['slp_captcha_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['slp_captcha_answer'] ) ) : '';
+		$token  = isset( $_POST['saralopa_captcha_token'] ) ? sanitize_text_field( wp_unslash( $_POST['saralopa_captcha_token'] ) ) : '';
+		$answer = isset( $_POST['saralopa_captcha_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['saralopa_captcha_answer'] ) ) : '';
 		return self::verify( $token, $answer );
 	}
 
@@ -138,7 +138,7 @@ class SLP_Captcha {
 	 */
 	private static function error() {
 		return new WP_Error(
-			'slp_captcha',
+			'saralopa_captcha',
 			'<strong>' . esc_html__( 'Error:', 'sarala-login-page' ) . '</strong> ' . esc_html__( 'Please answer the security question correctly.', 'sarala-login-page' )
 		);
 	}
@@ -149,11 +149,11 @@ class SLP_Captcha {
 	public static function field_wp() {
 		list( $text, $token ) = self::new_question();
 		?>
-		<p class="slp-captcha">
-			<label for="slp_captcha_answer"><?php esc_html_e( 'Security question:', 'sarala-login-page' ); ?> <?php echo esc_html( $text ); ?></label>
-			<input type="text" name="slp_captcha_answer" id="slp_captcha_answer" class="input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" size="5" required />
-			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
-			<?php wp_nonce_field( 'slp_captcha', 'slp_captcha_nonce', false ); ?>
+		<p class="saralopa-captcha">
+			<label for="saralopa_captcha_answer"><?php esc_html_e( 'Security question:', 'sarala-login-page' ); ?> <?php echo esc_html( $text ); ?></label>
+			<input type="text" name="saralopa_captcha_answer" id="saralopa_captcha_answer" class="input" inputmode="numeric" pattern="[0-9]*" autocomplete="off" size="5" required />
+			<input type="hidden" name="saralopa_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+			<?php wp_nonce_field( 'saralopa_captcha', 'saralopa_captcha_nonce', false ); ?>
 		</p>
 		<?php
 	}
@@ -163,13 +163,13 @@ class SLP_Captcha {
 	 */
 	public static function field_wc() {
 		list( $text, $token ) = self::new_question();
-		$id                   = 'slp_captcha_answer_' . wp_rand( 1000, 9999 );
+		$id                   = 'saralopa_captcha_answer_' . wp_rand( 1000, 9999 );
 		?>
-		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide slp-captcha">
+		<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide saralopa-captcha">
 			<label for="<?php echo esc_attr( $id ); ?>"><?php esc_html_e( 'Security question:', 'sarala-login-page' ); ?> <?php echo esc_html( $text ); ?>&nbsp;<span class="required" aria-hidden="true">*</span></label>
-			<input type="text" name="slp_captcha_answer" id="<?php echo esc_attr( $id ); ?>" class="woocommerce-Input input-text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-required="true" />
-			<input type="hidden" name="slp_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
-			<?php wp_nonce_field( 'slp_captcha', 'slp_captcha_nonce', false ); ?>
+			<input type="text" name="saralopa_captcha_answer" id="<?php echo esc_attr( $id ); ?>" class="woocommerce-Input input-text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" required aria-required="true" />
+			<input type="hidden" name="saralopa_captcha_token" value="<?php echo esc_attr( $token ); ?>" />
+			<?php wp_nonce_field( 'saralopa_captcha', 'saralopa_captcha_nonce', false ); ?>
 		</p>
 		<?php
 	}
@@ -206,7 +206,7 @@ class SLP_Captcha {
 	 */
 	public static function check_wp_register( $errors ) {
 		if ( ! self::posted_answer_is_correct() ) {
-			$errors->add( 'slp_captcha', self::error()->get_error_message() );
+			$errors->add( 'saralopa_captcha', self::error()->get_error_message() );
 		}
 		return $errors;
 	}
@@ -221,7 +221,7 @@ class SLP_Captcha {
 	 */
 	public static function check_wc_register( $errors ) {
 		if ( self::is_wc_form( 'register' ) && ! self::posted_answer_is_correct() ) {
-			$errors->add( 'slp_captcha', self::error()->get_error_message() );
+			$errors->add( 'saralopa_captcha', self::error()->get_error_message() );
 		}
 		return $errors;
 	}

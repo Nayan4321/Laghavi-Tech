@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Lets logged-in users connect and disconnect social accounts.
  */
-class SLP_Account {
+class SARALOPA_Account {
 
 	/**
 	 * Hook everything up.
@@ -33,9 +33,9 @@ class SLP_Account {
 	 */
 	public static function linked( $user_id ) {
 		$linked = array();
-		foreach ( array_keys( SLP_Providers::all() ) as $provider ) {
-			if ( get_user_meta( $user_id, SLP_Auth::meta_key( $provider ), true ) ) {
-				$linked[ $provider ] = (string) get_user_meta( $user_id, '_slp_' . $provider . '_email', true );
+		foreach ( array_keys( SARALOPA_Providers::all() ) as $provider ) {
+			if ( get_user_meta( $user_id, SARALOPA_Auth::meta_key( $provider ), true ) ) {
+				$linked[ $provider ] = (string) get_user_meta( $user_id, '_saralopa_' . $provider . '_email', true );
 			}
 		}
 		return $linked;
@@ -45,26 +45,26 @@ class SLP_Account {
 	 * Disconnect a provider when the user clicks "Disconnect".
 	 */
 	public static function maybe_unlink() {
-		if ( ! isset( $_GET['slp_unlink'], $_GET['_wpnonce'] ) ) {
+		if ( ! isset( $_GET['saralopa_unlink'], $_GET['_wpnonce'] ) ) {
 			return;
 		}
-		$provider = sanitize_key( wp_unslash( $_GET['slp_unlink'] ) );
+		$provider = sanitize_key( wp_unslash( $_GET['saralopa_unlink'] ) );
 		$user_id  = isset( $_GET['user_id'] ) ? absint( $_GET['user_id'] ) : get_current_user_id();
 		$nonce    = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
-		$valid    = wp_verify_nonce( $nonce, 'slp_unlink_' . $provider . '_' . $user_id );
-		$from     = $valid && isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), home_url( '/' ) ) : home_url( '/' );
+		$valid    = wp_verify_nonce( $nonce, 'saralopa_unlink_' . $provider . '_' . $user_id );
+		$from     = $valid && isset( $_GET['saralopa_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['saralopa_from'] ) ), home_url( '/' ) ) : home_url( '/' );
 
-		if ( ! $valid || ! is_user_logged_in() || ! SLP_Providers::exists( $provider ) ) {
-			wp_safe_redirect( SLP_Auth::with_message( $from, 'error', 'expired' ) );
+		if ( ! $valid || ! is_user_logged_in() || ! SARALOPA_Providers::exists( $provider ) ) {
+			wp_safe_redirect( SARALOPA_Auth::with_message( $from, 'error', 'expired' ) );
 			exit;
 		}
 		if ( get_current_user_id() !== $user_id && ! current_user_can( 'edit_user', $user_id ) ) {
-			wp_safe_redirect( SLP_Auth::with_message( $from, 'error', 'failed' ) );
+			wp_safe_redirect( SARALOPA_Auth::with_message( $from, 'error', 'failed' ) );
 			exit;
 		}
 
-		SLP_Auth::unlink( $user_id, $provider );
-		wp_safe_redirect( SLP_Auth::with_message( $from, 'notice', 'unlinked' ) );
+		SARALOPA_Auth::unlink( $user_id, $provider );
+		wp_safe_redirect( SARALOPA_Auth::with_message( $from, 'notice', 'unlinked' ) );
 		exit;
 	}
 
@@ -79,10 +79,10 @@ class SLP_Account {
 	private static function unlink_url( $provider, $user_id, $from ) {
 		return add_query_arg(
 			array(
-				'slp_unlink' => rawurlencode( $provider ),
-				'user_id'    => $user_id,
-				'slp_from'   => rawurlencode( $from ),
-				'_wpnonce'   => wp_create_nonce( 'slp_unlink_' . $provider . '_' . $user_id ),
+				'saralopa_unlink' => rawurlencode( $provider ),
+				'user_id'         => $user_id,
+				'saralopa_from'   => rawurlencode( $from ),
+				'_wpnonce'        => wp_create_nonce( 'saralopa_unlink_' . $provider . '_' . $user_id ),
 			),
 			home_url( '/' )
 		);
@@ -97,11 +97,11 @@ class SLP_Account {
 	 */
 	private static function rows( $user_id, $from ) {
 		$linked  = self::linked( $user_id );
-		$enabled = SLP_Providers::enabled();
+		$enabled = SARALOPA_Providers::enabled();
 		$own     = get_current_user_id() === $user_id;
 		$rows    = array();
 
-		foreach ( array_keys( SLP_Providers::all() ) as $provider ) {
+		foreach ( array_keys( SARALOPA_Providers::all() ) as $provider ) {
 			$connected = array_key_exists( $provider, $linked );
 			// Only the user can connect their own account; admins can disconnect.
 			if ( ! $connected && ( ! $own || ! in_array( $provider, $enabled, true ) ) ) {
@@ -109,10 +109,10 @@ class SLP_Account {
 			}
 			$rows[] = array(
 				'provider'  => $provider,
-				'label'     => SLP_Providers::label( $provider ),
+				'label'     => SARALOPA_Providers::label( $provider ),
 				'email'     => $connected ? $linked[ $provider ] : '',
 				'connected' => $connected,
-				'url'       => $connected ? self::unlink_url( $provider, $user_id, $from ) : SLP_Auth::link_url( $provider, $from ),
+				'url'       => $connected ? self::unlink_url( $provider, $user_id, $from ) : SARALOPA_Auth::link_url( $provider, $from ),
 			);
 		}
 		return $rows;
@@ -132,7 +132,7 @@ class SLP_Account {
 			return;
 		}
 
-		wp_enqueue_style( 'sarala-login-page', SLP_URL . 'assets/css/slp.css', array(), SLP_VERSION );
+		wp_enqueue_style( 'sarala-login-page', SARALOPA_URL . 'assets/css/saralopa.css', array(), SARALOPA_VERSION );
 		?>
 		<h2><?php esc_html_e( 'Connected accounts', 'sarala-login-page' ); ?></h2>
 		<p class="description"><?php esc_html_e( 'Log in with any connected account instead of a password.', 'sarala-login-page' ); ?></p>
@@ -140,7 +140,7 @@ class SLP_Account {
 			<?php foreach ( $rows as $row ) : ?>
 				<tr>
 					<th scope="row">
-						<span class="slp-inline-icon slp-button--<?php echo esc_attr( $row['provider'] ); ?>"><?php SLP_Buttons::output( SLP_Buttons::icon( $row['provider'] ) ); ?></span>
+						<span class="saralopa-inline-icon saralopa-button--<?php echo esc_attr( $row['provider'] ); ?>"><?php SARALOPA_Buttons::output( SARALOPA_Buttons::icon( $row['provider'] ) ); ?></span>
 						<?php echo esc_html( $row['label'] ); ?>
 					</th>
 					<td><?php self::row_action( $row ); ?></td>
@@ -162,14 +162,14 @@ class SLP_Account {
 
 		wp_enqueue_style( 'sarala-login-page' );
 		?>
-		<fieldset class="slp-connected">
+		<fieldset class="saralopa-connected">
 			<legend><?php esc_html_e( 'Connected accounts', 'sarala-login-page' ); ?></legend>
 			<p><?php esc_html_e( 'Log in with any connected account instead of a password.', 'sarala-login-page' ); ?></p>
-			<ul class="slp-connected__list">
+			<ul class="saralopa-connected__list">
 				<?php foreach ( $rows as $row ) : ?>
 					<li>
-						<span class="slp-connected__name">
-							<span class="slp-inline-icon slp-button--<?php echo esc_attr( $row['provider'] ); ?>"><?php SLP_Buttons::output( SLP_Buttons::icon( $row['provider'] ) ); ?></span>
+						<span class="saralopa-connected__name">
+							<span class="saralopa-inline-icon saralopa-button--<?php echo esc_attr( $row['provider'] ); ?>"><?php SARALOPA_Buttons::output( SARALOPA_Buttons::icon( $row['provider'] ) ); ?></span>
 							<?php echo esc_html( $row['label'] ); ?>
 						</span>
 						<span><?php self::row_action( $row ); ?></span>
@@ -194,7 +194,7 @@ class SLP_Account {
 				echo esc_html__( 'Connected', 'sarala-login-page' ) . ' &middot; ';
 			}
 			printf(
-				'<a href="%s" class="slp-disconnect">%s</a>',
+				'<a href="%s" class="saralopa-disconnect">%s</a>',
 				esc_url( $row['url'] ),
 				esc_html__( 'Disconnect', 'sarala-login-page' )
 			);
@@ -216,12 +216,12 @@ class SLP_Account {
 		if ( 'profile.php' !== $pagenow && 'user-edit.php' !== $pagenow ) {
 			return;
 		}
-		$error  = SLP_Auth::message( 'error' );
-		$notice = SLP_Auth::message( 'notice' );
+		$error  = SARALOPA_Auth::message( 'error' );
+		$notice = SARALOPA_Auth::message( 'notice' );
 		if ( '' !== $error ) {
-			printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::error_message( $error ) ) );
+			printf( '<div class="notice notice-error is-dismissible"><p>%s</p></div>', esc_html( SARALOPA_Auth::error_message( $error ) ) );
 		} elseif ( '' !== $notice ) {
-			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( SLP_Auth::notice_message( $notice ) ) );
+			printf( '<div class="notice notice-success is-dismissible"><p>%s</p></div>', esc_html( SARALOPA_Auth::notice_message( $notice ) ) );
 		}
 	}
 
@@ -232,7 +232,7 @@ class SLP_Account {
 	 * @return array
 	 */
 	public static function users_column( $columns ) {
-		$columns['slp_social'] = __( 'Social login', 'sarala-login-page' );
+		$columns['saralopa_social'] = __( 'Social login', 'sarala-login-page' );
 		return $columns;
 	}
 
@@ -245,10 +245,10 @@ class SLP_Account {
 	 * @return string
 	 */
 	public static function users_column_value( $output, $column, $user_id ) {
-		if ( 'slp_social' !== $column ) {
+		if ( 'saralopa_social' !== $column ) {
 			return $output;
 		}
-		$labels = array_map( array( 'SLP_Providers', 'label' ), array_keys( self::linked( $user_id ) ) );
+		$labels = array_map( array( 'SARALOPA_Providers', 'label' ), array_keys( self::linked( $user_id ) ) );
 		return $labels ? esc_html( implode( ', ', $labels ) ) : '&mdash;';
 	}
 }

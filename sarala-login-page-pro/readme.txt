@@ -4,7 +4,7 @@ Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,6 +78,9 @@ Yes. Click "Deactivate on this site" on the Pro license screen, then activate it
 Page caching plugins usually serve the same page to every logged-out visitor and skip the cache for logged-in users, so "logged-out visitors" rules and role rules both work. If your cache also serves logged-in users, exclude pages that use role-based blocks.
 
 == Changelog ==
+
+= 1.0.1 =
+* Works with Sarala Login Page 1.0.1 and later (its new code prefix). Update both plugins together.
 
 = 1.0.0 =
 * First release: super admin, activity log, hide & restrict, front-end visibility, login page designer.

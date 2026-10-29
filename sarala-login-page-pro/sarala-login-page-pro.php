@@ -3,7 +3,7 @@
  * Plugin Name:       Sarala Login Page Pro
  * Plugin URI:        https://laghavi.site/sarala-login-page/
  * Description:       Pro add-on for Sarala Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets, plus login page templates.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Requires Plugins:  sarala-login-page
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SLPP_VERSION', '1.0.0' );
+define( 'SLPP_VERSION', '1.0.1' );
 define( 'SLPP_FILE', __FILE__ );
 define( 'SLPP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SLPP_URL', plugin_dir_url( __FILE__ ) );
@@ -40,7 +40,7 @@ require_once SLPP_DIR . 'includes/class-slpp-login-design.php';
 add_action(
 	'plugins_loaded',
 	static function () {
-		if ( ! class_exists( 'SLP_Settings' ) ) {
+		if ( ! class_exists( 'SARALOPA_Settings' ) ) {
 			add_action( 'admin_notices', 'slpp_missing_free_plugin_notice' );
 			return;
 		}

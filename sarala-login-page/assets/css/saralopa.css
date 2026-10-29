@@ -1,10 +1,10 @@
 /* Sarala Login Page – front end */
-.slp-buttons {
+.saralopa-buttons {
 	margin: 16px 0;
 	clear: both;
 }
 
-.slp-divider {
+.saralopa-divider {
 	display: flex;
 	align-items: center;
 	gap: 12px;
@@ -14,20 +14,20 @@
 	text-align: center;
 }
 
-.slp-divider::before,
-.slp-divider::after {
+.saralopa-divider::before,
+.saralopa-divider::after {
 	content: "";
 	flex: 1;
 	border-top: 1px solid #dcdcde;
 }
 
-.slp-buttons__list {
+.saralopa-buttons__list {
 	display: flex;
 	flex-direction: column;
 	gap: 8px;
 }
 
-.slp-button {
+.saralopa-button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -47,67 +47,67 @@
 	transition: filter 0.15s ease, box-shadow 0.15s ease;
 }
 
-.slp-button:hover {
+.saralopa-button:hover {
 	filter: brightness(0.95);
 }
 
-.slp-button:focus-visible {
+.saralopa-button:focus-visible {
 	outline: 2px solid #2f55a6;
 	outline-offset: 2px;
 }
 
-.slp-button__icon {
+.saralopa-button__icon {
 	display: inline-flex;
 	flex: 0 0 20px;
 }
 
-.slp-button__icon svg {
+.saralopa-button__icon svg {
 	display: block;
 	width: 20px;
 	height: 20px;
 }
 
-.slp-button--google {
+.saralopa-button--google {
 	background: #fff;
 	border-color: #747775;
 	color: #1f1f1f !important;
 }
 
-.slp-button--facebook {
+.saralopa-button--facebook {
 	background: #1877f2;
 	color: #fff !important;
 }
 
-.slp-button--apple {
+.saralopa-button--apple {
 	background: #000;
 	color: #fff !important;
 }
 
-.slp-button--microsoft {
+.saralopa-button--microsoft {
 	background: #fff;
 	border-color: #8c8c8c;
 	color: #5e5e5e !important;
 }
 
-.slp-button--linkedin {
+.saralopa-button--linkedin {
 	background: #0a66c2;
 	color: #fff !important;
 }
 
 /* Icons-only layout */
-.slp-buttons--icons .slp-buttons__list {
+.saralopa-buttons--icons .saralopa-buttons__list {
 	flex-direction: row;
 	flex-wrap: wrap;
 	justify-content: center;
 }
 
-.slp-buttons--icons .slp-button {
+.saralopa-buttons--icons .saralopa-button {
 	width: 48px;
 	min-height: 48px;
 	padding: 0;
 }
 
-.slp-buttons--icons .slp-button__label {
+.saralopa-buttons--icons .saralopa-button__label {
 	position: absolute !important;
 	width: 1px;
 	height: 1px;
@@ -116,35 +116,35 @@
 	white-space: nowrap;
 }
 
-.slp-credit {
+.saralopa-credit {
 	margin: 10px 0 0;
 	font-size: 12px;
 	color: #646970;
 	text-align: center;
 }
 
-.slp-credit a {
+.saralopa-credit a {
 	color: #2f55a6;
 }
 
 /* wp-login.php */
-.login .slp-context-wp-login {
+.login .saralopa-context-wp-login {
 	margin: 16px 0 0;
 	padding-top: 4px;
 }
 
-.login .slp-captcha label {
+.login .saralopa-captcha label {
 	display: block;
 }
 
 /* WooCommerce checkout */
-.slp-context-checkout {
+.saralopa-context-checkout {
 	max-width: 420px;
 	margin: 0 auto 24px;
 }
 
 /* Messages shown by the shortcode */
-.slp-message {
+.saralopa-message {
 	margin: 0 0 12px;
 	padding: 10px 12px;
 	border-left: 4px solid #d63638;
@@ -152,7 +152,7 @@
 }
 
 /* Connected accounts */
-.slp-inline-icon {
+.saralopa-inline-icon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -163,18 +163,18 @@
 	vertical-align: middle;
 }
 
-.slp-inline-icon svg {
+.saralopa-inline-icon svg {
 	width: 16px;
 	height: 16px;
 }
 
-.slp-connected__list {
+.saralopa-connected__list {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 }
 
-.slp-connected__list li {
+.saralopa-connected__list li {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;

@@ -10,17 +10,17 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Social login flow.
  */
-class SLP_Auth {
+class SARALOPA_Auth {
 
 	/**
 	 * Cookie that ties a login attempt to the browser that started it.
 	 */
-	const BIND_COOKIE = 'slp_oauth';
+	const BIND_COOKIE = 'saralopa_oauth';
 
 	/**
 	 * Cookie carrying a message to show after a redirect (an error or notice code, never free text).
 	 */
-	const MESSAGE_COOKIE = 'slp_message';
+	const MESSAGE_COOKIE = 'saralopa_message';
 
 	/**
 	 * Message read from the cookie on this request: array( type, code ).
@@ -50,7 +50,7 @@ class SLP_Auth {
 	 * @return string
 	 */
 	public static function meta_key( $provider ) {
-		return '_slp_' . $provider . '_id';
+		return '_saralopa_' . $provider . '_id';
 	}
 
 	/**
@@ -67,7 +67,7 @@ class SLP_Auth {
 			$args['redirect_to'] = $redirect_to;
 		}
 		if ( '' !== $from ) {
-			$args['slp_from'] = $from;
+			$args['saralopa_from'] = $from;
 		}
 		return add_query_arg( array_map( 'rawurlencode', $args ), rest_url( 'sarala-login-page/v1/start/' . rawurlencode( $provider ) ) );
 	}
@@ -82,10 +82,10 @@ class SLP_Auth {
 	public static function link_url( $provider, $from ) {
 		return add_query_arg(
 			array(
-				'slp_login' => rawurlencode( $provider ),
-				'slp_mode'  => 'link',
-				'slp_from'  => rawurlencode( $from ),
-				'_wpnonce'  => wp_create_nonce( 'slp_link_' . $provider ),
+				'saralopa_login' => rawurlencode( $provider ),
+				'saralopa_mode'  => 'link',
+				'saralopa_from'  => rawurlencode( $from ),
+				'_wpnonce'       => wp_create_nonce( 'saralopa_link_' . $provider ),
 			),
 			home_url( '/' )
 		);
@@ -108,17 +108,17 @@ class SLP_Auth {
 	 * Start connecting a provider to the logged-in user's account (link from the profile or My Account).
 	 */
 	public static function maybe_start() {
-		if ( ! isset( $_GET['slp_login'], $_GET['_wpnonce'] ) ) {
+		if ( ! isset( $_GET['saralopa_login'], $_GET['_wpnonce'] ) ) {
 			return;
 		}
-		$provider = sanitize_key( wp_unslash( $_GET['slp_login'] ) );
+		$provider = sanitize_key( wp_unslash( $_GET['saralopa_login'] ) );
 		$nonce    = sanitize_text_field( wp_unslash( $_GET['_wpnonce'] ) );
-		if ( ! wp_verify_nonce( $nonce, 'slp_link_' . $provider ) || ! is_user_logged_in() ) {
+		if ( ! wp_verify_nonce( $nonce, 'saralopa_link_' . $provider ) || ! is_user_logged_in() ) {
 			self::redirect( self::with_message( self::default_link_page(), 'error', 'expired' ) );
 		}
-		$from = isset( $_GET['slp_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['slp_from'] ) ), '' ) : '';
+		$from = isset( $_GET['saralopa_from'] ) ? wp_validate_redirect( esc_url_raw( wp_unslash( $_GET['saralopa_from'] ) ), '' ) : '';
 		$from = '' !== $from ? $from : self::default_link_page();
-		if ( ! SLP_Providers::is_enabled( $provider ) ) {
+		if ( ! SARALOPA_Providers::is_enabled( $provider ) ) {
 			self::redirect( self::with_message( $from, 'error', 'provider_disabled' ) );
 		}
 		self::redirect_to_provider( $provider, 'link', get_current_user_id(), '', $from );
@@ -134,11 +134,11 @@ class SLP_Auth {
 	 */
 	public static function start( $request ) {
 		$provider = sanitize_key( $request['provider'] );
-		$from     = wp_validate_redirect( esc_url_raw( (string) $request->get_param( 'slp_from' ) ), '' );
+		$from     = wp_validate_redirect( esc_url_raw( (string) $request->get_param( 'saralopa_from' ) ), '' );
 		$redirect = wp_validate_redirect( esc_url_raw( (string) $request->get_param( 'redirect_to' ) ), '' );
 		$from     = '' !== $from ? $from : self::default_login_page();
 
-		if ( ! SLP_Providers::is_enabled( $provider ) ) {
+		if ( ! SARALOPA_Providers::is_enabled( $provider ) ) {
 			return self::redirect_response( self::with_message( $from, 'error', 'provider_disabled' ) );
 		}
 		$response = new WP_REST_Response( null, 302 );
@@ -162,7 +162,7 @@ class SLP_Auth {
 		$bind  = wp_generate_password( 40, false, false );
 
 		set_transient(
-			'slp_state_' . $state,
+			'saralopa_state_' . $state,
 			array(
 				'provider'    => $provider,
 				'mode'        => $mode,
@@ -174,7 +174,7 @@ class SLP_Auth {
 			self::STATE_TTL
 		);
 		self::set_bind_cookie( $bind, time() + self::STATE_TTL );
-		return SLP_Providers::authorize_url( $provider, $state );
+		return SARALOPA_Providers::authorize_url( $provider, $state );
 	}
 
 	/**
@@ -229,12 +229,12 @@ class SLP_Auth {
 	public static function callback( $request ) {
 		$provider = sanitize_key( $request['provider'] );
 		$state    = (string) $request->get_param( 'state' );
-		$data     = '' !== $state && preg_match( '/^[A-Za-z0-9]{40}$/', $state ) ? get_transient( 'slp_state_' . $state ) : false;
+		$data     = '' !== $state && preg_match( '/^[A-Za-z0-9]{40}$/', $state ) ? get_transient( 'saralopa_state_' . $state ) : false;
 		$bind     = isset( $_COOKIE[ self::BIND_COOKIE ] ) ? sanitize_text_field( wp_unslash( $_COOKIE[ self::BIND_COOKIE ] ) ) : '';
 
 		if ( false !== $data ) {
 			// One use only.
-			delete_transient( 'slp_state_' . $state );
+			delete_transient( 'saralopa_state_' . $state );
 		}
 		self::set_bind_cookie( '', time() - YEAR_IN_SECONDS );
 
@@ -251,7 +251,7 @@ class SLP_Auth {
 			return self::redirect_response( self::with_message( $from, 'error', 'cancelled' ) );
 		}
 
-		$profile = SLP_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
+		$profile = SARALOPA_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
 		if ( is_wp_error( $profile ) ) {
 			self::log( $provider, $profile );
 			return self::redirect_response( self::with_message( $from, 'error', 'failed' ) );
@@ -270,28 +270,28 @@ class SLP_Auth {
 			 * @param string $code     Error code.
 			 * @param string $email    Email shared by the provider.
 			 */
-			do_action( 'slp_social_login_failed', $provider, $user->get_error_code(), $profile['email'] );
+			do_action( 'saralopa_social_login_failed', $provider, $user->get_error_code(), $profile['email'] );
 			return self::redirect_response( self::with_message( $from, 'error', $user->get_error_code() ) );
 		}
 
 		/** This filter is documented in wp-includes/user.php. Lets plugins such as user-approval plugins block the login. */
-		$checked = apply_filters( 'wp_authenticate_user', $user, '' );
+		$checked = apply_filters( 'wp_authenticate_user', $user, '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook, run so other plugins see this login.
 		if ( is_wp_error( $checked ) ) {
 			/** This action is documented above. */
-			do_action( 'slp_social_login_failed', $provider, 'blocked', $profile['email'] );
+			do_action( 'saralopa_social_login_failed', $provider, 'blocked', $profile['email'] );
 			return self::redirect_response( self::with_message( $from, 'error', 'blocked' ) );
 		}
 
 		wp_set_current_user( $user->ID );
 		wp_set_auth_cookie( $user->ID, true, is_ssl() );
 		/** This action is documented in wp-includes/user.php. */
-		do_action( 'wp_login', $user->user_login, $user );
+		do_action( 'wp_login', $user->user_login, $user ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook, run so other plugins see this login.
 
 		$default  = self::default_redirect( $user );
 		$redirect = '' !== $data['redirect_to'] ? $data['redirect_to'] : $default;
 		/** This filter is documented in wp-login.php. */
-		$redirect = apply_filters( 'login_redirect', $redirect, $data['redirect_to'], $user );
-		$redirect = apply_filters( 'slp_login_redirect', $redirect, $user, $provider );
+		$redirect = apply_filters( 'login_redirect', $redirect, $data['redirect_to'], $user ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress core hook, run so other plugins see this login.
+		$redirect = apply_filters( 'saralopa_login_redirect', $redirect, $user, $provider );
 
 		return self::redirect_response( wp_validate_redirect( $redirect, $default ) );
 	}
@@ -347,7 +347,7 @@ class SLP_Auth {
 		}
 
 		// 3. New sign-up.
-		if ( ! SLP_Settings::get( 'allow_registration' ) ) {
+		if ( ! SARALOPA_Settings::get( 'allow_registration' ) ) {
 			return new WP_Error( 'registration_disabled' );
 		}
 		if ( '' === $profile['email'] ) {
@@ -361,7 +361,7 @@ class SLP_Auth {
 		}
 
 		self::save_link( $user_id, $provider, $profile );
-		update_user_meta( $user_id, '_slp_registered_with', $provider );
+		update_user_meta( $user_id, '_saralopa_registered_with', $provider );
 
 		/**
 		 * Fires after a new user signs up through a social provider.
@@ -370,7 +370,7 @@ class SLP_Auth {
 		 * @param string $provider Provider ID.
 		 * @param array  $profile  Normalized profile.
 		 */
-		do_action( 'slp_user_registered', $user_id, $provider, $profile );
+		do_action( 'saralopa_user_registered', $user_id, $provider, $profile );
 
 		return get_userdata( $user_id );
 	}
@@ -382,11 +382,11 @@ class SLP_Auth {
 	 * @return string
 	 */
 	public static function new_user_role() {
-		$role = slp_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' );
+		$role = saralopa_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' );
 		if ( ! $role || ! get_role( $role ) ) {
 			$role = 'subscriber';
 		}
-		return apply_filters( 'slp_new_user_role', $role );
+		return apply_filters( 'saralopa_new_user_role', $role );
 	}
 
 	/**
@@ -406,7 +406,7 @@ class SLP_Auth {
 			'display_name' => '' !== $profile['display_name'] ? $profile['display_name'] : $username,
 		);
 
-		if ( slp_is_woocommerce_active() && function_exists( 'wc_create_new_customer' ) ) {
+		if ( saralopa_is_woocommerce_active() && function_exists( 'wc_create_new_customer' ) ) {
 			// Lets WooCommerce send its "new account" email and fire its own customer hooks.
 			$user_id = wc_create_new_customer( $profile['email'], $username, $password, array_merge( $names, array( 'role' => $role ) ) );
 			if ( ! is_wp_error( $user_id ) ) {
@@ -430,7 +430,7 @@ class SLP_Auth {
 			)
 		);
 
-		if ( ! is_wp_error( $user_id ) && apply_filters( 'slp_notify_admin_of_new_user', true, $user_id ) ) {
+		if ( ! is_wp_error( $user_id ) && apply_filters( 'saralopa_notify_admin_of_new_user', true, $user_id ) ) {
 			wp_send_new_user_notifications( $user_id, 'admin' );
 		}
 
@@ -472,7 +472,7 @@ class SLP_Auth {
 	 */
 	private static function save_link( $user_id, $provider, $profile ) {
 		update_user_meta( $user_id, self::meta_key( $provider ), $profile['id'] );
-		update_user_meta( $user_id, '_slp_' . $provider . '_email', $profile['email'] );
+		update_user_meta( $user_id, '_saralopa_' . $provider . '_email', $profile['email'] );
 	}
 
 	/**
@@ -483,7 +483,7 @@ class SLP_Auth {
 	 */
 	public static function unlink( $user_id, $provider ) {
 		delete_user_meta( $user_id, self::meta_key( $provider ) );
-		delete_user_meta( $user_id, '_slp_' . $provider . '_email' );
+		delete_user_meta( $user_id, '_saralopa_' . $provider . '_email' );
 	}
 
 	/**
@@ -512,7 +512,7 @@ class SLP_Auth {
 	 * @return string
 	 */
 	private static function default_redirect( $user ) {
-		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) && ! user_can( $user, 'edit_posts' ) ) {
+		if ( saralopa_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) && ! user_can( $user, 'edit_posts' ) ) {
 			return wc_get_page_permalink( 'myaccount' );
 		}
 		return user_can( $user, 'edit_posts' ) ? admin_url() : home_url( '/' );
@@ -524,7 +524,7 @@ class SLP_Auth {
 	 * @return string
 	 */
 	private static function default_login_page() {
-		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) ) {
+		if ( saralopa_is_woocommerce_active() && function_exists( 'wc_get_page_permalink' ) ) {
 			return wc_get_page_permalink( 'myaccount' );
 		}
 		return wp_login_url();
@@ -536,7 +536,7 @@ class SLP_Auth {
 	 * @return string
 	 */
 	private static function default_link_page() {
-		if ( slp_is_woocommerce_active() && function_exists( 'wc_get_account_endpoint_url' ) ) {
+		if ( saralopa_is_woocommerce_active() && function_exists( 'wc_get_account_endpoint_url' ) ) {
 			return wc_get_account_endpoint_url( 'edit-account' );
 		}
 		return admin_url( 'profile.php' );

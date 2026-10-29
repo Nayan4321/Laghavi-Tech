@@ -1,11 +1,11 @@
 /* Sarala Login Page – copy buttons on the settings page. */
 ( function () {
-	document.querySelectorAll( '.slp-copy__button' ).forEach( function ( button ) {
+	document.querySelectorAll( '.saralopa-copy__button' ).forEach( function ( button ) {
 		button.addEventListener( 'click', function () {
 			var input = button.parentNode.querySelector( 'input' );
 			var label = button.textContent;
 			var done = function () {
-				button.textContent = window.slpAdmin ? window.slpAdmin.copied : label;
+				button.textContent = window.saralopaAdmin ? window.saralopaAdmin.copied : label;
 				setTimeout( function () {
 					button.textContent = label;
 				}, 1500 );

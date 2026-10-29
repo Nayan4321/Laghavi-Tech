@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Social login buttons.
  */
-class SLP_Buttons {
+class SARALOPA_Buttons {
 
 	/**
 	 * Hook everything up.
@@ -36,7 +36,7 @@ class SLP_Buttons {
 	 * Register the front-end stylesheet; it is enqueued only where buttons are shown.
 	 */
 	public static function register_styles() {
-		wp_register_style( 'sarala-login-page', SLP_URL . 'assets/css/slp.css', array(), SLP_VERSION );
+		wp_register_style( 'sarala-login-page', SARALOPA_URL . 'assets/css/saralopa.css', array(), SARALOPA_VERSION );
 	}
 
 	/**
@@ -45,14 +45,14 @@ class SLP_Buttons {
 	public static function enqueue_login_styles() {
 		self::register_styles();
 		wp_enqueue_style( 'sarala-login-page' );
-		wp_enqueue_script( 'sarala-login-page-login', SLP_URL . 'assets/js/login.js', array(), SLP_VERSION, true );
+		wp_enqueue_script( 'sarala-login-page-login', SARALOPA_URL . 'assets/js/login.js', array(), SARALOPA_VERSION, true );
 	}
 
 	/**
 	 * Buttons on the wp-login.php login form.
 	 */
 	public static function wp_login_form() {
-		if ( SLP_Settings::get( 'show_wp_login' ) ) {
+		if ( SARALOPA_Settings::get( 'show_wp_login' ) ) {
 			// wp-login.php has already read where to go after logging in.
 			$redirect = isset( $GLOBALS['redirect_to'] ) && is_string( $GLOBALS['redirect_to'] ) ? esc_url_raw( $GLOBALS['redirect_to'] ) : '';
 			$redirect = admin_url() === $redirect ? '' : $redirect;
@@ -64,7 +64,7 @@ class SLP_Buttons {
 	 * Buttons on the wp-login.php registration form.
 	 */
 	public static function wp_register_form() {
-		if ( SLP_Settings::get( 'show_wp_register' ) ) {
+		if ( SARALOPA_Settings::get( 'show_wp_register' ) ) {
 			self::output( self::render( '', 'wp-login' ) );
 		}
 	}
@@ -73,7 +73,7 @@ class SLP_Buttons {
 	 * Buttons on the WooCommerce login form (My Account and checkout).
 	 */
 	public static function wc_login_form() {
-		if ( SLP_Settings::get( 'show_wc_login' ) ) {
+		if ( SARALOPA_Settings::get( 'show_wc_login' ) ) {
 			$redirect = function_exists( 'is_checkout' ) && is_checkout() ? wc_get_checkout_url() : '';
 			self::output( self::render( $redirect, 'woocommerce' ) );
 		}
@@ -83,7 +83,7 @@ class SLP_Buttons {
 	 * Buttons on the WooCommerce registration form.
 	 */
 	public static function wc_register_form() {
-		if ( SLP_Settings::get( 'show_wc_register' ) ) {
+		if ( SARALOPA_Settings::get( 'show_wc_register' ) ) {
 			self::output( self::render( '', 'woocommerce' ) );
 		}
 	}
@@ -94,10 +94,10 @@ class SLP_Buttons {
 	 * They come back to the checkout afterwards; WooCommerce moves the guest's cart onto the new account.
 	 */
 	public static function wc_checkout() {
-		if ( ! SLP_Settings::get( 'show_wc_checkout' ) || is_user_logged_in() ) {
+		if ( ! SARALOPA_Settings::get( 'show_wc_checkout' ) || is_user_logged_in() ) {
 			return;
 		}
-		$heading = SLP_Settings::get( 'allow_registration' )
+		$heading = SARALOPA_Settings::get( 'allow_registration' )
 			? __( 'Create an account or log in with one click', 'sarala-login-page' )
 			: __( 'Returning customer? Log in with one click', 'sarala-login-page' );
 
@@ -127,9 +127,9 @@ class SLP_Buttons {
 		}
 
 		$html = '';
-		$code = SLP_Auth::message( 'error' );
-		if ( ! slp_is_woocommerce_active() && '' !== $code ) {
-			$html .= '<div class="slp-message slp-message--error" role="alert">' . esc_html( SLP_Auth::error_message( $code ) ) . '</div>';
+		$code = SARALOPA_Auth::message( 'error' );
+		if ( ! saralopa_is_woocommerce_active() && '' !== $code ) {
+			$html .= '<div class="saralopa-message saralopa-message--error" role="alert">' . esc_html( SARALOPA_Auth::error_message( $code ) ) . '</div>';
 		}
 
 		return $html . self::render( esc_url_raw( $atts['redirect_to'] ), 'shortcode', $atts['heading'] );
@@ -142,9 +142,9 @@ class SLP_Buttons {
 	 * @return WP_Error
 	 */
 	public static function wp_login_messages( $errors ) {
-		$code = SLP_Auth::message( 'error' );
+		$code = SARALOPA_Auth::message( 'error' );
 		if ( '' !== $code ) {
-			$errors->add( 'slp_error', esc_html( SLP_Auth::error_message( $code ) ) );
+			$errors->add( 'saralopa_error', esc_html( SARALOPA_Auth::error_message( $code ) ) );
 		}
 		return $errors;
 	}
@@ -153,19 +153,19 @@ class SLP_Buttons {
 	 * Show login errors and account notices as WooCommerce notices.
 	 */
 	public static function wc_messages() {
-		if ( ! slp_is_woocommerce_active() || ! function_exists( 'wc_add_notice' ) || ! function_exists( 'is_account_page' ) ) {
+		if ( ! saralopa_is_woocommerce_active() || ! function_exists( 'wc_add_notice' ) || ! function_exists( 'is_account_page' ) ) {
 			return;
 		}
 		if ( ! is_account_page() && ! is_checkout() ) {
 			return;
 		}
-		$error  = SLP_Auth::message( 'error' );
-		$notice = SLP_Auth::message( 'notice' );
+		$error  = SARALOPA_Auth::message( 'error' );
+		$notice = SARALOPA_Auth::message( 'notice' );
 		if ( '' !== $error ) {
-			wc_add_notice( SLP_Auth::error_message( $error ), 'error' );
+			wc_add_notice( SARALOPA_Auth::error_message( $error ), 'error' );
 		}
 		if ( '' !== $notice ) {
-			wc_add_notice( SLP_Auth::notice_message( $notice ), 'success' );
+			wc_add_notice( SARALOPA_Auth::notice_message( $notice ), 'success' );
 		}
 	}
 
@@ -176,8 +176,8 @@ class SLP_Buttons {
 	 * @return string
 	 */
 	public static function button_label( $provider ) {
-		$label = SLP_Providers::label( $provider );
-		switch ( SLP_Settings::get( 'button_text' ) ) {
+		$label = SARALOPA_Providers::label( $provider );
+		switch ( SARALOPA_Settings::get( 'button_text' ) ) {
 			case 'signin':
 				/* translators: %s: provider name, e.g. Google. */
 				return sprintf( __( 'Sign in with %s', 'sarala-login-page' ), $label );
@@ -199,7 +199,7 @@ class SLP_Buttons {
 	 * @return string HTML.
 	 */
 	public static function render( $redirect_to = '', $context = '', $heading = null ) {
-		$providers = SLP_Providers::enabled();
+		$providers = SARALOPA_Providers::enabled();
 		if ( ! $providers ) {
 			return '';
 		}
@@ -210,21 +210,21 @@ class SLP_Buttons {
 			$heading = __( 'or', 'sarala-login-page' );
 		}
 
-		$layout  = 'icons' === SLP_Settings::get( 'layout' ) ? 'icons' : 'full';
-		$from    = SLP_Auth::current_url();
-		$classes = 'slp-buttons slp-buttons--' . $layout . ( '' !== $context ? ' slp-context-' . str_replace( ' ', ' slp-context-', $context ) : '' );
+		$layout  = 'icons' === SARALOPA_Settings::get( 'layout' ) ? 'icons' : 'full';
+		$from    = SARALOPA_Auth::current_url();
+		$classes = 'saralopa-buttons saralopa-buttons--' . $layout . ( '' !== $context ? ' saralopa-context-' . str_replace( ' ', ' saralopa-context-', $context ) : '' );
 
 		$html = '<div class="' . esc_attr( $classes ) . '">';
 		if ( '' !== $heading ) {
-			$html .= '<p class="slp-divider"><span>' . esc_html( $heading ) . '</span></p>';
+			$html .= '<p class="saralopa-divider"><span>' . esc_html( $heading ) . '</span></p>';
 		}
-		$html .= '<div class="slp-buttons__list">';
+		$html .= '<div class="saralopa-buttons__list">';
 		foreach ( $providers as $provider ) {
 			$label = self::button_label( $provider );
 			$html .= sprintf(
-				'<a class="slp-button slp-button--%1$s" href="%2$s" rel="nofollow" aria-label="%3$s"%4$s><span class="slp-button__icon" aria-hidden="true">%5$s</span><span class="slp-button__label">%6$s</span></a>',
+				'<a class="saralopa-button saralopa-button--%1$s" href="%2$s" rel="nofollow" aria-label="%3$s"%4$s><span class="saralopa-button__icon" aria-hidden="true">%5$s</span><span class="saralopa-button__label">%6$s</span></a>',
 				esc_attr( $provider ),
-				esc_url( SLP_Auth::login_url( $provider, $redirect_to, $from ) ),
+				esc_url( SARALOPA_Auth::login_url( $provider, $redirect_to, $from ) ),
 				esc_attr( $label ),
 				'icons' === $layout ? ' title="' . esc_attr( $label ) . '"' : '',
 				self::icon( $provider ),
@@ -233,8 +233,8 @@ class SLP_Buttons {
 		}
 		$html .= '</div>';
 
-		if ( SLP_Settings::get( 'show_credit' ) ) {
-			$html .= '<p class="slp-credit">' . sprintf(
+		if ( SARALOPA_Settings::get( 'show_credit' ) ) {
+			$html .= '<p class="saralopa-credit">' . sprintf(
 				/* translators: %s: link to Laghavi Digital. */
 				esc_html__( 'Powered by %s', 'sarala-login-page' ),
 				'<a href="https://laghavi.site/" target="_blank" rel="noopener">Laghavi Digital</a>'

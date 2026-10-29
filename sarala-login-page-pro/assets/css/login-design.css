@@ -422,25 +422,25 @@ body.login.slpp-design {
 }
 
 /* Social buttons and math question (free plugin) */
-.slpp-design.login .slp-buttons {
+.slpp-design.login .saralopa-buttons {
 	margin: 20px 0 0;
 }
 
-.slpp-design.login .slp-button {
+.slpp-design.login .saralopa-button {
 	min-height: 46px;
 	border-radius: var(--slpp-radius);
 	font-family: inherit;
 }
 
-.slpp-design.login .slp-divider {
+.slpp-design.login .saralopa-divider {
 	color: var(--slpp-muted);
 }
 
-.slpp-design.login .slp-captcha label {
+.slpp-design.login .saralopa-captcha label {
 	display: block;
 }
 
-.slpp-design.login .slp-captcha .input {
+.slpp-design.login .saralopa-captcha .input {
 	max-width: 140px;
 }
 
@@ -448,7 +448,7 @@ body.login.slpp-design {
 .slpp-hide-remember .forgetmenot,
 .slpp-hide-lost a[href*="action=lostpassword"],
 .slpp-hide-back #backtoblog,
-.slpp-hide-social-divider .slp-divider {
+.slpp-hide-social-divider .saralopa-divider {
 	display: none !important;
 }
 
@@ -531,9 +531,9 @@ body.login.slpp-design.slpp-tpl-glass {
 	color: #111827;
 }
 
-.slpp-tpl-glass .slp-credit,
-.slpp-tpl-glass .slp-credit a,
-.slpp-tpl-glass .slp-divider {
+.slpp-tpl-glass .saralopa-credit,
+.slpp-tpl-glass .saralopa-credit a,
+.slpp-tpl-glass .saralopa-divider {
 	color: rgba(255, 255, 255, 0.85);
 }
 

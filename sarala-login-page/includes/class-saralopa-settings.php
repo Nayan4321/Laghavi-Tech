@@ -10,9 +10,9 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Plugin settings.
  */
-class SLP_Settings {
+class SARALOPA_Settings {
 
-	const OPTION = 'slp_settings';
+	const OPTION = 'saralopa_settings';
 	const PAGE   = 'sarala-login-page';
 
 	/**
@@ -30,9 +30,9 @@ class SLP_Settings {
 		add_action( 'admin_init', array( __CLASS__, 'register' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'update_option_' . self::OPTION, array( __CLASS__, 'flush_cache' ) );
-		add_action( 'update_option_' . self::OPTION, array( 'SLP_Login_Url', 'notify_change' ), 10, 2 );
+		add_action( 'update_option_' . self::OPTION, array( 'SARALOPA_Login_Url', 'notify_change' ), 10, 2 );
 		add_action( 'admin_notices', array( __CLASS__, 'credit_notice' ) );
-		add_action( 'admin_post_slp_credit', array( __CLASS__, 'credit_answer' ) );
+		add_action( 'admin_post_saralopa_credit', array( __CLASS__, 'credit_answer' ) );
 	}
 
 	/**
@@ -40,14 +40,14 @@ class SLP_Settings {
 	 * WordPress.org only allows front-end credit links the owner has agreed to.
 	 */
 	public static function credit_notice() {
-		if ( ! current_user_can( 'manage_options' ) || get_option( 'slp_credit_asked' ) || self::get( 'show_credit' ) ) {
+		if ( ! current_user_can( 'manage_options' ) || get_option( 'saralopa_credit_asked' ) || self::get( 'show_credit' ) ) {
 			return;
 		}
 		$screen = get_current_screen();
-		if ( ! $screen || ! in_array( $screen->id, array( 'dashboard', 'plugins', 'toplevel_page_' . self::PAGE ), true ) ) {
+		if ( ! $screen || 'toplevel_page_' . self::PAGE !== $screen->id ) {
 			return;
 		}
-		$url = wp_nonce_url( admin_url( 'admin-post.php?action=slp_credit' ), 'slp_credit' );
+		$url = wp_nonce_url( admin_url( 'admin-post.php?action=saralopa_credit' ), 'saralopa_credit' );
 		?>
 		<div class="notice notice-info">
 			<p>
@@ -69,9 +69,9 @@ class SLP_Settings {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'sarala-login-page' ) );
 		}
-		check_admin_referer( 'slp_credit' );
+		check_admin_referer( 'saralopa_credit' );
 
-		update_option( 'slp_credit_asked', 1, false );
+		update_option( 'saralopa_credit_asked', 1, false );
 		if ( isset( $_GET['answer'] ) && 'yes' === $_GET['answer'] ) {
 			$settings                = self::get();
 			$settings['show_credit'] = 1;
@@ -88,7 +88,7 @@ class SLP_Settings {
 	 */
 	public static function defaults() {
 		$providers = array();
-		foreach ( SLP_Providers::all() as $id => $provider ) {
+		foreach ( SARALOPA_Providers::all() as $id => $provider ) {
 			$providers[ $id ] = array( 'enabled' => 0 );
 			foreach ( $provider['fields'] as $field ) {
 				$providers[ $id ][ $field ] = '';
@@ -161,7 +161,7 @@ class SLP_Settings {
 			'manage_options',
 			self::PAGE,
 			array( __CLASS__, 'page' ),
-			SLP_URL . 'assets/images/menu-icon.png',
+			SARALOPA_URL . 'assets/images/menu-icon.png',
 			71
 		);
 		// Name the first submenu item "Settings" instead of repeating the menu title.
@@ -181,11 +181,11 @@ class SLP_Settings {
 		if ( false === strpos( $hook, self::PAGE ) ) {
 			return;
 		}
-		wp_enqueue_style( 'slp-admin', SLP_URL . 'assets/css/admin.css', array(), SLP_VERSION );
-		wp_enqueue_script( 'slp-admin', SLP_URL . 'assets/js/admin.js', array(), SLP_VERSION, true );
+		wp_enqueue_style( 'saralopa-admin', SARALOPA_URL . 'assets/css/admin.css', array(), SARALOPA_VERSION );
+		wp_enqueue_script( 'saralopa-admin', SARALOPA_URL . 'assets/js/admin.js', array(), SARALOPA_VERSION, true );
 		wp_localize_script(
-			'slp-admin',
-			'slpAdmin',
+			'saralopa-admin',
+			'saralopaAdmin',
 			array( 'copied' => __( 'Copied!', 'sarala-login-page' ) )
 		);
 	}
@@ -195,7 +195,7 @@ class SLP_Settings {
 	 */
 	public static function register() {
 		register_setting(
-			'slp_settings_group',
+			'saralopa_settings_group',
 			self::OPTION,
 			array(
 				'type'              => 'array',
@@ -227,7 +227,7 @@ class SLP_Settings {
 		$clean['ip_source']          = isset( $input['ip_source'] ) && in_array( $input['ip_source'], array( 'remote_addr', 'cloudflare', 'forwarded', 'real_ip' ), true ) ? $input['ip_source'] : 'remote_addr';
 		$clean['geo_token']          = isset( $input['geo_token'] ) && '' !== trim( $input['geo_token'] ) ? sanitize_text_field( $input['geo_token'] ) : ( isset( $old['geo_token'] ) ? $old['geo_token'] : '' );
 
-		$slug = SLP_Login_Url::validate( isset( $input['login_slug'] ) ? (string) $input['login_slug'] : '' );
+		$slug = SARALOPA_Login_Url::validate( isset( $input['login_slug'] ) ? (string) $input['login_slug'] : '' );
 		if ( is_wp_error( $slug ) ) {
 			add_settings_error( self::OPTION, $slug->get_error_code(), $slug->get_error_message() );
 			$slug = isset( $old['login_slug'] ) ? $old['login_slug'] : '';
@@ -253,13 +253,13 @@ class SLP_Settings {
 			}
 
 			if ( 'apple' === $id && '' !== $provider['private_key'] && false === openssl_pkey_get_private( $provider['private_key'] ) ) {
-				add_settings_error( self::OPTION, 'slp_apple_key', __( 'The Apple private key is not valid. Paste the full contents of the .p8 file, including the BEGIN and END lines.', 'sarala-login-page' ) );
+				add_settings_error( self::OPTION, 'saralopa_apple_key', __( 'The Apple private key is not valid. Paste the full contents of the .p8 file, including the BEGIN and END lines.', 'sarala-login-page' ) );
 				$provider['private_key'] = isset( $old['providers']['apple']['private_key'] ) ? $old['providers']['apple']['private_key'] : '';
 			}
 
 			if ( $provider['enabled'] ) {
 				$missing = false;
-				foreach ( SLP_Providers::all()[ $id ]['fields'] as $field ) {
+				foreach ( SARALOPA_Providers::all()[ $id ]['fields'] as $field ) {
 					if ( '' === $provider[ $field ] ) {
 						$missing = true;
 					}
@@ -267,9 +267,9 @@ class SLP_Settings {
 				if ( $missing ) {
 					add_settings_error(
 						self::OPTION,
-						'slp_missing_' . $id,
+						'saralopa_missing_' . $id,
 						/* translators: %s: provider name. */
-						sprintf( __( '%s is switched on but some keys are missing, so its button stays hidden until they are filled in.', 'sarala-login-page' ), SLP_Providers::label( $id ) ),
+						sprintf( __( '%s is switched on but some keys are missing, so its button stays hidden until they are filled in.', 'sarala-login-page' ), SARALOPA_Providers::label( $id ) ),
 						'warning'
 					);
 				}
@@ -354,7 +354,7 @@ class SLP_Settings {
 	 */
 	private static function checkbox( $key, $label ) {
 		printf(
-			'<label class="slp-check"><input type="checkbox" name="%1$s[%2$s]" value="1" %3$s /> %4$s</label>',
+			'<label class="saralopa-check"><input type="checkbox" name="%1$s[%2$s]" value="1" %3$s /> %4$s</label>',
 			esc_attr( self::OPTION ),
 			esc_attr( $key ),
 			checked( 1, (int) self::get( $key ), false ),
@@ -371,13 +371,13 @@ class SLP_Settings {
 		}
 
 		$settings = self::get();
-		$woo      = slp_is_woocommerce_active();
-		$role     = SLP_Auth::new_user_role();
+		$woo      = saralopa_is_woocommerce_active();
+		$role     = SARALOPA_Auth::new_user_role();
 		$roles    = wp_roles()->get_names();
 		?>
-		<div class="wrap slp-admin">
-			<div class="slp-admin__header">
-				<img src="<?php echo esc_url( SLP_URL . 'assets/images/laghavi-logo.png' ); ?>" alt="<?php esc_attr_e( 'Laghavi Digital', 'sarala-login-page' ); ?>" class="slp-admin__logo" />
+		<div class="wrap saralopa-admin">
+			<div class="saralopa-admin__header">
+				<img src="<?php echo esc_url( SARALOPA_URL . 'assets/images/laghavi-logo.png' ); ?>" alt="<?php esc_attr_e( 'Laghavi Digital', 'sarala-login-page' ); ?>" class="saralopa-admin__logo" />
 				<div>
 					<h1><?php esc_html_e( 'Sarala Login Page', 'sarala-login-page' ); ?></h1>
 					<p><?php esc_html_e( 'Sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn.', 'sarala-login-page' ); ?></p>
@@ -387,9 +387,9 @@ class SLP_Settings {
 			<?php settings_errors( self::OPTION ); ?>
 
 			<form method="post" action="options.php">
-				<?php settings_fields( 'slp_settings_group' ); ?>
+				<?php settings_fields( 'saralopa_settings_group' ); ?>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'New sign-ups', 'sarala-login-page' ); ?></h2>
 					<?php self::checkbox( 'allow_registration', __( 'Create a new account when someone logs in with a social account for the first time', 'sarala-login-page' ) ); ?>
 					<p class="description">
@@ -420,7 +420,7 @@ class SLP_Settings {
 					<p class="description"><?php esc_html_e( 'People who already have an account (same email) are logged straight into it and the social account is connected automatically, as long as the provider has verified that email.', 'sarala-login-page' ); ?></p>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Where to show the buttons', 'sarala-login-page' ); ?></h2>
 					<?php
 					self::checkbox( 'show_wp_login', __( 'WordPress login page', 'sarala-login-page' ) );
@@ -453,9 +453,9 @@ class SLP_Settings {
 
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><label for="slp-button-text"><?php esc_html_e( 'Button text', 'sarala-login-page' ); ?></label></th>
+							<th scope="row"><label for="saralopa-button-text"><?php esc_html_e( 'Button text', 'sarala-login-page' ); ?></label></th>
 							<td>
-								<select id="slp-button-text" name="<?php echo esc_attr( self::OPTION ); ?>[button_text]">
+								<select id="saralopa-button-text" name="<?php echo esc_attr( self::OPTION ); ?>[button_text]">
 									<option value="continue" <?php selected( $settings['button_text'], 'continue' ); ?>><?php esc_html_e( 'Continue with Google', 'sarala-login-page' ); ?></option>
 									<option value="signin" <?php selected( $settings['button_text'], 'signin' ); ?>><?php esc_html_e( 'Sign in with Google', 'sarala-login-page' ); ?></option>
 									<option value="login" <?php selected( $settings['button_text'], 'login' ); ?>><?php esc_html_e( 'Log in with Google', 'sarala-login-page' ); ?></option>
@@ -463,9 +463,9 @@ class SLP_Settings {
 							</td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="slp-layout"><?php esc_html_e( 'Layout', 'sarala-login-page' ); ?></label></th>
+							<th scope="row"><label for="saralopa-layout"><?php esc_html_e( 'Layout', 'sarala-login-page' ); ?></label></th>
 							<td>
-								<select id="slp-layout" name="<?php echo esc_attr( self::OPTION ); ?>[layout]">
+								<select id="saralopa-layout" name="<?php echo esc_attr( self::OPTION ); ?>[layout]">
 									<option value="full" <?php selected( $settings['layout'], 'full' ); ?>><?php esc_html_e( 'Full-width buttons with text', 'sarala-login-page' ); ?></option>
 									<option value="icons" <?php selected( $settings['layout'], 'icons' ); ?>><?php esc_html_e( 'Icons only, in a row', 'sarala-login-page' ); ?></option>
 								</select>
@@ -475,20 +475,20 @@ class SLP_Settings {
 					<?php self::checkbox( 'show_credit', __( 'Show a small "Powered by Laghavi Digital" link under the buttons', 'sarala-login-page' ) ); ?>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Login page URL', 'sarala-login-page' ); ?></h2>
 					<?php if ( is_multisite() ) : ?>
 						<p class="description"><?php esc_html_e( 'Changing the login URL is not available on multisite networks.', 'sarala-login-page' ); ?></p>
 					<?php else : ?>
 						<p class="description"><?php esc_html_e( 'Move the login page away from wp-login.php so bots cannot find it. Logged-out visitors who open wp-login.php or wp-admin are sent to your 404 page. Leave empty to keep the normal address.', 'sarala-login-page' ); ?></p>
-						<p class="slp-slug">
-							<label for="slp-login-slug" class="slp-slug__prefix"><?php echo esc_html( get_option( 'permalink_structure' ) ? trailingslashit( home_url() ) : trailingslashit( home_url() ) . '?' ); ?></label>
-							<input type="text" id="slp-login-slug" name="<?php echo esc_attr( self::OPTION ); ?>[login_slug]" value="<?php echo esc_attr( $settings['login_slug'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. my-login', 'sarala-login-page' ); ?>" autocomplete="off" />
+						<p class="saralopa-slug">
+							<label for="saralopa-login-slug" class="saralopa-slug__prefix"><?php echo esc_html( get_option( 'permalink_structure' ) ? trailingslashit( home_url() ) : trailingslashit( home_url() ) . '?' ); ?></label>
+							<input type="text" id="saralopa-login-slug" name="<?php echo esc_attr( self::OPTION ); ?>[login_slug]" value="<?php echo esc_attr( $settings['login_slug'] ); ?>" class="regular-text" placeholder="<?php esc_attr_e( 'e.g. my-login', 'sarala-login-page' ); ?>" autocomplete="off" />
 						</p>
 						<?php if ( '' !== $settings['login_slug'] ) : ?>
 							<div class="notice notice-info inline"><p>
 								<?php esc_html_e( 'Your login page is now:', 'sarala-login-page' ); ?>
-								<a href="<?php echo esc_url( SLP_Login_Url::url() ); ?>"><strong><?php echo esc_html( SLP_Login_Url::url() ); ?></strong></a>
+								<a href="<?php echo esc_url( SARALOPA_Login_Url::url() ); ?>"><strong><?php echo esc_html( SARALOPA_Login_Url::url() ); ?></strong></a>
 								&mdash; <?php esc_html_e( 'bookmark it. A copy was emailed to the site admin when it was set.', 'sarala-login-page' ); ?>
 							</p></div>
 						<?php endif; ?>
@@ -496,7 +496,7 @@ class SLP_Settings {
 					<?php endif; ?>
 				</div>
 
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Bot protection', 'sarala-login-page' ); ?></h2>
 					<p class="description"><?php esc_html_e( 'Asks a simple math question (for example "What is 7 + 9?"), picked at random from four, before a password login or registration goes through.', 'sarala-login-page' ); ?></p>
 					<?php
@@ -505,27 +505,27 @@ class SLP_Settings {
 					?>
 				</div>
 
-				<div class="slp-card" id="slp-log-settings">
+				<div class="saralopa-card" id="saralopa-log-settings">
 					<h2><?php esc_html_e( 'Failed login log', 'sarala-login-page' ); ?></h2>
 					<p class="description">
 						<?php
 						printf(
 							/* translators: %s: link to the Failed logins page. */
 							esc_html__( 'Records every failed login with the username tried, IP address, device and location. See them under %s.', 'sarala-login-page' ),
-							'<a href="' . esc_url( admin_url( 'admin.php?page=' . SLP_Login_Log::PAGE ) ) . '">' . esc_html__( 'Sarala Login > Failed logins', 'sarala-login-page' ) . '</a>'
+							'<a href="' . esc_url( admin_url( 'admin.php?page=' . SARALOPA_Login_Log::PAGE ) ) . '">' . esc_html__( 'Sarala Login > Failed logins', 'sarala-login-page' ) . '</a>'
 						);
 						?>
 					</p>
 					<?php self::checkbox( 'log_failed_logins', __( 'Record failed login attempts', 'sarala-login-page' ) ); ?>
 					<table class="form-table" role="presentation">
 						<tr>
-							<th scope="row"><label for="slp-retention"><?php esc_html_e( 'Keep entries for', 'sarala-login-page' ); ?></label></th>
-							<td><input type="number" id="slp-retention" min="1" max="365" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[log_retention_days]" value="<?php echo esc_attr( $settings['log_retention_days'] ); ?>" /> <?php esc_html_e( 'days', 'sarala-login-page' ); ?></td>
+							<th scope="row"><label for="saralopa-retention"><?php esc_html_e( 'Keep entries for', 'sarala-login-page' ); ?></label></th>
+							<td><input type="number" id="saralopa-retention" min="1" max="365" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[log_retention_days]" value="<?php echo esc_attr( $settings['log_retention_days'] ); ?>" /> <?php esc_html_e( 'days', 'sarala-login-page' ); ?></td>
 						</tr>
 						<tr>
-							<th scope="row"><label for="slp-ip-source"><?php esc_html_e( 'IP address source', 'sarala-login-page' ); ?></label></th>
+							<th scope="row"><label for="saralopa-ip-source"><?php esc_html_e( 'IP address source', 'sarala-login-page' ); ?></label></th>
 							<td>
-								<select id="slp-ip-source" name="<?php echo esc_attr( self::OPTION ); ?>[ip_source]">
+								<select id="saralopa-ip-source" name="<?php echo esc_attr( self::OPTION ); ?>[ip_source]">
 									<option value="remote_addr" <?php selected( $settings['ip_source'], 'remote_addr' ); ?>><?php esc_html_e( 'Direct connection (recommended)', 'sarala-login-page' ); ?></option>
 									<option value="cloudflare" <?php selected( $settings['ip_source'], 'cloudflare' ); ?>><?php esc_html_e( 'Cloudflare (CF-Connecting-IP)', 'sarala-login-page' ); ?></option>
 									<option value="forwarded" <?php selected( $settings['ip_source'], 'forwarded' ); ?>><?php esc_html_e( 'Proxy / load balancer (X-Forwarded-For)', 'sarala-login-page' ); ?></option>
@@ -539,38 +539,38 @@ class SLP_Settings {
 							<td>
 								<?php self::checkbox( 'geo_lookup', __( 'Look up city and country for each IP (uses the free IPinfo.io service)', 'sarala-login-page' ) ); ?>
 								<p class="description"><?php esc_html_e( 'IP addresses are sent to ipinfo.io only when you open the Failed logins page. Sites behind Cloudflare get the country without this.', 'sarala-login-page' ); ?></p>
-								<label for="slp-geo-token" class="slp-check"><?php esc_html_e( 'IPinfo token (optional, for higher limits)', 'sarala-login-page' ); ?></label>
-								<input type="password" id="slp-geo-token" name="<?php echo esc_attr( self::OPTION ); ?>[geo_token]" class="regular-text" autocomplete="new-password" placeholder="<?php echo '' !== $settings['geo_token'] ? esc_attr__( 'Saved. Leave empty to keep it.', 'sarala-login-page' ) : ''; ?>" />
+								<label for="saralopa-geo-token" class="saralopa-check"><?php esc_html_e( 'IPinfo token (optional, for higher limits)', 'sarala-login-page' ); ?></label>
+								<input type="password" id="saralopa-geo-token" name="<?php echo esc_attr( self::OPTION ); ?>[geo_token]" class="regular-text" autocomplete="new-password" placeholder="<?php echo '' !== $settings['geo_token'] ? esc_attr__( 'Saved. Leave empty to keep it.', 'sarala-login-page' ) : ''; ?>" />
 							</td>
 						</tr>
 					</table>
 				</div>
 
-				<h2 class="slp-section-title"><?php esc_html_e( 'Login providers', 'sarala-login-page' ); ?></h2>
+				<h2 class="saralopa-section-title"><?php esc_html_e( 'Login providers', 'sarala-login-page' ); ?></h2>
 				<?php if ( ! is_ssl() && 0 !== strpos( home_url(), 'https://' ) ) : ?>
 					<div class="notice notice-warning inline"><p><?php esc_html_e( 'Your site is not using HTTPS. Most providers (and Apple always) require HTTPS redirect URIs.', 'sarala-login-page' ); ?></p></div>
 				<?php endif; ?>
 
-				<?php foreach ( SLP_Providers::all() as $id => $provider ) : ?>
+				<?php foreach ( SARALOPA_Providers::all() as $id => $provider ) : ?>
 					<?php
 					$config = $settings['providers'][ $id ];
-					$ready  = SLP_Providers::is_configured( $id );
+					$ready  = SARALOPA_Providers::is_configured( $id );
 					$name   = self::OPTION . '[providers][' . $id . ']';
 					?>
-					<details class="slp-card slp-provider" <?php echo $config['enabled'] ? 'open' : ''; ?>>
+					<details class="saralopa-card saralopa-provider" <?php echo $config['enabled'] ? 'open' : ''; ?>>
 						<summary>
-							<span class="slp-provider__icon slp-button--<?php echo esc_attr( $id ); ?>"><?php SLP_Buttons::output( SLP_Buttons::icon( $id ) ); ?></span>
-							<span class="slp-provider__name"><?php echo esc_html( $provider['label'] ); ?></span>
+							<span class="saralopa-provider__icon saralopa-button--<?php echo esc_attr( $id ); ?>"><?php SARALOPA_Buttons::output( SARALOPA_Buttons::icon( $id ) ); ?></span>
+							<span class="saralopa-provider__name"><?php echo esc_html( $provider['label'] ); ?></span>
 							<?php if ( $config['enabled'] && $ready ) : ?>
-								<span class="slp-badge slp-badge--on"><?php esc_html_e( 'Active', 'sarala-login-page' ); ?></span>
+								<span class="saralopa-badge saralopa-badge--on"><?php esc_html_e( 'Active', 'sarala-login-page' ); ?></span>
 							<?php elseif ( $config['enabled'] ) : ?>
-								<span class="slp-badge slp-badge--warn"><?php esc_html_e( 'Keys missing', 'sarala-login-page' ); ?></span>
+								<span class="saralopa-badge saralopa-badge--warn"><?php esc_html_e( 'Keys missing', 'sarala-login-page' ); ?></span>
 							<?php else : ?>
-								<span class="slp-badge"><?php esc_html_e( 'Off', 'sarala-login-page' ); ?></span>
+								<span class="saralopa-badge"><?php esc_html_e( 'Off', 'sarala-login-page' ); ?></span>
 							<?php endif; ?>
 						</summary>
 
-						<label class="slp-check">
+						<label class="saralopa-check">
 							<input type="checkbox" name="<?php echo esc_attr( $name ); ?>[enabled]" value="1" <?php checked( 1, (int) $config['enabled'] ); ?> />
 							<?php
 							/* translators: %s: provider name. */
@@ -582,16 +582,16 @@ class SLP_Settings {
 							<tr>
 								<th scope="row"><?php echo 'apple' === $id ? esc_html__( 'Return URL', 'sarala-login-page' ) : esc_html__( 'Redirect URI', 'sarala-login-page' ); ?></th>
 								<td>
-									<div class="slp-copy">
-										<input type="text" class="regular-text code" readonly value="<?php echo esc_attr( SLP_Providers::callback_url( $id ) ); ?>" />
-										<button type="button" class="button slp-copy__button"><?php esc_html_e( 'Copy', 'sarala-login-page' ); ?></button>
+									<div class="saralopa-copy">
+										<input type="text" class="regular-text code" readonly value="<?php echo esc_attr( SARALOPA_Providers::callback_url( $id ) ); ?>" />
+										<button type="button" class="button saralopa-copy__button"><?php esc_html_e( 'Copy', 'sarala-login-page' ); ?></button>
 									</div>
 									<p class="description"><?php esc_html_e( 'Paste this exactly into the provider\'s app settings.', 'sarala-login-page' ); ?></p>
 								</td>
 							</tr>
 							<?php foreach ( $provider['fields'] as $field ) : ?>
 								<?php
-								$field_id  = 'slp-' . $id . '-' . $field;
+								$field_id  = 'saralopa-' . $id . '-' . $field;
 								$is_secret = in_array( $field, array( 'client_secret', 'private_key' ), true );
 								$has_value = '' !== $config[ $field ];
 								?>
@@ -610,7 +610,7 @@ class SLP_Settings {
 							<?php endforeach; ?>
 						</table>
 
-						<div class="slp-steps">
+						<div class="saralopa-steps">
 							<strong><?php esc_html_e( 'How to get these keys', 'sarala-login-page' ); ?></strong>
 							<ol>
 								<?php foreach ( self::setup_steps( $id ) as $step ) : ?>
@@ -631,7 +631,7 @@ class SLP_Settings {
 				<?php submit_button(); ?>
 			</form>
 
-			<p class="slp-admin__credit">
+			<p class="saralopa-admin__credit">
 				<?php
 				printf(
 					/* translators: %s: link to laghavi.site. */

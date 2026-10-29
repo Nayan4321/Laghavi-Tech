@@ -239,12 +239,12 @@ class SLPP_License {
 			'inactive' => __( 'This site is not activated for this key.', 'sarala-login-page-pro' ),
 		);
 		?>
-		<div class="wrap slp-admin">
+		<div class="wrap saralopa-admin">
 			<h1><?php esc_html_e( 'Sarala Login Page Pro license', 'sarala-login-page-pro' ); ?></h1>
 			<?php if ( '' !== $data['message'] ) : ?>
 				<div class="notice notice-info"><p><?php echo esc_html( $data['message'] ); ?></p></div>
 			<?php endif; ?>
-			<div class="slp-card">
+			<div class="saralopa-card">
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="slpp_license" />
 					<?php wp_nonce_field( 'slpp_license' ); ?>
@@ -300,7 +300,7 @@ class SLPP_License {
 			'package'      => isset( $info['package'] ) ? $info['package'] : '',
 			'tested'       => isset( $info['tested'] ) ? $info['tested'] : '',
 			'requires_php' => isset( $info['requires_php'] ) ? $info['requires_php'] : '',
-			'icons'        => array( '1x' => SLP_URL . 'assets/images/menu-icon-2x.png' ),
+			'icons'        => array( '1x' => SARALOPA_URL . 'assets/images/menu-icon-2x.png' ),
 		);
 	}
 

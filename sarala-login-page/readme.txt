@@ -4,7 +4,7 @@ Tags: social login, google login, woocommerce login, apple login, facebook login
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -68,7 +68,7 @@ No. Without WooCommerce, the buttons appear on the WordPress login and registrat
 
 = What role do new users get? =
 
-Customer when WooCommerce is active, otherwise the default role in Settings > General. You can change a user's role any time. Developers can use the `slp_new_user_role` filter.
+Customer when WooCommerce is active, otherwise the default role in Settings > General. You can change a user's role any time. Developers can use the `saralopa_new_user_role` filter.
 
 = Can I stop new accounts being created? =
 
@@ -84,7 +84,7 @@ Yes. Guests see the buttons at the top of the checkout page. After signing up or
 
 = Where do people go after logging in? =
 
-Back to the page they came from when it is known (for example checkout), otherwise My Account for WooCommerce customers, the dashboard for editors and admins, or the home page. Developers can change this with the `slp_login_redirect` filter.
+Back to the page they came from when it is known (for example checkout), otherwise My Account for WooCommerce customers, the dashboard for editors and admins, or the home page. Developers can change this with the `saralopa_login_redirect` filter.
 
 = Can I change the security questions? =
 
@@ -120,10 +120,16 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 
 == Changelog ==
 
+= 1.0.1 =
+* Code names now use the prefix "saralopa". Settings, connected accounts and the login log are moved over automatically.
+
 = 1.0.0 =
 * First release: Google, Facebook, Apple, Microsoft and LinkedIn login and sign-up, WooCommerce My Account and checkout support, connected accounts, and a math question on login and registration forms.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Code names now use the prefix "saralopa"; your settings and data are moved over automatically.
 
 = 1.0.0 =
 First release.

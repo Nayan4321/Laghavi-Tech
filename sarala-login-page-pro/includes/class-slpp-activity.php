@@ -237,7 +237,7 @@ class SLPP_Activity {
 				'object_type' => $object_type,
 				'object_id'   => (int) $object_id,
 				'title'       => mb_substr( wp_strip_all_tags( (string) $title ), 0, 255 ),
-				'ip'          => SLP_Login_Log::client_ip(),
+				'ip'          => SARALOPA_Login_Log::client_ip(),
 				'user_agent'  => substr( $user_agent, 0, 255 ),
 			),
 			array( '%s', '%d', '%s', '%s', '%d', '%s', '%s', '%s' )
@@ -797,7 +797,7 @@ class SLPP_Activity {
 			fputcsv( $out, array( 'time_utc', 'user_id', 'user', 'activity', 'ip', 'device' ) );
 			foreach ( $rows as $row ) {
 				$user                  = get_userdata( $row->user_id );
-				list( $device, $type ) = SLP_Login_Log::describe_device( $row->user_agent );
+				list( $device, $type ) = SARALOPA_Login_Log::describe_device( $row->user_agent );
 				$cells                 = array( $row->created_at, $row->user_id, $user ? $user->user_login : '', self::describe( $row->action, $row->title ), $row->ip, $device . ' (' . $type . ')' );
 				// Stop spreadsheet apps from running text that starts like a formula.
 				$cells = array_map(
@@ -901,12 +901,12 @@ class SLPP_Activity {
 			'slpp_activity'
 		);
 		?>
-		<div class="wrap slp-admin slp-log">
+		<div class="wrap saralopa-admin saralopa-log">
 			<h1><?php esc_html_e( 'User activity', 'sarala-login-page-pro' ); ?></h1>
 			<p class="description"><?php esc_html_e( 'What each logged-in user did on the site, newest first.', 'sarala-login-page-pro' ); ?></p>
 
 			<?php if ( $filtered ) : ?>
-				<div class="slp-card slpp-user-card">
+				<div class="saralopa-card slpp-user-card">
 					<?php echo get_avatar( $filtered->ID, 48 ); ?>
 					<div>
 						<h2><?php echo esc_html( $filtered->display_name ); ?> <span class="description">(<?php echo esc_html( $filtered->user_login . ' · ' . implode( ', ', $filtered->roles ) ); ?>)</span></h2>
@@ -914,7 +914,7 @@ class SLPP_Activity {
 					</div>
 				</div>
 			<?php elseif ( $recent ) : ?>
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Active in the last 24 hours', 'sarala-login-page-pro' ); ?></h2>
 					<ul class="slpp-recent">
 						<?php foreach ( $recent as $item ) : ?>
@@ -960,7 +960,7 @@ class SLPP_Activity {
 				<a href="<?php echo esc_url( $export ); ?>" class="button"><?php esc_html_e( 'Export CSV', 'sarala-login-page-pro' ); ?></a>
 			</form>
 
-			<table class="widefat striped slp-log__table">
+			<table class="widefat striped saralopa-log__table">
 				<thead>
 					<tr>
 						<th scope="col"><?php esc_html_e( 'Time', 'sarala-login-page-pro' ); ?></th>
@@ -978,7 +978,7 @@ class SLPP_Activity {
 						<?php
 						$user                  = get_userdata( $row->user_id );
 						$time                  = strtotime( $row->created_at . ' UTC' );
-						list( $device, $type ) = SLP_Login_Log::describe_device( $row->user_agent );
+						list( $device, $type ) = SARALOPA_Login_Log::describe_device( $row->user_agent );
 						$link                  = '';
 						if ( $row->object_id && in_array( $row->object_type, array( 'post', 'page', 'product' ), true ) && get_post( $row->object_id ) ) {
 							$link = get_edit_post_link( $row->object_id, 'raw' );
@@ -1035,12 +1035,12 @@ class SLPP_Activity {
 			<?php endif; ?>
 
 			<?php if ( SLPP_Owner::current_user_is_boss() ) : ?>
-				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="slp-card">
+				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="saralopa-card">
 					<input type="hidden" name="action" value="slpp_activity" />
 					<input type="hidden" name="todo" value="settings" />
 					<?php wp_nonce_field( 'slpp_activity' ); ?>
 					<h2><?php esc_html_e( 'Activity settings', 'sarala-login-page-pro' ); ?></h2>
-					<label class="slp-check"><input type="checkbox" name="page_views" value="1" <?php checked( 1, (int) $settings['page_views'] ); ?> /> <?php esc_html_e( 'Also record every page logged-in users open (front end and admin). Uses more database space.', 'sarala-login-page-pro' ); ?></label>
+					<label class="saralopa-check"><input type="checkbox" name="page_views" value="1" <?php checked( 1, (int) $settings['page_views'] ); ?> /> <?php esc_html_e( 'Also record every page logged-in users open (front end and admin). Uses more database space.', 'sarala-login-page-pro' ); ?></label>
 					<p>
 						<label><?php esc_html_e( 'Keep activity for', 'sarala-login-page-pro' ); ?> <input type="number" name="retention_days" min="1" max="3650" class="small-text" value="<?php echo esc_attr( $settings['retention_days'] ); ?>" /> <?php esc_html_e( 'days', 'sarala-login-page-pro' ); ?></label>
 					</p>

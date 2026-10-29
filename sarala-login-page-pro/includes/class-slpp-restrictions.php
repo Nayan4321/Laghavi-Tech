@@ -662,7 +662,7 @@ class SLPP_Restrictions {
 			)
 		);
 		?>
-		<div class="wrap slp-admin slpp-rules">
+		<div class="wrap saralopa-admin slpp-rules">
 			<h1><?php esc_html_e( 'Hide & restrict', 'sarala-login-page-pro' ); ?></h1>
 			<p class="description"><?php esc_html_e( 'Choose a role or a user, then tick what they should not see. A user gets everything hidden for any of their roles plus their own settings. You (the super admin) always see everything.', 'sarala-login-page-pro' ); ?></p>
 			<?php if ( $saved ) : ?>
@@ -690,7 +690,7 @@ class SLPP_Restrictions {
 			</form>
 
 			<?php if ( $rules ) : ?>
-				<div class="slp-card">
+				<div class="saralopa-card">
 					<h2><?php esc_html_e( 'Current restrictions', 'sarala-login-page-pro' ); ?></h2>
 					<ul class="slpp-summary">
 						<?php foreach ( $rules as $key => $cats ) : ?>
@@ -737,7 +737,7 @@ class SLPP_Restrictions {
 		$dashboard = get_option( 'slpp_snapshot_dashboard', array() );
 		$metaboxes = get_option( 'slpp_snapshot_metaboxes', array() );
 		?>
-		<details class="slp-card" open>
+		<details class="saralopa-card" open>
 			<summary><?php esc_html_e( 'Admin menus and submenus', 'sarala-login-page-pro' ); ?></summary>
 			<p class="description"><?php esc_html_e( 'Hidden screens also cannot be opened by typing their address.', 'sarala-login-page-pro' ); ?></p>
 			<div class="slpp-grid">
@@ -754,7 +754,7 @@ class SLPP_Restrictions {
 			</div>
 		</details>
 
-		<details class="slp-card">
+		<details class="saralopa-card">
 			<summary><?php esc_html_e( 'Admin bar tools', 'sarala-login-page-pro' ); ?></summary>
 			<p class="description"><?php esc_html_e( 'The black bar at the top of the screen, on the admin and on the site. Items appear here after you have seen them in your own admin bar.', 'sarala-login-page-pro' ); ?></p>
 			<div class="slpp-grid">
@@ -773,7 +773,7 @@ class SLPP_Restrictions {
 			</div>
 		</details>
 
-		<details class="slp-card">
+		<details class="saralopa-card">
 			<summary><?php esc_html_e( 'Dashboard widgets', 'sarala-login-page-pro' ); ?></summary>
 			<div class="slpp-grid">
 				<?php if ( ! $dashboard ) : ?>
@@ -785,7 +785,7 @@ class SLPP_Restrictions {
 			</div>
 		</details>
 
-		<details class="slp-card">
+		<details class="saralopa-card">
 			<summary><?php esc_html_e( 'Meta boxes and custom fields', 'sarala-login-page-pro' ); ?></summary>
 			<p class="description"><?php esc_html_e( 'Boxes on the post and page editing screens, from WordPress and from plugins (for example "Custom Fields" or an SEO box). Open the editor for each post type once and its boxes will appear here.', 'sarala-login-page-pro' ); ?></p>
 			<div class="slpp-grid">
@@ -808,7 +808,7 @@ class SLPP_Restrictions {
 			<?php endif; ?>
 		</details>
 
-		<details class="slp-card">
+		<details class="saralopa-card">
 			<summary><?php esc_html_e( 'Editor blocks', 'sarala-login-page-pro' ); ?></summary>
 			<p class="description"><?php esc_html_e( 'Hidden blocks disappear from the block inserter. Blocks already in a post keep working.', 'sarala-login-page-pro' ); ?></p>
 			<p><input type="search" class="slpp-block-search regular-text" placeholder="<?php esc_attr_e( 'Filter blocks…', 'sarala-login-page-pro' ); ?>" /></p>
@@ -836,7 +836,7 @@ class SLPP_Restrictions {
 			<?php endforeach; ?>
 		</details>
 
-		<details class="slp-card">
+		<details class="saralopa-card">
 			<summary><?php esc_html_e( 'Editor panels and features', 'sarala-login-page-pro' ); ?></summary>
 			<h3><?php esc_html_e( 'Sidebar panels', 'sarala-login-page-pro' ); ?></h3>
 			<div class="slpp-grid">

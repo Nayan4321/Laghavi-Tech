@@ -126,7 +126,7 @@ class SLPP_Owner {
 		}
 
 		// Nobody but the owner can switch off or delete this plugin and the free one.
-		$protected = array( plugin_basename( SLPP_FILE ), plugin_basename( SLP_FILE ) );
+		$protected = array( plugin_basename( SLPP_FILE ), plugin_basename( SARALOPA_FILE ) );
 		if ( 'deactivate_plugin' === $cap && ! empty( $args[0] ) && in_array( $args[0], $protected, true ) ) {
 			return array( 'do_not_allow' );
 		}
@@ -157,7 +157,7 @@ class SLPP_Owner {
 	 * @return array
 	 */
 	public static function plugin_links( $links, $file ) {
-		if ( self::owner_id() && ! self::is_owner() && in_array( $file, array( plugin_basename( SLPP_FILE ), plugin_basename( SLP_FILE ) ), true ) ) {
+		if ( self::owner_id() && ! self::is_owner() && in_array( $file, array( plugin_basename( SLPP_FILE ), plugin_basename( SARALOPA_FILE ) ), true ) ) {
 			unset( $links['deactivate'], $links['delete'] );
 		}
 		return $links;
@@ -198,7 +198,7 @@ class SLPP_Owner {
 	 */
 	public static function assets( $hook ) {
 		if ( false !== strpos( $hook, 'sarala-login-page' ) || 'users.php' === $hook ) {
-			wp_enqueue_style( 'slp-admin', SLP_URL . 'assets/css/admin.css', array(), SLP_VERSION );
+			wp_enqueue_style( 'saralopa-admin', SARALOPA_URL . 'assets/css/admin.css', array(), SARALOPA_VERSION );
 			wp_enqueue_style( 'slpp-admin', SLPP_URL . 'assets/css/pro-admin.css', array(), SLPP_VERSION );
 			wp_enqueue_script( 'slpp-admin', SLPP_URL . 'assets/js/pro-admin.js', array(), SLPP_VERSION, true );
 		}
@@ -271,7 +271,7 @@ class SLPP_Owner {
 			if ( $id && ! self::is_owner( $id ) ) {
 				$user = get_userdata( $id );
 				if ( $user ) {
-					$user->set_role( slp_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' ) );
+					$user->set_role( saralopa_is_woocommerce_active() ? 'customer' : get_option( 'default_role', 'subscriber' ) );
 				}
 			}
 		} elseif ( 'transfer' === $todo ) {
@@ -296,7 +296,7 @@ class SLPP_Owner {
 	 */
 	private static function checkbox( $key, $label, $settings ) {
 		printf(
-			'<label class="slp-check"><input type="checkbox" name="%1$s" value="1" %2$s /> %3$s</label>',
+			'<label class="saralopa-check"><input type="checkbox" name="%1$s" value="1" %2$s /> %3$s</label>',
 			esc_attr( $key ),
 			checked( 1, (int) $settings[ $key ], false ),
 			esc_html( $label )
@@ -320,7 +320,7 @@ class SLPP_Owner {
 		);
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Display only.
 		?>
-		<div class="wrap slp-admin">
+		<div class="wrap saralopa-admin">
 			<h1><?php esc_html_e( 'Super admin', 'sarala-login-page-pro' ); ?></h1>
 			<?php if ( ! empty( $_GET['saved'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Settings saved.', 'sarala-login-page-pro' ); ?></p></div>
@@ -333,7 +333,7 @@ class SLPP_Owner {
 			<?php endif; ?>
 			<?php // phpcs:enable ?>
 
-			<div class="slp-card">
+			<div class="saralopa-card">
 				<h2><?php esc_html_e( 'You are the super admin', 'sarala-login-page-pro' ); ?></h2>
 				<p class="description"><?php esc_html_e( 'Only you can add or promote administrators. Other administrators cannot edit, delete or demote you or each other, cannot remove Sarala Login Page, and cannot see this page.', 'sarala-login-page-pro' ); ?></p>
 				<?php if ( defined( 'SLPP_OWNER' ) ) : ?>
@@ -341,7 +341,7 @@ class SLPP_Owner {
 				<?php endif; ?>
 			</div>
 
-			<div class="slp-card">
+			<div class="saralopa-card">
 				<h2><?php esc_html_e( 'Administrators under you', 'sarala-login-page-pro' ); ?></h2>
 				<?php if ( $admins ) : ?>
 					<table class="widefat striped">
@@ -383,7 +383,7 @@ class SLPP_Owner {
 				<p class="description"><?php esc_html_e( 'If the email belongs to an existing user, they are promoted. Otherwise a new account is created and they get an email to set a password.', 'sarala-login-page-pro' ); ?></p>
 			</div>
 
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="slp-card">
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="saralopa-card">
 				<input type="hidden" name="action" value="slpp_owner" />
 				<input type="hidden" name="todo" value="settings" />
 				<?php wp_nonce_field( 'slpp_owner' ); ?>

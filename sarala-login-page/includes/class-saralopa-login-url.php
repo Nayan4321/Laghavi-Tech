@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Custom login URL.
  */
-class SLP_Login_Url {
+class SARALOPA_Login_Url {
 
 	/**
 	 * Whether this request is for the custom login URL.
@@ -44,7 +44,7 @@ class SLP_Login_Url {
 		if ( is_multisite() ) {
 			return '';
 		}
-		return (string) SLP_Settings::get( 'login_slug' );
+		return (string) SARALOPA_Settings::get( 'login_slug' );
 	}
 
 	/**
@@ -143,7 +143,7 @@ class SLP_Login_Url {
 	private static function block() {
 		nocache_headers();
 		$url = get_option( 'permalink_structure' ) ? home_url( user_trailingslashit( '404' ) ) : home_url( '/' );
-		wp_safe_redirect( apply_filters( 'slp_blocked_login_redirect', $url ) );
+		wp_safe_redirect( apply_filters( 'saralopa_blocked_login_redirect', $url ) );
 		exit;
 	}
 
@@ -206,11 +206,11 @@ class SLP_Login_Url {
 		}
 		if ( in_array( $slug, self::reserved_slugs(), true ) ) {
 			/* translators: %s: login slug. */
-			return new WP_Error( 'slp_slug_reserved', sprintf( __( '"%s" is used by WordPress itself. Please choose another login URL.', 'sarala-login-page' ), $slug ) );
+			return new WP_Error( 'saralopa_slug_reserved', sprintf( __( '"%s" is used by WordPress itself. Please choose another login URL.', 'sarala-login-page' ), $slug ) );
 		}
 		if ( get_page_by_path( $slug, OBJECT, array( 'page', 'post', 'product' ) ) ) {
 			/* translators: %s: login slug. */
-			return new WP_Error( 'slp_slug_taken', sprintf( __( 'A page or post already uses "%s". Please choose another login URL.', 'sarala-login-page' ), $slug ) );
+			return new WP_Error( 'saralopa_slug_taken', sprintf( __( 'A page or post already uses "%s". Please choose another login URL.', 'sarala-login-page' ), $slug ) );
 		}
 		return $slug;
 	}
