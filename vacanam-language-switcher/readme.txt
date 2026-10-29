@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -95,6 +95,8 @@ Yes. All Elementor data (sections, containers, widgets and their settings) is co
 
 Elementor templates can be translated: copy the header into Arabic and visitors of the Arabic pages see the Arabic header. Menus inside them are swapped for their Arabic copy automatically. Or keep one header and add the Language switcher widget to it.
 
+Set the display conditions (for example "Entire site") on the main-language header only. When you publish the Arabic copy, Elementor asks for conditions: remove them and click Save & Close. Vacanam shows the Arabic copy wherever the main header shows, on Arabic pages. Giving both headers the same conditions makes Elementor report a conflict.
+
 = Does it work with Yoast SEO and Rank Math? =
 
 Yes. Each translation has its own SEO title and description; canonical addresses, sitemaps and Open Graph follow the language; hreflang links are added by Vacanam.
@@ -139,10 +141,16 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 == Changelog ==
 
+= 1.0.1 =
+* Elementor Pro: copies of headers, footers and other theme templates no longer take over the original's display conditions, which made Elementor report a conflict. The Languages panel in Elementor explains how to set conditions.
+
 = 1.0.0 =
 * First release.
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+Copies of Elementor headers and footers no longer copy display conditions.
 
 = 1.0.0 =
 First release.

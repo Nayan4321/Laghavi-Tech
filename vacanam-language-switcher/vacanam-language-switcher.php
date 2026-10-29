@@ -3,7 +3,7 @@
  * Plugin Name:       Vacanam Language Switcher
  * Plugin URI:        https://laghavi.site/vacanam-language-switcher/
  * Description:       Make your website multilingual: languages with right-to-left support (Arabic, Hebrew, Persian, Urdu), translated pages, posts, categories, menus and texts, one-click copies of your pages with Elementor and block designs kept, language switchers for menus, widgets, blocks and Elementor, and SEO done right (hreflang, canonical, sitemaps, Yoast and Rank Math).
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VACANAM_VERSION', '1.0.0' );
+define( 'VACANAM_VERSION', '1.0.1' );
 define( 'VACANAM_FILE', __FILE__ );
 define( 'VACANAM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VACANAM_URL', plugin_dir_url( __FILE__ ) );

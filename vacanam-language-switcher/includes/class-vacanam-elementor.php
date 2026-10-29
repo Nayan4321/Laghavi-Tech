@@ -52,7 +52,12 @@ class Vacanam_Elementor {
 				$html .= '<li style="margin:6px 0">' . esc_html( $info['name'] ) . ' – <a target="_top" href="' . esc_url( Vacanam_Admin_Content::duplicate_url( $id, $slug ) ) . '">' . esc_html__( 'copy this page, then translate', 'vacanam-language-switcher' ) . '</a></li>';
 			}
 		}
-		$html .= '</ul><p style="font-style:italic">' . esc_html__( 'Save your changes before leaving this page.', 'vacanam-language-switcher' ) . '</p>';
+		$html .= '</ul>';
+		$type  = 'elementor_library' === $post->post_type ? (string) get_post_meta( $id, '_elementor_template_type', true ) : '';
+		if ( in_array( $type, array( 'header', 'footer', 'single', 'single-post', 'single-page', 'archive', 'search-results', 'error-404', 'popup', 'loop-item' ), true ) ) {
+			$html .= '<p style="margin-top:10px;padding:8px 10px;border-left:3px solid #93003c;background:rgba(147,0,60,.06)">' . esc_html__( 'Display conditions: set them on one template of this group only (normally the one in the main language) and leave the others without conditions. Vacanam shows the translation in the language of each page automatically. Giving every copy the same conditions makes Elementor report a conflict.', 'vacanam-language-switcher' ) . '</p>';
+		}
+		$html .= '<p style="font-style:italic">' . esc_html__( 'Save your changes before leaving this page.', 'vacanam-language-switcher' ) . '</p>';
 		$document->start_controls_section(
 			'vacanam_languages',
 			array(

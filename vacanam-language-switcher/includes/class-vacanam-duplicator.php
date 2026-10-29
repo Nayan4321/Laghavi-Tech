@@ -86,6 +86,7 @@ class Vacanam_Duplicator {
 			'_elementor_element_cache',
 			'_elementor_screenshot',
 			'_elementor_screenshot_failed',
+			'_elementor_conditions', // Elementor Pro display conditions: only the original keeps them, its translations follow it.
 			'_yoast_wpseo_canonical',
 			'_yoast_indexnow_last_ping',
 			'rank_math_canonical_url',
