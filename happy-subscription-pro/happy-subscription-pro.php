@@ -3,7 +3,7 @@
  * Plugin Name:          Happy Subscription Pro
  * Plugin URI:           https://laghavi.site/happy-subscription/
  * Description:          Pro add-on for Happy Subscription: license keys for variable products (1 site, 5 sites, unlimited at different prices), "Ask for price" products with contact page and WhatsApp buttons, and a currency switcher with exchange rates and per-country currencies.
- * Version:              1.0.0
+ * Version:              1.0.1
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     happy-subscription
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'HAPPYSUBPRO_VERSION', '1.0.0' );
+define( 'HAPPYSUBPRO_VERSION', '1.0.1' );
 define( 'HAPPYSUBPRO_FILE', __FILE__ );
 define( 'HAPPYSUBPRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'HAPPYSUBPRO_URL', plugin_dir_url( __FILE__ ) );

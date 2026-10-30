@@ -15,14 +15,30 @@ class HAPPYSUB_Account {
 	const ENDPOINT = 'subscriptions';
 
 	/**
+	 * Address of the My Account page (my-account/subscriptions/). With WooCommerce Subscriptions
+	 * active, which uses the same address, ours becomes my-account/happy-subscriptions/.
+	 *
+	 * @return string
+	 */
+	public static function endpoint() {
+		$slug = class_exists( 'WC_Subscriptions' ) ? 'happy-subscriptions' : self::ENDPOINT;
+		/**
+		 * My Account address of the subscriptions page.
+		 *
+		 * @param string $slug Endpoint.
+		 */
+		return sanitize_title( (string) apply_filters( 'happysub_account_endpoint', $slug ) );
+	}
+
+	/**
 	 * Hook everything up.
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'add_endpoint' ) );
 		add_filter( 'woocommerce_get_query_vars', array( __CLASS__, 'query_vars' ) );
 		add_filter( 'woocommerce_account_menu_items', array( __CLASS__, 'menu_items' ), 20 );
-		add_filter( 'woocommerce_endpoint_' . self::ENDPOINT . '_title', array( __CLASS__, 'title' ) );
-		add_action( 'woocommerce_account_' . self::ENDPOINT . '_endpoint', array( __CLASS__, 'content' ) );
+		add_filter( 'woocommerce_endpoint_' . self::endpoint() . '_title', array( __CLASS__, 'title' ) );
+		add_action( 'woocommerce_account_' . self::endpoint() . '_endpoint', array( __CLASS__, 'content' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'handle_action' ) );
 		add_filter( 'wc_get_template', array( __CLASS__, 'dashboard_template' ), 10, 2 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
@@ -33,7 +49,7 @@ class HAPPYSUB_Account {
 	 * Register /my-account/subscriptions/.
 	 */
 	public static function add_endpoint() {
-		add_rewrite_endpoint( self::ENDPOINT, EP_ROOT | EP_PAGES );
+		add_rewrite_endpoint( self::endpoint(), EP_ROOT | EP_PAGES );
 	}
 
 	/**
@@ -43,7 +59,7 @@ class HAPPYSUB_Account {
 	 * @return array
 	 */
 	public static function query_vars( $vars ) {
-		$vars[ self::ENDPOINT ] = self::ENDPOINT;
+		$vars[ self::endpoint() ] = self::endpoint();
 		return $vars;
 	}
 
@@ -58,11 +74,11 @@ class HAPPYSUB_Account {
 		foreach ( $items as $key => $label ) {
 			$new[ $key ] = $label;
 			if ( 'orders' === $key ) {
-				$new[ self::ENDPOINT ] = __( 'Subscriptions', 'happy-subscription' );
+				$new[ self::endpoint() ] = __( 'Subscriptions', 'happy-subscription' );
 			}
 		}
-		if ( ! isset( $new[ self::ENDPOINT ] ) ) {
-			$new = array_slice( $new, 0, 1, true ) + array( self::ENDPOINT => __( 'Subscriptions', 'happy-subscription' ) ) + array_slice( $new, 1, null, true );
+		if ( ! isset( $new[ self::endpoint() ] ) ) {
+			$new = array_slice( $new, 0, 1, true ) + array( self::endpoint() => __( 'Subscriptions', 'happy-subscription' ) ) + array_slice( $new, 1, null, true );
 		}
 		return $new;
 	}
@@ -129,7 +145,7 @@ class HAPPYSUB_Account {
 		check_admin_referer( 'happysub_action_' . $id );
 
 		$sub    = HAPPYSUB_Subscriptions::get( $id );
-		$return = wc_get_account_endpoint_url( self::ENDPOINT );
+		$return = wc_get_account_endpoint_url( self::endpoint() );
 		// Buttons shown on other account pages (for example Licenses) bring the customer back there.
 		if ( ! empty( $_POST['happysub_return'] ) ) {
 			$return = wp_validate_redirect( esc_url_raw( wp_unslash( $_POST['happysub_return'] ) ), $return );

@@ -3,7 +3,7 @@
  * Plugin Name:          Laghavi Subscriptions for WooCommerce
  * Plugin URI:           https://laghavi.site/
  * Description:          Subscription products with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, "Ask for price" products, and a currency switcher.
- * Version:              1.0.0
+ * Version:              1.0.1
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LSUB_VERSION', '1.0.0' );
+define( 'LSUB_VERSION', '1.0.1' );
 define( 'LSUB_FILE', __FILE__ );
 define( 'LSUB_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LSUB_URL', plugin_dir_url( __FILE__ ) );

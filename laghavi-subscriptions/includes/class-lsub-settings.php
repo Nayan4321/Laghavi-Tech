@@ -29,24 +29,26 @@ class LSUB_Settings {
 	 * @return array<string, string>
 	 */
 	public static function defaults() {
+		// Settings can be read while plugins load, before translations may be loaded.
+		$tr = did_action( 'after_setup_theme' );
 		return array(
 			'lsub_skip_cart'           => 'yes',
 			'lsub_editable_checkout'   => 'yes',
-			'lsub_buy_now_text'        => __( 'Buy now', 'laghavi-subscriptions' ),
-			'lsub_subscribe_text'      => __( 'Subscribe', 'laghavi-subscriptions' ),
+			'lsub_buy_now_text'        => ( $tr ? __( 'Buy now', 'laghavi-subscriptions' ) : 'Buy now' ),
+			'lsub_subscribe_text'      => ( $tr ? __( 'Subscribe', 'laghavi-subscriptions' ) : 'Subscribe' ),
 			'lsub_reminder_days'       => '3',
 			'lsub_grace_days'          => '7',
 			'lsub_cancel_after_days'   => '30',
 			'lsub_customer_cancel'     => 'yes',
 			'lsub_account_design'      => 'yes',
 			'lsub_ask_mode'            => 'both',
-			'lsub_ask_label'           => __( 'Ask for price', 'laghavi-subscriptions' ),
-			'lsub_ask_whatsapp_label'  => __( 'Chat on WhatsApp', 'laghavi-subscriptions' ),
+			'lsub_ask_label'           => ( $tr ? __( 'Ask for price', 'laghavi-subscriptions' ) : 'Ask for price' ),
+			'lsub_ask_whatsapp_label'  => ( $tr ? __( 'Chat on WhatsApp', 'laghavi-subscriptions' ) : 'Chat on WhatsApp' ),
 			'lsub_ask_contact_url'     => '',
 			'lsub_ask_whatsapp'        => '',
 			/* translators: {product} and {url} are replaced with the product name and link. */
-			'lsub_ask_message'         => __( 'Hi! I am interested in {product}. Could we schedule a meeting to discuss it? {url}', 'laghavi-subscriptions' ),
-			'lsub_ask_price_text'      => __( 'Price on request', 'laghavi-subscriptions' ),
+			'lsub_ask_message'         => ( $tr ? __( 'Hi! I am interested in {product}. Could we schedule a meeting to discuss it? {url}', 'laghavi-subscriptions' ) : 'Hi! I am interested in {product}. Could we schedule a meeting to discuss it? {url}' ),
+			'lsub_ask_price_text'      => ( $tr ? __( 'Price on request', 'laghavi-subscriptions' ) : 'Price on request' ),
 			'lsub_currency_floating'   => 'yes',
 			'lsub_currency_checkout'   => 'yes',
 			'lsub_currency_geo'        => 'no',
@@ -63,9 +65,12 @@ class LSUB_Settings {
 	 * @return string
 	 */
 	public static function get( $key ) {
+		$value = get_option( $key, null );
+		if ( null !== $value && '' !== $value ) {
+			return (string) $value;
+		}
 		$defaults = self::defaults();
-		$value    = get_option( $key, null );
-		return null === $value || '' === $value ? ( isset( $defaults[ $key ] ) ? $defaults[ $key ] : '' ) : (string) $value;
+		return isset( $defaults[ $key ] ) ? $defaults[ $key ] : '';
 	}
 
 	/**

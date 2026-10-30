@@ -97,7 +97,7 @@ class HAPPYSUB_Emails {
 	 * @return string
 	 */
 	private static function account_url() {
-		return wc_get_account_endpoint_url( HAPPYSUB_Account::ENDPOINT );
+		return wc_get_account_endpoint_url( HAPPYSUB_Account::endpoint() );
 	}
 
 	/**

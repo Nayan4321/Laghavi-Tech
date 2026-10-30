@@ -46,9 +46,15 @@ class LSUB_Currency {
 		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::OPTION, array( __CLASS__, 'sanitize_rows' ), 10, 3 );
 		add_action( 'admin_post_lsub_fetch_rates', array( __CLASS__, 'fetch_rates_now' ) );
 		add_action( 'lsub_daily_rates', array( __CLASS__, 'update_rates' ) );
-		if ( LSUB_Settings::on( 'lsub_rates_auto' ) && self::currencies() && ! wp_next_scheduled( 'lsub_daily_rates' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'lsub_daily_rates' );
-		}
+		// Scheduled once WordPress is fully loaded (scheduling builds translated cron labels).
+		add_action(
+			'init',
+			static function () {
+				if ( LSUB_Settings::on( 'lsub_rates_auto' ) && self::currencies() && ! wp_next_scheduled( 'lsub_daily_rates' ) ) {
+					wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'lsub_daily_rates' );
+				}
+			}
+		);
 
 		if ( ! self::currencies() ) {
 			return;
@@ -98,7 +104,7 @@ class LSUB_Currency {
 		$rows = get_option( self::OPTION, array() );
 		$out  = array();
 		foreach ( is_array( $rows ) ? $rows : array() as $row ) {
-			if ( empty( $row['code'] ) || $row['code'] === self::base() || (float) $row['rate'] <= 0 ) {
+			if ( empty( $row['code'] ) || $row['code'] === self::base() || ! isset( $row['rate'] ) || (float) $row['rate'] <= 0 ) {
 				continue;
 			}
 			$out[ $row['code'] ] = array(
@@ -605,6 +611,18 @@ class LSUB_Currency {
 					</thead>
 					<tbody>
 						<?php foreach ( array_values( $rows ) as $i => $row ) : ?>
+							<?php
+							$row = wp_parse_args(
+								(array) $row,
+								array(
+									'code'      => '',
+									'rate'      => '',
+									'decimals'  => 2,
+									'rounding'  => 'none',
+									'countries' => array(),
+								)
+							);
+							?>
 							<tr>
 								<td>
 									<select name="<?php echo esc_attr( self::OPTION . '[' . $i . '][code]' ); ?>">

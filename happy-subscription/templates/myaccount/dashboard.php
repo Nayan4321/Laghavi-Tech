@@ -64,7 +64,7 @@ $happysub_menu   = wc_get_account_menu_items();
 			/* translators: %s: plan. */
 			echo esc_html( sprintf( __( 'Payment needed for %s.', 'happy-subscription' ), $happysub_sub->name ) );
 			?>
-			<a href="<?php echo esc_url( wc_get_account_endpoint_url( HAPPYSUB_Account::ENDPOINT ) ); ?>"><?php esc_html_e( 'Fix it now', 'happy-subscription' ); ?></a>
+			<a href="<?php echo esc_url( wc_get_account_endpoint_url( HAPPYSUB_Account::endpoint() ) ); ?>"><?php esc_html_e( 'Fix it now', 'happy-subscription' ); ?></a>
 		</p>
 	<?php endforeach; ?>
 
@@ -104,7 +104,7 @@ $happysub_menu   = wc_get_account_menu_items();
 					</li>
 				<?php endforeach; ?>
 			</ul>
-			<a href="<?php echo esc_url( wc_get_account_endpoint_url( HAPPYSUB_Account::ENDPOINT ) ); ?>"><?php esc_html_e( 'Manage subscriptions →', 'happy-subscription' ); ?></a>
+			<a href="<?php echo esc_url( wc_get_account_endpoint_url( HAPPYSUB_Account::endpoint() ) ); ?>"><?php esc_html_e( 'Manage subscriptions →', 'happy-subscription' ); ?></a>
 		</section>
 	<?php endif; ?>
 

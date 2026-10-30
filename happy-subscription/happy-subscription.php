@@ -8,6 +8,7 @@
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
  * WC requires at least: 8.0
+ * WC tested up to:     11.2
  * Author:               Laghavi Digital
  * Author URI:           https://laghavi.site/
  * License:              GPL-2.0-or-later

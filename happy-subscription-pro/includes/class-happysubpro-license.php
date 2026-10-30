@@ -23,9 +23,15 @@ class HAPPYSUBPRO_License {
 		add_action( 'admin_post_happysubpro_license', array( __CLASS__, 'handle_form' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notice' ) );
 		add_action( 'happysubpro_daily', array( __CLASS__, 'check' ) );
-		if ( ! wp_next_scheduled( 'happysubpro_daily' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'happysubpro_daily' );
-		}
+		// Scheduled once WordPress is fully loaded (scheduling builds translated cron labels).
+		add_action(
+			'init',
+			static function () {
+				if ( ! wp_next_scheduled( 'happysubpro_daily' ) ) {
+					wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'happysubpro_daily' );
+				}
+			}
+		);
 
 		// WordPress 5.8+ asks plugins with an "Update URI" header for their own updates.
 		add_filter( 'update_plugins_laghavi.site', array( __CLASS__, 'update_info' ), 10, 3 );

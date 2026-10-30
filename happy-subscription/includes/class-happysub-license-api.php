@@ -56,7 +56,9 @@ class HAPPYSUB_License_Api {
 				array(
 					'methods'             => 'POST',
 					'callback'            => array( __CLASS__, $route ),
-					'permission_callback' => '__return_true',
+					// Public by design: customers' sites call it without a WordPress login. The license key is the check.
+					// Public by design: customers' sites call it without a WordPress login. The license key is the check.
+				'permission_callback' => '__return_true',
 					'args'                => $args,
 				)
 			);
@@ -67,6 +69,7 @@ class HAPPYSUB_License_Api {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( __CLASS__, 'update' ),
+				// Public by design: customers' sites call it without a WordPress login. The license key is the check.
 				'permission_callback' => '__return_true',
 				'args'                => $args,
 			)
@@ -77,6 +80,7 @@ class HAPPYSUB_License_Api {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( __CLASS__, 'download' ),
+				// Public by design: customers' sites call it without a WordPress login. The license key is the check.
 				'permission_callback' => '__return_true',
 				'args'                => $args,
 			)

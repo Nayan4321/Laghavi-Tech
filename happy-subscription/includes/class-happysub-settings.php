@@ -29,11 +29,13 @@ class HAPPYSUB_Settings {
 	 * @return array<string, string>
 	 */
 	public static function defaults() {
+		// Settings can be read while plugins load, before translations may be loaded.
+		$tr = did_action( 'after_setup_theme' );
 		$defaults = array(
 			'happysub_skip_cart'           => 'yes',
 			'happysub_editable_checkout'   => 'yes',
-			'happysub_buy_now_text'        => __( 'Buy now', 'happy-subscription' ),
-			'happysub_subscribe_text'      => __( 'Subscribe', 'happy-subscription' ),
+			'happysub_buy_now_text'        => ( $tr ? __( 'Buy now', 'happy-subscription' ) : 'Buy now' ),
+			'happysub_subscribe_text'      => ( $tr ? __( 'Subscribe', 'happy-subscription' ) : 'Subscribe' ),
 			'happysub_reminder_days'       => '3',
 			'happysub_grace_days'          => '7',
 			'happysub_cancel_after_days'   => '30',
@@ -57,9 +59,12 @@ class HAPPYSUB_Settings {
 	 * @return string
 	 */
 	public static function get( $key ) {
+		$value = get_option( $key, null );
+		if ( null !== $value && '' !== $value ) {
+			return (string) $value;
+		}
 		$defaults = self::defaults();
-		$value    = get_option( $key, null );
-		return null === $value || '' === $value ? ( isset( $defaults[ $key ] ) ? $defaults[ $key ] : '' ) : (string) $value;
+		return isset( $defaults[ $key ] ) ? $defaults[ $key ] : '';
 	}
 
 	/**

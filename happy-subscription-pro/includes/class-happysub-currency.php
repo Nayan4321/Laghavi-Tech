@@ -51,9 +51,15 @@ class HAPPYSUB_Currency {
 		add_filter( 'woocommerce_admin_settings_sanitize_option_' . self::OPTION, array( __CLASS__, 'sanitize_rows' ), 10, 3 );
 		add_action( 'admin_post_happysub_fetch_rates', array( __CLASS__, 'fetch_rates_now' ) );
 		add_action( 'happysub_daily_rates', array( __CLASS__, 'update_rates' ) );
-		if ( HAPPYSUB_Settings::on( 'happysub_rates_auto' ) && self::currencies() && ! wp_next_scheduled( 'happysub_daily_rates' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'happysub_daily_rates' );
-		}
+		// Scheduled once WordPress is fully loaded (scheduling builds translated cron labels).
+		add_action(
+			'init',
+			static function () {
+				if ( HAPPYSUB_Settings::on( 'happysub_rates_auto' ) && self::currencies() && ! wp_next_scheduled( 'happysub_daily_rates' ) ) {
+					wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'happysub_daily_rates' );
+				}
+			}
+		);
 
 		if ( ! self::currencies() ) {
 			return;

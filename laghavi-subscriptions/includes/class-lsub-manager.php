@@ -23,6 +23,13 @@ class LSUB_Manager {
 		add_action( 'woocommerce_order_status_refunded', array( __CLASS__, 'on_parent_cancelled' ) );
 
 		add_action( 'lsub_hourly', array( __CLASS__, 'run_schedule' ) );
+		add_action( 'init', array( __CLASS__, 'schedule' ) );
+	}
+
+	/**
+	 * Hourly renewals and reminders (scheduled once WordPress is fully loaded).
+	 */
+	public static function schedule() {
 		if ( ! wp_next_scheduled( 'lsub_hourly' ) ) {
 			wp_schedule_event( time() + 300, 'hourly', 'lsub_hourly' );
 		}
