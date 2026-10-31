@@ -1,0 +1,227 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face { font-family: "Corm"; src: url("fonts/CormorantGaramond[wght].ttf"); font-weight: 300 700; }
+@font-face { font-family: "Corm"; src: url("fonts/CormorantGaramond-Italic[wght].ttf"); font-weight: 300 700; font-style: italic; }
+@font-face { font-family: "Jost"; src: url("fonts/Jost[wght].ttf"); font-weight: 100 900; }
+/* H&S Dubai Series: deep emerald-black ground, cream type, brushed gold accents */
+:root {
+  --ink: #0b1512; --ink2: #10201b; --panel: rgba(239, 232, 216, 0.06); --line: rgba(201, 164, 106, 0.28);
+  --cream: #efe8d8; --muted: #a9a593; --gold: #c9a46a; --gold2: #e6c891; --emerald: #2f6f57; --sea: #12302a;
+  --serif: "Corm", Georgia, serif; --sans: "Jost", system-ui, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { width: 1080px; height: 1920px; overflow: hidden; background: transparent; }
+#stage { position: absolute; inset: 0; overflow: hidden; color: var(--cream); font-family: var(--sans); }
+#bg, #grain { clip-path: path(evenodd, "M0 0H1080V1920H0Z M86 1268H366A30 30 0 0 1 396 1298V1668A30 30 0 0 1 366 1698H86A30 30 0 0 1 56 1668V1298A30 30 0 0 1 86 1268Z"); }
+#scrim { position: absolute; left: 0; right: 0; top: 0; height: 760px; background: linear-gradient(180deg, rgba(8,16,13,.92) 0%, rgba(8,16,13,.7) 45%, transparent 100%); opacity: 0; }
+#map3d.bb { filter: contrast(1.12) saturate(.92) sepia(.1) brightness(.97); }
+#map3d { position: absolute; left: 0; top: 0; width: 1080px; height: 1240px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 190px, #000 1050px, transparent 1240px); }
+#dof { position: absolute; left: 0; top: 0; width: 1080px; height: 1240px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 190px, #000 1050px, transparent 1240px); }
+#map { position: absolute; left: 0; top: 0; width: 1080px; height: 1240px; -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 190px, #000 1050px, transparent 1240px); }
+#bg { position: absolute; inset: 0; background:
+  radial-gradient(120% 70% at 50% 28%, #16302a 0%, #0d1b17 55%, #08100d 100%); }
+#grain { position: absolute; inset: 0; opacity: .07; mix-blend-mode: overlay; }
+.overlay #bg, .overlay #grain, .overlay #chrome, .overlay #card { display: none; }
+/* top chrome */
+#chrome { position: absolute; left: 56px; right: 56px; top: 92px; }
+#chrome .row { display: flex; justify-content: space-between; align-items: center; padding-bottom: 14px; border-bottom: 1px solid var(--line);
+  font: 500 21px/1 var(--sans); letter-spacing: .28em; text-transform: uppercase; color: var(--muted); }
+#chrome .row b { color: var(--gold2); font-weight: 500; }
+#chrome .note { text-align: right; margin-top: 12px; font: 400 15px var(--sans); letter-spacing: .3em; color: rgba(169,165,147,.6); text-transform: uppercase; }
+/* presenter card: green slot is the window for Vikas' footage */
+#card { position: absolute; left: 56px; right: 56px; top: 1268px; height: 430px; display: flex; gap: 34px; align-items: stretch; }
+#win { width: 340px; flex: none; border-radius: 30px; background: transparent; position: relative; box-shadow: 0 0 0 2px var(--gold), 0 24px 60px rgba(0,0,0,.55); }
+#win::after { content: ""; position: absolute; inset: -12px; border-radius: 40px; border: 1px solid var(--line); }
+#meta { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; min-width: 0; }
+#meta .name { font: 600 46px/1 var(--serif); letter-spacing: .01em; }
+#meta .role { font: 500 18px/1.4 var(--sans); letter-spacing: .26em; color: var(--gold); text-transform: uppercase; }
+#meta .live { display: flex; align-items: center; gap: 12px; margin-top: 10px; font: 500 18px var(--sans); letter-spacing: .22em; color: var(--muted); text-transform: uppercase; }
+#meta .bars { display: flex; gap: 5px; align-items: center; height: 26px; }
+#meta .bars i { width: 4px; border-radius: 2px; background: var(--gold); display: block; }
+#cue { font: italic 500 40px/1.15 var(--serif); color: var(--cream); min-height: 92px; }
+#cue em { color: var(--gold2); }
+/* scenes */
+.scene { position: absolute; left: 0; right: 0; top: 0; height: 1240px; opacity: 0; }
+.overlay .scene { height: 1920px; }
+.kick { position: absolute; left: 0; right: 0; text-align: center; font: 500 22px var(--sans); letter-spacing: .34em; color: var(--gold); text-transform: uppercase; }
+.title { position: absolute; left: 40px; right: 40px; text-align: center; font: 500 118px/1 var(--serif); letter-spacing: -.01em; }
+.title i, .big i { font-style: italic; color: var(--gold2); font-weight: 500; }
+.big { position: absolute; left: 0; right: 0; text-align: center; font: 600 190px/1 var(--serif); letter-spacing: -.02em; font-variant-numeric: lining-nums; }
+.sub { position: absolute; left: 80px; right: 80px; text-align: center; font: 400 38px/1.35 var(--sans); color: var(--muted); }
+.sub b { color: var(--cream); font-weight: 500; }
+.pill { display: inline-flex; align-items: center; gap: 14px; padding: 16px 30px; border-radius: 999px; border: 1.5px solid var(--gold); color: var(--gold2);
+  font: 500 26px var(--sans); letter-spacing: .2em; text-transform: uppercase; background: rgba(201,164,106,.08); }
+.row3 { position: absolute; left: 56px; right: 56px; display: grid; gap: 22px; }
+.tile { border: 1px solid var(--line); background: linear-gradient(180deg, rgba(20,34,29,.92), rgba(12,22,19,.88)); border-radius: 28px; padding: 46px 44px;
+  display: flex; align-items: center; gap: 30px; }
+.tile svg { width: 120px; height: 120px; flex: none; stroke: var(--gold2); fill: none; stroke-width: 2.2; }
+.tile h3 { font: 600 70px/1.02 var(--serif); }
+.tile p { font: 400 32px/1.3 var(--sans); color: var(--muted); margin-top: 8px; letter-spacing: .02em; }
+.tile.hl { border-color: var(--gold); background: linear-gradient(180deg, rgba(64,52,30,.94), rgba(30,28,20,.92)); box-shadow: 0 0 0 2px rgba(201,164,106,.35), 0 30px 80px rgba(0,0,0,.5); }
+svg.map { position: absolute; left: 0; top: 230px; width: 1080px; height: 1000px; overflow: visible; }
+.lbl { font: 500 19px var(--sans); letter-spacing: .26em; fill: var(--muted); text-transform: uppercase; }
+.lblg { font: 600 22px var(--sans); letter-spacing: .24em; fill: var(--gold2); text-transform: uppercase; }
+.lbls { font: italic 600 44px var(--serif); fill: var(--cream); }
+.ell { position: absolute; overflow: visible; pointer-events: none; }
+.stat { position: absolute; left: 56px; right: 56px; display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+.stat div { border: 1px solid var(--line); border-radius: 22px; padding: 30px 26px; text-align: center; background: rgba(239,232,216,.04); }
+.stat b { display: block; font: 600 66px/1 var(--serif); color: var(--cream); }
+.stat span { display: block; margin-top: 12px; font: 500 19px var(--sans); letter-spacing: .26em; color: var(--gold); text-transform: uppercase; }
+.hook { position: absolute; left: 60px; right: 60px; top: 300px; text-align: center; }
+.hook .l1 { font: 700 92px/1.02 var(--sans); letter-spacing: -.01em; text-transform: uppercase; color: #fff; text-shadow: 0 6px 30px rgba(0,0,0,.6); }
+.hook .l2 { margin-top: 26px; display: inline-block; padding: 10px 34px 14px; background: var(--gold); color: #14100a; font: 700 84px/1 var(--sans); text-transform: uppercase; border-radius: 14px; }
+.cta { position: absolute; left: 0; right: 0; text-align: center; }
+.cta .btn { display: inline-block; padding: 34px 64px; border-radius: 30px; background: linear-gradient(180deg, var(--gold2), var(--gold)); color: #14100a;
+  font: 700 120px/1 var(--sans); letter-spacing: .08em; box-shadow: 0 30px 80px rgba(201,164,106,.35); }
+.bubble { display: inline-flex; align-items: center; gap: 18px; padding: 22px 34px; border-radius: 30px 30px 30px 8px; background: var(--cream); color: #13201b; font: 500 40px var(--sans); }
+</style></head>
+<body><div id="stage">
+<div id="bg"></div><canvas id="grain" width="540" height="960"></canvas><canvas id="map3d" width="1080" height="1240"></canvas><canvas id="dof" width="1080" height="1240"></canvas><canvas id="map" width="1080" height="1240"></canvas><div id="scrim"></div>
+<div id="scenes"></div>
+<div id="chrome"><div class="row"><span id="ch-l"></span><b>H&amp;S Real Estate</b></div><div class="note" id="ch-note">Schematic map · not to scale</div></div>
+<div id="card"><div id="win"></div><div id="meta">
+  <div class="name">Vikas Mangwani</div><div class="role">H&amp;S Real Estate<br>Dubai Wealth Architect</div>
+  <div id="cue"></div>
+  <div class="live"><div class="bars" id="bars"></div><span id="tag"></span></div>
+</div></div>
+</div>
+<script src="node_modules/three/build/three.min.js"></script><script src="nk_seg.js"></script><script src="map3d.js"></script><script src="gl3d.js"></script><script src="photo3d.js"></script><script src="scenes.js"></script><script src="photomaps.js"></script>
+<script>
+const P = new URLSearchParams(location.search), EP = P.get('ep') || '2', MODE = P.get('mode') || 'full';
+const ease = { out: t => 1 - Math.pow(1 - t, 3), inout: t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2, back: t => { const c = 1.6; return 1 + (c + 1) * Math.pow(t - 1, 3) + c * Math.pow(t - 1, 2); } };
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const prog = (t, a, d) => clamp((t - a) / d);
+const EPD = window.EPISODES[EP];
+const WORLD = window.WORLDS[EPD.world](); window.__W = WORLD; if (EPD.setup) EPD.setup(WORLD);
+if (EPD.world === 'bb') document.getElementById('map3d').classList.add('bb');
+const PHOTO = window.PHOTOMAPS && window.PHOTOMAPS[EP];
+let MAPR = () => {};
+const diReady = EPD.world === 'di' ? new Promise(ok => { const i = new Image(); i.onload = () => { WORLD.planImg = i; WORLD.planRect = [-1100, -900, 1100, 900]; WORLD.planScale = 2; ok(); }; i.src = '../ref/nk_plan.png'; }) : Promise.resolve();
+if (!PHOTO) diReady.then(() => { MAPR = Map3D(document.getElementById('map'), WORLD); });
+const loadImg = src => new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = src; });
+const photoReady = PHOTO ? Promise.all([loadImg(PHOTO.src), loadImg(PHOTO.depth)]).then(([img, depthImg]) => {
+  MAPR = PhotoMap(document.getElementById('map3d'), document.getElementById('map'), { ...PHOTO, img, depthImg });
+}) : Promise.resolve();
+document.getElementById('ch-l').textContent = EPD.chrome;
+document.getElementById('tag').textContent = EPD.tag;
+if (MODE === 'overlay') document.body.classList.add('overlay');
+if (MODE === 'plate') {                       // full-frame Burj Khalifa view for the EP2 opening
+  document.body.classList.add('overlay');
+  const mc = document.getElementById('map'); mc.width = 1080; mc.height = 1920; mc.style.height = '1920px'; mc.style.webkitMaskImage = 'none';
+  document.getElementById('stage').style.background = 'linear-gradient(180deg,#9fbfd8 0%,#c3d6e2 45%,#e3e6e2 72%,#e9e4d8 100%)';
+}
+// timeline: scenes start where he says the line (seconds from the start of his clip)
+const SC = [], host = document.getElementById('scenes');
+if (PHOTO) for (const s of EPD.scenes) { if (PHOTO.scenes[s.id]) s.map = PHOTO.scenes[s.id]; else delete s.map; }
+const list = EPD.scenes.filter(s => MODE !== 'overlay' || s.hook);
+list.forEach((s, i) => {
+  const end = i + 1 < list.length ? list[i + 1].at : EPD.total;
+  const el = document.createElement('div'); el.className = 'scene'; el.innerHTML = s.html; host.appendChild(el);
+  SC.push({ ...s, el, start: s.at, dur: end - s.at });
+});
+const t0 = EPD.total;
+window.TOTAL = t0;
+window.TIMELINE = SC.map(s => ({ id: s.id, start: +s.start.toFixed(2), dur: +s.dur.toFixed(2), say: s.say || '', hook: !!s.hook }));
+// prepare draw paths
+for (const s of SC) {
+  s.el.querySelectorAll('[data-draw]').forEach(p => { const L = p.getTotalLength ? p.getTotalLength() : 1000; p.dataset.len = L; p.style.strokeDasharray = L; p.style.strokeDashoffset = L; });
+  if (s.init) s.init(s.el);
+}
+// grain
+const g = document.getElementById('grain').getContext('2d');
+function grain(seed) {
+  const im = g.createImageData(540, 960); let x = seed * 9301 + 49297;
+  for (let i = 0; i < im.data.length; i += 4) { x = (x * 1103515245 + 12345) & 0x7fffffff; const v = x & 255; im.data[i] = im.data[i + 1] = im.data[i + 2] = v; im.data[i + 3] = 255; }
+  g.putImageData(im, 0, 0);
+}
+const bars = document.getElementById('bars');
+for (let i = 0; i < 9; i++) bars.appendChild(document.createElement('i'));
+function fmt(v, f) {
+  if (f === 'comma') return Math.round(v).toLocaleString('en-US');
+  if (f === 'd1') return v.toFixed(1);
+  return String(Math.round(v));
+}
+function animate(el, lt) {
+  el.querySelectorAll('[data-a]').forEach(e => {
+    const p = ease.out(prog(lt, +e.dataset.t || 0, +e.dataset.d || .7)), k = e.dataset.a;
+    let tf = '';
+    if (k === 'up') tf = `translateY(${(1 - p) * 60}px)`;
+    if (k === 'down') tf = `translateY(${-(1 - p) * 60}px)`;
+    if (k === 'left') tf = `translateX(${-(1 - p) * 90}px)`;
+    if (k === 'right') tf = `translateX(${(1 - p) * 90}px)`;
+    if (k === 'scale') tf = `scale(${.86 + .14 * ease.back(prog(lt, +e.dataset.t || 0, +e.dataset.d || .7))})`;
+    if (k === 'pop') tf = `scale(${.5 + .5 * ease.back(prog(lt, +e.dataset.t || 0, +e.dataset.d || .6))})`;
+    e.style.opacity = k === 'blur' ? p : p; e.style.filter = k === 'blur' ? `blur(${(1 - p) * 18}px)` : '';
+    if (tf) e.style.transform = tf + (e.dataset.base || '');
+    if (e.dataset.out) { const q = ease.inout(prog(lt, +e.dataset.out, .45)); e.style.opacity = p * (1 - q); }
+  });
+  el.querySelectorAll('[data-draw]').forEach(e => {
+    const p = ease.inout(prog(lt, +e.dataset.t || 0, +e.dataset.d || 1.2));
+    e.style.strokeDashoffset = (+e.dataset.len) * (1 - p);
+  });
+  el.querySelectorAll('[data-count]').forEach(e => {
+    const p = ease.out(prog(lt, +e.dataset.t || 0, +e.dataset.d || 1.4));
+    e.textContent = fmt(+e.dataset.count * p + (+e.dataset.from || 0) * (1 - p), e.dataset.f);
+  });
+  el.querySelectorAll('[data-grow]').forEach(e => {
+    const p = ease.inout(prog(lt, +e.dataset.t || 0, +e.dataset.d || 1));
+    e.style.transform = `scaleX(${p})`;
+  });
+  el.querySelectorAll('[data-pulse]').forEach(e => {
+    const ph = ((lt - (+e.dataset.t || 0)) % 1.6) / 1.6; const on = lt > (+e.dataset.t || 0);
+    e.setAttribute('r', on ? 10 + ph * 46 : 0); e.style.opacity = on ? (1 - ph) * .9 : 0;
+  });
+  el.querySelectorAll('[data-kb]').forEach(e => { e.style.transform = `scale(${1 + (+e.dataset.kb) * lt})`; e.style.transformOrigin = e.dataset.o || '50% 50%'; });
+}
+window.renderPlate = function (cam) { document.getElementById('map').style.opacity = 1; const R = Map3D(document.getElementById('map'), WORLD); R(60, cam, { hl: b => b.group === 'burj' && false }); };
+window.renderAt = function (t) {
+  grain(Math.floor(t * 30) % 7);
+  let cue = '';
+  for (const s of SC) {
+    const lt = t - s.start, vis = lt > -0.0001 && lt < s.dur;
+    const last = s === SC[SC.length - 1];
+    if (!vis && !(last && lt >= s.dur)) { s.el.style.opacity = 0; s.el.style.display = 'none'; continue; }
+    s.el.style.display = 'block';
+    const fi = s.hard ? 1 : ease.out(prog(lt, 0, .32)), fo = last ? 1 : 1 - ease.inout(prog(lt, s.dur - .28, .28));
+    s.el.style.opacity = fi * fo;
+    s.el.style.transform = `translateY(${(1 - fi) * 24}px) scale(${1 - (1 - fo) * .03})`;
+    animate(s.el, Math.min(lt, s.dur));
+    if (s.update) s.update(s.el, lt, s.dur);
+    cue = s.cue || cue;
+  }
+  const cueEl = document.getElementById('cue'); if (cueEl.dataset.v !== cue) { cueEl.innerHTML = cue; cueEl.dataset.v = cue; }
+  // voice-meter bars
+  [...bars.children].forEach((b, i) => { const v = .3 + .7 * Math.abs(Math.sin(t * 7.3 + i * 1.7) * Math.sin(t * 3.1 + i)); b.style.height = (6 + v * 20) + 'px'; });
+  // card hidden during full-frame hook (his footage shows through)
+  const hookOn = SC.some(s => s.hook && t >= s.start && t < s.start + s.dur);
+  for (const id of ['card', 'chrome', 'bg', 'grain']) document.getElementById(id).style.opacity = hookOn ? 0 : (id === 'grain' ? '' : 1);
+  // 3D map layer: camera eased across each scene that uses it, faded in/out at scene edges
+  let ma = 0;
+  for (const s of SC) {
+    if (!s.map) continue; const lt = t - s.start; if (lt < -.35 || lt > s.dur + .35) continue;
+    const a = Math.min(clamp((lt + .35) / .6), clamp((s.dur + .35 - lt) / .6)) * (s.map.alpha ?? 1);
+    if (a <= ma) continue; ma = a;
+    const k = MAPUTIL.easeInOut(clamp(lt / s.dur));
+    let cam = MAPUTIL.lerpCam(s.map.cam0 || s.map.keys[0][1], s.map.cam1 || s.map.cam0 || s.map.keys[0][1], k);
+    if (s.map.keys) {                      // absolute-time camera keyframes, eased per segment
+      const K = s.map.keys; cam = K[0][1];
+      for (let i = 0; i < K.length - 1; i++) if (t >= K[i][0]) cam = MAPUTIL.lerpCam(K[i][1], K[i + 1][1], MAPUTIL.easeInOut(clamp((t - K[i][0]) / (K[i + 1][0] - K[i][0]))));
+    }
+    window.MAPCALL = [t, cam, s.map];
+  }
+  const mc = document.getElementById('map'); mc.style.opacity = ma; document.getElementById('map3d').style.opacity = ma; document.getElementById('scrim').style.opacity = hookOn ? 0 : ma * .9;
+  if (ma > 0 && window.MAPCALL) {
+    MAPR(...window.MAPCALL);
+    // tilt-shift: blurred copy of the 3D map, faded out across the in-focus band
+    const dc = document.getElementById('dof'), dx = dc.getContext('2d'), blur = EPD.world === 'di' ? 5 : 3;
+    dx.globalCompositeOperation = 'source-over'; dx.clearRect(0, 0, 1080, 1240); dx.filter = `blur(${blur}px)`;
+    dx.drawImage(document.getElementById('map3d'), 0, 0); dx.filter = 'none';
+    const g = dx.createLinearGradient(0, 0, 0, 1240);
+    g.addColorStop(0, 'rgba(0,0,0,1)'); g.addColorStop(.36, 'rgba(0,0,0,0)'); g.addColorStop(.7, 'rgba(0,0,0,0)'); g.addColorStop(1, 'rgba(0,0,0,1)');
+    dx.globalCompositeOperation = 'destination-in'; dx.fillStyle = g; dx.fillRect(0, 0, 1080, 1240); dx.globalCompositeOperation = 'source-over';
+  }
+  document.getElementById('dof').style.opacity = ma;
+};
+Promise.all([document.fonts.ready, photoReady, diReady]).then(() => { window.renderAt(0); window.READY = true; });
+</script></body></html>
