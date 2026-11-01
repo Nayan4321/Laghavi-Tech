@@ -241,7 +241,16 @@
         }
       }
       }
-      for (const L of opt.leaders || []) {                                    // brochure-style title with a hairline leader
+      for (const Z of opt.zones || []) {                                      // highlighted areas: tinted fill + glowing outline (drawn in)
+        const a = clamp((t - Z.at) / .6) * (Z.until ? 1 - clamp((t - Z.until) / .5) : 1); if (a <= 0) continue;
+        const pts = Z.poly, n = pts.length, k = Math.max(2, Math.round(n * clamp((t - Z.at) / 1.0)));
+        ctx.save(); ctx.globalAlpha = a; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+        poly(cam, pts, Z.z || 3.2); ctx.fillStyle = Z.col.replace('A', String(.22 * clamp((t - Z.at - .3) / .6))); ctx.fill();
+        line(cam, pts.slice(0, k).concat(k >= n ? [pts[0]] : []), Z.z || 3.2);
+        ctx.shadowColor = Z.col.replace('A', '1'); ctx.shadowBlur = 18; ctx.strokeStyle = Z.col.replace('A', '.95'); ctx.lineWidth = 4; ctx.stroke();
+        ctx.shadowBlur = 0; ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 1.4; ctx.stroke(); ctx.restore();
+      }
+      for (const L of opt.leaders || []) {                                   // brochure-style title with a hairline leader
         const a = clamp((t - L.at) / .7) * (L.until ? 1 - clamp((t - L.until) / .4) : 1); if (a <= 0) continue;
         const s1 = cam.p([L.x, L.y, L.z || 4]); const top = L.top ?? 300;
         ctx.globalAlpha = a; ctx.strokeStyle = 'rgba(255,255,255,.85)'; ctx.lineWidth = 2;
@@ -271,9 +280,10 @@
         ctx.font = L.big ? 'italic 600 40px Corm' : '600 21px Jost'; const txt = L.big ? L.text : L.text.toUpperCase();
         if (!L.big) ctx.letterSpacing = '4px';
         const w = ctx.measureText(txt).width + 36, hgt = L.big ? 58 : 44, x = s[0] - w / 2, y = s[1] - lift * a - hgt;
-        ctx.fillStyle = L.gold ? 'rgba(201,164,106,.95)' : 'rgba(12,22,19,.82)'; ctx.strokeStyle = 'rgba(230,200,145,.7)';
-        ctx.beginPath(); ctx.roundRect(x, y, w, hgt, hgt / 2); ctx.fill(); if (!L.gold) ctx.stroke();
-        ctx.fillStyle = L.gold ? '#14100a' : '#efe8d8'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, s[0] + (L.big ? 0 : 2), y + hgt / 2 + 1);
+        ctx.fillStyle = L.card ? 'rgba(255,255,255,.96)' : L.gold ? 'rgba(201,164,106,.95)' : 'rgba(12,22,19,.82)'; ctx.strokeStyle = L.card ? (L.col || '#fff') : 'rgba(230,200,145,.7)';
+        if (L.card) { ctx.shadowColor = 'rgba(0,0,0,.35)'; ctx.shadowBlur = 14; }
+        ctx.beginPath(); ctx.roundRect(x, y, w, hgt, L.card ? 8 : hgt / 2); ctx.fill(); ctx.shadowBlur = 0; if (!L.gold) { ctx.lineWidth = L.card ? 2.5 : 1.5; ctx.stroke(); }
+        ctx.fillStyle = L.card ? '#13201b' : L.gold ? '#14100a' : '#efe8d8'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(txt, s[0] + (L.big ? 0 : 2), y + hgt / 2 + 1);
         ctx.letterSpacing = '0px'; ctx.globalAlpha = 1;
       }
     };

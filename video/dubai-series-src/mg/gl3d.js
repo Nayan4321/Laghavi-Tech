@@ -169,8 +169,10 @@
       const geo = new T.PlaneGeometry(rect[2] - rect[0], rect[3] - rect[1]); geo.rotateX(-Math.PI / 2);
       const mesh = new T.Mesh(geo, new T.MeshStandardMaterial({ map: tex, roughness: .93, metalness: 0, envMapIntensity: .35 }));
       mesh.position.set((rect[0] + rect[2]) / 2, y, -(rect[1] + rect[3]) / 2); mesh.receiveShadow = true; scene.add(mesh);
+      grounds.push({ c, rect, y });
       return { c, rect };
     }
+    const grounds = [];
     let paintWorld;
     if (kind === 'bb') {
       paintWorld = (ctx, pt, N) => {
@@ -270,7 +272,7 @@
         const shape = new T.Shape(I.poly.map(p => new T.Vector2(p[0], p[1])));
         const geo = new T.ExtrudeGeometry(shape, { depth: 1, bevelEnabled: false, curveSegments: 2 }); geo.rotateX(-Math.PI / 2);
         const mesh = new T.Mesh(geo, [new T.MeshStandardMaterial({ map: tex, roughness: .95, envMapIntensity: .3 }), sideMat]);
-        mesh.receiveShadow = true; mesh.castShadow = true; scene.add(mesh); islandObjs.push({ I, mesh });
+        mesh.receiveShadow = true; mesh.castShadow = true; scene.add(mesh); islandObjs.push({ I, mesh, c, rect });
       });
     }
 
@@ -397,6 +399,7 @@
       trees = { cm, tm, all };
     }
 
+    window.__GLX = { parts, burj, islandObjs, trees, grounds };              // read by blender/export.js
     const M = new T.Matrix4(), Q = new T.Quaternion(), S = new T.Vector3(), Pv = new T.Vector3(), UP = new T.Vector3(0, 1, 0);
     const GOLD = new T.Color().setRGB(.95, .74, .4);
     function prog(b, t) { const at = b.at + (b.delay || 0); if (t < at - .9) return -1; return clamp((t - at) / (b.dur || .9)); }
@@ -465,6 +468,7 @@
   const Map2D = window.Map3D;
   window.Map3D = function (canvas2d, world) {
     world.gl = true;
+    if (new URLSearchParams(location.search).get('bl')) return Map2D(canvas2d, world);   // Blender frames supply the 3D layer
     const gl = MapGL(document.getElementById('map3d'), world, world.kind);
     const r2 = Map2D(canvas2d, world);
     return function (t, cam, opt = {}) { gl(t, cam, opt); r2(t, cam, opt); };

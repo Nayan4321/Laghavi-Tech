@@ -79,7 +79,7 @@ svg.map { position: absolute; left: 0; top: 230px; width: 1080px; height: 1000px
 <body><div id="stage">
 <div id="bg"></div><canvas id="grain" width="540" height="960"></canvas><canvas id="map3d" width="1080" height="1240"></canvas><canvas id="dof" width="1080" height="1240"></canvas><canvas id="map" width="1080" height="1240"></canvas><div id="scrim"></div>
 <div id="scenes"></div>
-<div id="chrome"><div class="row"><span id="ch-l"></span><b>H&amp;S Real Estate</b></div><div class="note" id="ch-note">Schematic map · not to scale</div></div>
+<div id="chrome"><div class="row"><span id="ch-l"></span><b>H&amp;S Real Estate</b></div><div class="note" id="ch-note">Map data © OpenStreetMap · Esri</div></div>
 <div id="card"><div id="win"></div><div id="meta">
   <div class="name">Vikas Mangwani</div><div class="role">H&amp;S Real Estate<br>Dubai Wealth Architect</div>
   <div id="cue"></div>
@@ -94,7 +94,14 @@ const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
 const prog = (t, a, d) => clamp((t - a) / d);
 const EPD = window.EPISODES[EP];
 const WORLD = window.WORLDS[EPD.world](); window.__W = WORLD; if (EPD.setup) EPD.setup(WORLD);
-if (EPD.world === 'bb') document.getElementById('map3d').classList.add('bb');
+const BL = P.get('bl');                       // folder of Blender map frames (00000.png ...) relative to mg/
+if (EPD.world === 'bb' && !BL) document.getElementById('map3d').classList.add('bb');
+window.renderAtBl = async function (t) {      // draw the Blender frame into the 3D layer, then the normal overlay pass
+  const cv = document.getElementById('map3d'), cx = cv.getContext('2d'), f = Math.round(t * 30);
+  const img = await new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = `${BL}/${String(f).padStart(5, '0')}.png`; });
+  cx.clearRect(0, 0, cv.width, cv.height); if (img) cx.drawImage(img, 0, 0, cv.width, cv.height);
+  window.renderAt(t);
+};
 const PHOTO = window.PHOTOMAPS && window.PHOTOMAPS[EP];
 let MAPR = () => {};
 const diReady = EPD.world === 'di' ? new Promise(ok => { const i = new Image(); i.onload = () => { WORLD.planImg = i; WORLD.planRect = [-1100, -900, 1100, 900]; WORLD.planScale = 2; ok(); }; i.src = '../ref/nk_plan.png'; }) : Promise.resolve();
