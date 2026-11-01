@@ -15,6 +15,7 @@ UA = {'User-Agent': 'laghavi-tech-map-render/1.0'}
 CFG = {
     '2': dict(lat=25.1930, lon=55.2760, rings=[(17, 3600), (15, 12000), (13, 40000)], bld=6500),
     '5': dict(lat=25.2860, lon=55.3080, rings=[(16, 6000), (14, 18000), (12, 60000)], bld=7000),
+    '5r': dict(lat=25.2860, lon=55.3080, rings=[(17, 4700), (15, 13000), (13, 42000)], bld=7000),   # EP5 reel look: sharper core
 }[EP]
 LAT0, LON0 = CFG['lat'], CFG['lon']
 MLAT, MLON = 110574.0, 111320.0 * math.cos(math.radians(LAT0))

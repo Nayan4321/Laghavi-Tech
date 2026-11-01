@@ -31,3 +31,18 @@ EP2 uses a stylised "city model" ground; EP5 uses the satellite photo with the N
    `bash encode.sh blender/out/ov5 50.567 44.16 5.70 EP5_Dubai_Islands ref/ep5_opening_beach.mp4`
 
 Credits shown on screen: map data © OpenStreetMap contributors, imagery Esri.
+
+### EP5 Dubai Islands: Palm Springs reel layout (current EP5 deliverable)
+
+Full-frame satellite map with a gliding camera, presenter window top-right, word-by-word captions,
+glowing island zones, white callout cards. Design + timing: `mg/reel5.js`; overlay page: `mg/reel.html`.
+
+1. `blender --background --python blender/fetch_real.py -- 5r` (+ copy `real/ep5/osm*.json` into `real/ep5r/`)
+2. `node blender/paint_ground.js 5r sat` then `node blender/tile_ground.js 5r` (GPU-sized texture tiles)
+3. Island outlines: `blender/trace_islands.py` -> `real/ep5r/islands_real.json` -> `mg/islands5.js`
+4. Cameras: `node -e` over `mg/reel5.js` -> `blender/data/ep5r/frames.json` (see `camAt`)
+5. `blender --background --factory-startup --python blender/build_real.py -- 5r blender/out/ep5r all 16`
+6. `BL=../blender/out/ep5r node reel_render.js blender/out/ov5r`
+7. `bash encode_reel.sh blender/out/ov5r 50.567 44.16 5.70 EP5_Dubai_Islands ref/ep5_opening_beach.mp4 mg/reel_window_border.png`
+
+Captions come from a faster-whisper transcript of his clip (word timestamps), corrected by hand in `reel5.js`.

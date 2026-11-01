@@ -13,7 +13,7 @@ const K = 4.333764, TH = 0.2365397, MS = [-8.800355, 19.568184], MR = [586.6, 30
 const Mm = ([u, v]) => { u = (u - MS[0]) * K; v = (v - MS[1]) * K; return [MR[0] + u * Math.cos(TH) - v * Math.sin(TH), MR[1] + u * Math.sin(TH) + v * Math.cos(TH)]; };
 const W5 = ep === '5' ? JSON.parse(fs.readFileSync(path.join(__dirname, 'data', 'ep5', 'world.json'))) : null;
 const plan = W5 ? { sea: W5.water[0].map(Mm), islands: W5.islands.map(I => I.poly.map(Mm)) } : null;
-const SAT = process.argv[3] === 'sat';     // "sat": bright satellite-photo look (Google Earth style) instead of the tan model ground
+const SAT = process.argv[3] === 'sat', REEL = ep === '5r';     // "sat": bright satellite-photo look (Google Earth style) instead of the tan model ground
 const water = JSON.parse(fs.readFileSync(path.join(dir, 'osm.json'))).filter(e => e.t.natural === 'water' && !/pond|reflecting_pool|drain/.test(e.t.water || '') && e.p.length > 1).map(e => e.p);
 (async () => {
   fs.writeFileSync(path.join(dir, 'paint.html'), '<!doctype html><body></body>');
@@ -22,7 +22,7 @@ const water = JSON.parse(fs.readFileSync(path.join(dir, 'osm.json'))).filter(e =
   await p.goto('file:///' + path.join(dir, 'paint.html').replace(/\\/g, '/'));
   for (const ring of M.rings) {
     const t0 = Date.now();
-    const url = await p.evaluate(async ({ ring, osm2, water, plan, SAT }) => {
+    const url = await p.evaluate(async ({ ring, osm2, water, plan, SAT, REEL }) => {
       const img = await new Promise((ok, no) => { const i = new Image(); i.onload = () => ok(i); i.onerror = no; i.src = ring.file; });
       const N = ring.px[0], H = ring.px[1], c = document.createElement('canvas'); c.width = N; c.height = H;
       const x = c.getContext('2d', { willReadFrequently: true }); x.drawImage(img, 0, 0);
@@ -55,15 +55,16 @@ const water = JSON.parse(fs.readFileSync(path.join(dir, 'osm.json'))).filter(e =
         const r = d[i] / 255, g = d[i + 1] / 255, bl = d[i + 2] / 255;
         const lum = .3 * r + .59 * g + .11 * bl;
         const px = (i / 4) % N, py = Math.floor(i / 4 / N), sv = sea[Math.floor(py / GS) * gw + Math.floor(px / GS)];
-        const water = Math.max(sm((bl - r - .05) / .06) * sm((g - r) / .05) * sm((.42 - lum) / .12), sm((sv - .6) / .3) * sm((.2 - lum) / .08));
+        const water0 = Math.max(sm((bl - r - .05) / .06) * sm((g - r) / .05) * sm((.42 - lum) / .12), sm((sv - .6) / .3) * sm((.2 - lum) / .08));
+        const water = REEL ? Math.max(water0, sm((.06 - lum) / .03)) : water0;   // pure-black tiles in the aerial = sea
         const green = sm((g - r - .05) / .06) * sm((g - bl - .03) / .05) * (1 - water);
         const L = Math.pow(sm(lum * 1.15), .85);
         // sand / city tan: dark umber -> warm sand -> pale cream on bright roofs
         if (SAT) {                                            // lift + soften the photo, slight warmth
-          const lift = v => 255 * (.09 + .91 * Math.pow(v, .8));
+          const lift = REEL ? v => 255 * (.04 + .92 * Math.pow(v, .92)) : v => 255 * (.09 + .91 * Math.pow(v, .8));
           let R = lift(r), G2 = lift(g), B = lift(bl); const m = .3 * R + .59 * G2 + .11 * B;
-          R = m + (R - m) * .78 + 4; G2 = m + (G2 - m) * .78 + 1; B = m + (B - m) * .78 - 3;
-          const wl2 = Math.min(1, lum * 2.2), wc = [22 + wl2 * 20, 70 + wl2 * 40, 96 + wl2 * 40];
+          const sat = REEL ? .95 : .78; R = m + (R - m) * sat + 4; G2 = m + (G2 - m) * sat + 1; B = m + (B - m) * sat - (REEL ? 6 : 3);
+          const wl2 = Math.min(1, lum * 2.2), wc = REEL ? [30 + wl2 * 30, 62 + wl2 * 40, 64 + wl2 * 36] : [22 + wl2 * 20, 70 + wl2 * 40, 96 + wl2 * 40];
           d[i] = R * (1 - water) + water * wc[0]; d[i + 1] = G2 * (1 - water) + water * wc[1]; d[i + 2] = B * (1 - water) + water * wc[2]; d[i + 3] = 255; continue;
         }
         let R = 98 + L * 150, G = 70 + L * 118, B = 40 + L * 78;
@@ -121,17 +122,16 @@ const water = JSON.parse(fs.readFileSync(path.join(dir, 'osm.json'))).filter(e =
       }
       if (plan) {                                             // open sea over the island area: the islands rise from it (build_real.py)
         path_(plan.sea, true); x.save(); x.clip();
-        x.fillStyle = SAT ? '#1d4e66' : '#16455f'; x.fillRect(0, 0, N, H);
+        x.fillStyle = SAT ? '#24536a' : '#16455f'; x.fillRect(0, 0, N, H);
         let rs = 31; const rr = () => (rs = (rs * 1664525 + 1013904223) >>> 0) / 4294967296;
         x.filter = 'blur(' + Math.max(2, Math.round(N / 120)) + 'px)';
         for (let i = 0; i < 160; i++) { x.fillStyle = rr() < .6 ? 'rgba(8,38,70,.25)' : 'rgba(34,96,128,.2)'; x.beginPath(); const [a, bb] = P(-9000 + rr() * 20000, -4000 + rr() * 16000); x.ellipse(a, bb, (300 + rr() * 1500) * s, (200 + rr() * 900) * s, rr() * 3, 0, 6.28); x.fill(); }
         x.filter = 'blur(' + Math.max(1, Math.round(60 * s)) + 'px)';
         for (const I of plan.islands) { path_(I, true); x.lineWidth = 150 * s; x.strokeStyle = 'rgba(52,160,170,.75)'; x.stroke(); x.fillStyle = 'rgba(52,160,170,.75)'; x.fill(); }
         x.filter = 'none'; x.restore();
-        path_(plan.sea.slice(0, -2), false); x.strokeStyle = '#e6d6b0'; x.lineWidth = Math.max(1, 25 * s); x.stroke();
       }
       return c.toDataURL('image/png');
-    }, { ring, osm2, water, plan, SAT });
+    }, { ring, osm2, water, plan, SAT, REEL });
     fs.writeFileSync(path.join(dir, 'ground_z' + ring.z + '.png'), Buffer.from(url.split(',')[1], 'base64'));
     console.log('ring', ring.z, ((Date.now() - t0) / 1000).toFixed(1) + 's');
   }

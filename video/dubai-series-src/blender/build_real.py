@@ -18,9 +18,13 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 REAL = os.path.join(HERE, 'real', 'ep' + EP)
 FR = json.load(open(os.path.join(HERE, 'data', 'ep' + EP, 'frames.json')))
 os.makedirs(OUT, exist_ok=True)
-VZ = 1.6                                         # vertical exaggeration (map-model look; Burj tip meets its label pin)
+NAKHEEL_LOOK = EP == '5'                          # islands = Nakheel render surface + subtle relief, no box buildings
+VZ = 1.15 if EP == '5r' else 1.6                                         # vertical exaggeration (map-model look; Burj tip meets its label pin)
 # map units <-> real metres: m = MR + K * Rot(TH) * (u - MS)
-if EP == '2':      # Burj Khalifa (real centroid) at (-120, 160), 1 unit = 4 m, north up
+REEL = EP == '5r'                                 # EP5 in the Palm Springs reel layout: real metres, full 9:16 frame, static map
+if REEL:
+    K, TH, MS, MR = 1.0, 0.0, (0.0, 0.0), (0.0, 0.0)
+elif EP == '2':      # Burj Khalifa (real centroid) at (-120, 160), 1 unit = 4 m, north up
     K, TH, MS, MR = 4.0, 0.0, (-120.0, 160.0), (-186.0, 463.0)
 else:              # Dubai Islands: least-squares fit of the five island centroids (Nakheel plan -> real aerial)
     K, TH, MS, MR = 4.333764, 0.2365397, (-8.800355, 19.568184), (586.6, 3006.2)
@@ -39,7 +43,7 @@ sc = bpy.context.scene
 for eng in ('BLENDER_EEVEE', 'BLENDER_EEVEE_NEXT'):
     try: sc.render.engine = eng; break
     except TypeError: pass
-sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1080, 1240, PCT
+sc.render.resolution_x, sc.render.resolution_y, sc.render.resolution_percentage = 1080, 1920 if EP == '5r' else 1240, PCT
 sc.render.image_settings.file_format = 'PNG'
 ee = sc.eevee; ee.taa_render_samples = SAMPLES
 for k, v in (('use_raytracing', True), ('use_shadows', True), ('use_gtao', True), ('gtao_distance', 4.0)):
@@ -48,7 +52,7 @@ for k, v in (('use_raytracing', True), ('use_shadows', True), ('use_gtao', True)
         except Exception: pass
 try: sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Medium High Contrast'
 except Exception: pass
-sc.view_settings.exposure = 0.1
+sc.view_settings.exposure = -0.55 if EP == '5r' else 0.1
 
 def sock(coll, ident):
     for s in coll:
@@ -87,14 +91,14 @@ class NT:
         nd = self.node('ShaderNodeValue'); nd.outputs[0].default_value = v; return nd
 
 HAZE, HL = [], {}
-HAZE_COL = (0.62, 0.55, 0.45) if EP == '2' else (0.58, 0.66, 0.74)
+HAZE_COL = (0.62, 0.55, 0.45) if EP == '2' else (0.70, 0.74, 0.77) if EP == '5r' else (0.58, 0.66, 0.74)
 GOLD = (0.95, 0.70, 0.33)
 
 def finish(T, shader_out):
     cam = T.node('ShaderNodeCameraData')
     near, far = T.value(1500), T.value(9000); HAZE.append((near, far))
     f = T.math('DIVIDE', T.math('SUBTRACT', cam.outputs['View Distance'], near.outputs[0]), T.math('SUBTRACT', far.outputs[0], near.outputs[0]), clamp=True)
-    f = T.math('MULTIPLY', T.math('POWER', f, 0.9), 0.85)
+    f = T.math('MULTIPLY', T.math('POWER', f, 0.9), 0.4 if EP == '5r' else 0.85)
     em = T.node('ShaderNodeEmission'); em.inputs['Color'].default_value = HAZE_COL + (1,)
     mx = T.node('ShaderNodeMixShader'); T.link(f, mx.inputs[0]); T.link(shader_out, mx.inputs[1]); T.link(em.outputs[0], mx.inputs[2])
     out = T.node('ShaderNodeOutputMaterial'); T.link(mx.outputs[0], out.inputs['Surface'])
@@ -108,7 +112,7 @@ def principled(T, **kw):
         else: T.link(v, p.inputs[name])
     return p
 
-IMGS = {}
+IMGS, UVW = {}, {}
 def ground_tex(T, ring_rect, path):
     """image sampled by world XY; ring_rect = (x0, y0, x1, y1) in real metres"""
     img = IMGS.get(path) or IMGS.setdefault(path, bpy.data.images.load(path))
@@ -123,12 +127,27 @@ def ground_tex(T, ring_rect, path):
     mp.inputs['Location'].default_value = (-x0 / (x1 - x0), -y0 / (y1 - y0), 0)
     mp.inputs['Scale'].default_value = (1 / (x1 - x0), 1 / (y1 - y0), 1)
     T.link(geo.outputs['Position'], m1.inputs['Vector']); T.link(m1.outputs[0], mp.inputs['Vector']); T.link(mp.outputs[0], tx.inputs['Vector'])
+    UVW[tx.name] = mp.outputs[0]
     return tx
+
+_TJ = os.path.join(REAL, 'tiles.json')
+TILES = json.load(open(_TJ)) if os.path.exists(_TJ) else {}
+def ground_color(T, ring_rect, path):
+    """colour socket of a ground painting; big paintings are stitched from GPU-sized tiles"""
+    tiles = TILES.get(os.path.basename(path))
+    if not tiles: return ground_tex(T, ring_rect, path).outputs['Color']
+    col = None
+    for tl in tiles:
+        tx = ground_tex(T, tl['rect'], os.path.join(REAL, tl['file']))
+        sp = T.node('ShaderNodeSeparateXYZ'); T.link(UVW[tx.name], sp.inputs[0])
+        inside = T.math('MULTIPLY', T.math('MULTIPLY', T.math('GREATER_THAN', sp.outputs['X'], -1e-4), T.math('LESS_THAN', sp.outputs['X'], 1.0001)),
+                        T.math('MULTIPLY', T.math('GREATER_THAN', sp.outputs['Y'], -1e-4), T.math('LESS_THAN', sp.outputs['Y'], 1.0001)))
+        col = tx.outputs['Color'] if col is None else T.mix(inside, col, tx.outputs['Color'])
+    return col
 
 def ground_mat(name, rect, path):
     m = bpy.data.materials.new(name); T = NT(m)
-    tx = ground_tex(T, rect, path)
-    col = tx.outputs['Color']
+    col = ground_color(T, rect, path)
     sep = T.node('ShaderNodeSeparateColor'); T.link(col, sep.inputs[0])
     # painted water is teal: blue clearly above red -> glossy, rippled water
     wat = T.math('MULTIPLY', T.math('SUBTRACT', sep.outputs['Blue'], sep.outputs['Red']), 12.0, clamp=True)
@@ -136,10 +155,10 @@ def ground_mat(name, rect, path):
     n = T.node('ShaderNodeTexNoise'); n.inputs['Scale'].default_value = 0.35; n.inputs['Detail'].default_value = 6
     T.link(geo.outputs['Position'], n.inputs['Vector'])
     bmp = T.node('ShaderNodeBump'); T.link(n.outputs['Fac'], bmp.inputs['Height'])
-    T.link(T.math('MULTIPLY', wat, 0.12), bmp.inputs['Strength'])
+    T.link(T.math('MULTIPLY', wat, 0.06 if EP in ('5', '5r') else 0.12), bmp.inputs['Strength'])
     p = principled(T, Base_Color=T.mix(wat, col, T.mix(0.35, col, (0.0, 0.03, 0.05))), Roughness=T.mix(wat, 0.88, 0.05, 'FLOAT'))
     T.link(bmp.outputs['Normal'], p.inputs['Normal'])
-    T.link(T.mix(wat, 0.5, 0.6, 'FLOAT'), p.inputs['Specular IOR Level'])
+    T.link(T.mix(wat, 0.5, 0.35 if EP in ('5', '5r') else 0.6, 'FLOAT'), p.inputs['Specular IOR Level'])
     finish(T, p.outputs[0]); return m
 
 def facade_mat(name, floor, win, low=False, roof_img=None, hl_kind='office'):
@@ -175,7 +194,7 @@ def facade_mat(name, floor, win, low=False, roof_img=None, hl_kind='office'):
     c = T.mix(gl, wall, gcol)
     roof = T.math('SUBTRACT', 1.0, side)
     if roof_img:
-        rt = ground_tex(T, *roof_img); roofc = T.mix(0.25, rt.outputs['Color'], (0.62, 0.58, 0.52))
+        roofc = T.mix(0.25, ground_color(T, *roof_img), (0.62, 0.58, 0.52))
     else:
         rn = T.node('ShaderNodeTexNoise'); rn.inputs['Scale'].default_value = 0.8; T.link(geo.outputs['Position'], rn.inputs['Vector'])
         roofc = T.mix(rn.outputs['Fac'], (0.42, 0.41, 0.39), (0.62, 0.61, 0.58))
@@ -206,7 +225,7 @@ RINGS = sorted(IMG['rings'], key=lambda r: r['z'])            # coarse first (dr
 RING_RECT = {}
 for i, r in enumerate(RINGS):
     rect = tuple(r['sw_m']) + tuple(r['ne_m']); RING_RECT[r['z']] = rect
-    plane(f'ground_z{r["z"]}', rect, -0.6 + i * 0.25, ground_mat(f'ground_z{r["z"]}', rect, os.path.join(REAL, f'ground_z{r["z"]}.png')))
+    plane(f'ground_z{r["z"]}', rect, (-4.0 * (len(RINGS) - 1 - i) - 0.1 if REEL else -0.6 + i * 0.25), ground_mat(f'ground_z{r["z"]}', rect, os.path.join(REAL, f'ground_z{r["z"]}.png')))
 fine = RINGS[-1]
 W5 = json.load(open(os.path.join(HERE, 'data', 'ep5', 'world.json'))) if EP == '5' else None
 SEA5 = np.array(W5['water'][0]) if W5 else None
@@ -258,8 +277,8 @@ for e in keep + parts:
     h = num(t.get('height')); mh = num(t.get('min_height')) or 0.0
     lv = num(t.get('building:levels'))
     if h is None and lv: h = lv * 3.4 + 2
-    if EP == '5':                                 # Deira mainland only; the islands come from the Nakheel plan
-        if in_poly_np(U(*c), SEA5): continue
+    if EP in ('5', '5r'):                         # EP5: Deira mainland only (islands from the Nakheel plan); reel: everything real
+        if SEA5 is not None and in_poly_np(U(*c), SEA5): continue
         if h is None:
             r = rng.random(); h = 7 + r * 7 if A < 450 else 14 + r * 26 if A < 2500 else 10 + r * 14
         BLD.append(dict(P=P, c=c, h=min(h, 400), mh=mh, A=A, dB=1e9, inBB=False, e11=False, part=bool(t.get('building:part')), burj=False,
@@ -286,6 +305,7 @@ for b in BLD:
     x, y = U(*b['c']); r = rng.random(); b['u'] = (x, y)
     tall = b['h'] >= 40
     b['office'] = False
+    if REEL: b['at'], b['dur'], b['grp'] = -10.0, .8, 'static'; continue
     if EP == '5':
         if b.get('apt'): b['at'], b['dur'], b['grp'] = 19.3 + r * .4, .8, 'apt'
         else: b['at'], b['dur'], b['grp'] = 8.6 + math.hypot(x - 200, y + 500) / 1400 * 2.4 + r * .4, .8, 'deira'
@@ -376,8 +396,10 @@ def uv_tex_mat(name, path, rect_u, rough=0.9):
     mp.inputs['Location'].default_value = (-x0 / (x1 - x0), -y0 / (y1 - y0), 0); mp.inputs['Scale'].default_value = (1 / (x1 - x0), 1 / (y1 - y0), 1)
     T.link(geo.outputs['Position'], mp.inputs['Vector']); T.link(mp.outputs[0], tx.inputs['Vector'])
     n = T.node('ShaderNodeTexNoise'); n.inputs['Scale'].default_value = 0.6; T.link(geo.outputs['Position'], n.inputs['Vector'])
-    b = T.node('ShaderNodeBump'); b.inputs['Strength'].default_value = 0.25; T.link(n.outputs['Fac'], b.inputs['Height'])
-    p = principled(T, Base_Color=tx.outputs['Color'], Roughness=rough); T.link(b.outputs['Normal'], p.inputs['Normal'])
+    bw = T.node('ShaderNodeRGBToBW'); T.link(tx.outputs['Color'], bw.inputs[0])            # relief from the render's own light/shade (trees, blocks)
+    b = T.node('ShaderNodeBump'); b.inputs['Strength'].default_value = 0.55; b.inputs['Distance'].default_value = 0.6; T.link(bw.outputs[0], b.inputs['Height'])
+    hsv = T.node('ShaderNodeHueSaturation'); hsv.inputs['Saturation'].default_value = 1.12; hsv.inputs['Value'].default_value = 1.05; T.link(tx.outputs['Color'], hsv.inputs['Color'])
+    p = principled(T, Base_Color=hsv.outputs['Color'], Roughness=rough); T.link(b.outputs['Normal'], p.inputs['Normal'])
     finish(T, p.outputs[0]); return m
 
 def prism(name, poly, mats):
@@ -445,24 +467,24 @@ if W5:
     ang = np.array([B5[i]['ang'] for i in bi]); lx = np.array([p['lx'] for p in isl_parts]); ly = np.array([p['ly'] for p in isl_parts])
     cx = np.array([B5[i]['cx'] for i in bi]) + lx * np.cos(ang) - ly * np.sin(ang); cy = np.array([B5[i]['cy'] for i in bi]) + lx * np.sin(ang) + ly * np.cos(ang)
     isw = np.array([p['w'] for p in isl_parts]); isd = np.array([p['d'] for p in isl_parts])
-    ISLB = Boxes('island_buildings', 'box', cx, cy, ang, isw, isd, M_LOW,
+    ISLB = None if NAKHEEL_LOOK else Boxes('island_buildings', 'box', cx, cy, ang, isw, isd, M_LOW,
                  {'col': ('COLOR', [[.93, .91, .86, 1] if rng.random() < .7 else [.86, .82, .74, 1] for _ in isl_parts]), 'gtint': ('COLOR', [[.05, .06, .07, 1]] * len(isl_parts)),
                   'seed': ('FLOAT', rng.random(len(isl_parts))), 'hl': ('FLOAT', np.zeros(len(isl_parts))), 'glass': ('FLOAT', np.full(len(isl_parts), .85)), 'zb': ('FLOAT', np.full(len(isl_parts), 3.0))})
-    ISLB.bi = bi; ISLB.y0 = np.array([p['y0'] for p in isl_parts]); ISLB.hf = np.array([p['hf'] for p in isl_parts]); ISLB.abs = np.array([p['abs'] for p in isl_parts])
-    ISLB.at = np.array([B5[i]['at'] for i in bi]); ISLB.dur = np.array([B5[i]['dur'] for i in bi]); ISLB.H = np.array([B5[i]['h'] for i in bi]) * 0.8
+    if ISLB: ISLB.bi = bi; ISLB.y0 = np.array([p['y0'] for p in isl_parts]); ISLB.hf = np.array([p['hf'] for p in isl_parts]); ISLB.abs = np.array([p['abs'] for p in isl_parts])
+    if ISLB: ISLB.at = np.array([B5[i]['at'] for i in bi]); ISLB.dur = np.array([B5[i]['dur'] for i in bi]); ISLB.H = np.array([B5[i]['h'] for i in bi]) * 0.8
     # trees: rounded crowns on the islands (plus extra scattered palms for density)
     T5 = W5['trees']
     tx = [t['x'] for t in T5]; ty = [t['y'] for t in T5]; tk = [t['k'] for t in T5]; ts = [t['s'] for t in T5]; trr = [t['r'] for t in T5]
     for k, isl in enumerate(W5['islands']):
         P = np.array(isl['poly']); mn, mxx = P.min(0), P.max(0); n = 0
-        while n < (900 if k else 350):
+        while n < ((220 if k else 90) if NAKHEEL_LOOK else (900 if k else 350)):
             q = mn + rng.random(2) * (mxx - mn)
             if in_poly_np(q, P * 0.93 + P.mean(0) * 0.07): tx.append(q[0]); ty.append(q[1]); tk.append(k); ts.append(rng.random()); trr.append(1.2 + rng.random() * 1.6); n += 1
     tx, ty, tk, ts, trr = map(np.array, (tx, ty, tk, ts, trr))
     leaf = bpy.data.materials.new('leaf'); T = NT(leaf)
     finish(T, principled(T, Base_Color=T.attr('col').outputs['Color'], Roughness=0.9).outputs[0])
     tcol = np.array([[.035, .09, .03, 1], [.05, .12, .035, 1], [.03, .07, .03, 1], [.06, .13, .04, 1]])[rng.integers(0, 4, len(tx))]
-    TREES = Boxes('trees', 'ball', tx, ty, ts * 6.28, trr * 1.6, trr * 1.6, leaf, {'col': ('COLOR', tcol)})
+    TREES = Boxes('trees', 'ball', tx, ty, ts * 6.28, trr * (1.0 if NAKHEEL_LOOK else 1.6), trr * (1.0 if NAKHEEL_LOOK else 1.6), leaf, {'col': ('COLOR', tcol)})
     TREES.k, TREES.s, TREES.r = tk, ts, trr
 
 def update_islands(t):
@@ -480,11 +502,11 @@ def update_islands(t):
     if TREES:
         at = np.array([W5['islands'][k]['at'] for k in TREES.k]); hI = np.array([W5['islands'][k]['h'] for k in TREES.k])
         p = np.clip((t - at - .6 - TREES.s * 1.4) / .6, 0, 1)
-        TREES.update(hI, TREES.r * 1.5 * p, p > 0)
+        TREES.update(hI, TREES.r * (0.8 if NAKHEEL_LOOK else 1.5) * p, p > 0)
 
 # ------------------------------------------------------------------ light, sky, camera
 sun_dir = np.array([0.52, -0.66, 0.54]); sun_dir /= np.linalg.norm(sun_dir)   # SE sun, matches the aerial's shadows
-ld = bpy.data.lights.new('sun', 'SUN'); ld.energy = 5.2; ld.color = (1.0, 0.86, 0.68); ld.angle = math.radians(0.6)
+ld = bpy.data.lights.new('sun', 'SUN'); ld.energy = 4.2 if EP == '5r' else 5.2; ld.color = (1.0, 0.86, 0.68); ld.angle = math.radians(0.6)
 sun = bpy.data.objects.new('sun', ld); sc.collection.objects.link(sun)
 sun.rotation_euler = Vector(-sun_dir).to_track_quat('-Z', 'Y').to_euler()
 world = bpy.data.worlds.new('sky'); sc.world = world; T = NT(world)
@@ -501,8 +523,8 @@ T.link(lp.outputs['Is Camera Ray'], mx.inputs[0]); T.link(bg.outputs[0], mx.inpu
 wo = T.node('ShaderNodeOutputWorld'); T.link(mx.outputs[0], wo.inputs['Surface'])
 
 camd = bpy.data.cameras.new('cam'); cam = bpy.data.objects.new('cam', camd); sc.collection.objects.link(cam); sc.camera = cam
-camd.sensor_fit = 'HORIZONTAL'; camd.sensor_width = 36.0; camd.clip_start = 2.0; camd.clip_end = 40000.0
-RW, RH = 1080, 1240
+camd.sensor_fit = 'HORIZONTAL'; camd.sensor_width = 36.0; camd.clip_start = 25.0 if REEL else 2.0; camd.clip_end = 40000.0
+RW, RH = 1080, 1920 if REEL else 1240
 def set_cam(c):
     yaw, pit = math.radians(c['yaw']), math.radians(c['pitch'])
     dh = np.array([math.sin(yaw), math.cos(yaw), 0])
@@ -514,7 +536,7 @@ def set_cam(c):
     camd.lens = c.get('f', 1100) / RW * 36.0
     camd.shift_x = 0.0; camd.shift_y = (c.get('cy', .5) - .5) * RH / max(RW, RH)
     for near, far in HAZE:
-        near.outputs[0].default_value = c['dist'] * 1.2; far.outputs[0].default_value = c['dist'] * 7
+        near.outputs[0].default_value = c['dist'] * (1.0 if REEL else 1.2); far.outputs[0].default_value = c['dist'] * (5 if REEL else 7)
 
 def set_time(t, F):
     for M in MESHES: M.update(t)
