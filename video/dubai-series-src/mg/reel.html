@@ -49,76 +49,82 @@ function zone(pr, polys, col, t, at, until) {
   x.restore();
 }
 function rr(X, Y, w, h, r) { x.beginPath(); x.roundRect(X, Y, w, h, r); }
+// ---- Business Bay (EP2) look for all text / info blocks: emerald-black panels, brushed gold, cream type
+const BB = { ink: 'rgba(12,22,19,.88)', tile0: 'rgba(20,34,29,.94)', tile1: 'rgba(12,22,19,.90)', line: 'rgba(201,164,106,.55)', cream: '#efe8d8', muted: '#a9a593', gold: '#c9a46a', gold2: '#e6c891' };
+function panel(X, Y, w, h, r, hl) {
+  const g = x.createLinearGradient(0, Y, 0, Y + h); g.addColorStop(0, hl ? 'rgba(64,52,30,.95)' : BB.tile0); g.addColorStop(1, hl ? 'rgba(30,28,20,.93)' : BB.tile1);
+  x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 40; x.shadowOffsetY = 12; x.fillStyle = g; rr(X, Y, w, h, r); x.fill(); x.shadowColor = 'transparent'; x.shadowOffsetY = 0;
+  x.strokeStyle = hl ? BB.gold : BB.line; x.lineWidth = hl ? 2.5 : 1.5; x.stroke();
+}
 function card(pr, C, t) {
   const a = prog(t, C.at, .3) * (1 - prog(t, C.until, .3)); if (a <= 0) return;
   const p = pr([C.x, C.y, 2]); if (p[2] < 0) return;
   const s = .86 + .14 * back(prog(t, C.at, .45)), lift = C.small ? 70 : 120;
   x.save(); x.globalAlpha = a;
-  // pin + leader
-  x.strokeStyle = 'rgba(255,255,255,.95)'; x.lineWidth = 2.5; x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0], p[1] - lift); x.stroke();
-  x.fillStyle = C.col; x.beginPath(); x.arc(p[0], p[1], 8, 0, 6.283); x.fill(); x.strokeStyle = '#fff'; x.lineWidth = 3; x.stroke();
+  x.strokeStyle = 'rgba(230,200,145,.9)'; x.lineWidth = 2; x.beginPath(); x.moveTo(p[0], p[1]); x.lineTo(p[0], p[1] - lift); x.stroke();
+  x.fillStyle = BB.gold2; x.beginPath(); x.arc(p[0], p[1], 7, 0, 6.283); x.fill();
+  const ph = ((t - C.at) % 1.4) / 1.4; x.strokeStyle = `rgba(230,200,145,${.9 * (1 - ph)})`; x.lineWidth = 2; x.beginPath(); x.arc(p[0], p[1], 8 + ph * 40, 0, 6.283); x.stroke();
   x.translate(p[0], p[1] - lift); x.scale(s, s);
-  x.font = `700 ${C.small ? 24 : 27}px Jost`; x.letterSpacing = '3px'; const tw = x.measureText(C.title.toUpperCase()).width;
-  let vw = 0; if (C.value) { x.font = 'italic 500 66px Corm'; x.letterSpacing = '0px'; vw = x.measureText(C.value).width; }
-  x.font = '500 20px Jost'; const gw = C.tag ? x.measureText(C.tag).width + 14 : 0;
-  const w = Math.max(tw + gw, vw) + 56, h = C.value ? 150 : 62;
-  x.shadowColor = 'rgba(0,0,0,.28)'; x.shadowBlur = 24; x.shadowOffsetY = 6; x.fillStyle = '#fff'; rr(-w / 2, -h, w, h, 8); x.fill(); x.shadowColor = 'transparent';
-  x.textBaseline = 'alphabetic'; x.textAlign = 'left';
-  x.font = `700 ${C.small ? 24 : 27}px Jost`; x.letterSpacing = '3px'; x.fillStyle = '#121624'; x.fillText(C.title.toUpperCase(), -w / 2 + 28, -h + (C.value ? 48 : 41));
-  if (C.tag) { x.font = '500 20px Jost'; x.letterSpacing = '0px'; x.fillStyle = '#8b90a0'; x.fillText(C.tag, -w / 2 + 28 + tw + 12, -h + 48); }
-  if (C.value) { const va = prog(t, C.valueAt ?? C.at, .35); x.globalAlpha = a * va; x.font = 'italic 500 66px Corm'; x.letterSpacing = '0px'; x.fillStyle = C.col; x.textAlign = 'center'; x.fillText(C.value, 0, -30 + (1 - eo(va)) * 14); }
+  x.font = `500 ${C.small ? 21 : 23}px Jost`; x.letterSpacing = '5px'; const tw = x.measureText(C.title.toUpperCase()).width;
+  let vw = 0; if (C.value) { x.font = 'italic 500 70px Corm'; x.letterSpacing = '0px'; vw = x.measureText(C.value).width; }
+  x.font = 'italic 500 26px Corm'; const gw = C.tag ? x.measureText(C.tag).width + 16 : 0;
+  const w = Math.max(tw + gw, vw) + 60, h = C.value ? 150 : 58;
+  panel(-w / 2, -h, w, h, C.value ? 22 : 29, false);
+  x.textBaseline = 'alphabetic'; x.textAlign = 'center';
+  x.font = `500 ${C.small ? 21 : 23}px Jost`; x.letterSpacing = '5px'; x.fillStyle = BB.gold; x.fillText(C.title.toUpperCase(), -gw / 2, -h + (C.value ? 46 : 37));
+  if (C.tag) { x.font = 'italic 500 26px Corm'; x.letterSpacing = '0px'; x.fillStyle = BB.muted; x.textAlign = 'left'; x.fillText(C.tag, tw / 2 - gw / 2 + 12, -h + 46); x.textAlign = 'center'; }
+  if (C.value) { const va = prog(t, C.valueAt ?? C.at, .35); x.globalAlpha = a * va; x.font = 'italic 500 70px Corm'; x.letterSpacing = '0px'; x.fillStyle = BB.gold2; x.fillText(C.value, 0, -28 + (1 - eo(va)) * 14); }
   x.restore();
 }
 function stat(S, t) {
   const a = prog(t, S.at, .3) * (1 - prog(t, S.until, .3)); if (a <= 0) return;
-  x.save(); x.globalAlpha = a; x.textAlign = 'center'; x.fillStyle = '#fff'; x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = 30;
-  const sc = .7 + .3 * back(prog(t, S.at, .45)); x.translate(540, S.y); x.scale(sc, sc);
-  x.font = '800 132px Jost'; x.fillText(S.text, 0, 0);
-  if (S.sub) { x.font = '700 44px Jost'; x.letterSpacing = '2px'; x.fillText(S.sub.toUpperCase(), 0, 66); }
+  x.save(); x.globalAlpha = a; x.textAlign = 'center'; x.shadowColor = 'rgba(0,0,0,.65)'; x.shadowBlur = 40;
+  x.translate(540, S.y + (1 - eo(prog(t, S.at, .5))) * 50);
+  x.font = '600 190px Corm'; x.fillStyle = BB.cream; x.fillText(S.text, 0, 0);
+  if (S.sub) { x.font = '500 30px Jost'; x.letterSpacing = '8px'; x.fillStyle = BB.gold2; x.fillText(S.sub.toUpperCase(), 0, 64); }
   x.restore();
 }
 function list(L, t) {
   const a = prog(t, L.at, .3) * (1 - prog(t, L.until, .3)); if (a <= 0) return;
-  const w = 800, rowH = 92, h = 110 + L.items.length * rowH, X = 140, Y = 640 - (1 - eo(prog(t, L.at, .4))) * 30;
-  x.save(); x.globalAlpha = a; x.shadowColor = 'rgba(0,0,0,.3)'; x.shadowBlur = 40; x.shadowOffsetY = 10; x.fillStyle = '#fff'; rr(X, Y, w, h, 22); x.fill(); x.shadowColor = 'transparent';
-  x.font = '800 50px Jost'; x.fillStyle = '#121624'; x.textBaseline = 'middle'; x.fillText(L.title, X + 44, Y + 64);
+  const w = 880, rowH = 104, h = 130 + L.items.length * rowH, X = 100, Y = 640 - (1 - eo(prog(t, L.at, .4))) * 40;
+  x.save(); x.globalAlpha = a; panel(X, Y, w, h, 28, false);
+  x.font = 'italic 500 22px Jost'; x.textBaseline = 'middle';
+  x.font = '500 22px Jost'; x.letterSpacing = '6px'; x.fillStyle = BB.gold; x.fillText(L.title.toUpperCase(), X + 50, Y + 64); x.letterSpacing = '0px';
   L.items.forEach(([main, sub, at], i) => {
-    const yy = Y + 110 + i * rowH + rowH / 2, on = t >= at, k = eo(prog(t, at, .3));
-    x.strokeStyle = 'rgba(18,22,36,.08)'; x.lineWidth = 2; x.beginPath(); x.moveTo(X + 40, yy - rowH / 2); x.lineTo(X + w - 40, yy - rowH / 2); x.stroke();
-    x.fillStyle = on ? '#2f5bea' : '#fff'; x.strokeStyle = on ? '#2f5bea' : '#d4d7df'; x.lineWidth = 3; rr(X + 44, yy - 20, 40, 40, 8); x.fill(); x.stroke();
-    if (on) { x.strokeStyle = '#fff'; x.lineWidth = 5; x.lineCap = 'round'; x.beginPath(); x.moveTo(X + 54, yy); x.lineTo(X + 54 + 8 * k, yy + 8 * k); x.lineTo(X + 54 + 8 * k + 13 * k, yy - 10 * k); x.stroke(); }
-    x.font = '600 40px Jost'; x.fillStyle = on ? '#121624' : '#b9bcc6'; x.fillText(main, X + 106, yy + (sub ? -12 : 0));
-    if (sub) { x.font = '500 28px Jost'; x.fillStyle = on ? '#6b7080' : '#cfd2d9'; x.fillText(sub, X + 106, yy + 26); }
+    const yy = Y + 130 + i * rowH + rowH / 2 - 10, on = t >= at, k = eo(prog(t, at, .35));
+    x.strokeStyle = 'rgba(201,164,106,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(X + 46, yy - rowH / 2); x.lineTo(X + w - 46, yy - rowH / 2); x.stroke();
+    x.strokeStyle = on ? BB.gold2 : 'rgba(201,164,106,.35)'; x.lineWidth = 2.5; x.fillStyle = on ? 'rgba(201,164,106,.18)' : 'transparent'; x.beginPath(); x.arc(X + 70, yy, 22, 0, 6.283); x.fill(); x.stroke();
+    if (on) { x.strokeStyle = BB.gold2; x.lineWidth = 4; x.lineCap = 'round'; x.beginPath(); x.moveTo(X + 59, yy); x.lineTo(X + 59 + 8 * k, yy + 8 * k); x.lineTo(X + 59 + 8 * k + 14 * k, yy - 10 * k); x.stroke(); }
+    x.font = '600 50px Corm'; x.fillStyle = on ? BB.cream : 'rgba(239,232,216,.35)'; x.fillText(main, X + 116, yy + (sub ? -14 : 0));
+    if (sub) { x.font = '400 28px Jost'; x.fillStyle = on ? BB.muted : 'rgba(169,165,147,.35)'; x.fillText(sub, X + 116, yy + 28); }
   });
   x.restore();
 }
 function summary(Sm, t) {
   const a = prog(t, Sm.at, .35) * (1 - prog(t, Sm.until, .35)); if (a <= 0) return;
-  const X = 90, Y = 560, w = 900, rowH = 74, h = 40 + Sm.rows.length * rowH;
-  x.save(); x.globalAlpha = a; x.fillStyle = 'rgba(20,28,62,.93)'; x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 40; rr(X, Y, w, h, 20); x.fill(); x.shadowColor = 'transparent';
-  Sm.rows.forEach(([v, l, col], i) => {
-    const k = eo(prog(t, Sm.at + .15 + i * .14, .35)), yy = Y + 20 + i * rowH + rowH / 2; x.globalAlpha = a * k;
-    if (i) { x.strokeStyle = 'rgba(255,255,255,.08)'; x.lineWidth = 2; x.beginPath(); x.moveTo(X + 30, yy - rowH / 2); x.lineTo(X + w - 30, yy - rowH / 2); x.stroke(); }
-    x.fillStyle = col; x.beginPath(); x.arc(X + 50, yy, 9, 0, 6.283); x.fill();
-    x.textBaseline = 'middle'; x.font = 'italic 500 52px Corm'; x.fillStyle = '#fff'; x.fillText(v, X + 80, yy);
-    x.font = '600 32px Jost'; x.fillStyle = 'rgba(255,255,255,.75)'; x.textAlign = 'right'; x.fillText(l, X + w - 40, yy); x.textAlign = 'left';
+  const X = 70, Y = 560, w = 940, rowH = 82, h = 50 + Sm.rows.length * rowH;
+  x.save(); x.globalAlpha = a; panel(X, Y, w, h, 22, false);
+  Sm.rows.forEach(([v, l], i) => {
+    const k = eo(prog(t, Sm.at + .15 + i * .14, .4)), yy = Y + 25 + i * rowH + rowH / 2; x.globalAlpha = a * k;
+    if (i) { x.strokeStyle = 'rgba(239,232,216,.22)'; x.lineWidth = 1.5; x.beginPath(); x.moveTo(X + 34, yy - rowH / 2); x.lineTo(X + w - 34, yy - rowH / 2); x.stroke(); }
+    x.textBaseline = 'middle'; x.textAlign = 'left'; x.font = '500 58px Corm'; x.fillStyle = BB.cream; x.fillText(v, X + 40 - (1 - k) * 40, yy);
+    x.font = '500 28px Jost'; x.letterSpacing = '2px'; x.fillStyle = BB.gold2; x.textAlign = 'right'; x.fillText(l.toUpperCase(), X + w - 40, yy); x.textAlign = 'left'; x.letterSpacing = '0px';
   });
   x.restore();
 }
 function caption(t) {
   const C = R.CHUNKS.find(c => t >= c.start && t < c.end); if (!C || t < R.MAP_FROM) return;
   const a = prog(t, C.start, .12);
-  const parts = C.words.map(w => ({ ...w, font: w.key ? 'italic 500 56px Corm' : '700 44px Jost' }));
+  const parts = C.words.map(w => ({ ...w, font: w.key ? 'italic 500 58px Corm' : '500 42px Jost' }));
   let tw = 0; parts.forEach((p, i) => { x.font = p.font; p.w2 = x.measureText(p.w).width; tw += p.w2 + (i ? 14 : 0); });
-  const h = 92, w = tw + 72, X = 540 - w / 2, Y = 1140 - h / 2;
-  x.save(); x.globalAlpha = a; x.fillStyle = 'rgba(24,31,66,.94)'; x.shadowColor = 'rgba(0,0,0,.3)'; x.shadowBlur = 24; rr(X, Y, w, h, 46); x.fill(); x.shadowColor = 'transparent';
-  let cx = X + 36; x.textBaseline = 'middle';
-  for (const p of parts) { x.font = p.font; x.fillStyle = p.key ? '#c9d3ff' : '#fff'; x.globalAlpha = a * (t >= p.s - .05 ? 1 : .38); x.fillText(p.w, cx, 1140 + (p.key ? 2 : 1)); cx += p.w2 + 14; }
-  // handle tag
-  x.globalAlpha = a; x.font = '600 26px Jost'; const hw = x.measureText(R.HANDLE).width + 70;
-  x.fillStyle = '#fff'; rr(540 - hw / 2, 1210, hw, 46, 23); x.fill();
-  x.fillStyle = '#2f5bea'; x.beginPath(); x.arc(540 - hw / 2 + 26, 1233, 6, 0, 6.283); x.fill();
-  x.fillStyle = '#121624'; x.fillText(R.HANDLE, 540 - hw / 2 + 44, 1234);
+  const h = 92, w = tw + 76, X = 540 - w / 2, Y = 1140 - h / 2;
+  x.save(); x.globalAlpha = a; x.fillStyle = BB.ink; x.shadowColor = 'rgba(0,0,0,.45)'; x.shadowBlur = 30; rr(X, Y, w, h, 46); x.fill(); x.shadowColor = 'transparent';
+  x.strokeStyle = BB.line; x.lineWidth = 1.5; x.stroke();
+  let cx = X + 38; x.textBaseline = 'middle';
+  for (const p of parts) { x.font = p.font; x.fillStyle = p.key ? BB.gold2 : BB.cream; x.globalAlpha = a * (t >= p.s - .05 ? 1 : .35); x.fillText(p.w, cx, 1140 + (p.key ? 2 : 1)); cx += p.w2 + 14; }
+  x.globalAlpha = a; x.font = '500 20px Jost'; x.letterSpacing = '5px'; const hw = x.measureText(R.HANDLE.toUpperCase()).width + 64;
+  x.fillStyle = BB.ink; x.strokeStyle = BB.gold; x.lineWidth = 1.5; rr(540 - hw / 2, 1212, hw, 44, 22); x.fill(); x.stroke();
+  x.fillStyle = BB.gold2; x.textAlign = 'center'; x.fillText(R.HANDLE.toUpperCase(), 540 + 2, 1235); x.textAlign = 'left';
   x.restore();
 }
 function routeDraw(pr, t) {
@@ -126,8 +132,8 @@ function routeDraw(pr, t) {
   const k = eo(prog(t, Ro.at, Ro.dur)), dense = []; for (let i = 0; i < Ro.pts.length - 1; i++) for (let j = 0; j < 20; j++) { const q = j / 20, p0 = Ro.pts[i], p1 = Ro.pts[i + 1]; dense.push([p0[0] + (p1[0] - p0[0]) * q, p0[1] + (p1[1] - p0[1]) * q]); }
   dense.push(Ro.pts[Ro.pts.length - 1]); const n = Math.max(2, Math.round(dense.length * k)), pts = dense.slice(0, n);
   x.save(); x.globalAlpha = a; x.lineCap = 'round'; x.lineJoin = 'round';
-  path(pr, pts, false); x.strokeStyle = 'rgba(47,91,234,.5)'; x.lineWidth = 16; x.shadowColor = '#2f5bea'; x.shadowBlur = 20; x.stroke(); x.shadowBlur = 0;
-  path(pr, pts, false); x.strokeStyle = '#fff'; x.lineWidth = 5; x.setLineDash([18, 12]); x.lineDashOffset = -t * 70; x.stroke(); x.setLineDash([]);
+  path(pr, pts, false); x.strokeStyle = 'rgba(230,200,145,.35)'; x.lineWidth = 14; x.shadowColor = BB.gold; x.shadowBlur = 18; x.stroke(); x.shadowBlur = 0;
+  path(pr, pts, false); x.strokeStyle = '#f3dca7'; x.lineWidth = 5; x.setLineDash([18, 12]); x.lineDashOffset = -t * 70; x.stroke(); x.setLineDash([]);
   if (k < 1) { const e = pr(pts[pts.length - 1]), b = pr(pts[Math.max(0, pts.length - 4)]); x.translate(e[0], e[1]); x.rotate(Math.atan2(e[1] - b[1], e[0] - b[0])); x.fillStyle = '#fff'; x.shadowColor = 'rgba(0,0,0,.5)'; x.shadowBlur = 10;
     x.beginPath(); x.moveTo(26, 0); x.lineTo(-14, -6); x.lineTo(-6, -24); x.lineTo(-12, -24); x.lineTo(-24, -5); x.lineTo(-32, -5); x.lineTo(-36, -14); x.lineTo(-40, -14); x.lineTo(-37, 0); x.lineTo(-40, 14); x.lineTo(-36, 14); x.lineTo(-32, 5); x.lineTo(-24, 5); x.lineTo(-12, 24); x.lineTo(-6, 24); x.lineTo(-14, 6); x.closePath(); x.fill(); }
   x.restore();
@@ -135,16 +141,40 @@ function routeDraw(pr, t) {
 function beach(pr, t) {
   const B = R.BEACH, a = prog(t, B.at, .2) * (1 - prog(t, B.until, .4)); if (a <= 0) return; const k = eo(prog(t, B.at, B.dur));
   x.save(); x.globalAlpha = a; x.lineJoin = 'round'; x.lineCap = 'round';
-  for (const k2 in ISL) for (const P of ISL[k2].polys) { path(pr, partial(P, k), false); x.shadowColor = '#ffe9b0'; x.shadowBlur = 18; x.strokeStyle = 'rgba(255,236,190,.95)'; x.lineWidth = 5; x.stroke(); }
+  for (const k2 in ISL) for (const P of ISL[k2].polys) { path(pr, partial(P, k), false); x.shadowColor = '#ffe9b0'; x.shadowBlur = 18; x.strokeStyle = 'rgba(243,220,167,.95)'; x.lineWidth = 5; x.stroke(); }
   x.restore();
 }
-function border() {                                   // presenter window frame (drawn over his video in encode_reel.sh)
-  x.save(); x.shadowColor = 'rgba(0,0,0,.35)'; x.shadowBlur = 24; x.strokeStyle = '#fff'; x.lineWidth = 4; rr(WIN.x, WIN.y, WIN.w, WIN.h, WIN.r); x.stroke(); x.restore();
+function chrome() {                                    // top bar as in the Business Bay video
+  x.save(); x.font = '500 21px Jost'; x.letterSpacing = '6px'; x.textBaseline = 'alphabetic';
+  x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 12;
+  x.fillStyle = BB.cream; x.textAlign = 'left'; x.fillText('DUBAI SERIES · EP5', 56, 112);
+  x.fillStyle = BB.gold2; x.textAlign = 'right'; x.fillText('H&S REAL ESTATE', 1024, 112);
+  x.shadowBlur = 0; x.strokeStyle = 'rgba(201,164,106,.5)'; x.lineWidth = 1; x.beginPath(); x.moveTo(56, 128); x.lineTo(1024, 128); x.stroke();
+  x.font = '400 15px Jost'; x.letterSpacing = '5px'; x.fillStyle = 'rgba(239,232,216,.7)'; x.fillText('MAP DATA © OPENSTREETMAP · ESRI', 1024, 154);
+  x.restore();
+}
+function hook(t) {                                     // opening headings, Business Bay style (white caps, gold stamp + gold pill)
+  const up = (at, d = .5) => eo(prog(t, at, d)), pop = (at, d = .5) => .5 + .5 * back(prog(t, at, d));
+  x.save(); x.textAlign = 'center'; x.textBaseline = 'alphabetic';
+  let k = up(.55); x.globalAlpha = k; x.font = '700 92px Jost'; x.fillStyle = '#fff'; x.shadowColor = 'rgba(0,0,0,.6)'; x.shadowBlur = 30; x.shadowOffsetY = 6;
+  x.fillText('ABU DHABI HAS', 540, 250 + (1 - k) * 60); x.fillText('5 ISLANDS.', 540, 344 + (1 - k) * 60);
+  x.shadowColor = 'transparent'; x.shadowOffsetY = 0;
+  if (t >= 2.55) { const s = pop(2.55, .45); x.globalAlpha = prog(t, 2.55, .45); x.save(); x.translate(540, 1360); x.rotate(-5 * Math.PI / 180); x.scale(s, s);
+    x.font = '500 40px Jost'; x.letterSpacing = '8px'; const w = x.measureText('PLOT TWIST').width + 64; x.fillStyle = 'rgba(10,16,14,.75)'; rr(-w / 2, -40, w, 80, 40); x.fill();
+    x.strokeStyle = BB.gold; x.lineWidth = 1.5; x.stroke(); x.fillStyle = '#f3dca7'; x.fillText('PLOT TWIST', 4, 14); x.restore(); }
+  if (t >= 3.9) { const s = pop(3.9); x.globalAlpha = prog(t, 3.9, .5); x.save(); x.translate(540, 1500); x.scale(s, s);
+    x.font = '700 84px Jost'; const w = x.measureText('SO DOES DUBAI.').width + 68; x.fillStyle = BB.gold; rr(-w / 2, -64, w, 108, 14); x.fill();
+    x.fillStyle = '#14100a'; x.fillText('SO DOES DUBAI.', 0, 14); x.restore(); }
+  x.restore();
+}
+function border() {                                   // presenter window frame: gold ring + faint outer line, as in Business Bay
+  x.save(); x.shadowColor = 'rgba(0,0,0,.55)'; x.shadowBlur = 40; x.shadowOffsetY = 18; x.strokeStyle = BB.gold; x.lineWidth = 3; rr(WIN.x, WIN.y, WIN.w, WIN.h, WIN.r); x.stroke();
+  x.shadowColor = 'transparent'; x.strokeStyle = 'rgba(201,164,106,.28)'; x.lineWidth = 1; rr(WIN.x - 10, WIN.y - 10, WIN.w + 20, WIN.h + 20, WIN.r + 8); x.stroke(); x.restore();
 }
 window.renderAt = async function (t) {
   x.clearRect(0, 0, W, H);
   if (P.get('border')) { border(); return; }
-  if (t < R.MAP_FROM) return;                         // his full-frame opening
+  if (t < R.MAP_FROM) { hook(t); return; }            // his full-frame opening + the hook headings
   const f = Math.round(t * 30), img = BL ? await new Promise(ok => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = `${BL}/${String(f).padStart(5, '0')}.png`; }) : null;
   if (img) x.drawImage(img, 0, 0, W, H); else { x.fillStyle = '#2a4a4f'; x.fillRect(0, 0, W, H); }
   const pr = camera(R.camAt(t));
@@ -154,7 +184,7 @@ window.renderAt = async function (t) {
   for (const S of R.STATS) stat(S, t);
   for (const L of R.LISTS) list(L, t);
   summary(R.SUMMARY, t);
-  caption(t);
+  caption(t); chrome();
 };
 Promise.all([document.fonts.load('700 40px Jost'), document.fonts.load('italic 500 40px Corm')])
   .then(() => { for (const o of window.ISL5) ISL[o.k] = o; window.TOTAL = R.TOTAL; window.READY = true; });
