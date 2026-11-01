@@ -196,6 +196,14 @@ section.block + section.block { border-top: 1px solid var(--line); }
 @media (max-width: 960px) { .sites { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 520px) { .sites { grid-template-columns: 1fr; } }
 
+.projgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.pcard { display: flex; flex-direction: column; gap: 10px; padding: 26px 28px; border-radius: var(--radius); background: var(--slate); color: var(--on-slate); text-decoration: none; transition: transform .4s ease, box-shadow .4s ease; }
+.pcard:hover { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(10, 20, 30, .2); }
+.pcard h3 { font-size: 24px; } .pcard p { color: color-mix(in srgb, var(--on-slate) 75%, transparent); font-size: 15px; }
+.crmlist { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 32px; margin-top: 18px; }
+.crm { padding: 14px 0; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+.crm b { font-weight: 600; } .crm span { color: var(--muted); font-size: 14.5px; }
+@media (max-width: 760px) { .projgrid, .crmlist { grid-template-columns: 1fr; } }
 /* plugin highlight */
 .plugin { margin-top: 44px; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 20px; align-items: center; background: var(--slate); color: var(--on-slate); border-radius: var(--radius); padding: 24px 28px; }
 .plugin svg { width: 44px; height: 44px; stroke: var(--brass); }
@@ -364,7 +372,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
 .zoom:focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
 .zoom img { width: 100%; height: auto; border-radius: var(--radius); transition: transform .6s var(--ease-out), box-shadow .6s var(--ease-out); }
 .zoom:hover img { transform: translateY(-4px); box-shadow: 0 18px 36px rgba(10, 20, 30, .2); }
-.media { grid-template-columns: repeat(6, minmax(0, 1fr)); margin-top: 0; }
+.media { grid-template-columns: repeat(4, minmax(0, 1fr)); margin-top: 0; }
 .media .zoom img { aspect-ratio: 9 / 16; object-fit: cover; }
 @media (max-width: 960px) { .media { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .media { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
@@ -419,7 +427,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
       <a href="#experience">Experience</a>
       <a href="#skills">Skills</a>
       <a href="#work">Work</a>
-      <a href="#websites">Websites</a>
+      <a href="#projects">Projects</a><a href="#websites">Websites</a>
       <a href="#education">Education</a>
     </nav>
   </div>
@@ -461,7 +469,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
     <div class="fact"><b>7+ yrs</b><span>Working since 2019</span></div>
     <div class="fact"><b>55+</b><span>Websites &amp; stores built</span></div>
     <div class="fact"><b>6</b><span>Ad platforms managed</span></div>
-    <div class="fact"><b>1</b><span>Plugin approved on WordPress.org</span></div>
+    <div class="fact"><b>2</b><span>Plugins live on WordPress.org</span></div>
   </div>
 </div>
 
@@ -507,7 +515,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="11" cy="11" r="6"/><path d="m20 20-4.5-4.5"/></svg><h3>SEO &amp; Organic Growth</h3><p>Technical SEO, on-page and off-page optimization, keyword research, website audits, content optimization, internal linking and search performance tracking.</p></div>
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="m13 7 4 4"/></svg><h3>Content Creation &amp; Strategy</h3><p>Content planning, social media content, website copywriting, SEO blog articles, ad creatives, video scripts and promotional campaigns tailored to each platform.</p></div>
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M7 6.5h.01M10 6.5h.01"/></svg><h3>Websites &amp; E-commerce</h3><p>Website design and development, WordPress, PHP, landing pages, e-commerce stores and conversion-focused website optimization.</p></div>
-      <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></svg><h3>Custom Plugin &amp; App Development</h3><p>Custom WordPress plugins, including one approved on the official WordPress.org directory, plus apps for Shopify and BigCommerce.</p></div>
+      <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M9 3v4M15 3v4M7 7h10v4a5 5 0 0 1-10 0z"/><path d="M12 16v5"/></svg><h3>Custom Plugin &amp; App Development</h3><p>Custom WordPress plugins, including two published on the official WordPress.org directory, plus apps for Shopify and BigCommerce.</p></div>
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="9" cy="9" r="5"/><path d="M14 14l7 7M3 21l3-3"/></svg><h3>Graphic Design &amp; Motion Graphics</h3><p>Digital graphics, promotional banners, branded creatives, motion graphics, animated content and short-form video for campaigns and social media.</p></div>
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="12" cy="18" r="2.5"/><path d="M8 7.5l3 8M16 7.5l-3 8M8.5 6h7"/></svg><h3>CRM &amp; Business Systems</h3><p>CRM customization, workflow automation, business process improvements, system integrations and customer management solutions.</p></div>
       <div class="svc"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><h3>Custom Dashboards &amp; Software</h3><p>Marketing intelligence dashboards, business intelligence solutions, performance reporting systems, data visualization and API integrations.</p></div>
@@ -538,7 +546,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
             <li><strong>SEO &amp; Organic Growth:</strong> technical, on-page and off-page SEO, audits, keyword research and rank tracking.</li>
             <li><strong>Content Creation &amp; Strategy:</strong> social content, web copy, SEO blogs, ad creatives and video scripts.</li>
             <li><strong>Websites &amp; E-commerce:</strong> WordPress, PHP, landing pages and conversion-focused stores.</li>
-            <li><strong>Custom Plugin &amp; App Development:</strong> WordPress plugins (one approved on WordPress.org), Shopify and BigCommerce apps.</li>
+            <li><strong>Custom Plugin &amp; App Development:</strong> WordPress plugins (two published on WordPress.org), Shopify and BigCommerce apps.</li>
             <li><strong>Graphic Design &amp; Motion Graphics:</strong> banners, branded creatives, animation and short-form video.</li>
             <li><strong>CRM &amp; Business Systems:</strong> CRM customization, workflow automation and integrations.</li>
             <li><strong>Custom Dashboards &amp; Software:</strong> BI dashboards, reporting systems and API integrations.</li>
@@ -755,6 +763,14 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
           <figcaption><b>Developer Finance ad</b><span>AI video ad · 25s</span></figcaption>
         </figure>
         <figure>
+          <video src="assets/dubai-series-business-bay.mp4" poster="assets/dubai-series-business-bay.webp" controls muted playsinline preload="none"></video>
+          <figcaption><b>Dubai Series · Business Bay</b><span>3D map motion graphics · 42s</span></figcaption>
+        </figure>
+        <figure>
+          <video src="assets/dubai-series-dubai-islands.mp4" poster="assets/dubai-series-dubai-islands.webp" controls muted playsinline preload="none"></video>
+          <figcaption><b>Dubai Series · Dubai Islands</b><span>3D map motion graphics · 44s</span></figcaption>
+        </figure>
+        <figure>
           <video src="assets/stereotypies-explainer.mp4" poster="assets/stereotypies-explainer.webp" controls muted playsinline preload="none"></video>
           <figcaption><b>Understanding Stereotypies</b><span>Animated explainer · 45s</span></figcaption>
         </figure>
@@ -845,6 +861,26 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
   <figure><img alt=""><figcaption></figcaption></figure>
   <button class="lb-nav lb-next" type="button" aria-label="Next image">&#8594;</button>
 </dialog>
+
+<section class="block" id="projects">
+  <div class="wrap">
+    <div class="head">
+      <div><p class="label">Projects &amp; clients</p><h2>Plugins, systems and campaigns</h2></div>
+      <p>Software I've published, business systems I've built, and the brands I run marketing, SEO and ads for.</p>
+    </div>
+    <div class="projgrid">
+      <a class="pcard" href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/" target="_blank" rel="noopener"><span class="label">WordPress.org plugin</span><h3>Laghavi Performance Insight for WooCommerce</h3><p>Store performance insights for WooCommerce, published on the official plugin directory.</p></a>
+      <a class="pcard" href="https://wordpress.org/plugins/sarala-login-page/" target="_blank" rel="noopener"><span class="label">WordPress.org plugin</span><h3>Sarala Login Page</h3><p>Custom login page and security plugin, including failed-login tracking, published on the official directory.</p></a>
+    </div>
+    <h3 class="sub" style="margin-top:44px">CRM, workflow automation &amp; business intelligence</h3>
+    <div class="crmlist"><div class="crm"><b>laghavi.site</b><span>Custom AI-supported marketing intelligence platform</span></div><div class="crm"><b>Grand Flora Group</b><span>Custom performance dashboard pulling real-time data from Zenoti &amp; CallGear</span></div><div class="crm"><b>Axis Real Estate</b><span>Custom Laravel/PHP CRM for agents</span></div><div class="crm"><b>A1 Partners Brokerage</b><span>Zoho CRM with performance dashboard and Zoho apps for HR, finance &amp; operations, with automated workflows</span></div><div class="crm"><b>Vision Vista Real Estate</b><span>HubSpot CRM + automation</span></div><div class="crm"><b>Brazilian Meal Restaurant</b><span>Custom PHP/Laravel online order management CRM</span></div><div class="crm"><b>Messe Düsseldorf Gulf Office</b><span>Zoho CRM with automations for operations</span></div></div>
+    <div class="skills" style="margin-top:44px">
+      <div class="skillset"><h3>Digital marketing &amp; branding</h3><div class="tags"><span>Al Ali Yachts</span><span>Uniq Dubai</span><span>Xtreme Yacht</span><span>Axis Real Estate</span><span>Pure Horizon Real Estate</span><span>Sea Riders UAE</span><span>Xtremewake UAE</span><span>Satbet</span><span>Xpress Marine Yachts &amp; Boat Repair</span><span>Dreamland Real Estate LLC</span><span>Majestic Rent a Car LLC</span><span>Carsnow Auto Service Garage</span><span>Meteora Developers (Viani)</span><span>Dugasta Properties (Al Haseen 3)</span><span>A1 Partners Brokerage</span><span>Vision Vista Real Estate</span><span>Flovia Flowers</span><span>Baaqat Flowers</span><span>American Spine Center</span><span>AAA Banking Services Consultancy</span><span>Femme Haven Real Estate LLC</span><span>Kaizen Assets Management LLC</span></div></div>
+      <div class="skillset"><h3>SEO work</h3><div class="tags"><span>alaliyachts.com</span><span>uniqdubai.com</span><span>xtremeyacht.com</span><span>flovia.ae</span><span>baaqat.ae</span><span>gaila.ae</span><span>alrasapestcontrol.ae</span><span>carsnowautoservices.ae</span><span>servyxuae.com</span><span>atoney.com</span><span>eliteparty.ae</span><span>krewmarketing.ae</span><span>oberoiyacht.com</span><span>baaqatcamps.ae</span><span>yoyrestaurant.ae</span><span>a1.partners</span><span>texon.ae</span><span>kaizenams.com</span><span>Pisa Hair Salon (GMB)</span><span>Fitland Fitness (GMB)</span></div></div>
+      <div class="skillset"><h3>SEM / paid ads</h3><div class="tags"><span>Al Ali Yachts</span><span>Xtreme Yachts</span><span>Xpress Marine</span><span>Majestic Rent A Car</span><span>Al Ali Tech</span><span>Uniq Dubai</span><span>A1 Partners</span><span>Viani by Meteora</span><span>Cabello Lounge</span><span>Xtreme Wake UAE</span><span>Sea Riders UAE</span><span>wake2wake.ae</span><span>Super Kids Therapist (UK)</span></div></div>
+    </div>
+  </div>
+</section>
 
 <section class="block" id="websites">
   <div class="wrap">
@@ -954,7 +990,7 @@ footer .wrap { padding-block: 18px; display: flex; flex-wrap: wrap; justify-cont
     </div>
     <div class="plugin">
       <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6"><circle cx="12" cy="9" r="6"/><path d="m8.5 14-1.5 7 5-3 5 3-1.5-7"/></svg>
-      <div><h3>Dedicated achievement: WordPress.org plugin approval</h3><p>Developed a custom WordPress plugin and received official approval for it on the WordPress.org plugin directory.</p></div>
+      <div><h3>Dedicated achievement: WordPress.org plugin approval</h3><p>Developed custom WordPress plugins and received official approval for them on the WordPress.org plugin directory: <a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/" target="_blank" rel="noopener">Laghavi Performance Insight for WooCommerce</a> and <a href="https://wordpress.org/plugins/sarala-login-page/" target="_blank" rel="noopener">Sarala Login Page</a>.</p></div>
     </div>
     <div class="personal">
       <div><h3>Languages</h3><p>English · Hindi · Marathi</p></div>
@@ -1061,7 +1097,7 @@ document.querySelectorAll('.copy').forEach(function (btn) {
   var groups = [
     ['.head > *', ''], ['.about > *', ''], ['.svc', 'scale'], ['.services + .plugin', ''],
     ['.job', 'left'], ['.skillset', ''], ['.shot', ''], ['.sub', ''], ['.subnote', ''], ['.media figure', ''], ['.hcard', ''], ['.masonry figure', ''], ['.slide', ''], ['.seo figure', ''],
-    ['.sites > div', ''], ['.edu > div', ''], ['.plugin', ''], ['.personal > div', ''],
+    ['.sites > div', ''], ['.pcard', ''], ['.crm', ''], ['.edu > div', ''], ['.plugin', ''], ['.personal > div', ''],
     ['.contact .wrap > div:first-child', 'left'], ['.ccard', ''], ['.fact', '']
   ];
   var targets = [];
