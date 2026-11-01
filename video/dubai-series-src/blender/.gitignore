@@ -1,0 +1,6 @@
+# downloaded / generated data (re-create with fetch_real.py, fetch_osm2.js, paint_ground.js, export.js)
+real/
+data/
+out/
+out_*.log
+test/

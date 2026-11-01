@@ -1,0 +1,18 @@
+{
+  "name": "mg",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gl3d.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "ffmpeg-static": "^5.2.0",
+    "playwright-core": "^1.47.2",
+    "three": "^0.150.1"
+  }
+}

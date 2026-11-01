@@ -113,12 +113,13 @@ window.EPISODES = {
           </div>` },
       { at: 19.82, id: 'map', cue: 'canal · offices · <em>Downtown</em>',
         map: { keys: [[19.5, { x: -120, y: 170, dist: 1250, pitch: 28, yaw: -40, f: 1100, cy: .7 }], [20.4, { x: -100, y: 160, dist: 1150, pitch: 31, yaw: -44, f: 1100, cy: .68 }],
-              [21.5, { x: 130, y: 50, dist: 820, pitch: 48, yaw: -52, f: 1100, cy: .62 }], [24.6, { x: 20, y: 80, dist: 720, pitch: 40, yaw: -28, f: 1100, cy: .64 }]],
+              // targets / labels on the real map (Blender build, 1 unit = 4 m): Business Bay lies SW of the Burj, Bay Square offices on the canal
+              [21.5, { x: -90, y: -120, dist: 820, pitch: 48, yaw: -52, f: 1100, cy: .62 }], [24.6, { x: -60, y: -40, dist: 720, pitch: 40, yaw: -28, f: 1100, cy: .64 }]],
           hl: (b, t) => (b.office && t > 21.55 && t < 23.4) || (b.group === 'burj' && t > 23.0),
-          labels: [{ x: -120, y: 160, z: 330, text: 'Burj Khalifa', at: 19.75, lift: 30, pulse: true }, { x: 55, y: 180, z: 10, text: 'Dubai Mall', at: 20.0, until: 21.1, lift: 60 },
-            { x: -420, y: 40, z: 150, text: 'Sheikh Zayed Rd', at: 20.1, until: 21.1, lift: 30 }, { x: 60, y: -60, z: 40, text: 'Business Bay', big: true, at: 21.2, lift: 120, gold: false },
-            { x: 300, y: 250, text: 'Dubai Canal', at: 21.0 }, { x: 240, y: 120, z: 35, text: 'Offices next door', gold: true, at: 21.6, lift: 90, pulse: true },
-            { x: -200, y: 230, z: 0, text: 'Downtown · short walk', at: 23.2, lift: 40 }] },
+          labels: [{ x: -120, y: 160, z: 330, text: 'Burj Khalifa', at: 19.75, lift: 30, pulse: true }, { x: 17, y: 196, z: 10, text: 'Dubai Mall', at: 20.0, until: 21.1, lift: 60 },
+            { x: -370, y: 125, z: 60, text: 'Sheikh Zayed Rd', at: 20.1, until: 21.1, lift: 30 }, { x: -173, y: -106, z: 40, text: 'Business Bay', big: true, at: 21.2, lift: 120, gold: false },
+            { x: 66, y: -2, text: 'Dubai Canal', at: 21.0 }, { x: 20, y: -157, z: 35, text: 'Offices next door', gold: true, at: 21.6, lift: 90, pulse: true },
+            { x: -71, y: 261, z: 0, text: 'Downtown · short walk', at: 23.2, lift: 40 }] },
         html: `<div class="kick" style="top:230px" data-a="up" data-t=".05">Business Bay · location</div>${chips(['Canal homes', 'Offices next door', 'Downtown · short walk'].map((c, i) => c), 0)}`,
         update(el, lt) { el.querySelectorAll('.pill').forEach((p, i) => { const on = lt >= [0, 1.73, 3.26][i]; p.style.opacity = on ? 1 : 0; p.style.background = on && lt < [1.73, 3.26, 99][i] ? 'rgba(201,164,106,.32)' : 'rgba(10,16,14,.7)'; }); } },
       { at: 24.5, id: 'who', map: { alpha: .32, cam0: { x: 0, y: 60, dist: 1100, pitch: 30, yaw: -70, f: 1100, cy: .72 }, cam1: { x: 0, y: 60, dist: 1050, pitch: 32, yaw: -52, f: 1100, cy: .72 } }, cue: 'who is it <em>for?</em>',
@@ -129,10 +130,10 @@ window.EPISODES = {
           </div>`,
         update(el, lt) { el.querySelectorAll('.tile').forEach((t, i) => t.classList.toggle('hl', lt >= [1.27, 3.77][i] && lt < [3.77, 99][i])); } },
       { at: 33.58, id: 'close', cue: 'live here · <em>rent here</em>',
-        map: { cam0: { x: 140, y: 30, dist: 560, pitch: 50, yaw: 15, f: 1100, cy: .64 }, cam1: { x: 150, y: 40, dist: 500, pitch: 44, yaw: 40, f: 1100, cy: .64 },
+        map: { cam0: { x: -100, y: -205, dist: 560, pitch: 50, yaw: 15, f: 1100, cy: .64 }, cam1: { x: -90, y: -195, dist: 500, pitch: 44, yaw: 40, f: 1100, cy: .64 },
           hl: (b, t) => b.office,
-          routes: [{ pts: [[40, -70], [100, -20], [160, 40], [210, 100], [240, 120]], at: 34.9, dur: 1.2 }],
-          labels: [{ x: 40, y: -70, z: 20, text: 'Live on the canal', at: 33.7, lift: 60, pulse: true }, { x: 240, y: 120, z: 35, text: 'Tenants work here', gold: true, at: 35.0, lift: 80 }] },
+          routes: [{ pts: [[-202, -253], [-160, -228], [-110, -205], [-50, -178], [20, -157]], at: 34.9, dur: 1.2 }],
+          labels: [{ x: -202, y: -253, z: 20, text: 'Live on the canal', at: 33.7, lift: 60, pulse: true }, { x: 20, y: -157, z: 35, text: 'Tenants work here', gold: true, at: 35.0, lift: 80 }] },
         html: `<div class="title" style="top:240px;font-size:84px;${shadowTxt}" data-a="up" data-t=".1">Live on the <i>canal.</i></div>
           <div class="title" style="top:340px;font-size:54px;color:var(--cream);${shadowTxt}" data-a="up" data-t="1.28">Rent to people who work <i>next door.</i></div>` },
       { at: 37.99, id: 'cta', map: { alpha: .32, cam0: { x: 0, y: 60, dist: 1100, pitch: 30, yaw: -70, f: 1100, cy: .72 }, cam1: { x: 0, y: 60, dist: 1050, pitch: 32, yaw: -52, f: 1100, cy: .72 } }, cue: 'comment <em>Business Bay</em>',
@@ -154,8 +155,15 @@ window.EPISODES = {
         if (b.group === 'isl') return { at: 13.8 + b.island * .32 + r() * 1.3, dur: .8 };
         if (b.group === 'apt') return { at: 19.3 + r() * .4, dur: .8 };
       });
-      window.EPISODES['5'].scenes.find(s => s.id === 'dxb').map.routes[0].pts = W.route;
-      window.EPISODES['5'].scenes.find(s => s.id === 'size').map.labels = W.islands.map((I, i) => ({ x: I.c[0], y: I.c[1], z: 4, text: I.name + ' · ' + I.tag, gold: i === 0, at: 15.25 + i * .16, lift: 46 + (i % 2) * 26 }));
+      const RT = [W.islands[0].c, [135, -244], [216, -302], [330, -600], [560, -1200], [790, -1700]], route = [];   // island A -> bridge -> real DXB
+      for (let i = 0; i < RT.length - 1; i++) for (let k = 0; k < 12; k++) route.push([RT[i][0] + (RT[i + 1][0] - RT[i][0]) * k / 12, RT[i][1] + (RT[i + 1][1] - RT[i][1]) * k / 12]);
+      route.push(RT[RT.length - 1]);
+      window.EPISODES['5'].scenes.find(s => s.id === 'dxb').map.routes[0].pts = route;
+      // each island: glowing coloured outline + white name card (style of the Palm Springs reel the client liked)
+      const ZC = ['rgba(242,190,80,A)', 'rgba(90,150,255,A)', 'rgba(70,215,140,A)', 'rgba(40,200,210,A)', 'rgba(225,95,235,A)'];
+      const zones = W.islands.map((I, i) => ({ poly: I.poly, col: ZC[i], at: 13.3 + i * .3, until: 19.0 }));
+      window.EPISODES['5'].scenes.find(s => s.id === 'size').map.labels = W.islands.map((I, i) => ({ x: I.c[0], y: I.c[1], z: 4, text: I.name + ' · ' + I.tag, card: true, col: ZC[i].replace('A', '1'), at: 15.25 + i * .16, lift: 46 + (i % 2) * 26 }));
+      for (const id of ['size', 'beach']) window.EPISODES['5'].scenes.find(s => s.id === id).map.zones = zones;
     },
     scenes: [
       { at: 0, id: 'hook', hook: true, hard: true, cue: '',
@@ -181,9 +189,10 @@ window.EPISODES = {
         map: { beach: 16.9, cam0: { x: -60, y: 120, dist: 900, pitch: 54, yaw: 8, f: 1100, cy: .62 }, cam1: { x: -20, y: 130, dist: 800, pitch: 50, yaw: 26, f: 1100, cy: .62 } },
         html: statPanel(16.77), update: statUpdate },
       { at: 19.10, id: 'dxb', cue: '<em>10 min</em> to DXB',
-        map: { cam0: { x: 300, y: -250, dist: 1700, pitch: 54, yaw: 18, f: 1100, cy: .56 }, cam1: { x: 340, y: -320, dist: 1550, pitch: 58, yaw: 30, f: 1100, cy: .56 },
+        // real DXB terminal on the Blender map (Nakheel-plan units fitted to the real aerial)
+        map: { cam0: { x: 600, y: -1420, dist: 3300, pitch: 62, yaw: 152, f: 1100, cy: .56 }, cam1: { x: 620, y: -1450, dist: 3100, pitch: 64, yaw: 162, f: 1100, cy: .56 },
           routes: [{ pts: null, at: 19.5, dur: 1.8, plane: true }],
-          labels: [{ x: 640, y: -740, z: 4, text: 'DXB · Dubai International', at: 20.6, lift: 70, pulse: true }, { x: 300, y: -560, z: 2, text: '10 min', gold: true, at: 20.2, lift: 40 }] },
+          labels: [{ x: 804, y: -1751, z: 4, text: 'DXB · Dubai International', at: 20.6, lift: -40, pulse: true }, { x: 430, y: -1010, z: 2, text: '10 min', gold: true, at: 20.2, lift: 40 }] },
         html: statPanel(19.10), update: statUpdate },
       { at: 22.75, id: 'price', map: { alpha: .32, cam0: { x: -40, y: 60, dist: 1500, pitch: 30, yaw: -30, f: 1100, cy: .72 }, cam1: { x: -40, y: 60, dist: 1450, pitch: 32, yaw: -12, f: 1100, cy: .72 } }, cue: 'entry around <em>AED 2.8M</em>',
         html: `<div class="kick" style="top:330px" data-a="up" data-t=".05">Typical entry price</div>
