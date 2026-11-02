@@ -1,0 +1,389 @@
+/* Rinnovo Subscriptions & Licenses */
+:root {
+	--rinnovo-accent: #2f55a6;
+	--rinnovo-border: rgba(0, 0, 0, 0.1);
+	--rinnovo-soft: rgba(0, 0, 0, 0.03);
+	--rinnovo-radius: 10px;
+}
+
+/* ---------- Prices ---------- */
+.rinnovo-period {
+	font-size: 0.85em;
+	opacity: 0.8;
+}
+
+.rinnovo-plan-details {
+	display: block;
+	font-size: 0.8em;
+	opacity: 0.75;
+	margin-top: 2px;
+}
+
+/* ---------- Badges ---------- */
+.rinnovo-badge {
+	display: inline-block;
+	padding: 3px 10px;
+	border-radius: 999px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 1.5;
+	background: #f0f0f1;
+	color: #3c434a;
+	white-space: nowrap;
+	vertical-align: middle;
+}
+
+.rinnovo-badge--active { background: #e7f6ec; color: #116329; }
+.rinnovo-badge--trial { background: #e8f0fe; color: #1a4fa0; }
+.rinnovo-badge--on-hold { background: #fdecea; color: #a1221b; }
+.rinnovo-badge--pending-cancel { background: #fff4e0; color: #8a5300; }
+.rinnovo-badge--cancelled,
+.rinnovo-badge--expired { background: #f0f0f1; color: #646970; }
+
+.rinnovo-alert {
+	padding: 12px 16px;
+	border-radius: var(--rinnovo-radius);
+	background: #fdecea;
+	color: #7a1712;
+}
+
+.rinnovo-alert a {
+	font-weight: 600;
+	margin-left: 6px;
+}
+
+/* ---------- Subscription cards ---------- */
+.rinnovo-subscriptions {
+	display: grid;
+	gap: 16px;
+}
+
+.rinnovo-card {
+	border: 1px solid var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+	padding: 20px;
+	background: #fff;
+}
+
+.rinnovo-card__head {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+}
+
+.rinnovo-card__image img {
+	width: 56px;
+	height: 56px;
+	border-radius: 8px;
+	object-fit: cover;
+}
+
+.rinnovo-card__title {
+	flex: 1;
+	min-width: 0;
+}
+
+.rinnovo-card__title h3 {
+	margin: 0 0 2px;
+	font-size: 1.1em;
+}
+
+.rinnovo-price {
+	opacity: 0.8;
+}
+
+.rinnovo-card__facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 12px;
+	margin: 18px 0;
+	padding: 14px;
+	border-radius: 8px;
+	background: var(--rinnovo-soft);
+}
+
+.rinnovo-card__facts div {
+	margin: 0;
+}
+
+.rinnovo-card__facts dt {
+	font-size: 12px;
+	opacity: 0.7;
+	margin: 0;
+}
+
+.rinnovo-card__facts dd {
+	margin: 0;
+	font-weight: 600;
+}
+
+.rinnovo-card__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	align-items: center;
+}
+
+.rinnovo-inline-form {
+	display: inline;
+	margin: 0;
+}
+
+.rinnovo-link-button.button {
+	background: none !important;
+	border: 0 !important;
+	color: inherit !important;
+	text-decoration: underline;
+	opacity: 0.75;
+	box-shadow: none !important;
+}
+
+.rinnovo-card__history {
+	margin-top: 14px;
+}
+
+.rinnovo-card__history summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.rinnovo-empty {
+	padding: 32px;
+	text-align: center;
+	border: 1px dashed var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+}
+
+/* ---------- Account dashboard ---------- */
+.rinnovo-dashboard {
+	display: grid;
+	gap: 24px;
+}
+
+.rinnovo-hello h2 {
+	margin: 0 0 4px;
+}
+
+.rinnovo-hello p {
+	margin: 0;
+	opacity: 0.75;
+}
+
+.rinnovo-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+	gap: 12px;
+}
+
+.rinnovo-stat {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: 18px;
+	border: 1px solid var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+	background: #fff;
+}
+
+.rinnovo-stat__value {
+	font-size: 1.5em;
+	font-weight: 700;
+	color: var(--rinnovo-accent);
+	line-height: 1.2;
+}
+
+.rinnovo-stat__label {
+	font-size: 13px;
+	opacity: 0.75;
+}
+
+.rinnovo-section h3 {
+	margin: 0 0 10px;
+}
+
+.rinnovo-mini-list {
+	list-style: none;
+	margin: 0 0 10px;
+	padding: 0;
+	border: 1px solid var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+}
+
+.rinnovo-mini-list li {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 16px;
+	align-items: center;
+	justify-content: space-between;
+	padding: 12px 16px;
+	border-bottom: 1px solid var(--rinnovo-border);
+}
+
+.rinnovo-mini-list li:last-child {
+	border-bottom: 0;
+}
+
+.rinnovo-quick-links {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 12px;
+}
+
+.rinnovo-quick-link {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 16px;
+	border: 1px solid var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+	text-decoration: none !important;
+	transition: border-color 0.15s ease, transform 0.15s ease;
+}
+
+.rinnovo-quick-link:hover {
+	border-color: var(--rinnovo-accent);
+	transform: translateY(-1px);
+}
+
+.rinnovo-quick-link span {
+	font-size: 13px;
+	opacity: 0.7;
+}
+
+/* Modern account navigation */
+.rinnovo-account .woocommerce-MyAccount-navigation ul {
+	list-style: none;
+	margin: 0;
+	padding: 8px;
+	border: 1px solid var(--rinnovo-border);
+	border-radius: var(--rinnovo-radius);
+}
+
+.rinnovo-account .woocommerce-MyAccount-navigation li a {
+	display: block;
+	padding: 10px 14px;
+	border-radius: 8px;
+	text-decoration: none;
+}
+
+.rinnovo-account .woocommerce-MyAccount-navigation li.is-active a,
+.rinnovo-account .woocommerce-MyAccount-navigation li a:hover {
+	background: var(--rinnovo-soft);
+	color: var(--rinnovo-accent);
+	font-weight: 600;
+}
+
+/* ---------- Checkout ---------- */
+.rinnovo-continue {
+	margin: 0 0 16px;
+}
+
+.rinnovo-qty {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 6px;
+	vertical-align: middle;
+}
+
+.rinnovo-qty__btn {
+	width: 28px;
+	height: 28px;
+	padding: 0;
+	border: 1px solid var(--rinnovo-border);
+	border-radius: 6px;
+	background: #fff;
+	cursor: pointer;
+	line-height: 1;
+}
+
+.rinnovo-qty__input {
+	width: 48px !important;
+	height: 28px;
+	padding: 0 4px !important;
+	text-align: center;
+	-moz-appearance: textfield;
+}
+
+.rinnovo-qty__input::-webkit-outer-spin-button,
+.rinnovo-qty__input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+.rinnovo-qty__remove {
+	margin-left: 6px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: #a1221b;
+	font-size: 12px;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.rinnovo-recurring-total small {
+	opacity: 0.75;
+}
+
+/* ---------- Admin ---------- */
+.rinnovo-admin-stats {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 12px;
+	margin: 16px 0;
+}
+
+.rinnovo-admin-stats div {
+	display: flex;
+	flex-direction: column;
+	min-width: 150px;
+	padding: 14px 18px;
+	border: 1px solid #dcdcde;
+	border-radius: 8px;
+	background: #fff;
+}
+
+.rinnovo-admin-stats strong {
+	font-size: 22px;
+}
+
+.rinnovo-details th {
+	width: 180px;
+}
+
+/* Subscriptions and licenses are bought one at a time. Hide WooCommerce's quantity field and the
+   +/- boxes themes add around it (the page gets the rinnovo-no-quantity class from the plugin). */
+form.cart .quantity:has(input[type="hidden"][name="quantity"]),
+body.rinnovo-no-quantity form.cart .quantity,
+body.rinnovo-no-quantity form.cart .qty-box,
+body.rinnovo-no-quantity form.cart .quantity-wrap,
+body.rinnovo-no-quantity form.cart .qty-wrap,
+body.rinnovo-no-quantity form.cart .qib-container,
+body.rinnovo-no-quantity form.cart .product-quantity {
+	display: none !important;
+}
+
+/* ---------- Reviews and download count ---------- */
+.rinnovo-review-bought {
+	margin: 2px 0 6px;
+	font-size: 13px;
+	color: #6b7280;
+}
+
+.rinnovo-downloads {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	margin: 0 0 14px;
+	padding: 5px 12px;
+	border-radius: 999px;
+	background: #eef2ff;
+	color: #3730a3;
+	font-size: 14px;
+	font-weight: 600;
+}
+
+.rinnovo-downloads svg {
+	flex: none;
+}
