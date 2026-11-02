@@ -276,12 +276,16 @@ class HAPPYSUB_Product {
 		if ( ! $product || $product->is_type( 'variable' ) ) {
 			return;
 		}
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce checked the product form nonce.
+		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
+			return;
+		}
+		if ( ! current_user_can( 'edit_product', $product_id ) ) {
+			return;
+		}
 		$values = array();
 		foreach ( array( '_happysub_enabled', '_happysub_period', '_happysub_interval', '_happysub_signup_fee', '_happysub_trial_days', '_happysub_length' ) as $key ) {
 			$values[ $key ] = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 		}
-		// phpcs:enable
 		self::save_values( $product, $values );
 	}
 
@@ -296,12 +300,15 @@ class HAPPYSUB_Product {
 		if ( ! $variation ) {
 			return;
 		}
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce checked the variations nonce.
+		$ajax = isset( $_POST['security'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['security'] ) ), 'save-variations' );
+		$form = isset( $_POST['woocommerce_meta_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' );
+		if ( ( ! $ajax && ! $form ) || ! current_user_can( 'edit_product', $variation->get_parent_id() ) ) {
+			return;
+		}
 		$values = array();
 		foreach ( array( '_happysub_enabled', '_happysub_period', '_happysub_interval', '_happysub_signup_fee', '_happysub_trial_days', '_happysub_length' ) as $key ) {
 			$values[ $key ] = isset( $_POST[ $key ][ $i ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ][ $i ] ) ) : '';
 		}
-		// phpcs:enable
 		self::save_values( $variation, $values );
 	}
 

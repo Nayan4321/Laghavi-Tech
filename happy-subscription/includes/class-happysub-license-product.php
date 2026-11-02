@@ -238,7 +238,9 @@ class HAPPYSUB_License_Product {
 	 * @param int $product_id Product ID.
 	 */
 	public static function save( $product_id ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce verified the product form nonce.
+		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
+			return;
+		}
 		if ( ! current_user_can( 'edit_product', $product_id ) ) {
 			return;
 		}
@@ -284,6 +286,5 @@ class HAPPYSUB_License_Product {
 				}
 			}
 		}
-		// phpcs:enable
 	}
 }

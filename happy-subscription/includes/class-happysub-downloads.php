@@ -225,13 +225,14 @@ class HAPPYSUB_Downloads {
 	 * @param int $product_id Product ID.
 	 */
 	public static function save( $product_id ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce verified the product form nonce.
+		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
+			return;
+		}
 		if ( ! current_user_can( 'edit_product', $product_id ) ) {
 			return;
 		}
 		update_post_meta( $product_id, self::META_SHOW, isset( $_POST[ self::META_SHOW ] ) ? 'yes' : 'no' );
 		$extra = isset( $_POST[ self::META_EXTRA ] ) ? absint( $_POST[ self::META_EXTRA ] ) : 0;
-		// phpcs:enable
 		if ( $extra ) {
 			update_post_meta( $product_id, self::META_EXTRA, $extra );
 		} else {

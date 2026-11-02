@@ -163,7 +163,7 @@ class HAPPYSUB_License_Orders {
 			foreach ( $licenses as $license ) {
 				echo esc_html( get_the_title( $license->product_id ) . ': ' . $license->license_key ) . "\n";
 			}
-			echo "\n" . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses:', 'happy-subscription' ) . ' ' . esc_url_raw( wc_get_account_endpoint_url( HAPPYSUB_License_Account::ENDPOINT ) ) . "\n\n";
+			echo "\n" . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses:', 'happy-subscription' ) . ' ' . esc_url( wc_get_account_endpoint_url( HAPPYSUB_License_Account::ENDPOINT ) ) . "\n\n";
 			return;
 		}
 		echo '<h2>' . esc_html__( 'Your license keys', 'happy-subscription' ) . '</h2><ul>';
