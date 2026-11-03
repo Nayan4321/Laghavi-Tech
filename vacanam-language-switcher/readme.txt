@@ -37,7 +37,7 @@ Already have a multilingual site? Vacanam finds your old plugin's data and takes
 
 * Give each language its own text font and headings font: Cairo or Tajawal for Arabic, Inter for English, Noto Sans Devanagari for Hindi…
 * Use your theme's fonts, WordPress's Font Library, Elementor custom fonts, ready-made system fonts, or **download any Google font into your site** in one click: visitors load it from your site and never connect to Google (faster, GDPR friendly).
-* **Elementor**: the global fonts of Site Settings switch with the language (Primary and Secondary take the headings font, Text, Accent and your own global fonts take the text font). Your Elementor settings are not changed, so nothing conflicts.
+* **Elementor**: the global fonts of Site Settings switch with the language, so every widget set to a global font (the globe icon) follows it: Primary, Secondary and H1 to H6 take the headings font, Text, Accent and your own global fonts take the text font (or the headings font when named like a heading or title). Elementor custom fonts work too. Your Elementor settings are not changed, so nothing conflicts.
 * Optionally replace fonts set on single widgets too. Icon fonts are never touched.
 
 = Right to left (RTL) =

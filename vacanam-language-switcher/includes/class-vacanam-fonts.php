@@ -340,6 +340,11 @@ class Vacanam_Fonts {
 		if ( Vacanam_Settings::on( 'fonts_elementor' ) ) {
 			$css .= self::elementor_css( $body, $head );
 		}
+		foreach ( array_unique( array_filter( array( $fonts[2]['font'], $fonts[2]['font_h'] ) ) ) as $family ) {
+			if ( 0 !== strpos( $family, 'stack:' ) && ! isset( self::downloaded()[ $family ] ) ) {
+				$css = self::elementor_font_face( $family ) . $css;
+			}
+		}
 		if ( $force && '' !== $body ) {
 			// Elements with a font of their own (widget settings), but never icon fonts.
 			$css .= 'html:root body :is(p,a,li,td,th,dd,dt,label,blockquote,figcaption,span,strong,em,b,small,div):not(i):not([class*="icon"]):not([class*="fa-"]):not([class^="fa"]):not(.dashicons):not([class*="eicon"]){font-family:' . $body . ' !important}';
@@ -357,8 +362,69 @@ class Vacanam_Fonts {
 	}
 
 	/**
-	 * Elementor: point the global fonts of the active kit to the fonts of the language.
-	 * Headings use Elementor's Primary and Secondary fonts, text the Text, Accent and custom ones.
+	 * Global fonts of Elementor's active kit: Primary, Secondary, Text, Accent, H1 to H6 (newer
+	 * Elementor) and the site's own global fonts.
+	 *
+	 * Read from the kit's settings and from the CSS Elementor generated for the kit, so fonts that
+	 * newer Elementor versions add are found too.
+	 *
+	 * @param int $kit Kit ID.
+	 * @return array ID => true when it is a headings font.
+	 */
+	public static function elementor_globals( $kit ) {
+		$found    = array();
+		$titles   = array();
+		$settings = get_post_meta( $kit, '_elementor_page_settings', true );
+		foreach ( array( 'system_typography', 'custom_typography' ) as $group ) {
+			if ( is_array( $settings ) && ! empty( $settings[ $group ] ) && is_array( $settings[ $group ] ) ) {
+				foreach ( $settings[ $group ] as $item ) {
+					if ( ! empty( $item['_id'] ) ) {
+						$id            = preg_replace( '/[^a-z0-9_-]/i', '', $item['_id'] );
+						$found[ $id ]  = true;
+						$titles[ $id ] = isset( $item['title'] ) ? (string) $item['title'] : '';
+					}
+				}
+			}
+		}
+		// The kit's generated CSS lists every global font variable in use.
+		$up   = wp_upload_dir( null, false );
+		$file = trailingslashit( $up['basedir'] ) . 'elementor/css/post-' . (int) $kit . '.css';
+		if ( is_readable( $file ) ) {
+			$key  = 'vacanam_el_fonts_' . $kit . '_' . filemtime( $file );
+			$vars = get_transient( $key );
+			if ( false === $vars ) {
+				$vars = array();
+				if ( preg_match_all( '/--e-global-typography-([a-z0-9_-]+?)-font-family/i', (string) file_get_contents( $file ), $m ) ) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
+					$vars = array_values( array_unique( $m[1] ) );
+				}
+				set_transient( $key, $vars, WEEK_IN_SECONDS );
+			}
+			foreach ( $vars as $id ) {
+				$found[ $id ] = true;
+			}
+		}
+		foreach ( array( 'primary', 'secondary', 'text', 'accent' ) as $id ) {
+			$found[ $id ] = true;
+		}
+		$out = array();
+		foreach ( array_keys( $found ) as $id ) {
+			$title      = isset( $titles[ $id ] ) ? $titles[ $id ] : '';
+			$out[ $id ] = in_array( $id, array( 'primary', 'secondary' ), true )
+				|| (bool) preg_match( '/^h[1-6]$/i', $id )
+				|| (bool) preg_match( '/\b(h[1-6]|heading|headline|title)\b/i', $title );
+		}
+		/**
+		 * Elementor global fonts and whether each one takes the headings font.
+		 *
+		 * @param array $out ID => true for headings.
+		 * @param int   $kit Kit ID.
+		 */
+		return apply_filters( 'vacanam_elementor_global_fonts', $out, $kit );
+	}
+
+	/**
+	 * Elementor: point the global fonts of the active kit to the fonts of the language. Widgets set to
+	 * a global font (the globe icon) read it from these variables, so they follow the language too.
 	 *
 	 * @param string $body Text font (CSS value).
 	 * @param string $head Headings font (CSS value).
@@ -369,32 +435,53 @@ class Vacanam_Fonts {
 		if ( ! $kit || ! defined( 'ELEMENTOR_VERSION' ) ) {
 			return '';
 		}
-		$settings = get_post_meta( $kit, '_elementor_page_settings', true );
-		$ids      = array( 'primary', 'secondary', 'text', 'accent' );
-		if ( is_array( $settings ) && ! empty( $settings['custom_typography'] ) && is_array( $settings['custom_typography'] ) ) {
-			foreach ( $settings['custom_typography'] as $item ) {
-				if ( ! empty( $item['_id'] ) ) {
-					$ids[] = preg_replace( '/[^a-z0-9_-]/i', '', $item['_id'] );
-				}
-			}
-		}
 		$vars = '';
-		foreach ( $ids as $id ) {
-			$value = in_array( $id, array( 'primary', 'secondary' ), true ) ? $head : $body;
+		foreach ( self::elementor_globals( $kit ) as $id => $is_heading ) {
+			$value = $is_heading && '' !== $head ? $head : $body;
 			if ( '' !== $value ) {
 				$vars .= '--e-global-typography-' . $id . '-font-family:' . $value . ';';
 			}
 		}
 		$css = '';
 		if ( '' !== $vars ) {
-			// body.elementor-kit-N outranks Elementor's own .elementor-kit-N rule.
-			$css .= 'body.elementor-kit-' . $kit . '{' . $vars . '}';
+			// body.elementor-kit-N outranks Elementor's own .elementor-kit-N rule, and :root for newer versions.
+			$css .= ':root body.elementor-kit-' . $kit . ',:root body.elementor-kit-' . $kit . ' .elementor{' . $vars . '}';
 		}
 		if ( '' !== $body ) {
 			$css .= 'body.elementor-kit-' . $kit . '{font-family:' . $body . '}';
 		}
 		if ( '' !== $head ) {
 			$css .= 'body.elementor-kit-' . $kit . ' :is(h1,h2,h3,h4,h5,h6){font-family:' . $head . '}';
+		}
+		return $css;
+	}
+
+	/**
+	 * @font-face rules of an Elementor custom font (Elementor Pro > Custom Fonts): Elementor only prints
+	 * them when the font is used in its own settings, so Vacanam prints them when a language uses it.
+	 *
+	 * @param string $family Font family.
+	 * @return string
+	 */
+	private static function elementor_font_face( $family ) {
+		$posts = get_posts( array( 'post_type' => 'elementor_font', 'title' => $family, 'numberposts' => 1, 'post_status' => 'publish' ) );
+		if ( ! $posts ) {
+			return '';
+		}
+		$files = get_post_meta( $posts[0]->ID, 'elementor_font_files', true );
+		$css   = '';
+		foreach ( is_array( $files ) ? $files : array() as $face ) {
+			$src = array();
+			foreach ( array( 'woff2' => 'woff2', 'woff' => 'woff', 'ttf' => 'truetype', 'otf' => 'opentype' ) as $ext => $format ) {
+				if ( ! empty( $face[ $ext ]['url'] ) ) {
+					$src[] = 'url("' . esc_url_raw( $face[ $ext ]['url'] ) . '") format("' . $format . '")';
+				}
+			}
+			if ( $src ) {
+				$weight = isset( $face['font_weight'] ) ? preg_replace( '/[^a-z0-9 ]/i', '', (string) $face['font_weight'] ) : 'normal';
+				$style  = isset( $face['font_style'] ) && 'italic' === $face['font_style'] ? 'italic' : 'normal';
+				$css   .= '@font-face{font-family:"' . $family . '";font-style:' . $style . ';font-weight:' . ( '' !== $weight ? $weight : 'normal' ) . ';font-display:swap;src:' . implode( ',', $src ) . '}';
+			}
 		}
 		return $css;
 	}
@@ -513,7 +600,7 @@ class Vacanam_Fonts {
 		}
 		echo '</tbody></table>';
 		echo '<h2>' . esc_html__( 'How the fonts are applied', 'vacanam-language-switcher' ) . '</h2><table class="form-table" role="presentation">';
-		echo '<tr><th>' . esc_html__( 'Elementor', 'vacanam-language-switcher' ) . '</th><td><label><input type="checkbox" name="fonts_elementor" value="yes" ' . checked( 'yes', $s['fonts_elementor'], false ) . ' /> ' . esc_html__( 'Switch Elementor\'s global fonts too (Site Settings > Global Fonts): Primary and Secondary take the headings font, Text, Accent and your own global fonts take the text font.', 'vacanam-language-switcher' ) . '</label><p class="description">' . esc_html__( 'Your Elementor settings are not changed: the fonts are only replaced on pages in that language, so nothing conflicts.', 'vacanam-language-switcher' ) . '</p></td></tr>';
+		echo '<tr><th>' . esc_html__( 'Elementor', 'vacanam-language-switcher' ) . '</th><td><label><input type="checkbox" name="fonts_elementor" value="yes" ' . checked( 'yes', $s['fonts_elementor'], false ) . ' /> ' . esc_html__( 'Switch Elementor\'s global fonts too (Site Settings > Global Fonts): every widget set to a global font follows the language. Primary, Secondary, H1 to H6 and global fonts named like a heading or title take the headings font; Text, Accent and the others take the text font. Elementor custom fonts are loaded when a language uses them.', 'vacanam-language-switcher' ) . '</label><p class="description">' . esc_html__( 'Your Elementor settings are not changed: the fonts are only replaced on pages in that language, so nothing conflicts.', 'vacanam-language-switcher' ) . '</p></td></tr>';
 		echo '<tr><th>' . esc_html__( 'Fonts set on single elements', 'vacanam-language-switcher' ) . '</th><td><label><input type="checkbox" name="fonts_force" value="yes" ' . checked( 'yes', $s['fonts_force'], false ) . ' /> ' . esc_html__( 'Also replace fonts set on a single widget or by the theme on single elements', 'vacanam-language-switcher' ) . '</label><p class="description">' . esc_html__( 'Use it when some texts keep the old font. Icon fonts are never changed.', 'vacanam-language-switcher' ) . '</p></td></tr>';
 		echo '</table>';
 		submit_button( __( 'Save fonts', 'vacanam-language-switcher' ) );
