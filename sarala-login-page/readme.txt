@@ -4,7 +4,7 @@ Tags: social login, google login, woocommerce login, apple login, facebook login
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -119,6 +119,9 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 5. Connected accounts on the user's profile.
 
 == Changelog ==
+
+= 1.0.2 =
+* New: a "Pro features" screen that shows what Sarala Login Page Pro adds (login page templates, super admin, activity log, per-role restrictions), with links to the Pro plans. Shown only on this plugin's screens and hidden when Pro is installed. Nothing in the free plugin is locked.
 
 = 1.0.1 =
 * Code names now use the prefix "saralopa". Settings, connected accounts and the login log are moved over automatically.

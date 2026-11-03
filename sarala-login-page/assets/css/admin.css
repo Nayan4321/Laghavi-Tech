@@ -198,3 +198,33 @@
 	gap: 12px;
 	margin: 12px 0;
 }
+
+/* Pro features */
+.saralopa-pro__hero { background: linear-gradient(135deg, #1e1b4b, #6d28d9); color: #fff; border-radius: 16px; padding: 32px 36px; margin: 16px 0 24px; }
+.saralopa-pro__hero h1 { color: #fff; font-size: 30px; margin: 12px 0 8px; }
+.saralopa-pro__hero p { font-size: 15px; max-width: 760px; color: #e9e5ff; }
+.saralopa-pro__badge { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 5px 12px; border-radius: 999px; background: rgba(255, 255, 255, .15); }
+.saralopa-pro .saralopa-pro__cta { background: #16a34a; border-color: #16a34a; color: #fff; font-weight: 600; }
+.saralopa-pro .saralopa-pro__cta:hover, .saralopa-pro .saralopa-pro__cta:focus { background: #15803d; border-color: #15803d; color: #fff; }
+.saralopa-pro__templates { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 16px; margin: 12px 0 28px; }
+.saralopa-tpl { margin: 0; text-align: center; font-weight: 600; }
+.saralopa-tpl__screen { position: relative; height: 130px; border-radius: 10px; overflow: hidden; box-shadow: 0 8px 20px -10px rgba(0, 0, 0, .35); margin-bottom: 8px; }
+.saralopa-tpl__panel { position: absolute; inset: 0; }
+.saralopa-tpl__card { position: absolute; width: 46%; top: 18%; bottom: 18%; left: 27%; background: #fff; border-radius: 6px; padding: 8px; display: flex; flex-direction: column; gap: 5px; }
+.saralopa-tpl__card i { display: block; height: 6px; border-radius: 3px; background: #e5e7eb; }
+.saralopa-tpl__card i.l { width: 16px; height: 16px; border-radius: 4px; background: #7c3aed; margin: 0 auto 2px; }
+.saralopa-tpl__card i.b { height: 10px; margin-top: auto; background: #1f2937; }
+.saralopa-tpl--glass .saralopa-tpl__panel { background: linear-gradient(135deg, #94a3ff, #f0abfc); }
+.saralopa-tpl--glass .saralopa-tpl__card { background: rgba(255, 255, 255, .7); }
+.saralopa-tpl--split .saralopa-tpl__panel { background: linear-gradient(90deg, #7c3aed 50%, #f5f3ff 50%); }
+.saralopa-tpl--split .saralopa-tpl__card { left: 52%; width: 40%; }
+.saralopa-tpl--wave .saralopa-tpl__panel { background: radial-gradient(120% 55% at 50% 0, #0f766e 60%, #f0fdfa 61%); }
+.saralopa-tpl--image .saralopa-tpl__panel { background: linear-gradient(180deg, rgba(0, 0, 0, .1), rgba(0, 0, 0, .45)), linear-gradient(135deg, #d97706, #78350f); }
+.saralopa-tpl--gradient .saralopa-tpl__panel { background: linear-gradient(160deg, #0ea5e9, #6366f1); }
+.saralopa-pro__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+.saralopa-pro__grid .saralopa-card { margin: 0; }
+.saralopa-pro__list { margin: 10px 0 0; }
+.saralopa-pro__list li { position: relative; padding-inline-start: 22px; margin-bottom: 8px; }
+.saralopa-pro__list li::before { content: "\2713"; position: absolute; inset-inline-start: 0; color: #16a34a; font-weight: 700; }
+.saralopa-pro__end { margin-top: 20px; text-align: center; }
+.saralopa-pro-note { border-inline-start: 4px solid #7c3aed; }

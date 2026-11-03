@@ -630,6 +630,7 @@ class SARALOPA_Settings {
 
 				<?php submit_button(); ?>
 			</form>
+			<?php SARALOPA_Pro_Features::settings_note(); ?>
 
 			<p class="saralopa-admin__credit">
 				<?php
