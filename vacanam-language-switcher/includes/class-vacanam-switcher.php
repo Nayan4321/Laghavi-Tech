@@ -142,7 +142,7 @@ class Vacanam_Switcher {
 				'slug'     => $slug,
 				'name'     => $lang['name'],
 				'code'     => strtoupper( strtok( $slug, '-' ) ),
-				'flag'     => Vacanam_Languages::flag_url( $lang['flag'] ),
+				'flag'     => Vacanam_Languages::lang_flag_url( $lang ),
 				'url'      => $url,
 				'current'  => $is_current,
 				'rtl'      => $lang['rtl'],
@@ -272,7 +272,7 @@ class Vacanam_Switcher {
 				$current = $lang ? array(
 					'name'     => $lang['name'],
 					'code'     => strtoupper( strtok( $lang['slug'], '-' ) ),
-					'flag'     => Vacanam_Languages::flag_url( $lang['flag'] ),
+					'flag'     => Vacanam_Languages::lang_flag_url( $lang ),
 					'hreflang' => Vacanam_Languages::hreflang( $lang ),
 				) : null;
 			}

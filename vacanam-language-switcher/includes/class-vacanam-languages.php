@@ -150,6 +150,9 @@ class Vacanam_Languages {
 				'rtl'      => false,
 				'hreflang' => '',
 				'active'   => true,
+				'flag_img' => '',
+				'font'     => '',
+				'font_h'   => '',
 			),
 			$lang
 		);
@@ -208,6 +211,32 @@ class Vacanam_Languages {
 	}
 
 	/**
+	 * Address of the flag of a language: its own image when one was chosen, else its flag.
+	 *
+	 * @param array $lang Language.
+	 * @return string
+	 */
+	public static function lang_flag_url( $lang ) {
+		if ( ! empty( $lang['flag_img'] ) ) {
+			return $lang['flag_img'];
+		}
+		return self::flag_url( isset( $lang['flag'] ) ? $lang['flag'] : '' );
+	}
+
+	/**
+	 * Names of the flags, code => English name.
+	 *
+	 * @return array
+	 */
+	public static function flag_names() {
+		static $names = null;
+		if ( null === $names ) {
+			$names = include VACANAM_DIR . 'includes/data/flags.php';
+		}
+		return $names;
+	}
+
+	/**
 	 * Add a language.
 	 *
 	 * @param array $data locale, and optionally slug, name, flag, rtl, hreflang.
@@ -241,6 +270,9 @@ class Vacanam_Languages {
 				'rtl'      => isset( $data['rtl'] ) ? (bool) $data['rtl'] : $known[4],
 				'hreflang' => isset( $data['hreflang'] ) ? self::clean_hreflang( $data['hreflang'] ) : '',
 				'active'   => true,
+				'flag_img' => isset( $data['flag_img'] ) ? esc_url_raw( $data['flag_img'] ) : '',
+				'font'     => isset( $data['font'] ) ? Vacanam_Fonts::clean_family( $data['font'] ) : '',
+				'font_h'   => isset( $data['font_h'] ) ? Vacanam_Fonts::clean_family( $data['font_h'] ) : '',
 			)
 		);
 		$all[ $slug ] = $lang;
@@ -281,6 +313,14 @@ class Vacanam_Languages {
 		foreach ( array( 'rtl', 'active' ) as $key ) {
 			if ( isset( $data[ $key ] ) ) {
 				$lang[ $key ] = (bool) $data[ $key ];
+			}
+		}
+		if ( isset( $data['flag_img'] ) ) {
+			$lang['flag_img'] = esc_url_raw( $data['flag_img'] );
+		}
+		foreach ( array( 'font', 'font_h' ) as $key ) {
+			if ( isset( $data[ $key ] ) ) {
+				$lang[ $key ] = Vacanam_Fonts::clean_family( $data[ $key ] );
 			}
 		}
 		if ( $slug === self::default_slug() ) {

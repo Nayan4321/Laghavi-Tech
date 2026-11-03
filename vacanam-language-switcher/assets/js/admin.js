@@ -40,12 +40,199 @@
 			form.elements.flag.dispatchEvent( new Event( 'change' ) );
 		} );
 	} );
+	// Flag picker: a searchable grid of flags with country names, built from the select.
 	$all( '.vacanam-flag-pick' ).forEach( function ( select ) {
-		select.addEventListener( 'change', function () {
-			var box = select.parentNode.querySelector( '.vacanam-flag-preview' );
-			if ( box ) {
-				box.innerHTML = select.value ? '<img class="vacanam-admin-flag" width="20" height="15" alt="" src="' + cfg.flags + select.value + '.svg" />' : '';
+		var box = select.parentNode.querySelector( '.vacanam-flag-preview' );
+		var picker = document.createElement( 'div' );
+		picker.className = 'vacanam-flag-picker';
+		var current = document.createElement( 'button' );
+		current.type = 'button';
+		current.className = 'button vacanam-flag-current';
+		var panel = document.createElement( 'div' );
+		panel.className = 'vacanam-flag-panel';
+		panel.hidden = true;
+		var search = document.createElement( 'input' );
+		search.type = 'search';
+		search.placeholder = i18n.flagSearch || '';
+		search.className = 'vacanam-flag-search';
+		var grid = document.createElement( 'div' );
+		grid.className = 'vacanam-flag-grid';
+		panel.appendChild( search );
+		panel.appendChild( grid );
+		Array.prototype.forEach.call( select.options, function ( opt ) {
+			var b = document.createElement( 'button' );
+			b.type = 'button';
+			b.className = 'vacanam-flag-option';
+			b.setAttribute( 'data-value', opt.value );
+			b.setAttribute( 'data-search', ( opt.text + ' ' + opt.value ).toLowerCase() );
+			b.title = opt.text;
+			b.innerHTML = ( opt.value ? '<img alt="" width="28" height="21" loading="lazy" src="' + cfg.flags + opt.value + '.svg" />' : '<span class="vacanam-flag-blank"></span>' ) + '<span></span>';
+			b.lastChild.textContent = opt.text;
+			b.addEventListener( 'click', function () {
+				select.value = opt.value;
+				select.dispatchEvent( new Event( 'change' ) );
+				panel.hidden = true;
+			} );
+			grid.appendChild( b );
+		} );
+		function paint() {
+			var opt = select.options[ select.selectedIndex ];
+			current.innerHTML = ( select.value ? '<img alt="" width="24" height="18" src="' + cfg.flags + select.value + '.svg" /> ' : '' ) + '<span></span> <span class="dashicons dashicons-arrow-down-alt2"></span>';
+			current.querySelector( 'span' ).textContent = opt ? opt.text : ( i18n.flagNone || '' );
+			$all( '.vacanam-flag-option', grid ).forEach( function ( b ) {
+				b.classList.toggle( 'is-current', b.getAttribute( 'data-value' ) === select.value );
+			} );
+		}
+		current.addEventListener( 'click', function () {
+			panel.hidden = ! panel.hidden;
+			if ( ! panel.hidden ) {
+				search.value = '';
+				search.dispatchEvent( new Event( 'input' ) );
+				search.focus();
+				var on = grid.querySelector( '.is-current' );
+				if ( on ) {
+					on.scrollIntoView( { block: 'nearest' } );
+				}
 			}
+		} );
+		search.addEventListener( 'input', function () {
+			var q = search.value.trim().toLowerCase();
+			$all( '.vacanam-flag-option', grid ).forEach( function ( b ) {
+				b.hidden = q && b.getAttribute( 'data-search' ).indexOf( q ) === -1;
+			} );
+		} );
+		search.addEventListener( 'keydown', function ( e ) {
+			if ( 'Escape' === e.key ) {
+				panel.hidden = true;
+				current.focus();
+			} else if ( 'Enter' === e.key ) {
+				e.preventDefault();
+				var first = grid.querySelector( '.vacanam-flag-option:not([hidden])' );
+				if ( first ) {
+					first.click();
+				}
+			}
+		} );
+		document.addEventListener( 'click', function ( e ) {
+			if ( ! picker.contains( e.target ) ) {
+				panel.hidden = true;
+			}
+		} );
+		select.addEventListener( 'change', function () {
+			paint();
+			if ( box ) {
+				box.innerHTML = '';
+			}
+		} );
+		picker.appendChild( current );
+		picker.appendChild( panel );
+		select.style.display = 'none';
+		select.parentNode.insertBefore( picker, select );
+		if ( box ) {
+			box.innerHTML = '';
+		}
+		paint();
+	} );
+
+	// Import from another translation plugin, step by step.
+	$all( '.vacanam-import-run' ).forEach( function ( box ) {
+		var button = box.querySelector( 'button' );
+		var progress = box.querySelector( '.vacanam-progress' );
+		var text = box.querySelector( '.vacanam-progress-text' );
+		var bar = box.querySelector( '.vacanam-bar span' );
+		var result = box.querySelector( '.vacanam-import-result' );
+		var width = 5;
+		function call( start ) {
+			var data = new FormData();
+			data.append( 'action', 'vacanam_import' );
+			data.append( 'nonce', cfg.importNonce );
+			data.append( 'source', box.getAttribute( 'data-source' ) );
+			if ( start ) {
+				data.append( 'start', '1' );
+			}
+			fetch( cfg.ajax, { method: 'POST', body: data, credentials: 'same-origin' } )
+				.then( function ( r ) {
+					return r.json();
+				} )
+				.then( function ( r ) {
+					if ( ! r || ! r.success ) {
+						throw new Error( r && r.data && r.data.message ? r.data.message : i18n.importFail );
+					}
+					text.textContent = r.data.text;
+					width = Math.min( 95, width + 10 );
+					bar.style.width = ( r.data.finished ? 100 : width ) + '%';
+					if ( r.data.finished ) {
+						progress.hidden = true;
+						result.innerHTML = r.data.html;
+						result.hidden = false;
+						button.disabled = false;
+					} else {
+						call( false );
+					}
+				} )
+				.catch( function ( e ) {
+					text.textContent = e.message || i18n.importFail;
+					button.disabled = false;
+				} );
+		}
+		button.addEventListener( 'click', function () {
+			button.disabled = true;
+			result.hidden = true;
+			progress.hidden = false;
+			width = 5;
+			bar.style.width = '5%';
+			text.textContent = '';
+			call( true );
+		} );
+	} );
+
+	// Fonts: live preview of the chosen fonts.
+	$all( '.vacanam-fonts-table tbody tr' ).forEach( function ( row ) {
+		var selects = $all( '.vacanam-font-select', row );
+		var preview = row.querySelector( '.vacanam-font-preview' );
+		if ( 2 !== selects.length || ! preview ) {
+			return;
+		}
+		function css( select ) {
+			var opt = select.options[ select.selectedIndex ];
+			return opt ? opt.getAttribute( 'data-css' ) || '' : '';
+		}
+		function paint() {
+			var body = css( selects[ 0 ] );
+			preview.querySelector( '.vacanam-font-preview-b' ).style.fontFamily = body;
+			preview.querySelector( '.vacanam-font-preview-h' ).style.fontFamily = css( selects[ 1 ] ) || body;
+		}
+		selects.forEach( function ( s ) {
+			s.addEventListener( 'change', paint );
+		} );
+		paint();
+	} );
+
+	// Flag: your own image from the media library.
+	$all( '.vacanam-flag-own' ).forEach( function ( row ) {
+		var input = row.querySelector( 'input[name="flag_img"]' );
+		var view = row.querySelector( '.vacanam-flag-own-preview' );
+		var remove = row.querySelector( '.vacanam-flag-own-remove' );
+		var frame;
+		row.querySelector( '.vacanam-flag-upload' ).addEventListener( 'click', function () {
+			if ( ! window.wp || ! window.wp.media ) {
+				return;
+			}
+			if ( ! frame ) {
+				frame = window.wp.media( { title: i18n.flagImage, button: { text: i18n.flagUse }, library: { type: 'image' }, multiple: false } );
+				frame.on( 'select', function () {
+					var file = frame.state().get( 'selection' ).first().toJSON();
+					input.value = file.url;
+					view.innerHTML = '<img alt="" width="20" height="15" src="' + file.url + '" />';
+					remove.hidden = false;
+				} );
+			}
+			frame.open();
+		} );
+		remove.addEventListener( 'click', function () {
+			input.value = '';
+			view.innerHTML = '';
+			remove.hidden = true;
 		} );
 	} );
 

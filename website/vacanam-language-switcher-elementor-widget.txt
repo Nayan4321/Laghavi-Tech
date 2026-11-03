@@ -234,6 +234,31 @@
     </div>
   </section>
 
+  <!-- Import -->
+  <section id="import">
+    <h2>Moving from Polylang, WPML or TranslatePress?</h2>
+    <p class="lead">Keep everything you already translated. Vacanam finds your old plugin's data and takes it over, so you don't have to set up or edit your site again.</p>
+    <div class="vc-cols">
+      <div class="vc-box"><h3>Polylang &amp; WPML</h3><p>Languages, flags, addresses, the language of every page, post, product, Elementor template and category, which ones are translations of each other, menus per language and translated texts. Your translated pages are used as they are.</p></div>
+      <div class="vc-box"><h3>TranslatePress</h3><p>Languages and addresses are taken over, then Vacanam copies your pages with the same design and fills each copy with the translations you made in TranslatePress.</p></div>
+      <div class="vc-box"><h3>Safe to try</h3><p>The old plugin's data is never changed or deleted. Deactivate it, import with a progress bar, and switch back any time if you need to.</p></div>
+    </div>
+  </section>
+
+  <!-- Fonts -->
+  <section id="fonts">
+    <h2>A font for each language</h2>
+    <p class="lead">Arabic in Cairo, English in Inter, Hindi in Noto Sans Devanagari: each language gets the font that suits its script.</p>
+    <div class="vc-chips">
+      <span class="vc-chip"><i></i>Text and headings font per language</span><span class="vc-chip"><i></i>Google fonts downloaded into your site</span><span class="vc-chip"><i></i>Theme &amp; Font Library fonts</span><span class="vc-chip"><i></i>Elementor custom fonts</span><span class="vc-chip"><i></i>System fonts</span>
+    </div>
+    <div class="vc-cols">
+      <div class="vc-box"><h3>Works with Elementor's global fonts</h3><p>Elementor's Primary, Secondary, Text and Accent fonts switch with the language. Your Elementor settings stay as they are, so the two never conflict.</p></div>
+      <div class="vc-box"><h3>Private and fast</h3><p>Google fonts are downloaded once into your site: visitors load them from you and never connect to Google. GDPR friendly.</p></div>
+      <div class="vc-box"><h3>Your flags, your way</h3><p>Pick from 270 flags with country names (UAE, Saudi Arabia, Arab League, England, Scotland…) or use your own flag image.</p></div>
+    </div>
+  </section>
+
   <!-- Switchers -->
   <section>
     <h2>A language switcher that matches your theme</h2>

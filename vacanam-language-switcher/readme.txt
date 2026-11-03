@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,6 +23,22 @@ Built for Arabic sites first: right to left everywhere, Arabic flags (Arab Leagu
 3. **Copy your site**: every page, post, category and menu is copied into the new languages with a progress bar, **with its design**: blocks, Elementor (all widgets and settings), other page builders, custom fields, SEO texts and featured images. The copies are connected to their originals, the home page copy becomes the home page of its language, and links between pages lead to the pages of the same language.
 4. **Language switcher**: added to your menu, or as a floating button.
 5. **Ready**: open a copy, change the text, publish.
+
+= Moving from Polylang, WPML or TranslatePress =
+
+Already have a multilingual site? Vacanam finds your old plugin's data and takes it over, so you don't have to set up or translate your site again.
+
+* **Polylang and WPML**: languages with their flags, main language, addresses, browser-language setting, the language of every page, post, product, Elementor template and category, which ones are translations of each other, menus per language and translated texts. Your translated pages are used as they are: nothing is copied or re-created.
+* **TranslatePress**: languages and addresses. TranslatePress keeps translations as texts, so Vacanam copies your pages and fills each copy with the translations you made in TranslatePress (blocks, classic content and Elementor), with the same design.
+* The old plugin's data is never changed: you can switch back at any time.
+* It starts from the setup (or Languages > Import) with a progress bar, also on large sites.
+
+= A font for each language =
+
+* Give each language its own text font and headings font: Cairo or Tajawal for Arabic, Inter for English, Noto Sans Devanagari for Hindi…
+* Use your theme's fonts, WordPress's Font Library, Elementor custom fonts, ready-made system fonts, or **download any Google font into your site** in one click: visitors load it from your site and never connect to Google (faster, GDPR friendly).
+* **Elementor**: the global fonts of Site Settings switch with the language (Primary and Secondary take the headings font, Text, Accent and your own global fonts take the text font). Your Elementor settings are not changed, so nothing conflicts.
+* Optionally replace fonts set on single widgets too. Icon fonts are never touched.
 
 = Right to left (RTL) =
 
@@ -113,9 +129,17 @@ Yes: in the Languages box of the editor, type its title in the field of its lang
 
 Products and product categories can be translated: tick them in Languages > Settings, then copy them like pages.
 
-= I used Polylang before. =
+= I used Polylang, WPML or TranslatePress before. Do I have to start again? =
 
-Vacanam provides Polylang's theme functions, so templates keep working. Deactivate Polylang before using Vacanam: only one translation plugin should be active.
+No. Deactivate the old plugin, then open Languages > Import (the setup offers it too): Vacanam reads the old plugin's data and converts it. With Polylang and WPML your translated pages, categories, menus and texts are kept as they are. With TranslatePress, Vacanam copies your pages and fills them with your TranslatePress translations. Themes written for Polylang (`pll__()`, `pll_the_languages()`…) or WPML keep working.
+
+= Can each language have its own font? =
+
+Yes, in Languages > Fonts: a text font and a headings font per language. With Elementor, the global fonts switch with the language too, without changing your Elementor settings.
+
+= Can I choose another flag, or my own image? =
+
+Yes. When you edit a language, the flag picker lists 270 flags with country and region names (search "emirates", "saudi", "england"…), and "Use your own image" takes any image from the media library.
 
 = What happens when I delete the plugin? =
 
@@ -123,7 +147,10 @@ Pages and posts are never deleted. Settings and links between translations are r
 
 == External services ==
 
-This plugin connects to no external service of its own. When you add a language, WordPress's own language-pack installer may download WordPress's translation of that language from WordPress.org (translate.wordpress.org), as when you change the site language in Settings > General. Only the language code is sent. [WordPress.org privacy policy](https://wordpress.org/about/privacy/).
+This plugin connects to no external service on its own. Two features use a service only when an administrator asks for it:
+
+* **Language packs**: when you add a language, WordPress's own language-pack installer may download WordPress's translation of that language from WordPress.org (translate.wordpress.org), as when you change the site language in Settings > General. Only the language code is sent. [WordPress.org privacy policy](https://wordpress.org/about/privacy/).
+* **Google Fonts**: only when you click "Download font" in Languages > Fonts, the font name you typed is sent to Google Fonts (fonts.googleapis.com) and the font files are downloaded from fonts.gstatic.com into your site (wp-content/uploads/vacanam-fonts). Visitors then load the font from your site: they never connect to Google. [Google Fonts terms](https://developers.google.com/fonts/terms), [Google privacy policy](https://policies.google.com/privacy).
 
 == Credits ==
 
@@ -141,6 +168,12 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 == Changelog ==
 
+= 1.1.0 =
+* New: import from Polylang, WPML and TranslatePress (Languages > Import, also offered by the setup): languages, settings, translated pages, posts, products, categories, menus and texts are taken over, nothing to edit again.
+* New: a text font and a headings font for each language (Languages > Fonts), with fonts of your site, system fonts or Google fonts downloaded into your site. Elementor's global fonts switch with the language.
+* New: flag picker with search and country names, and your own flag image.
+* Fix: flags in the admin bar language menu were shown at full size.
+
 = 1.0.1 =
 * Elementor Pro: copies of headers, footers and other theme templates no longer take over the original's display conditions, which made Elementor report a conflict. The Languages panel in Elementor explains how to set conditions.
 
@@ -148,6 +181,9 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 * First release.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Import from Polylang, WPML and TranslatePress, a font per language (with Elementor global fonts), and a flag picker with country names.
 
 = 1.0.1 =
 Copies of Elementor headers and footers no longer copy display conditions.

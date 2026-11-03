@@ -3,7 +3,7 @@
  * Plugin Name:       Vacanam Language Switcher
  * Plugin URI:        https://laghavi.site/vacanam-language-switcher/
  * Description:       Make your website multilingual: languages with right-to-left support (Arabic, Hebrew, Persian, Urdu), translated pages, posts, categories, menus and texts, one-click copies of your pages with Elementor and block designs kept, language switchers for menus, widgets, blocks and Elementor, and SEO done right (hreflang, canonical, sitemaps, Yoast and Rank Math).
- * Version:           1.0.1
+ * Version:           1.1.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -18,12 +18,12 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VACANAM_VERSION', '1.0.1' );
+define( 'VACANAM_VERSION', '1.1.0' );
 define( 'VACANAM_FILE', __FILE__ );
 define( 'VACANAM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VACANAM_URL', plugin_dir_url( __FILE__ ) );
 
-foreach ( array( 'settings', 'languages', 'model', 'router', 'frontend', 'seo', 'strings', 'switcher', 'menus', 'sync', 'media', 'duplicator', 'admin', 'admin-content', 'wizard', 'elementor', 'compat' ) as $vacanam_file ) {
+foreach ( array( 'settings', 'languages', 'model', 'router', 'frontend', 'seo', 'strings', 'switcher', 'menus', 'sync', 'media', 'duplicator', 'admin', 'admin-content', 'wizard', 'elementor', 'compat', 'fonts', 'import' ) as $vacanam_file ) {
 	require_once VACANAM_DIR . 'includes/class-vacanam-' . $vacanam_file . '.php';
 }
 unset( $vacanam_file );
@@ -57,6 +57,8 @@ add_action(
 		Vacanam_Duplicator::init();
 		Vacanam_Elementor::init();
 		Vacanam_Compat::init();
+		Vacanam_Fonts::init();
+		Vacanam_Import::init();
 		Vacanam_Admin_Content::init_always();
 		if ( is_admin() ) {
 			Vacanam_Admin::init();

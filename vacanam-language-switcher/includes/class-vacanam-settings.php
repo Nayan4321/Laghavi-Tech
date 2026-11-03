@@ -44,6 +44,8 @@ class Vacanam_Settings {
 			'floating'     => array(),
 			'domains'      => array(),
 			'delete_data'  => 'no',
+			'fonts_elementor' => 'yes',
+			'fonts_force'  => 'no',
 		);
 		/**
 		 * Default settings.

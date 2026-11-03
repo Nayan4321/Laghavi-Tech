@@ -14,7 +14,7 @@ if ( ! is_array( $vacanam_settings ) || empty( $vacanam_settings['delete_data'] 
 }
 
 global $wpdb;
-foreach ( array( 'vacanam_settings', 'vacanam_languages', 'vacanam_strings', 'vacanam_menu_translations', 'vacanam_job', 'vacanam_show_wizard' ) as $vacanam_option ) {
+foreach ( array( 'vacanam_settings', 'vacanam_languages', 'vacanam_strings', 'vacanam_menu_translations', 'vacanam_job', 'vacanam_show_wizard', 'vacanam_fonts', 'vacanam_import_job', 'vacanam_import_done', 'vacanam_import_tp' ) as $vacanam_option ) {
 	delete_option( $vacanam_option );
 }
 delete_metadata( 'post', 0, '_vacanam_tr', '', true );
@@ -45,4 +45,12 @@ if ( is_array( $vacanam_locations ) ) {
 		}
 	}
 	set_theme_mod( 'nav_menu_locations', $vacanam_locations );
+}
+
+// Fonts downloaded from Google Fonts.
+require_once ABSPATH . 'wp-admin/includes/file.php';
+$vacanam_uploads = wp_upload_dir( null, false );
+if ( WP_Filesystem() ) {
+	global $wp_filesystem;
+	$wp_filesystem->delete( trailingslashit( $vacanam_uploads['basedir'] ) . 'vacanam-fonts', true );
 }

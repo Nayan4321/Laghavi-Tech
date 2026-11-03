@@ -85,6 +85,7 @@ class Vacanam_Admin {
 				'ajax'      => admin_url( 'admin-ajax.php' ),
 				'jobNonce'  => wp_create_nonce( 'vacanam_job' ),
 				'searchNonce' => wp_create_nonce( 'vacanam_search' ),
+				'importNonce' => wp_create_nonce( 'vacanam_import' ),
 				'catalog'   => Vacanam_Languages::catalog(),
 				'flags'     => VACANAM_URL . 'assets/flags/',
 				'i18n'      => array(
@@ -95,6 +96,12 @@ class Vacanam_Admin {
 					'error'    => __( 'Something went wrong. Click the button again to continue where it stopped.', 'vacanam-language-switcher' ),
 					'noChoice' => __( 'Choose at least one language and one kind of content.', 'vacanam-language-switcher' ),
 					'leave'    => __( 'The copy is not finished. Leave anyway?', 'vacanam-language-switcher' ),
+					'importFail' => __( 'The import stopped. Click the button again to continue where it stopped.', 'vacanam-language-switcher' ),
+					'flagSearch' => __( 'Search a country or region…', 'vacanam-language-switcher' ),
+					'flagNone'   => __( 'No flag', 'vacanam-language-switcher' ),
+					'flagChange' => __( 'Change flag', 'vacanam-language-switcher' ),
+					'flagImage'  => __( 'Choose a flag image', 'vacanam-language-switcher' ),
+					'flagUse'    => __( 'Use this image', 'vacanam-language-switcher' ),
 				),
 			)
 		);
@@ -102,6 +109,9 @@ class Vacanam_Admin {
 		if ( in_array( $hook, $screens, true ) || false !== strpos( $hook, 'vacanam' ) ) {
 			wp_enqueue_style( 'vacanam-admin' );
 			wp_enqueue_script( 'vacanam-admin' );
+			if ( 'toplevel_page_vacanam' === $hook ) {
+				wp_enqueue_media(); // "Use your own image" for flags.
+			}
 			wp_enqueue_style( 'vacanam-switcher', VACANAM_URL . 'assets/css/switcher.css', array(), vacanam_asset_version( 'assets/css/switcher.css' ) );
 			wp_enqueue_script( 'vacanam-switcher', VACANAM_URL . 'assets/js/switcher.js', array(), vacanam_asset_version( 'assets/js/switcher.js' ), true );
 		}
@@ -115,7 +125,7 @@ class Vacanam_Admin {
 			return;
 		}
 		if ( defined( 'POLYLANG_VERSION' ) || defined( 'ICL_SITEPRESS_VERSION' ) || defined( 'TRP_PLUGIN_VERSION' ) || defined( 'WEGLOT_VERSION' ) ) {
-			echo '<div class="notice notice-error"><p>' . esc_html__( 'Vacanam Language Switcher: another translation plugin is active (Polylang, WPML, TranslatePress or Weglot). Use only one translation plugin at a time.', 'vacanam-language-switcher' ) . '</p></div>';
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'Vacanam Language Switcher: another translation plugin is active (Polylang, WPML, TranslatePress or Weglot). Use only one translation plugin at a time.', 'vacanam-language-switcher' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=vacanam-import' ) ) . '">' . esc_html__( 'Move its languages and translations to Vacanam', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
 		$screen = get_current_screen();
 		if ( ! Vacanam_Languages::all() && $screen && false === strpos( $screen->id, 'vacanam-setup' ) ) {
@@ -131,6 +141,7 @@ class Vacanam_Admin {
 			'deleted'  => __( 'Language removed. Its pages and posts are kept, without a language.', 'vacanam-language-switcher' ),
 			'assigned' => __( 'Everything without a language is now in the main language.', 'vacanam-language-switcher' ),
 			'copied'   => __( 'Menu copied. Translate its labels in Appearance > Menus.', 'vacanam-language-switcher' ),
+			'font_added' => __( 'Font downloaded into your site. Choose it for a language below.', 'vacanam-language-switcher' ),
 		);
 		if ( isset( $messages[ $msg ] ) ) {
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( $messages[ $msg ] ) . '</p></div>';
@@ -147,7 +158,7 @@ class Vacanam_Admin {
 	 * @param string $msg  Message key.
 	 * @param string $err  Error text.
 	 */
-	private static function back( $page, $msg = 'saved', $err = '' ) {
+	public static function back( $page, $msg = 'saved', $err = '' ) {
 		$args = array( 'page' => $page );
 		if ( '' !== $err ) {
 			$args['vacanam_err'] = rawurlencode( $err );
@@ -163,7 +174,7 @@ class Vacanam_Admin {
 	 *
 	 * @param string $action Action.
 	 */
-	private static function check( $action ) {
+	public static function check( $action ) {
 		if ( ! current_user_can( self::cap() ) ) {
 			wp_die( esc_html__( 'You are not allowed to do this.', 'vacanam-language-switcher' ), 403 );
 		}
@@ -176,7 +187,7 @@ class Vacanam_Admin {
 	 * @param string $title   Title.
 	 * @param string $current Current page.
 	 */
-	private static function header( $title, $current ) {
+	public static function header( $title, $current ) {
 		$tabs = array(
 			self::SLUG         => __( 'Languages', 'vacanam-language-switcher' ),
 			'vacanam-copy'     => __( 'Copy & translate', 'vacanam-language-switcher' ),
@@ -202,12 +213,13 @@ class Vacanam_Admin {
 	/**
 	 * Flag image.
 	 *
-	 * @param string $flag Flag code.
+	 * @param string|array $flag Flag code, or a language (its own image counts).
 	 * @return string
 	 */
 	public static function flag( $flag ) {
-		$url = Vacanam_Languages::flag_url( $flag );
-		return $url ? '<img class="vacanam-admin-flag" src="' . esc_url( $url ) . '" width="20" height="15" alt="" />' : '';
+		$url = is_array( $flag ) ? Vacanam_Languages::lang_flag_url( $flag ) : Vacanam_Languages::flag_url( $flag );
+		// Inline size: the admin bar resets the width and height of everything inside it (#wpadminbar *).
+		return $url ? '<img class="vacanam-admin-flag" src="' . esc_url( $url ) . '" width="20" height="15" style="width:20px;height:15px;object-fit:cover;vertical-align:middle;display:inline-block" alt="" />' : '';
 	}
 
 	/*
@@ -254,13 +266,21 @@ class Vacanam_Admin {
 					<?php if ( ! $edit ) : ?>
 						<p><label><?php esc_html_e( 'Code in addresses', 'vacanam-language-switcher' ); ?><br /><input type="text" name="slug" class="small-text code" maxlength="10" placeholder="ar" /></label><br /><span class="description"><?php esc_html_e( 'example.com/ar/ – two letters are best.', 'vacanam-language-switcher' ); ?></span></p>
 					<?php endif; ?>
-					<p><label><?php esc_html_e( 'Flag', 'vacanam-language-switcher' ); ?><br />
-						<select name="flag" class="vacanam-flag-pick">
+					<div class="vacanam-flag-field">
+						<p><label for="vacanam-flag-select"><?php esc_html_e( 'Flag', 'vacanam-language-switcher' ); ?></label><br />
+						<select id="vacanam-flag-select" name="flag" class="vacanam-flag-pick">
 							<option value=""><?php esc_html_e( 'No flag', 'vacanam-language-switcher' ); ?></option>
 							<?php foreach ( self::flags() as $code ) : ?>
-								<option value="<?php echo esc_attr( $code ); ?>" <?php selected( $edit ? $edit['flag'] : '', $code ); ?>><?php echo esc_html( strtoupper( $code ) ); ?></option>
+								<option value="<?php echo esc_attr( $code ); ?>" <?php selected( $edit ? $edit['flag'] : '', $code ); ?>><?php echo esc_html( self::flag_name( $code ) ); ?></option>
 							<?php endforeach; ?>
-						</select> <span class="vacanam-flag-preview"><?php echo $edit ? self::flag( $edit['flag'] ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?></span></label></p>
+						</select> <span class="vacanam-flag-preview"><?php echo $edit ? self::flag( $edit['flag'] ) : ''; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?></span></p>
+						<p class="vacanam-flag-own">
+							<input type="hidden" name="flag_img" value="<?php echo esc_attr( $edit ? $edit['flag_img'] : '' ); ?>" />
+							<span class="vacanam-flag-own-preview"><?php echo $edit && $edit['flag_img'] ? '<img src="' . esc_url( $edit['flag_img'] ) . '" width="20" height="15" alt="" />' : ''; ?></span>
+							<button type="button" class="button vacanam-flag-upload"><?php esc_html_e( 'Use your own image', 'vacanam-language-switcher' ); ?></button>
+							<button type="button" class="button-link vacanam-flag-own-remove"<?php echo $edit && $edit['flag_img'] ? '' : ' hidden'; ?>><?php esc_html_e( 'Remove image', 'vacanam-language-switcher' ); ?></button>
+						</p>
+					</div>
 					<p><label><input type="checkbox" name="rtl" value="1" <?php checked( $edit && $edit['rtl'] ); ?> /> <?php esc_html_e( 'Written right to left (Arabic, Hebrew, Persian, Urdu…)', 'vacanam-language-switcher' ); ?></label></p>
 					<p><label><?php esc_html_e( 'hreflang code for search engines (optional)', 'vacanam-language-switcher' ); ?><br /><input type="text" name="hreflang" class="small-text code" value="<?php echo esc_attr( $edit ? $edit['hreflang'] : '' ); ?>" placeholder="<?php echo esc_attr( $edit ? Vacanam_Languages::hreflang( array_merge( $edit, array( 'hreflang' => '' ) ) ) : 'ar' ); ?>" /></label><br /><span class="description"><?php esc_html_e( 'Leave empty: set for you (ar, or ar-AE when the site has two kinds of Arabic).', 'vacanam-language-switcher' ); ?></span></p>
 					<?php if ( $edit && $edit['slug'] !== $default ) : ?>
@@ -293,7 +313,7 @@ class Vacanam_Admin {
 						$count = $term ? (int) $term->count : 0;
 						?>
 						<tr>
-							<td><?php echo self::flag( $lang['flag'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?> <strong <?php echo $lang['rtl'] ? 'dir="rtl"' : ''; ?>><?php echo esc_html( $lang['name'] ); ?></strong>
+							<td><?php echo self::flag( $lang ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?> <strong <?php echo $lang['rtl'] ? 'dir="rtl"' : ''; ?>><?php echo esc_html( $lang['name'] ); ?></strong>
 								<?php if ( $slug === $default ) : ?>
 									<span class="vacanam-badge vacanam-badge-main"><?php esc_html_e( 'Main language', 'vacanam-language-switcher' ); ?></span>
 								<?php endif; ?>
@@ -345,7 +365,7 @@ class Vacanam_Admin {
 		}
 		echo '<h2>' . esc_html__( 'Translated so far', 'vacanam-language-switcher' ) . '</h2><table class="widefat striped vacanam-overview"><thead><tr><th>' . esc_html__( 'Content', 'vacanam-language-switcher' ) . '</th>';
 		foreach ( $langs as $lang ) {
-			echo '<th>' . self::flag( $lang['flag'] ) . ' ' . esc_html( $lang['name'] ) . '</th>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+			echo '<th>' . self::flag( $lang ) . ' ' . esc_html( $lang['name'] ) . '</th>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 		}
 		echo '</tr></thead><tbody>';
 		foreach ( Vacanam_Model::post_types() as $type ) {
@@ -388,6 +408,17 @@ class Vacanam_Admin {
 	}
 
 	/**
+	 * Name of a flag for the picker: "United Arab Emirates (AE)".
+	 *
+	 * @param string $code Flag code.
+	 * @return string
+	 */
+	public static function flag_name( $code ) {
+		$names = Vacanam_Languages::flag_names();
+		return isset( $names[ $code ] ) ? $names[ $code ] . ' (' . strtoupper( $code ) . ')' : strtoupper( $code );
+	}
+
+	/**
 	 * Add a language.
 	 */
 	public static function handle_add_language() {
@@ -400,6 +431,9 @@ class Vacanam_Admin {
 			if ( ! empty( $_POST[ $key ] ) ) {
 				$data[ $key ] = sanitize_text_field( wp_unslash( $_POST[ $key ] ) );
 			}
+		}
+		if ( ! empty( $_POST['flag_img'] ) ) {
+			$data['flag_img'] = esc_url_raw( wp_unslash( $_POST['flag_img'] ) );
 		}
 		if ( '' !== $locale || '' !== $custom ) {
 			$data['rtl'] = ! empty( $_POST['rtl'] );
@@ -425,6 +459,7 @@ class Vacanam_Admin {
 			'hreflang' => isset( $_POST['hreflang'] ) ? sanitize_text_field( wp_unslash( $_POST['hreflang'] ) ) : '',
 			'rtl'      => ! empty( $_POST['rtl'] ),
 			'active'   => ! empty( $_POST['active'] ) || Vacanam_Languages::default_slug() === $slug,
+			'flag_img' => isset( $_POST['flag_img'] ) ? esc_url_raw( wp_unslash( $_POST['flag_img'] ) ) : '',
 		);
 		if ( ! empty( $_POST['locale_custom'] ) ) {
 			$data['locale'] = sanitize_text_field( wp_unslash( $_POST['locale_custom'] ) );
@@ -534,7 +569,7 @@ class Vacanam_Admin {
 			<p>
 			<?php foreach ( Vacanam_Languages::all() as $slug => $lang ) : ?>
 				<?php if ( $slug !== $default ) : ?>
-					<label class="vacanam-chip"><input type="checkbox" name="langs[]" value="<?php echo esc_attr( $slug ); ?>" checked="checked" /> <?php echo self::flag( $lang['flag'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?> <?php echo esc_html( $lang['name'] ); ?></label>
+					<label class="vacanam-chip"><input type="checkbox" name="langs[]" value="<?php echo esc_attr( $slug ); ?>" checked="checked" /> <?php echo self::flag( $lang ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag(). ?> <?php echo esc_html( $lang['name'] ); ?></label>
 				<?php endif; ?>
 			<?php endforeach; ?>
 			</p>
@@ -595,7 +630,7 @@ class Vacanam_Admin {
 			wp_nonce_field( 'vacanam_save_menus' );
 			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Theme location', 'vacanam-language-switcher' ) . '</th>';
 			foreach ( $langs as $lang ) {
-				echo '<th>' . self::flag( $lang['flag'] ) . ' ' . esc_html( $lang['name'] ) . '</th>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+				echo '<th>' . self::flag( $lang ) . ' ' . esc_html( $lang['name'] ) . '</th>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 			}
 			echo '</tr></thead><tbody>';
 			foreach ( $locations as $location => $label ) {
@@ -628,9 +663,9 @@ class Vacanam_Admin {
 					}
 					$tr = Vacanam_Menus::translation( (int) $menu->term_id, $slug );
 					if ( $tr ) {
-						echo '<a class="button" href="' . esc_url( admin_url( 'nav-menus.php?action=edit&menu=' . $tr ) ) . '">' . self::flag( $lang['flag'] ) . ' ' . esc_html__( 'Edit', 'vacanam-language-switcher' ) . '</a> '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+						echo '<a class="button" href="' . esc_url( admin_url( 'nav-menus.php?action=edit&menu=' . $tr ) ) . '">' . self::flag( $lang ) . ' ' . esc_html__( 'Edit', 'vacanam-language-switcher' ) . '</a> '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 					} else {
-						echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_copy_menu&menu=' . $menu->term_id . '&slug=' . $slug ), 'vacanam_copy_menu' ) ) . '">' . self::flag( $lang['flag'] ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Copy into %s', 'vacanam-language-switcher' ), $lang['name'] ) ) . '</a> '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+						echo '<a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_copy_menu&menu=' . $menu->term_id . '&slug=' . $slug ), 'vacanam_copy_menu' ) ) . '">' . self::flag( $lang ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Copy into %s', 'vacanam-language-switcher' ), $lang['name'] ) ) . '</a> '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 					}
 				}
 				echo '</td></tr>';

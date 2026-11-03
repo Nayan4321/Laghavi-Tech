@@ -118,7 +118,7 @@ class Vacanam_Admin_Content {
 					array(
 						'parent' => 'vacanam',
 						'id'     => 'vacanam-' . $slug,
-						'title'  => Vacanam_Admin::flag( $info['flag'] ) . ' ' . esc_html( $info['name'] ),
+						'title'  => Vacanam_Admin::flag( $info ) . ' ' . esc_html( $info['name'] ),
 						'href'   => add_query_arg( 'vacanam_lang', $slug ),
 					)
 				);
@@ -138,10 +138,10 @@ class Vacanam_Admin_Content {
 				$tr = Vacanam_Model::post_translation( $object->ID, $slug );
 				if ( $tr && current_user_can( 'edit_post', $tr ) ) {
 					$href  = self::edit_link( $tr );
-					$title = Vacanam_Admin::flag( $info['flag'] ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Edit in %s', 'vacanam-language-switcher' ), $info['name'] ) );
+					$title = Vacanam_Admin::flag( $info ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Edit in %s', 'vacanam-language-switcher' ), $info['name'] ) );
 				} elseif ( ! $tr && current_user_can( 'edit_post', $object->ID ) ) {
 					$href  = self::duplicate_url( $object->ID, $slug );
-					$title = Vacanam_Admin::flag( $info['flag'] ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Copy into %s', 'vacanam-language-switcher' ), $info['name'] ) );
+					$title = Vacanam_Admin::flag( $info ) . ' ' . esc_html( sprintf( /* translators: %s: language */ __( 'Copy into %s', 'vacanam-language-switcher' ), $info['name'] ) );
 				} else {
 					continue;
 				}
@@ -267,7 +267,7 @@ class Vacanam_Admin_Content {
 	public static function columns( $columns ) {
 		$head = '';
 		foreach ( Vacanam_Languages::all() as $lang ) {
-			$flag  = Vacanam_Admin::flag( $lang['flag'] );
+			$flag  = Vacanam_Admin::flag( $lang );
 			$head .= '<span class="vacanam-col-head" title="' . esc_attr( $lang['name'] ) . '">' . ( $flag ? $flag : esc_html( strtoupper( $lang['slug'] ) ) ) . '</span>';
 		}
 		$out = array();
@@ -510,7 +510,7 @@ class Vacanam_Admin_Content {
 				continue;
 			}
 			$tr = isset( $group[ $slug ] ) ? $group[ $slug ] : 0;
-			echo '<tr><td class="vacanam-box-flag" title="' . esc_attr( $lang['name'] ) . '">' . ( Vacanam_Admin::flag( $lang['flag'] ) ? Vacanam_Admin::flag( $lang['flag'] ) : esc_html( strtoupper( $slug ) ) ) . '</td><td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+			echo '<tr><td class="vacanam-box-flag" title="' . esc_attr( $lang['name'] ) . '">' . ( Vacanam_Admin::flag( $lang ) ? Vacanam_Admin::flag( $lang ) : esc_html( strtoupper( $slug ) ) ) . '</td><td>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 			echo '<div class="vacanam-link-field" data-lang="' . esc_attr( $slug ) . '" data-type="' . esc_attr( $post->post_type ) . '" data-exclude="' . esc_attr( $post->ID ) . '">';
 			echo '<input type="hidden" name="vacanam_tr[' . esc_attr( $slug ) . ']" value="' . esc_attr( $tr ? $tr : '' ) . '" class="vacanam-link-id" />';
 			echo '<input type="search" class="widefat vacanam-link-search" value="' . esc_attr( $tr ? get_the_title( $tr ) : '' ) . '" placeholder="' . esc_attr__( 'Connect a page…', 'vacanam-language-switcher' ) . '" autocomplete="off"' . ( $lang['rtl'] ? ' dir="rtl"' : '' ) . ' />';
@@ -714,7 +714,7 @@ class Vacanam_Admin_Content {
 					'number'     => 500,
 				)
 			);
-			echo '<tr><td>' . Vacanam_Admin::flag( $info['flag'] ) . ' ' . esc_html( $info['name'] ) . '</td><td><select name="vacanam_tr[' . esc_attr( $slug ) . ']"><option value="">' . esc_html__( '— None —', 'vacanam-language-switcher' ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+			echo '<tr><td>' . Vacanam_Admin::flag( $info ) . ' ' . esc_html( $info['name'] ) . '</td><td><select name="vacanam_tr[' . esc_attr( $slug ) . ']"><option value="">' . esc_html__( '— None —', 'vacanam-language-switcher' ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 			foreach ( is_wp_error( $terms ) ? array() : $terms as $other ) {
 				echo '<option value="' . esc_attr( $other->term_id ) . '" ' . selected( isset( $group[ $slug ] ) ? $group[ $slug ] : 0, $other->term_id, false ) . '>' . esc_html( $other->name ) . '</option>';
 			}

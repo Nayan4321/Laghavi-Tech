@@ -298,6 +298,12 @@ class Vacanam_Wizard {
 		$suggest = self::suggestion();
 		$locale  = $main ? $main['locale'] : $suggest['locale'];
 		$popular = array( 'ar', 'en_US', 'fr_FR', 'es_ES', 'de_DE', 'ur', 'hi_IN', 'fa_IR', 'tr_TR', 'ru_RU', 'zh_CN', 'pt_BR', 'it_IT', 'bn_BD', 'id_ID', 'he_IL' );
+		if ( ! $langs ) {
+			/**
+			 * Before the first step of the setup (Vacanam offers to import from another plugin here).
+			 */
+			do_action( 'vacanam_wizard_before_languages' );
+		}
 		self::form_start( 'languages' );
 		echo '<h2>' . esc_html__( 'Main language', 'vacanam-language-switcher' ) . '</h2>';
 		if ( ! $main ) {
@@ -313,7 +319,7 @@ class Vacanam_Wizard {
 			}
 			echo '</select></p>';
 		} else {
-			echo '<p>' . Vacanam_Admin::flag( $main['flag'] ) . ' <strong>' . esc_html( $main['name'] ) . '</strong> – <a href="' . esc_url( admin_url( 'admin.php?page=vacanam' ) ) . '">' . esc_html__( 'change', 'vacanam-language-switcher' ) . '</a></p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+			echo '<p>' . Vacanam_Admin::flag( $main ) . ' <strong>' . esc_html( $main['name'] ) . '</strong> – <a href="' . esc_url( admin_url( 'admin.php?page=vacanam' ) ) . '">' . esc_html__( 'change', 'vacanam-language-switcher' ) . '</a></p>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 		}
 		echo '<h2>' . esc_html__( 'Other languages', 'vacanam-language-switcher' ) . '</h2><p>' . esc_html__( 'Choose the languages to translate your site into. You can add more later.', 'vacanam-language-switcher' ) . '</p><div class="vacanam-lang-grid">';
 		$have = wp_list_pluck( $langs, 'locale' );
@@ -335,7 +341,7 @@ class Vacanam_Wizard {
 		if ( $langs && count( $langs ) > 1 ) {
 			echo '<p>' . esc_html__( 'Already added:', 'vacanam-language-switcher' ) . ' ';
 			foreach ( $langs as $lang ) {
-				echo Vacanam_Admin::flag( $lang['flag'] ) . ' ' . esc_html( $lang['name'] ) . ' &nbsp; '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+				echo Vacanam_Admin::flag( $lang ) . ' ' . esc_html( $lang['name'] ) . ' &nbsp; '; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 			}
 			echo '</p>';
 		}
@@ -415,7 +421,7 @@ class Vacanam_Wizard {
 	private static function step_ready() {
 		echo '<h2>' . esc_html__( 'Your site is multilingual', 'vacanam-language-switcher' ) . '</h2><ul class="vacanam-ready">';
 		foreach ( Vacanam_Languages::all() as $slug => $lang ) {
-			echo '<li>' . Vacanam_Admin::flag( $lang['flag'] ) . ' <a href="' . esc_url( Vacanam_Router::home_for( $slug ) ) . '" target="_blank" rel="noopener">' . esc_html( sprintf( /* translators: %s: language */ __( 'View your site in %s', 'vacanam-language-switcher' ), $lang['name'] ) ) . '</a></li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
+			echo '<li>' . Vacanam_Admin::flag( $lang ) . ' <a href="' . esc_url( Vacanam_Router::home_for( $slug ) ) . '" target="_blank" rel="noopener">' . esc_html( sprintf( /* translators: %s: language */ __( 'View your site in %s', 'vacanam-language-switcher' ), $lang['name'] ) ) . '</a></li>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 		}
 		echo '</ul><h3>' . esc_html__( 'Next', 'vacanam-language-switcher' ) . '</h3><ol>';
 		echo '<li>' . wp_kses_post( sprintf( /* translators: %s: link */ __( 'Open %s: the flags show each translation. Click the pencil to edit it (pages built with Elementor open in Elementor), change the text and publish.', 'vacanam-language-switcher' ), '<a href="' . esc_url( admin_url( 'edit.php?post_type=page' ) ) . '">' . esc_html__( 'Pages', 'vacanam-language-switcher' ) . '</a>' ) ) . '</li>';
