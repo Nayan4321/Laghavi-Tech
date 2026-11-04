@@ -49,17 +49,6 @@ class RINNOVO_License_Orders {
 		}
 
 		foreach ( $order->get_items() as $item ) {
-			if ( $item->get_variation_id() ) {
-				/**
-				 * A variation was bought. Rinnovo Subscriptions & Licenses sells licenses for simple products; add-ons
-				 * (Rinnovo Subscriptions & Licenses Pro) create keys for variations with self::create_for_item().
-				 *
-				 * @param WC_Order_Item_Product $item  Order item.
-				 * @param WC_Order              $order Order.
-				 */
-				do_action( 'rinnovo_license_variation_bought', $item, $order );
-				continue;
-			}
 			self::create_for_item( $order, $item );
 		}
 
@@ -75,7 +64,11 @@ class RINNOVO_License_Orders {
 	 * @param WC_Order_Item_Product $item  Order item.
 	 */
 	public static function create_for_item( $order, $item ) {
-		$product_id = $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();
+		$product    = $item->get_product();
+		$product_id = $product ? $product->get_id() : 0;
+		if ( ! $product_id ) {
+			return;
+		}
 		$settings   = RINNOVO_License_Product::settings( $product_id );
 		if ( ! $settings['enabled'] ) {
 			return;

@@ -40,15 +40,13 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * Settings of a product. Variations use their parent's.
+	 * License settings of a product.
 	 *
 	 * @param int $product_id Product ID.
 	 * @return array
 	 */
 	public static function settings( $product_id ) {
-		$parent   = wp_get_post_parent_id( $product_id );
-		$is_child = 'product_variation' === get_post_type( $product_id ) && $parent;
-		$id       = $is_child ? $parent : $product_id;
+		$id       = (int) $product_id;
 		$settings = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_rinnovo_license_enabled', true ),
@@ -63,10 +61,10 @@ class RINNOVO_License_Product {
 			'file'         => (string) get_post_meta( $id, '_rinnovo_license_file', true ),
 		);
 		/**
-		 * License settings of a product or variation.
+		 * License settings of a product.
 		 *
 		 * @param array $settings   Settings.
-		 * @param int   $product_id Product or variation ID.
+		 * @param int   $product_id Product ID.
 		 */
 		return (array) apply_filters( 'rinnovo_license_settings', $settings, $product_id );
 	}

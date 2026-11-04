@@ -56,7 +56,6 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 * WooCommerce > Licenses: search, revoke or restore keys, add a year, change sites, or create a key by hand.
 * A small REST API for your plugin to activate, check and update (see "License API" below).
 
-The free plugin sells licenses for simple products. To sell one product in several plans (for example 1 site, 5 sites and unlimited at different prices), use Rinnovo Subscriptions & Licenses Pro.
 
 = Reviews and download counts =
 

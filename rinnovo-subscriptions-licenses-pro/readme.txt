@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 
 Pro add-on for Rinnovo Subscriptions & Licenses: licenses for variable products, "Ask for price" products and a currency switcher.
@@ -42,6 +42,9 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
 == Changelog ==
+
+= 1.0.2 =
+* Licenses for variable products work with the updated free plugin, which no longer has any variation code of its own.
 
 = 1.0.0 =
 * First release.
