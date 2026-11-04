@@ -6,11 +6,16 @@ Requires PHP: 7.4
 Stable tag: 1.0.2
 License: GPLv2 or later
 
-Pro add-on for Rinnovo Subscriptions & Licenses: licenses for variable products, "Ask for price" products and a currency switcher.
+Pro add-on for Rinnovo Subscriptions & Licenses: subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
 
 == Description ==
 
 Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. Buy a license at [laghavi.site](https://laghavi.site/rinnovo-subscriptions-licenses/).
+
+= Subscriptions on variable products =
+
+* Each variation can be its own plan, for example Monthly and Yearly, with its own billing period, free trial, sign-up fee and number of payments.
+* One subscription per order and no quantity box, as for simple subscription products.
 
 = Licenses for variable products =
 
@@ -44,7 +49,7 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 == Changelog ==
 
 = 1.0.2 =
-* Licenses for variable products work with the updated free plugin, which no longer has any variation code of its own.
+* Subscriptions and licenses on variable products are handled by Pro itself: the free plugin has no variation code of its own.
 
 = 1.0.0 =
 * First release.

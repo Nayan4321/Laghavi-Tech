@@ -70,9 +70,10 @@ class RINNOVO_Pro_Features {
 	 */
 	private static function features() {
 		return array(
-			__( 'Plans by number of sites', 'rinnovo-subscriptions-licenses' ) => array(
-				__( 'Sell one plugin in several plans, each at its own price.', 'rinnovo-subscriptions-licenses' ),
+			__( 'Variable products', 'rinnovo-subscriptions-licenses' ) => array(
+				__( 'Sell one product in several plans, each at its own price.', 'rinnovo-subscriptions-licenses' ),
 				array(
+					__( 'Subscriptions on variations: Monthly and Yearly, each with its own period, trial, sign-up fee and number of payments', 'rinnovo-subscriptions-licenses' ),
 					__( 'Licenses on variable products: 1 site, 5 sites, unlimited sites…', 'rinnovo-subscriptions-licenses' ),
 					__( 'One License tab (plugin slug, zip, version) for the whole product', 'rinnovo-subscriptions-licenses' ),
 					__( '"License: sites per key" on each plan, 0 for unlimited', 'rinnovo-subscriptions-licenses' ),
@@ -130,7 +131,7 @@ class RINNOVO_Pro_Features {
 			<div class="rinnovo-pro__hero">
 				<span class="rinnovo-pro__badge"><?php esc_html_e( 'Rinnovo Subscriptions & Licenses Pro', 'rinnovo-subscriptions-licenses' ); ?></span>
 				<h1><?php esc_html_e( 'Sell plans, quote prices and take every currency', 'rinnovo-subscriptions-licenses' ); ?></h1>
-				<p><?php esc_html_e( 'Everything in Rinnovo Subscriptions & Licenses keeps working as it is. Pro is a separate add-on that adds plans by number of sites, "Ask for price" products and a currency switcher.', 'rinnovo-subscriptions-licenses' ); ?></p>
+				<p><?php esc_html_e( 'Everything in Rinnovo Subscriptions & Licenses keeps working as it is. Pro is a separate add-on that adds subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.', 'rinnovo-subscriptions-licenses' ); ?></p>
 				<p><a class="button button-hero rinnovo-pro__cta" href="<?php echo esc_url( self::url( 'features-top' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get Rinnovo Pro', 'rinnovo-subscriptions-licenses' ); ?></a></p>
 			</div>
 			<div class="rinnovo-pro__grid">
@@ -138,7 +139,7 @@ class RINNOVO_Pro_Features {
 					<div class="rinnovo-pro__card">
 						<h2><?php echo esc_html( $title ); ?></h2>
 						<p class="description"><?php echo esc_html( $group[0] ); ?></p>
-						<?php if ( __( 'Plans by number of sites', 'rinnovo-subscriptions-licenses' ) === $title ) : ?>
+						<?php if ( __( 'Variable products', 'rinnovo-subscriptions-licenses' ) === $title ) : ?>
 							<div class="rinnovo-pro__plans"><span><?php esc_html_e( '1 site', 'rinnovo-subscriptions-licenses' ); ?></span><span class="is-on"><?php esc_html_e( '5 sites', 'rinnovo-subscriptions-licenses' ); ?></span><span><?php esc_html_e( 'Unlimited', 'rinnovo-subscriptions-licenses' ); ?></span></div>
 						<?php endif; ?>
 						<ul class="rinnovo-pro__list">

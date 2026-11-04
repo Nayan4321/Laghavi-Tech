@@ -58,7 +58,7 @@ class RINNOVO_Reviews {
 	}
 
 	/**
-	 * Earliest paid order of a customer that contains the product (or one of its variations).
+	 * Earliest paid order of a customer that contains the product (whatever option was chosen).
 	 *
 	 * @param int    $product_id Product ID.
 	 * @param int    $user_id    Customer's user ID (0 for guests).

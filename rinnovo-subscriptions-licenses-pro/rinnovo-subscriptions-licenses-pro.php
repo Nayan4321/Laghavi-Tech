@@ -33,6 +33,7 @@ if ( ! defined( 'RINNOVOPRO_LICENSE_SERVER' ) ) {
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-license.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-settings.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-license-variations.php';
+require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-variation-subscriptions.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-currency.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-ask-price.php';
 
@@ -58,6 +59,7 @@ add_action(
 
 		RINNOVOPRO_Settings::init();
 		RINNOVOPRO_License_Variations::init();
+		RINNOVOPRO_Variation_Subscriptions::init();
 		RINNOVO_Currency::init();
 		RINNOVO_Ask_Price::init();
 		add_action( 'wp_enqueue_scripts', 'rinnovopro_assets', 20 );

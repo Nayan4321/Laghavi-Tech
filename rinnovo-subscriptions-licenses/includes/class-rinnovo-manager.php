@@ -88,7 +88,7 @@ class RINNOVO_Manager {
 			array(
 				'user_id'                 => $order->get_customer_id(),
 				'parent_order_id'         => $order->get_id(),
-				'product_id'              => $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id(),
+				'product_id'              => $item->get_product() ? $item->get_product()->get_id() : $item->get_product_id(),
 				'quantity'                => $item->get_quantity(),
 				'name'                    => $item->get_name(),
 				'status'                  => $trial ? 'trial' : 'active',
@@ -149,11 +149,12 @@ class RINNOVO_Manager {
 		if ( null !== $amount ) {
 			// Stripe already charged this amount (tax included): record it exactly.
 			$line = new WC_Order_Item_Product();
+			if ( $product ) {
+				$line->set_product( $product );
+			}
 			$line->set_props(
 				array(
 					'name'         => $sub->name,
-					'product_id'   => $product ? ( $product->get_parent_id() ? $product->get_parent_id() : $product->get_id() ) : 0,
-					'variation_id' => $product && $product->get_parent_id() ? $product->get_id() : 0,
 					'quantity'     => (int) $sub->quantity,
 					'subtotal'     => $amount,
 					'total'        => $amount,

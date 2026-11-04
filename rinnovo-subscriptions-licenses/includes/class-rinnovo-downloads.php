@@ -46,7 +46,7 @@ class RINNOVO_Downloads {
 	 * How many times a product has been bought: the quantity on paid orders (subscription renewals not
 	 * counted again), plus the number added by hand.
 	 *
-	 * @param int $product_id Product ID (variations count towards their product).
+	 * @param int $product_id Product ID (all its order items count, whatever option was chosen).
 	 * @return int
 	 */
 	public static function count( $product_id ) {

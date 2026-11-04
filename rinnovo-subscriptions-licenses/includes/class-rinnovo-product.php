@@ -1,6 +1,6 @@
 <?php
 /**
- * Subscription settings on products and variations, and how they behave in the cart and checkout.
+ * Subscription settings on products, and how they behave in the cart and checkout.
  *
  * @package RinnovoSubscriptions
  */
@@ -19,8 +19,6 @@ class RINNOVO_Product {
 		// Admin fields.
 		add_action( 'woocommerce_product_options_general_product_data', array( __CLASS__, 'simple_fields' ) );
 		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save_simple' ) );
-		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'variation_fields' ), 10, 3 );
-		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation' ), 10, 2 );
 
 		// Shop.
 		add_filter( 'woocommerce_get_price_html', array( __CLASS__, 'price_html' ), 20, 2 );
@@ -69,7 +67,7 @@ class RINNOVO_Product {
 	}
 
 	/**
-	 * The subscription plan of a product or variation, or null if it is not a subscription.
+	 * The subscription plan of a product, or null if it is not a subscription.
 	 *
 	 * @param WC_Product|int|null $product Product.
 	 * @return array|null period, interval, signup_fee, trial_days, length.
@@ -101,7 +99,6 @@ class RINNOVO_Product {
 
 	/**
 	 * Subscriptions are bought one at a time, so the product page shows no quantity box.
-	 * A variable product counts when any of its variations is a subscription.
 	 *
 	 * @param bool       $single  Sold individually.
 	 * @param WC_Product $product Product.
@@ -111,17 +108,7 @@ class RINNOVO_Product {
 		if ( $single || ! $product instanceof WC_Product ) {
 			return $single;
 		}
-		if ( self::is_subscription( $product ) ) {
-			return true;
-		}
-		if ( $product->is_type( 'variable' ) ) {
-			foreach ( $product->get_children() as $child_id ) {
-				if ( 'yes' === get_post_meta( $child_id, '_rinnovo_enabled', true ) ) {
-					return true;
-				}
-			}
-		}
-		return $single;
+		return self::is_subscription( $product ) ? true : $single;
 	}
 
 	/**
@@ -143,84 +130,75 @@ class RINNOVO_Product {
 	// ---------------------------------------------------------------- Admin fields.
 
 	/**
-	 * Fields for one product or variation.
+	 * Subscription fields of a product.
 	 *
 	 * @param WC_Product $product Product.
-	 * @param string     $suffix  Field name suffix ("" for simple products, "[3]" for variation 3).
-	 * @param bool       $variation Whether this is a variation.
 	 */
-	private static function fields( $product, $suffix, $variation ) {
+	private static function fields( $product ) {
 		$value = static function ( $key, $default = '' ) use ( $product ) {
 			$v = $product ? $product->get_meta( $key ) : '';
 			return '' === $v ? $default : $v;
 		};
-		$wrap  = $variation ? 'form-row form-row-first' : '';
 		?>
 		<div class="rinnovo-fields options_group">
 			<?php
 			woocommerce_wp_checkbox(
 				array(
-					'id'            => '_rinnovo_enabled' . $suffix,
-					'name'          => '_rinnovo_enabled' . $suffix,
+					'id'            => '_rinnovo_enabled',
+					'name'          => '_rinnovo_enabled',
 					'label'         => __( 'Subscription', 'rinnovo-subscriptions-licenses' ),
 					'description'   => __( 'Charge the price above again every billing period.', 'rinnovo-subscriptions-licenses' ),
 					'value'         => $value( '_rinnovo_enabled', 'no' ),
-					'wrapper_class' => $variation ? 'form-row form-row-full' : '',
 				)
 			);
 			woocommerce_wp_text_input(
 				array(
-					'id'                => '_rinnovo_interval' . $suffix,
-					'name'              => '_rinnovo_interval' . $suffix,
+					'id'                => '_rinnovo_interval',
+					'name'              => '_rinnovo_interval',
 					'label'             => __( 'Bill every', 'rinnovo-subscriptions-licenses' ),
 					'type'              => 'number',
 					'custom_attributes' => array( 'min' => 1 ),
 					'value'             => $value( '_rinnovo_interval', '1' ),
-					'wrapper_class'     => $wrap,
 				)
 			);
 			woocommerce_wp_select(
 				array(
-					'id'            => '_rinnovo_period' . $suffix,
-					'name'          => '_rinnovo_period' . $suffix,
+					'id'            => '_rinnovo_period',
+					'name'          => '_rinnovo_period',
 					'label'         => __( 'Billing period', 'rinnovo-subscriptions-licenses' ),
 					'options'       => self::periods(),
 					'value'         => $value( '_rinnovo_period', 'month' ),
-					'wrapper_class' => $variation ? 'form-row form-row-last' : '',
 				)
 			);
 			woocommerce_wp_text_input(
 				array(
-					'id'            => '_rinnovo_signup_fee' . $suffix,
-					'name'          => '_rinnovo_signup_fee' . $suffix,
+					'id'            => '_rinnovo_signup_fee',
+					'name'          => '_rinnovo_signup_fee',
 					/* translators: %s: currency symbol. */
 					'label'         => sprintf( __( 'Sign-up fee (%s)', 'rinnovo-subscriptions-licenses' ), get_woocommerce_currency_symbol() ),
 					'data_type'     => 'price',
 					'value'         => $value( '_rinnovo_signup_fee' ),
-					'wrapper_class' => $wrap,
 				)
 			);
 			woocommerce_wp_text_input(
 				array(
-					'id'                => '_rinnovo_trial_days' . $suffix,
-					'name'              => '_rinnovo_trial_days' . $suffix,
+					'id'                => '_rinnovo_trial_days',
+					'name'              => '_rinnovo_trial_days',
 					'label'             => __( 'Free trial (days)', 'rinnovo-subscriptions-licenses' ),
 					'type'              => 'number',
 					'custom_attributes' => array( 'min' => 0 ),
 					'value'             => $value( '_rinnovo_trial_days', '0' ),
-					'wrapper_class'     => $variation ? 'form-row form-row-last' : '',
 				)
 			);
 			woocommerce_wp_text_input(
 				array(
-					'id'                => '_rinnovo_length' . $suffix,
-					'name'              => '_rinnovo_length' . $suffix,
+					'id'                => '_rinnovo_length',
+					'name'              => '_rinnovo_length',
 					'label'             => __( 'Number of payments', 'rinnovo-subscriptions-licenses' ),
 					'description'       => __( '0 = until cancelled.', 'rinnovo-subscriptions-licenses' ),
 					'type'              => 'number',
 					'custom_attributes' => array( 'min' => 0 ),
 					'value'             => $value( '_rinnovo_length', '0' ),
-					'wrapper_class'     => $variation ? 'form-row form-row-full' : '',
 				)
 			);
 			?>
@@ -234,19 +212,8 @@ class RINNOVO_Product {
 	public static function simple_fields() {
 		global $product_object;
 		echo '<div class="show_if_simple">';
-		self::fields( $product_object, '', false );
+		self::fields( $product_object );
 		echo '</div>';
-	}
-
-	/**
-	 * Fields on each variation.
-	 *
-	 * @param int     $loop           Index.
-	 * @param array   $variation_data Data.
-	 * @param WP_Post $variation      Variation post.
-	 */
-	public static function variation_fields( $loop, $variation_data, $variation ) {
-		self::fields( wc_get_product( $variation->ID ), '[' . $loop . ']', true );
 	}
 
 	/**
@@ -273,7 +240,7 @@ class RINNOVO_Product {
 	 */
 	public static function save_simple( $product_id ) {
 		$product = wc_get_product( $product_id );
-		if ( ! $product || $product->is_type( 'variable' ) ) {
+		if ( ! $product || ! $product->is_type( 'simple' ) ) {
 			return;
 		}
 		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
@@ -287,29 +254,6 @@ class RINNOVO_Product {
 			$values[ $key ] = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 		}
 		self::save_values( $product, $values );
-	}
-
-	/**
-	 * Save variation fields.
-	 *
-	 * @param int $variation_id Variation ID.
-	 * @param int $i            Index.
-	 */
-	public static function save_variation( $variation_id, $i ) {
-		$variation = wc_get_product( $variation_id );
-		if ( ! $variation ) {
-			return;
-		}
-		$ajax = isset( $_POST['security'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['security'] ) ), 'save-variations' );
-		$form = isset( $_POST['woocommerce_meta_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' );
-		if ( ( ! $ajax && ! $form ) || ! current_user_can( 'edit_product', $variation->get_parent_id() ) ) {
-			return;
-		}
-		$values = array();
-		foreach ( array( '_rinnovo_enabled', '_rinnovo_period', '_rinnovo_interval', '_rinnovo_signup_fee', '_rinnovo_trial_days', '_rinnovo_length' ) as $key ) {
-			$values[ $key ] = isset( $_POST[ $key ][ $i ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ][ $i ] ) ) : '';
-		}
-		self::save_values( $variation, $values );
 	}
 
 	// ---------------------------------------------------------------- Shop.
@@ -378,9 +322,7 @@ class RINNOVO_Product {
 	 * @return bool
 	 */
 	public static function one_subscription_per_cart( $valid, $product_id, $qty ) {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing -- Add-to-cart has no nonce in WooCommerce.
-		$variation_id = isset( $_REQUEST['variation_id'] ) ? absint( $_REQUEST['variation_id'] ) : 0;
-		$adding       = $variation_id ? $variation_id : $product_id;
+		$adding = (int) $product_id;
 		if ( ! $valid || ! self::is_subscription( $adding ) || ! WC()->cart ) {
 			return $valid;
 		}
