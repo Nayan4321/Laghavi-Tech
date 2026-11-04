@@ -212,6 +212,48 @@ class LGCC_Tools {
 				true,
 			),
 			'clear_cache'       => array( 'Clear WordPress\'s object cache, expired transients, and the caches of common cache plugins and Elementor.', array(), array(), true ),
+			'delete_files'      => array(
+				'Delete files or folders (for example malware). Every file is backed up first and can be restored with restore_backup. WordPress core files, wp-config.php and the connector can\'t be deleted.',
+				array(
+					'paths' => array(
+						'type'        => 'array',
+						'items'       => array( 'type' => 'string' ),
+						'description' => 'Paths relative to the WordPress folder. A folder is deleted with everything in it.',
+					),
+				),
+				array( 'paths' ),
+				true,
+			),
+			'trash_posts'       => array(
+				'Move posts or pages to the Trash (they can be restored from Posts > Trash for 30 days).',
+				array(
+					'ids' => array(
+						'type'  => 'array',
+						'items' => array( 'type' => 'integer' ),
+					),
+				),
+				array( 'ids' ),
+				true,
+			),
+			'delete_options'    => array(
+				'Delete WordPress options (for example ones left by malware). Their values are backed up first (list_backups). Core options can\'t be deleted.',
+				array(
+					'names' => array(
+						'type'  => 'array',
+						'items' => array( 'type' => 'string' ),
+					),
+				),
+				array( 'names' ),
+				true,
+			),
+			'unschedule_cron'   => array(
+				'Remove every scheduled run of a WP-Cron hook (for example a task left by malware or a removed plugin).',
+				array(
+					'hook' => array( 'type' => 'string' ),
+				),
+				array( 'hook' ),
+				true,
+			),
 		);
 	}
 
@@ -223,9 +265,8 @@ class LGCC_Tools {
 	public static function definitions() {
 		$out = array();
 		foreach ( self::catalog() as $name => $tool ) {
-			if ( $tool[3] && ! LGCC_Access::can_fix() ) {
-				continue;
-			}
+			// Fixing tools are always listed, so switching the key to "look and fix" needs no reconnect;
+			// they refuse to run while the key may only look.
 			$schema = array(
 				'type'       => 'object',
 				'properties' => $tool[1] ? $tool[1] : new stdClass(),
@@ -235,7 +276,7 @@ class LGCC_Tools {
 			}
 			$out[] = array(
 				'name'        => $name,
-				'description' => $tool[0],
+				'description' => $tool[0] . ( $tool[3] ? ' (Needs a "look and fix" key.)' : '' ),
 				'inputSchema' => $schema,
 				'annotations' => array(
 					'readOnlyHint'    => ! $tool[3],
@@ -601,7 +642,8 @@ class LGCC_Tools {
 	 */
 	private static function tool_fetch_page( $args ) {
 		$path  = '/' . ltrim( (string) $args['path'], '/' );
-		$url   = home_url( $path );
+		// The raw address: language plugins filter home_url() and would change the path.
+		$url   = untrailingslashit( (string) get_option( 'home' ) ) . $path;
 		$start = microtime( true );
 		$res   = wp_remote_get(
 			$url,
@@ -1294,5 +1336,122 @@ class LGCC_Tools {
 			$done[] = 'Elementor CSS';
 		}
 		return array( 'cleared' => $done );
+	}
+
+	/**
+	 * Delete files or folders, each file backed up first.
+	 *
+	 * @param array $args Arguments.
+	 * @return array
+	 */
+	private static function tool_delete_files( $args ) {
+		$out = array();
+		foreach ( array_slice( (array) $args['paths'], 0, 50 ) as $path ) {
+			$abs = self::path( $path, true );
+			if ( is_wp_error( $abs ) ) {
+				$out[ (string) $path ] = $abs->get_error_message();
+				continue;
+			}
+			if ( ! file_exists( $abs ) ) {
+				$out[ (string) $path ] = 'not found';
+				continue;
+			}
+			$files = array();
+			if ( is_dir( $abs ) ) {
+				$it = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $abs, FilesystemIterator::SKIP_DOTS ), RecursiveIteratorIterator::CHILD_FIRST );
+				foreach ( $it as $f ) {
+					$files[] = $f;
+					if ( count( $files ) > 2000 ) {
+						$out[ (string) $path ] = 'more than 2000 files: delete it from the hosting file manager';
+						continue 2;
+					}
+				}
+			}
+			$deleted = 0;
+			foreach ( $files as $f ) {
+				if ( $f->isDir() ) {
+					rmdir( $f->getPathname() );
+				} else {
+					self::backup( wp_normalize_path( $f->getPathname() ) );
+					unlink( $f->getPathname() );
+					++$deleted;
+				}
+			}
+			if ( is_dir( $abs ) ) {
+				$ok = rmdir( $abs );
+			} else {
+				self::backup( $abs );
+				$ok = unlink( $abs );
+				++$deleted;
+			}
+			$out[ self::rel( $abs ) ] = $ok ? 'deleted (' . $deleted . ' file' . ( 1 === $deleted ? '' : 's' ) . ' backed up)' : 'could not be deleted (permissions?)';
+		}
+		return $out;
+	}
+
+	/**
+	 * Move posts to the Trash.
+	 *
+	 * @param array $args Arguments.
+	 * @return array
+	 */
+	private static function tool_trash_posts( $args ) {
+		$out = array();
+		foreach ( array_slice( array_map( 'intval', (array) $args['ids'] ), 0, 200 ) as $id ) {
+			$post = get_post( $id );
+			if ( ! $post ) {
+				$out[ $id ] = 'not found';
+				continue;
+			}
+			$out[ $id ] = wp_trash_post( $id ) ? 'trashed: ' . $post->post_title : 'could not be trashed';
+		}
+		return $out;
+	}
+
+	/**
+	 * Options WordPress needs, never deleted.
+	 *
+	 * @return string[]
+	 */
+	private static function core_options() {
+		return array( 'siteurl', 'home', 'blogname', 'blogdescription', 'admin_email', 'active_plugins', 'template', 'stylesheet', 'cron', 'rewrite_rules', 'permalink_structure', 'db_version', 'initial_db_version', 'wp_user_roles', $GLOBALS['wpdb']->prefix . 'user_roles', 'show_on_front', 'page_on_front', 'page_for_posts', 'users_can_register', 'default_role', 'WPLANG', 'timezone_string', LGCC_Access::OPTION, LGCC_Access::LOG, self::BACKUPS, 'lgcc_backup_dir', 'lgcc_debug_log' );
+	}
+
+	/**
+	 * Delete options, values backed up first.
+	 *
+	 * @param array $args Arguments.
+	 * @return array
+	 */
+	private static function tool_delete_options( $args ) {
+		$out = array();
+		foreach ( array_slice( (array) $args['names'], 0, 100 ) as $name ) {
+			$name = (string) $name;
+			if ( in_array( $name, self::core_options(), true ) ) {
+				$out[ $name ] = 'kept: WordPress or the connector needs it';
+				continue;
+			}
+			$value = get_option( $name, null );
+			if ( null === $value ) {
+				$out[ $name ] = 'not found';
+				continue;
+			}
+			$file = self::backup_dir() . '/option-' . sanitize_file_name( $name ) . '-' . gmdate( 'Ymd-His' ) . '.json';
+			file_put_contents( $file, wp_json_encode( array( 'option' => $name, 'value' => maybe_serialize( $value ) ) ) );
+			$out[ $name ] = delete_option( $name ) ? 'deleted (value backed up in ' . basename( $file ) . ')' : 'could not be deleted';
+		}
+		return $out;
+	}
+
+	/**
+	 * Remove a cron hook.
+	 *
+	 * @param array $args Arguments.
+	 * @return string
+	 */
+	private static function tool_unschedule_cron( $args ) {
+		$hook  = (string) $args['hook'];
+		$count = wp_unschedule_hook( $hook );
+		return false === $count ? 'Could not change the schedule.' : 'Removed ' . (int) $count . ' scheduled run(s) of ' . $hook . '.';
 	}
 }
