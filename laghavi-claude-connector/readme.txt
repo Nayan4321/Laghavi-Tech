@@ -1,0 +1,38 @@
+=== Laghavi Claude Connector ===
+Contributors: nayan4321
+Requires at least: 6.2
+Tested up to: 7.1
+Requires PHP: 7.4
+Stable tag: 1.0.0
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
+
+Private tool by Laghavi Digital: lets Claude find and fix problems on a WordPress site through a secure, time-limited MCP connector.
+
+== Description ==
+
+Install it on a site, create a key in Tools > Claude Connector and add the connector address to Claude. Claude can then:
+
+* Look: site overview, Site Health, error logs (debug.log, PHP error_log, WooCommerce fatal-error logs), pages checked for PHP errors, plugins, themes, files, read-only database queries, options, scheduled tasks and users.
+* Fix (only with a "look and fix" key): edit files, activate, deactivate and update plugins, change options, turn error logging on or off, clear caches.
+
+Safety:
+
+* The key is stored as an HMAC only, works until the end date you choose, can be limited to IP addresses and revoked at any time.
+* "Look only" keys can't change anything; the fixing tools are not even offered to Claude.
+* Every file is backed up before it changes, and PHP files are checked for syntax errors before they are saved: a broken edit is refused.
+* WordPress core files, wp-config.php (except the logging settings) and the connector itself are never edited. Files outside the site can't be read.
+* Passwords, salts and keys in wp-config.php and the users table are hidden.
+* Every call is in the log on the settings screen, and administrators see a notice while the connector is on.
+
+== Connecting ==
+
+* Claude.ai or the Claude app: Settings > Connectors > Add custom connector, paste the address.
+* Claude Code: `claude mcp add --transport http my-site "<address>"`
+
+The site must use HTTPS.
+
+== Changelog ==
+
+= 1.0.0 =
+* First version.
