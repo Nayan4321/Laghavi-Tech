@@ -65,6 +65,16 @@ class SLPP_License {
 	}
 
 	/**
+	 * This site's address as saved in Settings > General. home_url() is not used: language and
+	 * multisite plugins filter it (for example /ar/), and the license server would then see another site.
+	 *
+	 * @return string
+	 */
+	public static function site() {
+		return untrailingslashit( (string) get_option( 'home' ) );
+	}
+
+	/**
 	 * Call the license server.
 	 *
 	 * @param string $endpoint activate, deactivate, check or update.
@@ -76,7 +86,7 @@ class SLPP_License {
 		$body = array_merge(
 			array(
 				'license_key' => self::data()['key'],
-				'site_url'    => home_url(),
+				'site_url'    => self::site(),
 				'slug'        => SLPP_SLUG,
 				'version'     => SLPP_VERSION,
 			),
@@ -118,10 +128,31 @@ class SLPP_License {
 			// Server unreachable or busy: keep the last known status.
 			return;
 		}
-		$data['status']     = sanitize_key( $reply['status'] );
-		$data['expires']    = isset( $reply['expires'] ) ? sanitize_text_field( (string) $reply['expires'] ) : '';
+		$status = sanitize_key( $reply['status'] );
+
+		// The server does not know this site (its address changed, or the activation was removed):
+		// activate it again, so the activity log and other features never stop on their own.
+		if ( 'inactive' === $status ) {
+			$again = self::request( 'activate' );
+			if ( ! is_wp_error( $again ) && ! empty( $again['success'] ) && ! empty( $again['status'] ) ) {
+				$reply  = $again;
+				$status = sanitize_key( $again['status'] );
+			}
+		}
+
+		$data['expires']    = isset( $reply['expires'] ) ? sanitize_text_field( (string) $reply['expires'] ) : $data['expires'];
 		$data['message']    = isset( $reply['message'] ) ? sanitize_text_field( $reply['message'] ) : '';
 		$data['last_check'] = time();
+		// Only a revoked key (refund) or a deleted key switches Pro off. Any other answer keeps the
+		// last good status and shows a notice, instead of silently stopping the logs.
+		if ( in_array( $status, array( 'active', 'expired', 'revoked', 'invalid' ), true ) || ! in_array( $data['status'], array( 'active', 'expired' ), true ) ) {
+			$data['status'] = $status;
+		} else {
+			$data['problem'] = $status;
+		}
+		if ( in_array( $status, array( 'active', 'expired' ), true ) ) {
+			unset( $data['problem'] );
+		}
 		update_option( self::OPTION, $data );
 	}
 
@@ -159,11 +190,33 @@ class SLPP_License {
 	 * Reminder to enter a key.
 	 */
 	public static function notice() {
-		if ( self::is_valid() || ! current_user_can( 'manage_options' ) ) {
+		if ( ! current_user_can( 'manage_options' ) ) {
 			return;
 		}
 		$screen = get_current_screen();
 		if ( $screen && false !== strpos( $screen->id, self::PAGE ) ) {
+			return;
+		}
+		$data = self::data();
+		if ( self::is_valid() ) {
+			if ( ! empty( $data['problem'] ) ) {
+				printf(
+					'<div class="notice notice-warning"><p>%s <a href="%s">%s</a></p></div>',
+					esc_html__( 'Sarala Login Page Pro: the license server could not confirm this site, so Pro keeps working with the last known license. Please check the key.', 'sarala-login-page-pro' ),
+					esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ),
+					esc_html__( 'License', 'sarala-login-page-pro' )
+				);
+			}
+			return;
+		}
+		if ( '' !== $data['key'] ) {
+			printf(
+				'<div class="notice notice-error"><p>%s %s <a href="%s">%s</a></p></div>',
+				esc_html__( 'Sarala Login Page Pro features are switched off, including the activity log:', 'sarala-login-page-pro' ),
+				esc_html( '' !== $data['message'] ? $data['message'] : $data['status'] ),
+				esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ),
+				esc_html__( 'License', 'sarala-login-page-pro' )
+			);
 			return;
 		}
 		printf(
