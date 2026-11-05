@@ -246,6 +246,41 @@ class LGCC_Tools {
 				array( 'names' ),
 				true,
 			),
+			'page_texts'        => array(
+				'A page or post with everything needed to translate or correct it: title, status, slug, language and its translations (Vacanam, Polylang, WPML), SEO title and description (Yoast, Rank Math), and every text shown on it (Elementor widgets, or the editor content), each once.',
+				array(
+					'id' => array( 'type' => 'integer' ),
+				),
+				array( 'id' ),
+				false,
+			),
+			'update_page'       => array(
+				'Change the texts of a page or post without touching its layout: exact text replacements inside Elementor widgets and the editor content, and optionally the title, SEO title, SEO description and status. The page is backed up first (restore_backup). Replacements that matched nothing are reported, so nothing is silently skipped.',
+				array(
+					'id'              => array( 'type' => 'integer' ),
+					'replacements'    => array(
+						'type'        => 'array',
+						'description' => 'Text pairs, applied in order. Each find must match a text on the page exactly (as page_texts shows it, HTML included); every occurrence is replaced.',
+						'items'       => array(
+							'type'       => 'object',
+							'properties' => array(
+								'find'    => array( 'type' => 'string' ),
+								'replace' => array( 'type' => 'string' ),
+							),
+							'required'   => array( 'find', 'replace' ),
+						),
+					),
+					'title'           => array( 'type' => 'string' ),
+					'seo_title'       => array( 'type' => 'string' ),
+					'seo_description' => array( 'type' => 'string' ),
+					'status'          => array(
+						'type' => 'string',
+						'enum' => array( 'draft', 'pending', 'publish', 'private' ),
+					),
+				),
+				array( 'id' ),
+				true,
+			),
 			'unschedule_cron'   => array(
 				'Remove every scheduled run of a WP-Cron hook (for example a task left by malware or a removed plugin).',
 				array(
@@ -402,6 +437,34 @@ class LGCC_Tools {
 	 */
 	private static function redact( $text ) {
 		return preg_replace( "/(define\(\s*['\"](DB_PASSWORD|AUTH_KEY|SECURE_AUTH_KEY|LOGGED_IN_KEY|NONCE_KEY|AUTH_SALT|SECURE_AUTH_SALT|LOGGED_IN_SALT|NONCE_SALT|[A-Z_]*(SECRET|TOKEN|API_KEY|PASSWORD)[A-Z_]*)['\"]\s*,\s*)(['\"]).*?\\4/i", '$1$4[hidden]$4', $text );
+	}
+
+	/**
+	 * Hide passwords, secrets, tokens and keys stored by plugins, in arrays and in serialized or JSON text.
+	 *
+	 * @param mixed  $value Value.
+	 * @param string $key   Its key, when inside an array.
+	 * @return mixed
+	 */
+	public static function hide_secrets( $value, $key = '' ) {
+		$secret = '/(secret|token|passw|private_key|api_key|apikey|license_key|auth_key|salt)/i';
+		if ( is_array( $value ) || is_object( $value ) ) {
+			$out = array();
+			foreach ( (array) $value as $k => $v ) {
+				$out[ $k ] = self::hide_secrets( $v, (string) $k );
+			}
+			return $out;
+		}
+		if ( '' !== $key && preg_match( $secret, $key ) && is_scalar( $value ) && '' !== (string) $value && ! is_bool( $value ) ) {
+			return '[hidden]';
+		}
+		if ( ! is_string( $value ) ) {
+			return $value;
+		}
+		// Serialized: s:13:"client_secret";s:35:"...".
+		$value = preg_replace( '/(s:\d+:"[^"]*(?:secret|token|passw|private_key|api_key|apikey|license_key|auth_key|salt)[^"]*";s:)\d+:"[^"]+"/i', '${1}8:"[hidden]"', $value );
+		// JSON: "client_secret":"...".
+		return preg_replace( '/("[^"]*(?:secret|token|passw|private_key|api_key|apikey|license_key|auth_key|salt)[^"]*"\s*:\s*)"[^"]+"/i', '$1"[hidden]"', $value );
 	}
 
 	/**
@@ -928,6 +991,11 @@ class LGCC_Tools {
 					$row[ $secret ] = '[hidden]';
 				}
 			}
+			foreach ( $row as $column => $cell ) {
+				if ( is_string( $cell ) && '' !== $cell ) {
+					$row[ $column ] = self::hide_secrets( $cell );
+				}
+			}
 		}
 		return array(
 			'rows'  => count( $rows ),
@@ -949,7 +1017,7 @@ class LGCC_Tools {
 		$value = get_option( $name, null );
 		return null === $value ? 'Option not found.' : array(
 			'name'  => $name,
-			'value' => $value,
+			'value' => self::hide_secrets( $value ),
 		);
 	}
 
@@ -1160,6 +1228,9 @@ class LGCC_Tools {
 		if ( ! isset( $list[ $id ] ) || ! is_file( self::backup_dir() . '/' . $id . '.bak' ) ) {
 			return new WP_Error( 'lgcc_backup', 'Backup not found.' );
 		}
+		if ( 0 === strpos( $list[ $id ]['abs'], 'post:' ) ) {
+			return self::restore_post( $id );
+		}
 		$file = $list[ $id ]['abs'];
 		$now  = self::backup( $file ); // The current version can be restored too.
 		if ( ! copy( self::backup_dir() . '/' . $id . '.bak', $file ) ) {
@@ -1331,6 +1402,11 @@ class LGCC_Tools {
 			WpeCommon::purge_varnish_cache();
 			$done[] = 'WP Engine';
 		}
+		if ( function_exists( 'WP_Optimize' ) && method_exists( WP_Optimize(), 'get_page_cache' ) ) {
+			WP_Optimize()->get_page_cache()->purge();
+			$done[] = 'WP-Optimize';
+		}
+		do_action( 'litespeed_purge_all' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- Also purges Hostinger's LiteSpeed server cache when its plugin listens.
 		if ( class_exists( '\Elementor\Plugin' ) && isset( \Elementor\Plugin::$instance->files_manager ) ) {
 			\Elementor\Plugin::$instance->files_manager->clear_cache();
 			$done[] = 'Elementor CSS';
@@ -1453,5 +1529,359 @@ class LGCC_Tools {
 		$hook  = (string) $args['hook'];
 		$count = wp_unschedule_hook( $hook );
 		return false === $count ? 'Could not change the schedule.' : 'Removed ' . (int) $count . ' scheduled run(s) of ' . $hook . '.';
+	}
+
+	/*
+	 * Pages.
+	 */
+
+	/**
+	 * Setting keys that never hold visible text.
+	 *
+	 * @param string $key Key.
+	 * @return bool
+	 */
+	private static function skip_key( $key ) {
+		return (bool) preg_match( '/^(_|id$|elType$|widgetType$|url$|link$|css|custom_css|html_tag|.*_(id|url|link|tag|size|color|colour|position|align|alignment|type|style|animation|icon|class|classes|unit|width|height|ratio|source|format|order|orderby|target|rel|query|template|selector|breakpoint|effect|duration|delay|easing|direction|hover|transition|border|padding|margin|gap|radius|shadow|typography.*|font.*|z_index)$)/i', (string) $key );
+	}
+
+	/**
+	 * Whether a string is text people read (not a URL, number, slug or setting).
+	 *
+	 * @param string $value Value.
+	 * @return bool
+	 */
+	private static function is_text( $value ) {
+		$plain = trim( wp_strip_all_tags( html_entity_decode( (string) $value, ENT_QUOTES, 'UTF-8' ) ) );
+		if ( '' === $plain || ! preg_match( '/\p{L}/u', $plain ) ) {
+			return false;
+		}
+		if ( preg_match( '#^(https?:|//|/|\#|mailto:|tel:|\[)#i', $plain ) || preg_match( '/^[a-z0-9_.-]+$/', $plain ) || preg_match( '/^(yes|no|on|off|true|false|none|default|inherit|custom|solid|left|right|center|full|auto)$/i', $plain ) ) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * Collect texts from Elementor data.
+	 *
+	 * @param mixed $node  Node.
+	 * @param array $texts Texts found (text => widget).
+	 * @param string $widget Current widget type.
+	 */
+	private static function collect_texts( $node, &$texts, $widget = '' ) {
+		if ( ! is_array( $node ) ) {
+			return;
+		}
+		if ( isset( $node['widgetType'] ) ) {
+			$widget = (string) $node['widgetType'];
+		}
+		foreach ( $node as $key => $value ) {
+			if ( 'settings' === $key && is_array( $value ) ) {
+				self::collect_settings( $value, $texts, $widget );
+			} elseif ( 'elements' === $key && is_array( $value ) ) {
+				foreach ( $value as $child ) {
+					self::collect_texts( $child, $texts, $widget );
+				}
+			} elseif ( is_int( $key ) ) {
+				self::collect_texts( $value, $texts, $widget );
+			}
+		}
+	}
+
+	/**
+	 * Collect texts from widget settings (repeaters included).
+	 *
+	 * @param array  $settings Settings.
+	 * @param array  $texts    Texts found.
+	 * @param string $widget   Widget type.
+	 */
+	private static function collect_settings( $settings, &$texts, $widget ) {
+		foreach ( $settings as $key => $value ) {
+			if ( is_array( $value ) ) {
+				self::collect_settings( $value, $texts, $widget );
+			} elseif ( is_string( $value ) && ! self::skip_key( $key ) && self::is_text( $value ) && ! isset( $texts[ $value ] ) ) {
+				$texts[ $value ] = $widget;
+			}
+		}
+	}
+
+	/**
+	 * Replace texts in every string of Elementor data (keys untouched).
+	 *
+	 * @param mixed $node  Node.
+	 * @param array $pairs find => replace.
+	 * @param array $hits  Count per find.
+	 * @return mixed
+	 */
+	private static function replace_in_data( $node, $pairs, &$hits ) {
+		if ( is_array( $node ) ) {
+			foreach ( $node as $key => $value ) {
+				if ( is_string( $key ) && self::skip_key( $key ) && 'settings' !== $key && 'elements' !== $key ) {
+					continue;
+				}
+				$node[ $key ] = self::replace_in_data( $value, $pairs, $hits );
+			}
+			return $node;
+		}
+		return is_string( $node ) ? self::replace_text( $node, $pairs, $hits ) : $node;
+	}
+
+	/**
+	 * Replace texts in one string, also matching the HTML-escaped form (& as &amp;).
+	 *
+	 * @param string $text  Text.
+	 * @param array  $pairs find => replace.
+	 * @param array  $hits  Count per find.
+	 * @return string
+	 */
+	private static function replace_text( $text, $pairs, &$hits ) {
+		foreach ( $pairs as $find => $replace ) {
+			$find = (string) $find;
+			foreach ( array_unique( array( $find, htmlspecialchars( $find, ENT_NOQUOTES, 'UTF-8', false ), str_replace( "'", '&#8217;', $find ), str_replace( "'", '’', $find ) ) ) as $variant ) {
+				$count = substr_count( $text, $variant );
+				if ( $count ) {
+					$text           = str_replace( $variant, (string) $replace, $text );
+					$hits[ $find ] += $count;
+				}
+			}
+		}
+		return $text;
+	}
+
+	/**
+	 * SEO title and description keys of the active SEO plugin.
+	 *
+	 * @return array{0: string, 1: string}
+	 */
+	private static function seo_keys() {
+		if ( defined( 'RANK_MATH_VERSION' ) ) {
+			return array( 'rank_math_title', 'rank_math_description' );
+		}
+		return array( '_yoast_wpseo_title', '_yoast_wpseo_metadesc' );
+	}
+
+	/**
+	 * Language and translations of a post (Vacanam, Polylang, WPML).
+	 *
+	 * @param int $id Post ID.
+	 * @return array
+	 */
+	private static function post_languages( $id ) {
+		if ( class_exists( 'Vacanam_Model' ) ) {
+			return array(
+				'language'     => Vacanam_Model::post_lang( $id ),
+				'translations' => Vacanam_Model::post_translations( $id ),
+			);
+		}
+		if ( function_exists( 'pll_get_post_language' ) ) {
+			return array(
+				'language'     => pll_get_post_language( $id ),
+				'translations' => function_exists( 'pll_get_post_translations' ) ? pll_get_post_translations( $id ) : array(),
+			);
+		}
+		$lang = apply_filters( 'wpml_post_language_details', null, $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's hook.
+		return is_array( $lang ) ? array( 'language' => $lang['language_code'] ) : array();
+	}
+
+	/**
+	 * Page texts.
+	 *
+	 * @param array $args Arguments.
+	 * @return array|WP_Error
+	 */
+	private static function tool_page_texts( $args ) {
+		$post = get_post( (int) $args['id'] );
+		if ( ! $post ) {
+			return new WP_Error( 'lgcc_post', 'Post not found.' );
+		}
+		list( $seo_title, $seo_desc ) = self::seo_keys();
+		$texts                        = array();
+		$data                         = json_decode( (string) get_post_meta( $post->ID, '_elementor_data', true ), true );
+		$builder                      = is_array( $data ) && 'builder' === get_post_meta( $post->ID, '_elementor_edit_mode', true );
+		if ( $builder ) {
+			self::collect_texts( $data, $texts );
+		} else {
+			foreach ( preg_split( '/<\/?(p|h[1-6]|li|td|th|div|figcaption|blockquote)[^>]*>|<!--.*?-->/s', $post->post_content ) as $part ) {
+				if ( self::is_text( $part ) && ! isset( $texts[ trim( $part ) ] ) ) {
+					$texts[ trim( $part ) ] = 'content';
+				}
+			}
+		}
+		$list = array();
+		foreach ( $texts as $text => $widget ) {
+			$list[] = array(
+				'text'   => (string) $text,
+				'widget' => $widget,
+			);
+		}
+		return array_merge(
+			array(
+				'id'              => $post->ID,
+				'type'            => $post->post_type,
+				'title'           => $post->post_title,
+				'slug'            => $post->post_name,
+				'status'          => $post->post_status,
+				'link'            => get_permalink( $post ),
+				'editor'          => $builder ? 'elementor' : 'wordpress',
+				'seo_title'       => (string) get_post_meta( $post->ID, $seo_title, true ),
+				'seo_description' => (string) get_post_meta( $post->ID, $seo_desc, true ),
+			),
+			self::post_languages( $post->ID ),
+			array(
+				'text_count' => count( $list ),
+				'texts'      => $list,
+			)
+		);
+	}
+
+	/**
+	 * Back up a post (fields and meta) before it changes.
+	 *
+	 * @param WP_Post $post Post.
+	 * @return string Backup ID.
+	 */
+	private static function backup_post( $post ) {
+		$id   = gmdate( 'Ymd-His' ) . '-' . substr( md5( 'post' . $post->ID . microtime() ), 0, 8 );
+		$file = self::backup_dir() . '/' . $id . '.bak';
+		file_put_contents(
+			$file,
+			wp_json_encode(
+				array(
+					'post' => array(
+						'ID'           => $post->ID,
+						'post_title'   => $post->post_title,
+						'post_content' => $post->post_content,
+						'post_excerpt' => $post->post_excerpt,
+						'post_status'  => $post->post_status,
+					),
+					'meta' => array_map(
+						static function ( $values ) {
+							return $values[0];
+						},
+						get_post_meta( $post->ID )
+					),
+				)
+			)
+		);
+		$list        = get_option( self::BACKUPS, array() );
+		$list        = is_array( $list ) ? $list : array();
+		$list[ $id ] = array(
+			'path' => 'page ' . $post->ID . ': ' . $post->post_title,
+			'abs'  => 'post:' . $post->ID,
+			'time' => time(),
+			'size' => filesize( $file ),
+		);
+		update_option( self::BACKUPS, array_slice( $list, -200, null, true ), false );
+		return $id;
+	}
+
+	/**
+	 * Restore a page backup.
+	 *
+	 * @param string $id Backup ID.
+	 * @return array|WP_Error
+	 */
+	private static function restore_post( $id ) {
+		$saved = json_decode( (string) file_get_contents( self::backup_dir() . '/' . $id . '.bak' ), true );
+		$post  = is_array( $saved ) ? get_post( (int) $saved['post']['ID'] ) : null;
+		if ( ! $post ) {
+			return new WP_Error( 'lgcc_backup', 'The page of this backup no longer exists.' );
+		}
+		$now = self::backup_post( $post );
+		wp_update_post( wp_slash( $saved['post'] ) );
+		list( $seo_title, $seo_desc ) = self::seo_keys();
+		foreach ( array( '_elementor_data', '_elementor_page_settings', $seo_title, $seo_desc ) as $key ) {
+			if ( isset( $saved['meta'][ $key ] ) ) {
+				update_post_meta( $post->ID, $key, wp_slash( maybe_unserialize( $saved['meta'][ $key ] ) ) );
+			} else {
+				delete_post_meta( $post->ID, $key );
+			}
+		}
+		self::refresh_elementor( $post->ID );
+		return array(
+			'restored'           => 'page ' . $post->ID . ': ' . $post->post_title,
+			'backup_of_replaced' => $now,
+		);
+	}
+
+	/**
+	 * Make Elementor rebuild a page's CSS and cached widgets.
+	 *
+	 * @param int $id Post ID.
+	 */
+	private static function refresh_elementor( $id ) {
+		foreach ( array( '_elementor_css', '_elementor_element_cache', '_elementor_page_assets' ) as $key ) {
+			delete_post_meta( $id, $key );
+		}
+		clean_post_cache( $id );
+	}
+
+	/**
+	 * Update a page's texts, title, SEO and status.
+	 *
+	 * @param array $args Arguments.
+	 * @return array|WP_Error
+	 */
+	private static function tool_update_page( $args ) {
+		$post = get_post( (int) $args['id'] );
+		if ( ! $post ) {
+			return new WP_Error( 'lgcc_post', 'Post not found.' );
+		}
+		$pairs = array();
+		foreach ( isset( $args['replacements'] ) ? (array) $args['replacements'] : array() as $pair ) {
+			if ( is_array( $pair ) && isset( $pair['find'], $pair['replace'] ) && '' !== (string) $pair['find'] ) {
+				$pairs[ (string) $pair['find'] ] = (string) $pair['replace'];
+			}
+		}
+		$backup = self::backup_post( $post );
+		$hits   = array_fill_keys( array_keys( $pairs ), 0 );
+		$fields = array( 'ID' => $post->ID );
+
+		if ( $pairs ) {
+			$raw = (string) get_post_meta( $post->ID, '_elementor_data', true );
+			$data = json_decode( $raw, true );
+			if ( is_array( $data ) ) {
+				$data = self::replace_in_data( $data, $pairs, $hits );
+				update_post_meta( $post->ID, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
+			}
+			$content = self::replace_text( $post->post_content, $pairs, $hits );
+			if ( $content !== $post->post_content ) {
+				$fields['post_content'] = $content;
+			}
+		}
+		if ( isset( $args['title'] ) && '' !== trim( (string) $args['title'] ) ) {
+			$fields['post_title'] = sanitize_text_field( (string) $args['title'] );
+		}
+		if ( isset( $args['status'] ) && in_array( $args['status'], array( 'draft', 'pending', 'publish', 'private' ), true ) ) {
+			$fields['post_status'] = $args['status'];
+		}
+		if ( count( $fields ) > 1 ) {
+			$result = wp_update_post( wp_slash( $fields ), true );
+			if ( is_wp_error( $result ) ) {
+				return $result;
+			}
+		}
+		list( $seo_title, $seo_desc ) = self::seo_keys();
+		if ( isset( $args['seo_title'] ) ) {
+			update_post_meta( $post->ID, $seo_title, sanitize_text_field( (string) $args['seo_title'] ) );
+		}
+		if ( isset( $args['seo_description'] ) ) {
+			update_post_meta( $post->ID, $seo_desc, sanitize_textarea_field( (string) $args['seo_description'] ) );
+		}
+		self::refresh_elementor( $post->ID );
+
+		$post = get_post( $post->ID );
+		return array(
+			'id'          => $post->ID,
+			'title'       => $post->post_title,
+			'status'      => $post->post_status,
+			'link'        => get_permalink( $post ),
+			'backup'      => $backup,
+			'replaced'    => array_sum( $hits ),
+			'not_found'   => array_keys( array_filter( $hits, static function ( $n ) {
+				return 0 === $n;
+			} ) ),
+		);
 	}
 }
