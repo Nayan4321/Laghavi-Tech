@@ -1,9 +1,9 @@
 <?php
 /**
- * Plugin Name:       Sarala Login Page
+ * Plugin Name:       Sarala Login Page – Social Login & Login Security
  * Plugin URI:        https://laghavi.site/sarala-login-page/
- * Description:       Let visitors sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn. Works with WordPress and WooCommerce accounts, adds a simple math question to the login form to stop bots, lets you move the login page to your own URL, and logs failed logins with IP, device and location.
- * Version:           1.0.2
+ * Description:       Let visitors sign up and log in with Google, Facebook, Apple, Microsoft, LinkedIn and X (Twitter). Works with WordPress and WooCommerce accounts, stops bots with a simple math question, limits login attempts, can make passwords expire, lets you move the login page to your own URL, and logs failed logins with IP, device and location.
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SARALOPA_VERSION', '1.0.2' );
+define( 'SARALOPA_VERSION', '1.1.0' );
 define( 'SARALOPA_FILE', __FILE__ );
 define( 'SARALOPA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SARALOPA_URL', plugin_dir_url( __FILE__ ) );
@@ -31,6 +31,7 @@ require_once SARALOPA_DIR . 'includes/class-saralopa-account.php';
 require_once SARALOPA_DIR . 'includes/class-saralopa-captcha.php';
 require_once SARALOPA_DIR . 'includes/class-saralopa-login-url.php';
 require_once SARALOPA_DIR . 'includes/class-saralopa-login-log.php';
+require_once SARALOPA_DIR . 'includes/class-saralopa-security.php';
 require_once SARALOPA_DIR . 'includes/class-saralopa-pro-features.php';
 
 /**
@@ -89,6 +90,7 @@ add_action(
 		SARALOPA_Captcha::init();
 		SARALOPA_Login_Url::init();
 		SARALOPA_Login_Log::init();
+		SARALOPA_Security::init();
 		SARALOPA_Pro_Features::init(); // After all plugins are loaded, so Pro is known.
 	}
 );

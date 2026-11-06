@@ -158,8 +158,9 @@ class SARALOPA_Auth {
 	 * @return string
 	 */
 	private static function provider_redirect_url( $provider, $mode, $user_id, $redirect, $from ) {
-		$state = wp_generate_password( 40, false, false );
-		$bind  = wp_generate_password( 40, false, false );
+		$state    = wp_generate_password( 40, false, false );
+		$bind     = wp_generate_password( 40, false, false );
+		$verifier = wp_generate_password( 64, false, false );
 
 		set_transient(
 			'saralopa_state_' . $state,
@@ -170,11 +171,12 @@ class SARALOPA_Auth {
 				'redirect_to' => $redirect,
 				'from'        => $from,
 				'bind'        => hash( 'sha256', $bind ),
+				'verifier'    => $verifier,
 			),
 			self::STATE_TTL
 		);
 		self::set_bind_cookie( $bind, time() + self::STATE_TTL );
-		return SARALOPA_Providers::authorize_url( $provider, $state );
+		return SARALOPA_Providers::authorize_url( $provider, $state, $verifier );
 	}
 
 	/**
@@ -251,7 +253,14 @@ class SARALOPA_Auth {
 			return self::redirect_response( self::with_message( $from, 'error', 'cancelled' ) );
 		}
 
-		$profile = SARALOPA_Providers::fetch_profile( $provider, $code, array( 'user' => (string) $request->get_param( 'user' ) ) );
+		$profile = SARALOPA_Providers::fetch_profile(
+			$provider,
+			$code,
+			array(
+				'user'     => (string) $request->get_param( 'user' ),
+				'verifier' => isset( $data['verifier'] ) ? (string) $data['verifier'] : '',
+			)
+		);
 		if ( is_wp_error( $profile ) ) {
 			self::log( $provider, $profile );
 			return self::redirect_response( self::with_message( $from, 'error', 'failed' ) );
@@ -670,6 +679,7 @@ class SARALOPA_Auth {
 			'failed'                => __( 'We could not log you in. Please try again.', 'sarala-login-page' ),
 			'email_unverified'      => __( 'An account with this email already exists. Log in with your password, then connect this account from your profile.', 'sarala-login-page' ),
 			'registration_disabled' => __( 'No account was found for this login, and new sign-ups are turned off.', 'sarala-login-page' ),
+			'unlink_blocked'        => __( 'This account can\'t be disconnected. If it is the only way you log in, set a password first, or ask an administrator.', 'sarala-login-page' ),
 			'no_email'              => __( 'Your account did not share an email address, so we cannot create an account. Please allow email access and try again.', 'sarala-login-page' ),
 			'blocked'               => __( 'Your account cannot log in right now.', 'sarala-login-page' ),
 			'already_linked'        => __( 'That account is already connected to a different user on this site.', 'sarala-login-page' ),

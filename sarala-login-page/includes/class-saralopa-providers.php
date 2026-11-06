@@ -52,6 +52,12 @@ class SARALOPA_Providers {
 				'console' => 'https://www.linkedin.com/developers/apps',
 				'fields'  => array( 'client_id', 'client_secret' ),
 			),
+			'twitter'   => array(
+				'label'   => 'X (Twitter)',
+				'button'  => 'X',
+				'console' => 'https://developer.x.com/en/portal/dashboard',
+				'fields'  => array( 'client_id', 'client_secret' ),
+			),
 		);
 	}
 
@@ -74,6 +80,27 @@ class SARALOPA_Providers {
 	public static function label( $id ) {
 		$all = self::all();
 		return isset( $all[ $id ] ) ? $all[ $id ]['label'] : $id;
+	}
+
+	/**
+	 * Short name for the login button ("Continue with X").
+	 *
+	 * @param string $id Provider ID.
+	 * @return string
+	 */
+	public static function button_name( $id ) {
+		$all = self::all();
+		return isset( $all[ $id ]['button'] ) ? $all[ $id ]['button'] : self::label( $id );
+	}
+
+	/**
+	 * PKCE code challenge (S256) for a code verifier.
+	 *
+	 * @param string $verifier Code verifier.
+	 * @return string
+	 */
+	public static function pkce_challenge( $verifier ) {
+		return self::base64url_encode( hash( 'sha256', $verifier, true ) );
 	}
 
 	/**
@@ -140,11 +167,12 @@ class SARALOPA_Providers {
 	/**
 	 * URL of the provider's consent screen.
 	 *
-	 * @param string $id    Provider ID.
-	 * @param string $state Anti-forgery state value.
+	 * @param string $id       Provider ID.
+	 * @param string $state    Anti-forgery state value.
+	 * @param string $verifier PKCE code verifier (used by X).
 	 * @return string
 	 */
-	public static function authorize_url( $id, $state ) {
+	public static function authorize_url( $id, $state, $verifier = '' ) {
 		$config   = self::config( $id );
 		$redirect = self::callback_url( $id );
 
@@ -209,6 +237,20 @@ class SARALOPA_Providers {
 				);
 				break;
 
+			case 'twitter':
+				$base   = 'https://x.com/i/oauth2/authorize';
+				$params = array(
+					'response_type'         => 'code',
+					'client_id'             => $config['client_id'],
+					'redirect_uri'          => $redirect,
+					// users.email lets X share the account's confirmed email address.
+					'scope'                 => 'users.read tweet.read users.email',
+					'state'                 => $state,
+					'code_challenge'        => self::pkce_challenge( $verifier ),
+					'code_challenge_method' => 'S256',
+				);
+				break;
+
 			default:
 				return '';
 		}
@@ -240,6 +282,9 @@ class SARALOPA_Providers {
 				break;
 			case 'linkedin':
 				$profile = self::linkedin( $code );
+				break;
+			case 'twitter':
+				$profile = self::twitter( $code, isset( $extra['verifier'] ) ? (string) $extra['verifier'] : '' );
 				break;
 			default:
 				return new WP_Error( 'saralopa_unknown_provider', 'Unknown provider.' );
@@ -524,6 +569,52 @@ class SARALOPA_Providers {
 	}
 
 	/**
+	 * X (Twitter): OAuth 2.0 with PKCE. The email is only shared when the app has
+	 * "Request email from users" switched on in the X developer portal.
+	 *
+	 * @param string $code     Authorization code.
+	 * @param string $verifier PKCE code verifier saved when the login started.
+	 * @return array|WP_Error
+	 */
+	private static function twitter( $code, $verifier ) {
+		$config = self::config( 'twitter' );
+		$token  = self::post_json(
+			'https://api.x.com/2/oauth2/token',
+			array(
+				'code'          => $code,
+				'grant_type'    => 'authorization_code',
+				'client_id'     => $config['client_id'],
+				'redirect_uri'  => self::callback_url( 'twitter' ),
+				'code_verifier' => $verifier,
+			),
+			// Confidential clients authenticate with HTTP Basic.
+			array( 'Authorization' => 'Basic ' . base64_encode( rawurlencode( $config['client_id'] ) . ':' . rawurlencode( $config['client_secret'] ) ) ) // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- HTTP Basic authentication.
+		);
+		if ( is_wp_error( $token ) ) {
+			return $token;
+		}
+
+		$info = self::get_json( 'https://api.x.com/2/users/me?user.fields=confirmed_email,name,username', $token['access_token'] );
+		if ( is_wp_error( $info ) ) {
+			return $info;
+		}
+		$data  = isset( $info['data'] ) && is_array( $info['data'] ) ? $info['data'] : array();
+		$name  = isset( $data['name'] ) ? (string) $data['name'] : '';
+		$parts = explode( ' ', trim( $name ), 2 );
+		$email = isset( $data['confirmed_email'] ) ? (string) $data['confirmed_email'] : '';
+
+		return array(
+			'id'             => isset( $data['id'] ) ? $data['id'] : '',
+			'email'          => $email,
+			// X only returns an address the account owner has confirmed.
+			'email_verified' => '' !== $email,
+			'first_name'     => $parts[0],
+			'last_name'      => isset( $parts[1] ) ? $parts[1] : '',
+			'display_name'   => '' !== $name ? $name : ( isset( $data['username'] ) ? (string) $data['username'] : '' ),
+		);
+	}
+
+	/**
 	 * Build the short-lived ES256 client secret Apple requires instead of a static secret.
 	 *
 	 * @param array $config Apple settings.
@@ -638,16 +729,17 @@ class SARALOPA_Providers {
 	/**
 	 * POST a form to a token endpoint and decode the JSON reply.
 	 *
-	 * @param string $url  Endpoint.
-	 * @param array  $body Form fields.
+	 * @param string $url     Endpoint.
+	 * @param array  $body    Form fields.
+	 * @param array  $headers Extra headers.
 	 * @return array|WP_Error
 	 */
-	private static function post_json( $url, $body ) {
+	private static function post_json( $url, $body, $headers = array() ) {
 		$response = wp_remote_post(
 			$url,
 			array(
 				'timeout' => 15,
-				'headers' => array( 'Accept' => 'application/json' ),
+				'headers' => array_merge( array( 'Accept' => 'application/json' ), $headers ),
 				'body'    => $body,
 			)
 		);

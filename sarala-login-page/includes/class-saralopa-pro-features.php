@@ -127,6 +127,31 @@ class SARALOPA_Pro_Features {
 					__( 'Editor blocks, sidebar panels and editor features', 'sarala-login-page' ),
 				),
 			),
+			__( 'Login redirects', 'sarala-login-page' )        => array(
+				__( 'Send each role to the right page after login and logout.', 'sarala-login-page' ),
+				array(
+					__( 'A page for every role: admins to the dashboard, customers to My Account, members to their area', 'sarala-login-page' ),
+					__( 'Separate pages after login and after logout, with a fallback for everyone else', 'sarala-login-page' ),
+					__( 'Works with password logins, social logins and WooCommerce', 'sarala-login-page' ),
+				),
+			),
+			__( 'Login widget', 'sarala-login-page' )           => array(
+				__( 'A login box for your sidebar, footer or any page.', 'sarala-login-page' ),
+				array(
+					__( 'AJAX login: no page reload, errors shown in place', 'sarala-login-page' ),
+					__( 'Social login buttons, "Remember me", lost password and register links', 'sarala-login-page' ),
+					__( 'Your own HTML for logged-in users and your own CSS', 'sarala-login-page' ),
+					__( 'As a classic widget or anywhere with a shortcode', 'sarala-login-page' ),
+				),
+			),
+			__( 'Profiles', 'sarala-login-page' )               => array(
+				__( 'Profile pictures and control over connected accounts.', 'sarala-login-page' ),
+				array(
+					__( 'Users upload their own profile picture, used instead of Gravatar everywhere', 'sarala-login-page' ),
+					__( 'Choose who may disconnect social accounts, and stop users locking themselves out', 'sarala-login-page' ),
+					__( 'Disconnect social accounts for many users at once', 'sarala-login-page' ),
+				),
+			),
 			__( 'Content for the right people', 'sarala-login-page' ) => array(
 				__( 'Show blocks and widgets to chosen visitors only.', 'sarala-login-page' ),
 				array(
@@ -157,7 +182,7 @@ class SARALOPA_Pro_Features {
 				<div>
 					<span class="saralopa-pro__badge"><?php esc_html_e( 'Sarala Login Page Pro', 'sarala-login-page' ); ?></span>
 					<h1><?php esc_html_e( 'Make your login page yours', 'sarala-login-page' ); ?></h1>
-					<p><?php esc_html_e( 'Everything in the free plugin keeps working. Pro is an add-on that adds login page templates with your brand, a super admin, a user activity log and per-role restrictions.', 'sarala-login-page' ); ?></p>
+					<p><?php esc_html_e( 'Everything in the free plugin keeps working. Pro is an add-on that adds login page templates with your brand, login redirects per role, a login widget, a super admin, a user activity log and per-role restrictions.', 'sarala-login-page' ); ?></p>
 					<p><a class="button button-hero saralopa-pro__cta" href="<?php echo esc_url( self::url( 'features-top' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get Pro – from USD 49 / year', 'sarala-login-page' ); ?></a></p>
 				</div>
 			</div>
@@ -202,6 +227,6 @@ class SARALOPA_Pro_Features {
 		if ( self::pro_active() ) {
 			return;
 		}
-		echo '<div class="saralopa-card saralopa-pro-note"><h2>' . esc_html__( 'Want your own login page design?', 'sarala-login-page' ) . '</h2><p>' . esc_html__( 'Sarala Login Page Pro adds five login page templates with your logo, colours and texts, a super admin, a user activity log and per-role restrictions.', 'sarala-login-page' ) . '</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'See the Pro features', 'sarala-login-page' ) . '</a></p></div>';
+		echo '<div class="saralopa-card saralopa-pro-note"><h2>' . esc_html__( 'Want your own login page design?', 'sarala-login-page' ) . '</h2><p>' . esc_html__( 'Sarala Login Page Pro adds five login page templates with your logo, colours and texts, login redirects per role, an AJAX login widget, a super admin, a user activity log and per-role restrictions.', 'sarala-login-page' ) . '</p><p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=' . self::PAGE ) ) . '">' . esc_html__( 'See the Pro features', 'sarala-login-page' ) . '</a></p></div>';
 	}
 }

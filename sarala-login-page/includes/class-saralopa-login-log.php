@@ -237,7 +237,7 @@ class SARALOPA_Login_Log {
 			__( 'Sarala Login Page', 'sarala-login-page' ),
 			wp_kses_post(
 				'<p>' . __( 'When a login attempt on this site fails, we record the username or email that was entered, the IP address, the browser\'s user agent and the time, to protect the site from attacks. These records are kept for a limited time and then deleted automatically.', 'sarala-login-page' ) . '</p>' .
-				'<p>' . __( 'If you log in with Google, Facebook, Apple, Microsoft or LinkedIn, we receive your name, email address and account ID from that service and store the account ID so you can log in with it again.', 'sarala-login-page' ) . '</p>'
+				'<p>' . __( 'If you log in with Google, Facebook, Apple, Microsoft, LinkedIn or X (Twitter), we receive your name, email address and account ID from that service and store the account ID so you can log in with it again.', 'sarala-login-page' ) . '</p>'
 			)
 		);
 	}
@@ -353,6 +353,8 @@ class SARALOPA_Login_Log {
 			'empty_username'               => __( 'Username left empty', 'sarala-login-page' ),
 			'empty_password'               => __( 'Password left empty', 'sarala-login-page' ),
 			'saralopa_captcha'             => __( 'Wrong security answer', 'sarala-login-page' ),
+			'saralopa_locked'              => __( 'Blocked: locked out', 'sarala-login-page' ),
+			'saralopa_password_expired'    => __( 'Password expired', 'sarala-login-page' ),
 			'spammer_account'              => __( 'Account marked as spam', 'sarala-login-page' ),
 			'social_email_unverified'      => __( 'Social login: email not verified', 'sarala-login-page' ),
 			'social_registration_disabled' => __( 'Social login: sign-ups off', 'sarala-login-page' ),
@@ -508,6 +510,8 @@ class SARALOPA_Login_Log {
 			<?php if ( ! SARALOPA_Settings::get( 'log_failed_logins' ) ) : ?>
 				<div class="notice notice-warning inline"><p><?php esc_html_e( 'Logging is turned off, so new failed logins are not being recorded.', 'sarala-login-page' ); ?></p></div>
 			<?php endif; ?>
+
+			<?php SARALOPA_Security::lockouts_panel(); ?>
 
 			<div class="saralopa-stats">
 				<div class="saralopa-stat"><span class="saralopa-stat__value"><?php echo esc_html( number_format_i18n( $day ) ); ?></span><span class="saralopa-stat__label"><?php esc_html_e( 'Last 24 hours', 'sarala-login-page' ); ?></span></div>

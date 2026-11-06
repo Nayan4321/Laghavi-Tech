@@ -9,7 +9,7 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
 
-foreach ( array( 'slpp_license', 'slpp_owner', 'slpp_owner_settings', 'slpp_rules', 'slpp_activity_settings', 'slpp_activity_db_version', 'slpp_snapshot_menu', 'slpp_snapshot_adminbar', 'slpp_snapshot_dashboard', 'slpp_snapshot_metaboxes' ) as $slpp_option ) {
+foreach ( array( 'slpp_license', 'slpp_owner', 'slpp_owner_settings', 'slpp_rules', 'slpp_activity_settings', 'slpp_activity_db_version', 'slpp_snapshot_menu', 'slpp_snapshot_adminbar', 'slpp_snapshot_dashboard', 'slpp_snapshot_metaboxes', 'slpp_redirects', 'slpp_profiles', 'widget_slpp_login_widget' ) as $slpp_option ) {
 	delete_option( $slpp_option );
 }
 delete_transient( 'slpp_update_info' );
@@ -17,5 +17,7 @@ wp_clear_scheduled_hook( 'slpp_daily' );
 
 delete_metadata( 'user', 0, '_slpp_last_activity', '', true );
 delete_metadata( 'user', 0, '_slpp_last_seen', '', true );
+// Uploaded profile pictures stay in the media library; only the link to them is removed.
+delete_metadata( 'user', 0, '_slpp_avatar_id', '', true );
 
 $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'slpp_activity' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Removing the plugin's own table.

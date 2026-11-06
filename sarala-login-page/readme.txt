@@ -1,24 +1,41 @@
-=== Sarala Login Page ===
+=== Sarala Login Page – Social Login & Login Security ===
 Contributors: nayan4321
-Tags: social login, google login, woocommerce login, apple login, facebook login
+Tags: social login, google login, limit login attempts, hide login, woocommerce login
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-One-click sign up and login with Google, Facebook, Apple, Microsoft and LinkedIn for WordPress and WooCommerce, with a math question to stop bots.
+Social login with Google, Facebook, Apple, Microsoft, LinkedIn and X, plus limit login attempts, a custom login URL and login security.
 
 == Description ==
 
-Sarala Login Page lets your visitors create an account or log in with one click using the accounts they already have:
+Sarala Login Page adds **one-click social login and sign-up** to WordPress and WooCommerce, and protects your login page at the same time. Visitors log in with the accounts they already have, you stop bots and brute-force attacks, and everything is set up from one simple screen. No account with us, no tracking, no locked features.
+
+= Features at a glance =
+
+* **Social login and registration**: Google, Facebook, Apple, Microsoft, LinkedIn and X (Twitter).
+* **WooCommerce login**: My Account, registration and checkout (guests sign up and come back to checkout with their cart).
+* **Limit login attempts**: lock out IP addresses after too many failed logins.
+* **Custom login URL**: hide wp-login.php and wp-admin from bots.
+* **Force password reset**: make passwords expire after a number of days.
+* **Login CAPTCHA**: a simple math question on login and registration forms, no Google reCAPTCHA needed.
+* **Failed login log**: every failed attempt with IP address, device and location.
+* **Connected accounts**: users connect and disconnect social accounts from their profile.
+* **Shortcode** `[sarala_login_page]` to place the login buttons on any page, with any theme or page builder.
+
+= Social login providers =
+
+Visitors create an account or log in with one click using the accounts they already have:
 
 * **Google**
 * **Facebook**
 * **Apple** (Sign in with Apple)
 * **Microsoft** (personal, work and school accounts)
 * **LinkedIn**
+* **X (Twitter)**
 
 **Works with WordPress and WooCommerce**
 
@@ -42,6 +59,14 @@ If someone already has an account with the same email address, logging in with G
 
 The login and registration forms (WordPress and WooCommerce) ask one random question, for example "What is 7 + 9?". The answer is checked on the server, so bots that skip the form cannot get past it. The REST API, XML-RPC and application passwords are not affected.
 
+**Limit login attempts**
+
+After 5 failed logins within 15 minutes (you choose the numbers), the IP address is locked out for 30 minutes, even if it then tries the right password. This works on wp-login.php, WooCommerce, XML-RPC and the REST API. You can add your own IP addresses to a "never lock out" list, and see and unlock locked-out addresses on the Failed logins screen.
+
+**Force password reset**
+
+Make passwords expire after a number of days you choose (for example 90), for every role or only the ones you pick. When a password is too old, the login is refused and the user is emailed a link to choose a new one. Existing users start counting from their next login, so nobody is locked out the moment you switch it on.
+
 **Built to be safe**
 
 * Standard OAuth 2.0 / OpenID Connect with a one-time state value tied to the visitor's browser.
@@ -61,6 +86,31 @@ Made by [Laghavi Digital](https://laghavi.site/) (Laghavi FZE LLC). Plugin page:
 Each provider has step-by-step instructions on the settings page. Your site should use HTTPS; Apple requires it.
 
 == Frequently Asked Questions ==
+
+= How do I add Google login to WordPress? =
+
+Install and activate Sarala Login Page, open Sarala Login > Settings, switch on Google and paste the Client ID and Client Secret from Google Cloud Console. The settings screen shows the exact steps and the redirect URI to copy. The "Continue with Google" button then appears on your login and registration pages, and on WooCommerce My Account and checkout.
+
+= Does it limit login attempts and stop brute-force attacks? =
+
+Yes. After 5 failed logins within 15 minutes (you can change both numbers) the IP address is locked out for 30 minutes, even if it then tries the right password. You can allow your own IP addresses, and see and unlock lockouts on the Failed logins screen.
+
+= Can I hide or change the wp-login.php URL? =
+
+Yes. Choose your own login address, for example example.com/my-login. Visitors who open wp-login.php or wp-admin without being logged in see your 404 page.
+
+= Can I force users to change their password regularly? =
+
+Yes. Turn on "Force password reset" and choose after how many days passwords expire, for every role or only some. Users with an expired password are emailed a link to choose a new one.
+
+= Does it work with my theme, Elementor or other page builders? =
+
+Yes. The buttons are added to the standard WordPress and WooCommerce forms, and the `[sarala_login_page]` shortcode works in any page builder, widget or theme.
+
+= Does Sign in with X (Twitter) give me the user's email address? =
+
+Yes, when you switch on "Request email from users" in your app on the X Developer Portal. Without it, people who already have an account can still connect X and log in with it.
+
 
 = Do I need WooCommerce? =
 
@@ -105,6 +155,7 @@ When a visitor clicks a button, their browser is sent to the provider's login pa
 * **Apple** – appleid.apple.com. [Terms](https://www.apple.com/legal/internet-services/terms/site.html), [Privacy](https://www.apple.com/legal/privacy/)
 * **Microsoft** – login.microsoftonline.com, graph.microsoft.com. [Terms](https://www.microsoft.com/servicesagreement), [Privacy](https://privacy.microsoft.com/privacystatement)
 * **LinkedIn** – www.linkedin.com, api.linkedin.com. [Terms](https://www.linkedin.com/legal/user-agreement), [Privacy](https://www.linkedin.com/legal/privacy-policy)
+* **X (Twitter)** – x.com, api.x.com. [Terms](https://x.com/en/tos), [Privacy](https://x.com/en/privacy)
 
 The plugin stores the visitor's provider account ID and email on their WordPress user so they can log in again. This data is deleted when the plugin is deleted.
 
@@ -120,6 +171,11 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 
 == Changelog ==
 
+= 1.1.0 =
+* New: sign up and log in with X (Twitter), using OAuth 2.0 with PKCE.
+* New: limit login attempts. Lock out an IP address after too many failed logins, with an allow list, and see and unlock lockouts on the Failed logins screen. On by default (5 attempts in 15 minutes, 30-minute lockout).
+* New: force password reset. Passwords can expire after a number of days, for all or chosen roles; users are emailed a link to choose a new one.
+
 = 1.0.2 =
 * New: a "Pro features" screen that shows what Sarala Login Page Pro adds (login page templates, super admin, activity log, per-role restrictions), with links to the Pro plans. Shown only on this plugin's screens and hidden when Pro is installed. Nothing in the free plugin is locked.
 
@@ -130,6 +186,9 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 * First release: Google, Facebook, Apple, Microsoft and LinkedIn login and sign-up, WooCommerce My Account and checkout support, connected accounts, and a math question on login and registration forms.
 
 == Upgrade Notice ==
+
+= 1.1.0 =
+Adds X (Twitter) login, limit login attempts (on by default) and optional password expiry.
 
 = 1.0.1 =
 Code names now use the prefix "saralopa"; your settings and data are moved over automatically.

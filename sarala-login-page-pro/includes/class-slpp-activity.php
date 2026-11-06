@@ -151,6 +151,8 @@ class SLPP_Activity {
 			'role_changed'       => array( 'users', __( 'Changed role of %s', 'sarala-login-page-pro' ) ),
 			/* translators: %s: user's name. */
 			'user_deleted'       => array( 'users', __( 'Deleted user %s', 'sarala-login-page-pro' ) ),
+			/* translators: %s: "provider (user name)", e.g. Google (Jane). */
+			'social_unlinked'    => array( 'users', __( 'Disconnected social account %s', 'sarala-login-page-pro' ) ),
 			/* translators: %s: post title. */
 			'post_published'     => array( 'content', __( 'Published %s', 'sarala-login-page-pro' ) ),
 			/* translators: %s: post title. */

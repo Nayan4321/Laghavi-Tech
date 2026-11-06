@@ -1,0 +1,103 @@
+/* Sarala Login widget. Override any of these with the widget's Custom CSS field. */
+.slpp-lw {
+	--slpp-lw-accent: #2563eb;
+	font-size: 15px;
+	line-height: 1.5;
+}
+
+.slpp-lw__form {
+	margin: 0;
+}
+
+.slpp-lw__row {
+	margin: 0 0 12px;
+}
+
+.slpp-lw__row label {
+	display: block;
+	margin-bottom: 4px;
+	font-weight: 600;
+}
+
+.slpp-lw__row input {
+	box-sizing: border-box;
+	width: 100%;
+	padding: 9px 12px;
+	border: 1px solid #c3c4c7;
+	border-radius: 6px;
+	background: #fff;
+	color: #1d2327;
+	font: inherit;
+}
+
+.slpp-lw__row input:focus {
+	border-color: var(--slpp-lw-accent);
+	outline: 2px solid color-mix(in srgb, var(--slpp-lw-accent) 25%, transparent);
+	outline-offset: 0;
+}
+
+.slpp-lw__remember {
+	margin: 0 0 12px;
+	font-size: 14px;
+}
+
+.slpp-lw__submit {
+	margin: 0 0 10px;
+}
+
+.slpp-lw__button {
+	width: 100%;
+	padding: 10px 16px;
+	border: 0;
+	border-radius: 6px;
+	background: var(--slpp-lw-accent);
+	color: #fff;
+	font: inherit;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.slpp-lw__button:hover,
+.slpp-lw__button:focus-visible {
+	filter: brightness(0.92);
+}
+
+.slpp-lw__button[disabled] {
+	opacity: 0.7;
+	cursor: progress;
+}
+
+.slpp-lw__links {
+	margin: 0;
+	font-size: 14px;
+	text-align: center;
+}
+
+.slpp-lw__message {
+	margin: 0 0 12px;
+	padding: 10px 12px;
+	border-left: 4px solid #d63638;
+	border-radius: 4px;
+	background: #fcf0f1;
+	font-size: 14px;
+}
+
+.slpp-lw__message.is-success {
+	border-color: #00a32a;
+	background: #edfaef;
+}
+
+.slpp-lw__social {
+	margin-top: 14px;
+}
+
+.slpp-lw__user {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.slpp-lw__avatar {
+	flex: none;
+	border-radius: 50%;
+}

@@ -63,9 +63,39 @@ class SARALOPA_Account {
 			exit;
 		}
 
+		if ( ! self::can_unlink( $user_id, $provider ) ) {
+			wp_safe_redirect( SARALOPA_Auth::with_message( $from, 'error', 'unlink_blocked' ) );
+			exit;
+		}
+
 		SARALOPA_Auth::unlink( $user_id, $provider );
+		/**
+		 * Fires after a social account is disconnected from a user.
+		 *
+		 * @param int    $user_id  User ID.
+		 * @param string $provider Provider ID.
+		 */
+		do_action( 'saralopa_unlinked', $user_id, $provider );
 		wp_safe_redirect( SARALOPA_Auth::with_message( $from, 'notice', 'unlinked' ) );
 		exit;
+	}
+
+	/**
+	 * Whether the current user may disconnect this provider from this user.
+	 *
+	 * @param int    $user_id  User ID.
+	 * @param string $provider Provider ID.
+	 * @return bool
+	 */
+	public static function can_unlink( $user_id, $provider ) {
+		/**
+		 * Filters whether a social account may be disconnected (Sarala Login Page Pro uses this).
+		 *
+		 * @param bool   $allowed  Whether it may be disconnected.
+		 * @param int    $user_id  User ID.
+		 * @param string $provider Provider ID.
+		 */
+		return (bool) apply_filters( 'saralopa_can_unlink', true, $user_id, $provider );
 	}
 
 	/**
@@ -112,6 +142,7 @@ class SARALOPA_Account {
 				'label'     => SARALOPA_Providers::label( $provider ),
 				'email'     => $connected ? $linked[ $provider ] : '',
 				'connected' => $connected,
+				'unlink'    => $connected && self::can_unlink( $user_id, $provider ),
 				'url'       => $connected ? self::unlink_url( $provider, $user_id, $from ) : SARALOPA_Auth::link_url( $provider, $from ),
 			);
 		}
@@ -189,9 +220,13 @@ class SARALOPA_Account {
 		if ( $row['connected'] ) {
 			if ( '' !== $row['email'] ) {
 				/* translators: %s: email address of the connected account. */
-				echo esc_html( sprintf( __( 'Connected as %s', 'sarala-login-page' ), $row['email'] ) ) . ' &middot; ';
+				echo esc_html( sprintf( __( 'Connected as %s', 'sarala-login-page' ), $row['email'] ) );
 			} else {
-				echo esc_html__( 'Connected', 'sarala-login-page' ) . ' &middot; ';
+				echo esc_html__( 'Connected', 'sarala-login-page' );
+			}
+			echo $row['unlink'] ? ' &middot; ' : '';
+			if ( ! $row['unlink'] ) {
+				return;
 			}
 			printf(
 				'<a href="%s" class="saralopa-disconnect">%s</a>',

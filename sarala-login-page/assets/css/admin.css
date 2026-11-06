@@ -81,6 +81,7 @@
 .saralopa-provider__icon.saralopa-button--facebook { background: #1877f2; color: #fff; border-color: #1877f2; }
 .saralopa-provider__icon.saralopa-button--apple { background: #000; color: #fff; border-color: #000; }
 .saralopa-provider__icon.saralopa-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
+.saralopa-provider__icon.saralopa-button--twitter { background: #000; color: #fff; border-color: #000; }
 
 .saralopa-badge {
 	margin-left: auto;
@@ -228,3 +229,16 @@
 .saralopa-pro__list li::before { content: "\2713"; position: absolute; inset-inline-start: 0; color: #16a34a; font-weight: 700; }
 .saralopa-pro__end { margin-top: 20px; text-align: center; }
 .saralopa-pro-note { border-inline-start: 4px solid #7c3aed; }
+
+.saralopa-check--inline {
+	display: inline-block;
+	margin: 0 16px 6px 0;
+}
+
+.saralopa-lockouts {
+	margin-bottom: 16px;
+}
+
+.saralopa-lockouts table form {
+	margin: 0;
+}

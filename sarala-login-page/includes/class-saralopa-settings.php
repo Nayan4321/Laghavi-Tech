@@ -112,6 +112,15 @@ class SARALOPA_Settings {
 			'ip_source'          => 'remote_addr',
 			'geo_lookup'         => 0,
 			'geo_token'          => '',
+			// Limit login attempts: on by default, like most security plugins.
+			'limit_logins'          => 1,
+			'lockout_attempts'      => 5,
+			'lockout_window'        => 15,
+			'lockout_minutes'       => 30,
+			'lockout_allowlist'     => '',
+			'password_expiry'       => 0,
+			'password_expiry_days'  => 90,
+			'password_expiry_roles' => array(),
 			'button_text'        => 'continue',
 			'layout'             => 'full',
 			'providers'          => $providers,
@@ -217,7 +226,7 @@ class SARALOPA_Settings {
 		$defaults = self::defaults();
 		$clean    = array();
 
-		foreach ( array( 'allow_registration', 'show_wp_login', 'show_wp_register', 'show_wc_login', 'show_wc_register', 'show_wc_checkout', 'captcha_login', 'captcha_register', 'show_credit', 'log_failed_logins', 'geo_lookup' ) as $key ) {
+		foreach ( array( 'allow_registration', 'show_wp_login', 'show_wp_register', 'show_wc_login', 'show_wc_register', 'show_wc_checkout', 'captcha_login', 'captcha_register', 'show_credit', 'log_failed_logins', 'geo_lookup', 'limit_logins', 'password_expiry' ) as $key ) {
 			$clean[ $key ] = empty( $input[ $key ] ) ? 0 : 1;
 		}
 		$clean['button_text'] = isset( $input['button_text'] ) && in_array( $input['button_text'], array( 'continue', 'signin', 'login' ), true ) ? $input['button_text'] : 'continue';
@@ -226,6 +235,16 @@ class SARALOPA_Settings {
 		$clean['log_retention_days'] = isset( $input['log_retention_days'] ) ? min( 365, max( 1, absint( $input['log_retention_days'] ) ) ) : 30;
 		$clean['ip_source']          = isset( $input['ip_source'] ) && in_array( $input['ip_source'], array( 'remote_addr', 'cloudflare', 'forwarded', 'real_ip' ), true ) ? $input['ip_source'] : 'remote_addr';
 		$clean['geo_token']          = isset( $input['geo_token'] ) && '' !== trim( $input['geo_token'] ) ? sanitize_text_field( $input['geo_token'] ) : ( isset( $old['geo_token'] ) ? $old['geo_token'] : '' );
+
+		$clean['lockout_attempts']     = isset( $input['lockout_attempts'] ) ? min( 50, max( 2, absint( $input['lockout_attempts'] ) ) ) : 5;
+		$clean['lockout_window']       = isset( $input['lockout_window'] ) ? min( 1440, max( 1, absint( $input['lockout_window'] ) ) ) : 15;
+		$clean['lockout_minutes']      = isset( $input['lockout_minutes'] ) ? min( 10080, max( 1, absint( $input['lockout_minutes'] ) ) ) : 30;
+		$allow                         = preg_split( '/[\s,]+/', isset( $input['lockout_allowlist'] ) ? sanitize_textarea_field( (string) $input['lockout_allowlist'] ) : '' );
+		$clean['lockout_allowlist']    = implode( "\n", array_filter( (array) $allow, static function ( $ip ) {
+			return (bool) filter_var( $ip, FILTER_VALIDATE_IP );
+		} ) );
+		$clean['password_expiry_days'] = isset( $input['password_expiry_days'] ) ? min( 3650, max( 1, absint( $input['password_expiry_days'] ) ) ) : 90;
+		$clean['password_expiry_roles'] = isset( $input['password_expiry_roles'] ) ? array_values( array_intersect( array_map( 'sanitize_key', (array) $input['password_expiry_roles'] ), array_keys( wp_roles()->get_names() ) ) ) : array();
 
 		$slug = SARALOPA_Login_Url::validate( isset( $input['login_slug'] ) ? (string) $input['login_slug'] : '' );
 		if ( is_wp_error( $slug ) ) {
@@ -342,6 +361,13 @@ class SARALOPA_Settings {
 					__( 'Auth tab: add the Redirect URI below under "Authorized redirect URLs for your app".', 'sarala-login-page' ),
 					__( 'Copy the Client ID and Primary Client Secret here.', 'sarala-login-page' ),
 				);
+			case 'twitter':
+				return array(
+					__( 'Open the X Developer Portal > Projects & Apps, and open (or create) your app.', 'sarala-login-page' ),
+					__( 'User authentication settings > Set up: App permissions "Read", Type of App "Web App, Automated App or Bot", and switch on "Request email from users" (it needs your privacy policy and terms URLs).', 'sarala-login-page' ),
+					__( 'Add the Callback URI below and your website URL, then save.', 'sarala-login-page' ),
+					__( 'Keys and tokens tab: copy the OAuth 2.0 Client ID and Client Secret here.', 'sarala-login-page' ),
+				);
 		}
 		return array();
 	}
@@ -380,7 +406,7 @@ class SARALOPA_Settings {
 				<img src="<?php echo esc_url( SARALOPA_URL . 'assets/images/laghavi-logo.png' ); ?>" alt="<?php esc_attr_e( 'Laghavi Digital', 'sarala-login-page' ); ?>" class="saralopa-admin__logo" />
 				<div>
 					<h1><?php esc_html_e( 'Sarala Login Page', 'sarala-login-page' ); ?></h1>
-					<p><?php esc_html_e( 'Sign up and log in with Google, Facebook, Apple, Microsoft and LinkedIn.', 'sarala-login-page' ); ?></p>
+					<p><?php esc_html_e( 'Sign up and log in with Google, Facebook, Apple, Microsoft, LinkedIn and X (Twitter).', 'sarala-login-page' ); ?></p>
 				</div>
 			</div>
 
@@ -503,6 +529,60 @@ class SARALOPA_Settings {
 					self::checkbox( 'captcha_login', __( 'On the WordPress and WooCommerce login forms', 'sarala-login-page' ) );
 					self::checkbox( 'captcha_register', __( 'On the WordPress and WooCommerce registration forms', 'sarala-login-page' ) );
 					?>
+				</div>
+
+				<div class="saralopa-card" id="saralopa-security">
+					<h2><?php esc_html_e( 'Login security', 'sarala-login-page' ); ?></h2>
+					<?php self::checkbox( 'limit_logins', __( 'Limit login attempts: lock out an IP address after too many failed logins', 'sarala-login-page' ) ); ?>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="saralopa-lockout-attempts"><?php esc_html_e( 'Lock out after', 'sarala-login-page' ); ?></label></th>
+							<td>
+								<input type="number" id="saralopa-lockout-attempts" min="2" max="50" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[lockout_attempts]" value="<?php echo esc_attr( $settings['lockout_attempts'] ); ?>" />
+								<?php esc_html_e( 'failed logins within', 'sarala-login-page' ); ?>
+								<input type="number" id="saralopa-lockout-window" min="1" max="1440" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[lockout_window]" value="<?php echo esc_attr( $settings['lockout_window'] ); ?>" aria-label="<?php esc_attr_e( 'Minutes counted', 'sarala-login-page' ); ?>" />
+								<?php esc_html_e( 'minutes', 'sarala-login-page' ); ?>
+							</td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="saralopa-lockout-minutes"><?php esc_html_e( 'Lockout lasts', 'sarala-login-page' ); ?></label></th>
+							<td><input type="number" id="saralopa-lockout-minutes" min="1" max="10080" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[lockout_minutes]" value="<?php echo esc_attr( $settings['lockout_minutes'] ); ?>" /> <?php esc_html_e( 'minutes', 'sarala-login-page' ); ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><label for="saralopa-lockout-allowlist"><?php esc_html_e( 'Never lock out', 'sarala-login-page' ); ?></label></th>
+							<td>
+								<textarea id="saralopa-lockout-allowlist" rows="3" class="regular-text code" name="<?php echo esc_attr( self::OPTION ); ?>[lockout_allowlist]" placeholder="203.0.113.10"><?php echo esc_textarea( $settings['lockout_allowlist'] ); ?></textarea>
+								<p class="description">
+									<?php
+									printf(
+										/* translators: %s: the visitor's IP address. */
+										esc_html__( 'IP addresses, one per line. Your current address is %s.', 'sarala-login-page' ),
+										'<code>' . esc_html( SARALOPA_Login_Log::client_ip() ) . '</code>'
+									);
+									?>
+									<?php esc_html_e( 'Locked-out addresses are listed, and can be unlocked, on the Failed logins screen.', 'sarala-login-page' ); ?>
+								</p>
+							</td>
+						</tr>
+					</table>
+
+					<?php self::checkbox( 'password_expiry', __( 'Force password reset: make passwords expire after a set number of days', 'sarala-login-page' ) ); ?>
+					<p class="description"><?php esc_html_e( 'When a password is older than this, the login is refused and the user is emailed a link to choose a new password. Existing accounts start counting from their next login. Social logins are not affected.', 'sarala-login-page' ); ?></p>
+					<table class="form-table" role="presentation">
+						<tr>
+							<th scope="row"><label for="saralopa-expiry-days"><?php esc_html_e( 'Passwords expire after', 'sarala-login-page' ); ?></label></th>
+							<td><input type="number" id="saralopa-expiry-days" min="1" max="3650" class="small-text" name="<?php echo esc_attr( self::OPTION ); ?>[password_expiry_days]" value="<?php echo esc_attr( $settings['password_expiry_days'] ); ?>" /> <?php esc_html_e( 'days', 'sarala-login-page' ); ?></td>
+						</tr>
+						<tr>
+							<th scope="row"><?php esc_html_e( 'For these roles', 'sarala-login-page' ); ?></th>
+							<td>
+								<?php foreach ( $roles as $role_key => $role_name ) : ?>
+									<label class="saralopa-check saralopa-check--inline"><input type="checkbox" name="<?php echo esc_attr( self::OPTION ); ?>[password_expiry_roles][]" value="<?php echo esc_attr( $role_key ); ?>" <?php checked( in_array( $role_key, (array) $settings['password_expiry_roles'], true ) ); ?> /> <?php echo esc_html( translate_user_role( $role_name ) ); ?></label>
+								<?php endforeach; ?>
+								<p class="description"><?php esc_html_e( 'Tick none to apply it to everyone.', 'sarala-login-page' ); ?></p>
+							</td>
+						</tr>
+					</table>
 				</div>
 
 				<div class="saralopa-card" id="saralopa-log-settings">

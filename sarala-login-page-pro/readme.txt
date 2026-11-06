@@ -4,15 +4,39 @@ Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Pro add-on for Sarala Login Page: a protected super admin, a user activity log, and per-role control over the admin, editor and front end.
+Pro add-on for Sarala Login Page: login redirects, a login widget, profile pictures, a protected super admin, an activity log and per-role control.
 
 == Description ==
 
 Requires the free **Sarala Login Page** plugin. Buy a license at [laghavi.site](https://laghavi.site/).
+
+**Login redirects**
+
+* Choose the page each role goes to after logging in and after logging out (for example admins to the dashboard, customers to My Account), with a fallback for everyone else.
+* Full addresses or paths, with {user_login} and {user_id} placeholders.
+* Optionally keep a page the visitor was on their way to.
+* Works with password logins, Sarala's social logins, WooCommerce and the login widget.
+
+**Login widget**
+
+* A login box for any sidebar (Appearance > Widgets) or anywhere with `[sarala_login_widget]`.
+* AJAX login: no page reload, errors shown in the box. Respects login limits, password expiry and the security question.
+* Social login buttons, "Remember me", lost password and register links, each optional.
+* Your own HTML for logged-in users with placeholders such as {avatar}, {display_name} and {logout_url}, and your own CSS.
+
+**Profile pictures**
+
+* Users upload their own picture on Users > Profile and WooCommerce My Account > Account details. It replaces Gravatar everywhere WordPress shows an avatar.
+
+**Disconnecting social accounts**
+
+* Choose who may disconnect a connected social account: users and admins, admins only, or the site owner only.
+* Stops users from disconnecting their only social login when they never set a password.
+* Bulk action on the Users screen to disconnect social accounts, with each disconnection in the activity log.
 
 **Super admin**
 
@@ -78,6 +102,13 @@ Yes. Click "Deactivate on this site" on the Pro license screen, then activate it
 Page caching plugins usually serve the same page to every logged-out visitor and skip the cache for logged-in users, so "logged-out visitors" rules and role rules both work. If your cache also serves logged-in users, exclude pages that use role-based blocks.
 
 == Changelog ==
+
+= 1.1.0 =
+* New: login redirects per role, after login and after logout.
+* New: Sarala Login widget and [sarala_login_widget] shortcode with AJAX login, custom HTML and CSS.
+* New: custom profile pictures (avatars) on the profile and WooCommerce account pages.
+* New: rules for disconnecting social accounts, a Users bulk action, and activity log entries.
+* Needs Sarala Login Page 1.1.0 or later.
 
 = 1.0.2 =
 * The activity log and other Pro features no longer stop when the daily license check cannot match this site: Pro activates the site again by itself and shows a notice if that fails.
