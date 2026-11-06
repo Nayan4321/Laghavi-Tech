@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Laghavi Claude Connector
  * Description:       Lets Claude look into this site and fix problems through a secure, time-limited connector (MCP): error logs, site health, plugins, files and database, with backups before every change and a log of everything it does.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LGCC_VERSION', '1.2.0' );
+define( 'LGCC_VERSION', '1.2.1' );
 define( 'LGCC_FILE', __FILE__ );
 define( 'LGCC_DIR', plugin_dir_path( __FILE__ ) );
 

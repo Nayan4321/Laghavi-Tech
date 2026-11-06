@@ -255,7 +255,7 @@ class LGCC_Tools {
 				false,
 			),
 			'update_page'       => array(
-				'Change the texts of a page or post without touching its layout: exact text replacements inside Elementor widgets and the editor content, and optionally the title, SEO title, SEO description and status. The page is backed up first (restore_backup). Replacements that matched nothing are reported, so nothing is silently skipped.',
+				'Change the texts of a page or post without touching its layout: exact text replacements inside Elementor widgets (links, e-mail and phone targets included) and the editor content, and optionally the title, SEO title, SEO description and status. The page is backed up first (restore_backup). Replacements that matched nothing are reported, so nothing is silently skipped.',
 				array(
 					'id'              => array( 'type' => 'integer' ),
 					'replacements'    => array(
@@ -1617,7 +1617,9 @@ class LGCC_Tools {
 	private static function replace_in_data( $node, $pairs, &$hits ) {
 		if ( is_array( $node ) ) {
 			foreach ( $node as $key => $value ) {
-				if ( is_string( $key ) && self::skip_key( $key ) && 'settings' !== $key && 'elements' !== $key ) {
+				// Replacements are exact texts chosen by the caller, so links, e-mail and phone targets and
+				// dynamic tags are included; only the structure (IDs and element types) is never changed.
+				if ( in_array( $key, array( 'id', '_id', 'elType', 'widgetType', 'isInner' ), true ) ) {
 					continue;
 				}
 				$node[ $key ] = self::replace_in_data( $value, $pairs, $hits );

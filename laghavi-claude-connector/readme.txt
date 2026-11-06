@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,9 @@ Safety:
 The site must use HTTPS.
 
 == Changelog ==
+
+= 1.2.1 =
+* update_page also changes link, e-mail and phone targets and dynamic links in Elementor widgets (IDs and element types are never changed).
 
 = 1.2.0 =
 * New page tools: page_texts lists every text on a page (Elementor or editor), its SEO title and description and its translations; update_page replaces texts, title, SEO and status without touching the layout, with a backup first.
