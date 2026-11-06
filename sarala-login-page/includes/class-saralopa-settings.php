@@ -328,10 +328,10 @@ class SARALOPA_Settings {
 		switch ( $provider ) {
 			case 'google':
 				return array(
-					__( 'Open Google Cloud Console > APIs & Services > Credentials.', 'sarala-login-page' ),
-					__( 'Set up the OAuth consent screen (app name, support email, your domain).', 'sarala-login-page' ),
-					__( 'Create credentials > OAuth client ID > Web application.', 'sarala-login-page' ),
-					__( 'Add the Redirect URI below under "Authorized redirect URIs", then copy the Client ID and Client Secret here.', 'sarala-login-page' ),
+					__( 'Open Google Cloud Console and create or pick a project. No API needs to be enabled for Google login.', 'sarala-login-page' ),
+					__( 'APIs & Services > OAuth consent screen (Google Auth Platform) > Get started: app name, support email, Audience "External". Then under Audience click "Publish app", otherwise only test users can log in.', 'sarala-login-page' ),
+					__( 'Clients > Create client > Web application. Under "Authorized redirect URIs" add the Redirect URI below.', 'sarala-login-page' ),
+					__( 'Copy the Client ID and Client Secret here and save. If Google asks "Which API are you using?", skip that wizard and choose "OAuth client ID".', 'sarala-login-page' ),
 				);
 			case 'facebook':
 				return array(

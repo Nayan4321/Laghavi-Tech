@@ -174,6 +174,7 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 = 1.1.0 =
 * New: sign up and log in with X (Twitter), using OAuth 2.0 with PKCE.
 * New: limit login attempts. Lock out an IP address after too many failed logins, with an allow list, and see and unlock lockouts on the Failed logins screen. On by default (5 attempts in 15 minutes, 30-minute lockout).
+* Clearer Google setup steps: no API needs to be enabled, and the app must be published.
 * New: force password reset. Passwords can expire after a number of days, for all or chosen roles; users are emailed a link to choose a new one.
 
 = 1.0.2 =
