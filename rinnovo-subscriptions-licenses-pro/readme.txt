@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 
 Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices, subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
@@ -56,6 +56,10 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
 == Changelog ==
+
+= 1.1.1 =
+* Fix: My Account > Invoices showed "Page not found" after updating until permalinks were saved.
+* Fix: "Choose image" for the invoice logo did nothing.
 
 = 1.1.0 =
 * New: invoices and tax invoices for every paid order, with three templates, your legal details and TRN, the customer's legal details, a My Account Invoices tab and email links.

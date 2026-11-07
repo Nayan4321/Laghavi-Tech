@@ -322,9 +322,15 @@ class LLM_Invoices {
 		<script>
 		( function () {
 			var button = document.getElementById( 'inv-logo-pick' );
-			if ( ! button || ! window.wp || ! wp.media ) { return; }
-			button.addEventListener( 'click', function () {
-				var frame = wp.media( { library: { type: 'image' }, multiple: false } );
+			if ( ! button ) { return; }
+			// The media library loads at the end of the page, so look for it only when the button is clicked.
+			button.addEventListener( 'click', function ( event ) {
+				event.preventDefault();
+				if ( ! window.wp || ! wp.media ) {
+					window.alert( '<?php echo esc_js( __( 'The media library is still loading. Please try again in a moment.', self::TD ) ); ?>' ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Same domain as the rest of the plugin.
+					return;
+				}
+				var frame = wp.media( { title: '<?php echo esc_js( __( 'Choose a logo', self::TD ) ); ?>', library: { type: 'image' }, multiple: false } ); // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Same domain as the rest of the plugin.
 				frame.on( 'select', function () {
 					document.getElementById( 'inv-logo' ).value = frame.state().get( 'selection' ).first().get( 'url' );
 				} );
@@ -984,6 +990,11 @@ td,th{padding:10px 8px;vertical-align:top}
 	 */
 	public static function add_endpoint() {
 		add_rewrite_endpoint( self::ENDPOINT, EP_ROOT | EP_PAGES );
+		// After an install or update, WordPress must rebuild its address rules once, or the tab is a 404.
+		if ( get_option( self::OPTION . '_rewrite' ) !== LLM_VERSION ) {
+			flush_rewrite_rules( false );
+			update_option( self::OPTION . '_rewrite', LLM_VERSION, true );
+		}
 	}
 
 	/**
