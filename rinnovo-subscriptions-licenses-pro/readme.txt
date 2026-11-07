@@ -3,14 +3,23 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 
-Pro add-on for Rinnovo Subscriptions & Licenses: subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
+Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices, subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
 
 == Description ==
 
 Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. Buy a license at [laghavi.site](https://laghavi.site/rinnovo-subscriptions-licenses/).
+
+= Invoices and tax invoices =
+
+* An invoice for every paid order, subscription renewals included, with numbers that follow on without gaps (for example INV-00001, prefix and start number of your choice).
+* Three templates: Classic, Bold (with a "Paid" stamp) and Modern, in your colour, with your logo.
+* Your legal company name, legal address and tax registration number (TRN, VAT No.…). With a number the title reads "Tax Invoice".
+* Customers add their own legal company name, address and TRN in My Account > Account details or at checkout (classic and block checkout). Choose optional, required, or off (billing details are used).
+* My Account > Invoices lists every invoice with View and Download PDF; order emails link to the invoice; an Invoice button on My Account > Orders.
+* An Invoice box on each order: view, create, or refresh the details after the customer adds them. Each invoice keeps the details it was issued with.
 
 = Subscriptions on variable products =
 
@@ -47,6 +56,9 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
 == Changelog ==
+
+= 1.1.0 =
+* New: invoices and tax invoices for every paid order, with three templates, your legal details and TRN, the customer's legal details, a My Account Invoices tab and email links.
 
 = 1.0.2 =
 * Subscriptions and licenses on variable products are handled by Pro itself: the free plugin has no variation code of its own.

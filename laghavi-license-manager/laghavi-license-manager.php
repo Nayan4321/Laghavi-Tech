@@ -3,7 +3,7 @@
  * Plugin Name:       Laghavi License Manager
  * Plugin URI:        https://laghavi.site/
  * Description:       Sell plugins with WooCommerce: license keys on purchase, downloads in My Account, keys that follow Laghavi Subscriptions (cancel any time, key works until the paid period ends), site activations and automatic updates.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LLM_VERSION', '1.0.0' );
+define( 'LLM_VERSION', '1.1.0' );
 define( 'LLM_FILE', __FILE__ );
 define( 'LLM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLM_URL', plugin_dir_url( __FILE__ ) );
@@ -28,6 +28,9 @@ require_once LLM_DIR . 'includes/class-llm-orders.php';
 require_once LLM_DIR . 'includes/class-llm-api.php';
 require_once LLM_DIR . 'includes/class-llm-account.php';
 require_once LLM_DIR . 'includes/class-llm-admin.php';
+require_once LLM_DIR . 'includes/class-llm-pdf.php';
+require_once LLM_DIR . 'includes/class-llm-invoice-pdf.php';
+require_once LLM_DIR . 'includes/class-llm-invoices.php';
 
 add_action(
 	'plugins_loaded',
@@ -42,6 +45,7 @@ add_action(
 		LLM_Product::init();
 		LLM_Orders::init();
 		LLM_Account::init();
+		LLM_Invoices::init();
 		LLM_Admin::init();
 	}
 );

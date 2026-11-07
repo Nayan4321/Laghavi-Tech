@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -38,3 +38,8 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `POST /activate`, `POST /deactivate`, `POST /check`
 * `GET /update` – latest version info, with a download link for sites allowed to update
 * `GET /download` – the zip, for sites allowed to update
+
+== Changelog ==
+
+= 1.1.0 =
+* Invoices: a PDF invoice (or tax invoice) for every paid order and renewal, three templates, the company's legal name, address and TRN, the customer's legal details (optional, required or off), My Account > Invoices with PDF downloads, the PDF attached to customer order emails, and an Invoice box on each order. Settings: WooCommerce > Invoices.
