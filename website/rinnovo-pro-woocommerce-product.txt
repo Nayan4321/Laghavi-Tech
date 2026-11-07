@@ -1,0 +1,98 @@
+RINNOVO SUBSCRIPTIONS & LICENSES PRO – WooCommerce product page on laghavi.site
+Paste each part into the field named above it. Use the editor's "Visual" tab: no HTML needed.
+To make a heading, put the cursor on the line and choose "Heading 2/3" in the paragraph menu.
+To make a list, select the lines and click the bullet list button.
+
+
+=====================================================================
+PRODUCT NAME
+=====================================================================
+Rinnovo Subscriptions & Licenses Pro
+
+
+=====================================================================
+PRODUCT SHORT DESCRIPTION  (box under the main editor)
+=====================================================================
+Sell WooCommerce subscriptions and license keys, and send a PDF tax invoice for every payment automatically.
+
+Pro adds invoices with your TRN, plans on variable products (Monthly / Yearly, 1 site / 5 sites / unlimited), a currency switcher and "Ask for price" products to the free Rinnovo plugin.
+
+
+=====================================================================
+PRODUCT DESCRIPTION  (main editor)
+=====================================================================
+
+[Heading 2] Rinnovo Pro: get paid, send the invoice, renew. Automatically.
+
+Rinnovo Subscriptions & Licenses turns WooCommerce into a store for subscriptions and license keys. Pro adds what a growing business needs next: proper tax invoices, plans on variable products and prices in your customers' currency.
+
+[Heading 3] New: PDF invoices and tax invoices
+
+[Bullet list]
+Every paid order and every subscription renewal gets an invoice the moment the payment comes in.
+Real PDF files named after the invoice number (INV-00001.pdf), attached to the order email and always available in My Account > Invoices.
+Your legal company name, legal address and tax registration number (TRN, VAT No., GSTIN). With a number, the title reads "Tax Invoice" and tax is shown on every line.
+Business customers add their legal company name, address and TRN at checkout or in their account, for invoices in their company's name. Optional, required or off: you choose.
+Payment details are filled in from the order: payment method, date, transaction ID, billing period, automatic renewal and next payment date.
+Three designs (Classic, Bold, Modern) in your colour with your logo. Preview each one as a PDF before you save.
+Invoice numbers follow on without gaps, with your own prefix and starting number.
+Each invoice keeps the details it was issued with. Customer added their TRN after paying? Refresh the invoice from the order screen: same number, same date.
+
+[Heading 3] Subscriptions on variable products
+
+[Bullet list]
+Each variation is its own plan: Monthly, Yearly or Lifetime, with its own price, free trial, sign-up fee and number of payments.
+Customers choose their plan on one product page.
+
+[Heading 3] License keys for every plan
+
+[Bullet list]
+Sell one plugin, theme or app as 1 site, 5 sites or unlimited sites, each at its own price.
+Works with subscriptions: every plan can renew yearly or monthly with its own license key.
+
+[Heading 3] Currency switcher
+
+[Bullet list]
+Show prices in AED, USD, EUR, GBP and more, with automatic or manual exchange rates.
+Choose the currency by country, and let customers pay in their own currency.
+
+[Heading 3] "Ask for price" products
+
+[Bullet list]
+Hide the price of any product and show "Ask for price" (your contact or booking page) and "Chat on WhatsApp" with a ready-written message naming the product.
+
+[Heading 3] What you get
+
+[Bullet list]
+The Pro plugin, installed next to the free Rinnovo plugin. Your settings and data stay as they are.
+One year of updates and email support.
+Your license key and download in My Account right after paying.
+
+[Heading 3] Requirements
+
+WordPress 6.0 or later, WooCommerce, PHP 7.4 or later, and the free Rinnovo Subscriptions & Licenses plugin.
+
+
+=====================================================================
+PRODUCT IMAGES  (Product image + Product gallery, in this order)
+=====================================================================
+Product image:  01-rinnovo-pro.png
+Gallery:        02-invoice-designs.png
+                03-tax-invoices.png
+                04-invoice-settings.png
+                then your current images, from 01-rinnovo-subscriptions-licenses.png to 07-pro.png
+
+Alt text (Media Library > image > Alternative Text):
+01  Rinnovo Subscriptions & Licenses Pro with PDF tax invoices
+02  Three invoice designs: Classic, Bold and Modern
+03  Tax invoice details at checkout and the My Account invoices list
+04  Invoice settings with company details, TRN and template preview
+
+
+=====================================================================
+SEO  (Yoast box at the bottom of the product)
+=====================================================================
+SEO title:         Rinnovo Pro – WooCommerce Subscriptions, Licenses & PDF Tax Invoices
+Slug:              rinnovo-subscriptions-licenses-pro
+Meta description:  Sell WooCommerce subscriptions and license keys, and send a PDF tax invoice with your TRN for every payment. Plans on variable products, currency switcher and more.
+Focus keyphrase:   woocommerce subscriptions invoices
