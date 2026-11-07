@@ -1,0 +1,30 @@
+/* Rinnovo Bundles & Variable Subscriptions Pro */
+.rinnovobv-builder{margin:16px 0}
+.rinnovobv-step{margin:20px 0 10px}
+.rinnovobv-sizes{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.rinnovobv-size{display:flex;flex-direction:column;gap:4px;border:1px solid #e5e7eb;border-radius:10px;padding:12px;cursor:pointer}
+.rinnovobv-size:has(input:checked){border-color:#0f766e;box-shadow:0 0 0 2px rgba(15,118,110,.2)}
+.rinnovobv-size input{margin:0 0 4px}
+.rinnovobv-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin:10px 0}
+.rinnovobv-item{display:flex;flex-direction:column;gap:6px;border:1px solid #e5e7eb;border-radius:10px;padding:10px;text-align:center}
+.rinnovobv-item img{max-width:100%;height:auto;border-radius:6px}
+.rinnovobv-item.is-out{opacity:.5}
+.rinnovobv-item__price{font-size:.9em;opacity:.8}
+.rinnovobv-count{display:flex;justify-content:center;align-items:center;gap:4px}
+.rinnovobv-count input{width:52px;text-align:center}
+.rinnovobv-count .button{min-width:34px;padding:4px 8px}
+.rinnovobv-counter{font-weight:400;font-size:.85em;opacity:.8}
+.rinnovobv-total{font-size:1.15em;margin:16px 0 8px}
+.rinnovobv-submit[disabled]{opacity:.5;cursor:not-allowed}
+.rinnovobv-contents{margin:10px 0}
+.rinnovobv-compare{width:100%;border-collapse:collapse;margin:14px 0}
+.rinnovobv-compare caption{text-align:left;font-weight:600;padding:0 0 6px}
+.rinnovobv-compare td{border:1px solid #e5e7eb;padding:8px 10px}
+.rinnovobv-card{border:1px solid #e5e7eb;border-radius:12px;padding:16px 18px;margin:0 0 18px}
+.rinnovobv-card header{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:baseline}
+.rinnovobv-card h3{margin:0}
+.rinnovobv-facts{opacity:.8;font-size:.92em}
+.rinnovobv-options p{display:flex;justify-content:space-between;gap:10px;align-items:center;border-bottom:1px solid #eee;padding:8px 0;margin:0}
+.rinnovobv-card details{margin:10px 0}
+.rinnovobv-card summary{cursor:pointer;font-weight:600}
+.rinnovobv-edit .rinnovobv-item input{width:64px;margin:0 auto}
