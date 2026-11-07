@@ -1,0 +1,39 @@
+/* Rinnovo Membership Content Pro */
+.rinnovomem-paywall{border:1px solid #e2e4ea;border-radius:14px;padding:22px 24px;margin:18px 0;background:linear-gradient(180deg,#faf7ff,#fff);text-align:center}
+.rinnovomem-paywall__title{font-size:1.2em;font-weight:700;margin:0 0 6px}
+.rinnovomem-paywall p{margin:0 0 10px}
+.rinnovomem-paywall__price{display:inline-block;margin-left:8px;opacity:.8}
+.rinnovomem-paywall__login{font-size:.92em}
+.rinnovomem-paywall--drip{background:#f8fafc}
+.rinnovomem-teaser{position:relative}
+.rinnovomem-blur{filter:blur(4px);user-select:none;pointer-events:none;margin:6px 0 0;opacity:.7}
+.rinnovomem-blur span{display:block;height:.9em;margin:.55em 0;border-radius:4px;background:currentColor;opacity:.18}
+.rinnovomem-badge{display:inline-block;padding:1px 9px;border-radius:999px;color:#fff;font-size:.75em;font-weight:700;line-height:1.7;vertical-align:middle;background-color:#7c3aed}
+.rinnovomem-badge--loyal{background-color:#0f766e}
+.rinnovomem-badge--new{background-color:#ea580c}
+.rinnovomem-badges{white-space:nowrap}
+.rinnovomem-video{position:relative;margin:0 0 18px}
+.rinnovomem-video iframe,.rinnovomem-video video{display:block;width:100%;height:auto;border:0;border-radius:10px;background:#000}
+.rinnovomem-video--locked{background:#111 center/cover no-repeat;border-radius:12px;padding:40px 16px}
+.rinnovomem-video--locked .rinnovomem-paywall{margin:0 auto;max-width:520px}
+.rinnovomem-library,.rinnovomem-content,.rinnovomem-perks{list-style:none;margin:0;padding:0}
+.rinnovomem-library li,.rinnovomem-content li,.rinnovomem-perks li{padding:8px 0;border-bottom:1px solid #eee}
+.rinnovomem-library__type,.rinnovomem-content__type{float:right;opacity:.6;font-size:.85em}
+.rinnovomem-section{margin:0 0 28px}
+.rinnovomem-card{border:1px solid #e2e4ea;border-radius:12px;padding:14px 16px;margin:0 0 10px}
+.rinnovomem-card__head{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:6px}
+.rinnovomem-card__since{opacity:.7;font-size:.9em}
+.rinnovomem-plan{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:8px 0;border-bottom:1px solid #eee}
+.rinnovomem-plan button{margin-left:auto}
+.rinnovomem-join{list-style:none;padding:0}
+.rinnovomem-join li{display:flex;gap:10px;align-items:center;margin:0 0 8px}
+.rinnovomem-directory__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;list-style:none;margin:16px 0;padding:0}
+.rinnovomem-directory__grid li{border:1px solid #e2e4ea;border-radius:12px;padding:16px;text-align:center}
+.rinnovomem-directory__grid img{border-radius:50%;display:block;margin:0 auto 8px}
+.rinnovomem-directory__grid strong{display:block;margin-bottom:4px}
+.rinnovomem-directory__headline{display:block;font-size:.85em;opacity:.75;margin-top:6px}
+.rinnovomem-profile__head{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.rinnovomem-profile__head img{border-radius:50%}
+.rinnovomem-profile__head h2{margin:0 0 6px}
+.rinnovomem-member-price{color:#15803d;font-weight:600;text-decoration:none}
+.rinnovomem-member-save{display:block;color:#7c3aed;font-weight:600}

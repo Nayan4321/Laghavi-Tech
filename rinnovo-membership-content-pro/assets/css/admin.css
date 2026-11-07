@@ -1,0 +1,5 @@
+.rinnovomem-tier{background:#fff;border:1px solid #dcdcde;border-radius:8px;margin:0 0 16px;padding:12px 16px}
+.rinnovomem-tier__head{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.rinnovomem-tier__level{font-weight:700;min-width:60px}
+.rinnovomem-tier .form-table th{width:220px}
+.rinnovomem-tier input[type=color]{width:40px;height:30px;padding:0;border:0}
