@@ -183,3 +183,7 @@ div.rinnovo-currency.floating details > ul {
 	background: var(--rinnovo-accent);
 	color: #fff;
 }
+
+/* Trial and first-payment offers. */
+.rinnovopro-offer{display:block;margin-top:4px;color:#15803d;font-weight:600;font-size:.85em}
+.rinnovopro-reverse-charge td{font-weight:600}

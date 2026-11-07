@@ -102,7 +102,8 @@ class RINNOVOPRO_Invoices {
 			'website'        => '',
 			'prefix'         => 'INV-',
 			'digits'         => 5,
-			'footer'         => __( 'Thank you for your business!', self::TD ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Same domain as the rest of the plugin.
+			// Translated only once WordPress has loaded translations (settings are read earlier, while hooking up).
+			'footer'         => did_action( 'init' ) ? __( 'Thank you for your business!', self::TD ) : 'Thank you for your business!', // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Same domain as the rest of the plugin.
 			'customer_mode'  => 'optional',
 			'free_orders'    => 0,
 			'email_link'     => 1,
@@ -825,7 +826,7 @@ class RINNOVOPRO_Invoices {
 				__( 'Paid on %1$s by %2$s', 'rinnovo-subscriptions-licenses-pro' ),
 				$paid_date ? date_i18n( get_option( 'date_format' ), $paid_date->getTimestamp() ) : '',
 				$order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'online payment', 'rinnovo-subscriptions-licenses-pro' )
-			) : __( 'Not paid yet', 'rinnovo-subscriptions-licenses-pro' ),
+			) . ( '' !== RINNOVOPRO_Tax::invoice_note( $order ) ? '. ' . RINNOVOPRO_Tax::invoice_note( $order ) : '' ) : __( 'Not paid yet', 'rinnovo-subscriptions-licenses-pro' ),
 			'due'        => self::money( $paid ? 0 : (float) $order->get_total(), $order, $pdf ),
 			'has_tax'    => wc_tax_enabled() || (float) $order->get_total_tax() > 0,
 			'currency'   => $order->get_currency(),
