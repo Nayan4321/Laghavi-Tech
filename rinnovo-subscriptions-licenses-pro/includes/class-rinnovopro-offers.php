@@ -358,8 +358,10 @@ class RINNOVOPRO_Offers {
 				continue;
 			}
 			$offer = self::offer( $item['data'] );
-			$price = (float) $item['data']->get_price();
-			$off   = self::discount_on( $offer, $price );
+			// From the product's own price: totals are calculated more than once per request.
+			$fresh = wc_get_product( $item['data']->get_id() );
+			$price = $fresh ? (float) $fresh->get_price( 'edit' ) : (float) $item['data']->get_price( 'edit' );
+			$off   = self::discount_on( $offer, $price, false );
 			if ( $off > 0 ) {
 				$item['data']->set_price( $price - $off );
 			}

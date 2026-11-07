@@ -1,0 +1,24 @@
+/* Rinnovo Physical Subscription Boxes & Goods Pro */
+.rinnovobox-picker{display:grid;gap:10px;margin:0 0 18px}
+.rinnovobox-option{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:4px 10px;padding:12px 14px;border:1.5px solid #e2e4ea;border-radius:10px;cursor:pointer;background:#fff}
+.rinnovobox-option:has(input:checked){border-color:currentColor;box-shadow:0 0 0 1px currentColor}
+.rinnovobox-option input{margin:0}
+.rinnovobox-option__title{font-weight:600}
+.rinnovobox-option__price{font-weight:600;white-space:nowrap}
+.rinnovobox-option__more,.rinnovobox-option__note{grid-column:2/4;font-size:.9em;opacity:.85}
+.rinnovobox-option__more select{max-width:100%}
+.rinnovobox-save{display:inline-block;margin-left:6px;padding:1px 8px;border-radius:999px;background:#dcfce7;color:#166534;font-size:.8em;font-weight:700}
+.rinnovobox-gift label{display:block;font-weight:600;margin-bottom:4px}
+.rinnovobox-gift textarea{width:100%}
+.rinnovobox-sns-hint{display:block;color:#15803d;font-weight:600}
+.rinnovobox-account{margin:0 0 28px}
+.rinnovobox-card{border:1px solid #e2e4ea;border-radius:12px;padding:16px 18px;margin:0 0 14px;background:#fff}
+.rinnovobox-card header{display:flex;justify-content:space-between;gap:12px;align-items:baseline;flex-wrap:wrap}
+.rinnovobox-card h3{margin:0;font-size:1.1em}
+.rinnovobox-card__next{margin:8px 0 12px}
+.rinnovobox-items td{vertical-align:middle}
+.rinnovobox-items select{max-width:100%}
+.rinnovobox-qty input{width:70px}
+.rinnovobox-inline{display:inline-block;margin:6px 6px 6px 0}
+.rinnovobox-address{margin:10px 0 14px}
+.rinnovobox-address summary{cursor:pointer;font-weight:600}
