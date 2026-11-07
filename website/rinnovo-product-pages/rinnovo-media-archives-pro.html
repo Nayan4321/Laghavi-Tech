@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Media Archives Pro product page</title>
+<style>
+:root{--ink:#1d1f23;--mute:#5b6270;--line:#dfe2e8;--soft:#f6f7f9;--ac:#ea580c;--bg:#eef0f4;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8eaee;--mute:#a3a9b5;--line:#2c313b;--soft:#1b1f27;--bg:#111318;--card:#171a21}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:26px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 22px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 22px;overflow:hidden}
+.box__head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.box__head b{font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.box__head small{display:block;color:var(--mute);font-size:13px;text-transform:none;letter-spacing:0;font-weight:400}
+button{border:0;border-radius:8px;background:var(--ac);color:#fff;font:600 14px/1 inherit;padding:10px 16px;cursor:pointer;white-space:nowrap}
+button.done{background:#16a34a}
+.content{padding:18px 20px}
+.content h2{font-size:22px;margin:4px 0 10px}
+.content h3{font-size:18px;margin:20px 0 6px}
+.content p{margin:0 0 12px}
+.content ul{margin:0 0 12px;padding-left:22px}
+.content li{margin:0 0 6px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap;color:var(--mute);width:1%}
+code{background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:14px}
+@media (max-width:600px){.box__head{flex-direction:column;align-items:flex-start}td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<h1>Rinnovo Media Archives Pro – product page</h1>
+	<p class="lead">For <code>laghavi.site/product/rinnovo-media-archives-pro/</code>. Click <b>Copy</b>, then paste into the WooCommerce editor's <b>Visual</b> tab (not the Text/Code tab). Headings and lists keep their formatting.</p>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product name</b><small>The title at the top of the product</small></div></div>
+		<div class="content">
+			<p>Rinnovo Media Archives Pro</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product short description</b><small>The box under the main editor, called "Product short description"</small></div><button data-copy="short">Copy</button></div>
+		<div class="content" id="short">
+			<p>Sell monthly or yearly access to video courses, podcasts, music, art archives and your own app, without handing out download links.</p>
+			<p>Expiring streaming links, watermarked players, private podcast feeds, view-only galleries, plan features and quotas, a subscription API with webhooks and single sign-on for your app.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product description</b><small>The main editor at the top of the product</small></div><button data-copy="long">Copy</button></div>
+		<div class="content" id="long">
+			<h2>Sell access, not downloads</h2>
+			<p>Rinnovo Media Archives Pro adds protected streaming and app access to the free Rinnovo Subscriptions &amp; Licenses plugin. Subscribers watch, listen and use your app while they pay, and everything stops the moment they don't.</p>
+
+			<h3>Expiring, tokenized links</h3>
+			<ul>
+				<li>Bunny Stream and Bunny CDN, Cloudflare Stream, Amazon CloudFront and S3, and Vimeo private links.</li>
+				<li>Links are made for subscribers only and expire. The page source never shows a reusable address.</li>
+			</ul>
+
+			<h3>Protected players and galleries</h3>
+			<ul>
+				<li><strong>Video and audio players</strong> with no download buttons, no right-click and no playing from other sites.</li>
+				<li><strong>A moving watermark</strong> with the subscriber's email and IP over the video.</li>
+				<li><strong>View-only galleries:</strong> art at screen size only, with the subscriber's email drawn into the image. Originals stay protected.</li>
+			</ul>
+
+			<h3>Private podcast feeds</h3>
+			<ul>
+				<li>Each subscriber gets their own RSS address for Apple Podcasts, Overcast and other apps.</li>
+				<li>The feed stops the moment the subscription ends, and feeds used from too many places are flagged as shared.</li>
+			</ul>
+
+			<h3>For your app or SaaS</h3>
+			<ul>
+				<li><strong>Plans with features and quotas:</strong> ai_credits=500, exports=yes, projects=10. Quotas reset every billing period.</li>
+				<li><strong>Subscription API:</strong> access, plan, usage, sessions and a portal link, plus signed webhooks (active, payment failed, cancelled, expired, paused, access revoked).</li>
+				<li><strong>Single sign-on:</strong> WordPress as the log-in for your app with OAuth 2 (PKCE) and JWT, with the plan inside the token.</li>
+			</ul>
+
+			<h3>Account sharing and instant cut-off</h3>
+			<ul>
+				<li>Limits per plan on devices signed in and streams at once. Use from two countries at the same time is flagged, or signs the account out everywhere.</li>
+				<li>Cancelled, refunded or unpaid: app tokens, feeds, players and devices stop at once.</li>
+			</ul>
+
+			<h3>Trials, upgrades and a self-service portal</h3>
+			<ul>
+				<li>7 or 14 day free trials with or without a card, and upgrades with the unused time credited.</li>
+				<li>Your access page: plan, usage, feed addresses, devices and "sign out everywhere", pause, plan changes, card and invoices. Also inside your app.</li>
+			</ul>
+
+			<h3>Everything in the free plugin</h3>
+			<ul>
+				<li>Subscriptions on simple and variable products, with free trials, sign-up fees and a set number of payments, on any WooCommerce payment method.</li>
+				<li>Automatic Stripe renewals, and "Pay now" renewal emails for every other payment method.</li>
+				<li>A better My Account: next payment, payment history, update card, cancel and resume.</li>
+			</ul>
+
+			<h3>Your license</h3>
+			<ul>
+				<li>Choose 1 site, 5 sites or unlimited sites, billed yearly.</li>
+				<li>Automatic updates from your WordPress dashboard and email support.</li>
+				<li>Your license key and download in My Account right after paying.</li>
+				<li>Cancel any time: your license keeps working until the end of the year you paid for.</li>
+			</ul>
+
+			<h3>Requirements</h3>
+			<p>WordPress 6.0 or later, WooCommerce 8.0 or later, PHP 7.4 or later, and the free Rinnovo Subscriptions &amp; Licenses plugin. Works on its own or next to the other Rinnovo Pro plugins.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Prices</b><small>Product data: Variable product, attribute "Sites" (used for variations), one variation per row. In each variation tick Subscription, every 1 year, Number of payments 0, and License with the sites per key.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>1 site</td><td><b>$89</b> / year · License: 1 site per key</td></tr>
+				<tr><td>5 sites</td><td><b>$179</b> / year · License: 5 sites per key</td></tr>
+				<tr><td>Unlimited sites</td><td><b>$349</b> / year · License: 0 (unlimited)</td></tr>
+				<tr><td>License tab</td><td>Slug <code>rinnovo-media-archives-pro</code>, upload <code>rinnovo-media-archives-pro.zip</code>, version 1.0.0</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Images</b><small>Product image = 01. Product gallery = 02 to 04, in this order. Alt text: Media Library › image › Alternative Text.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>01</td><td><code>01-media-archives-pro.png</code><br />Alt: Rinnovo Media Archives Pro: protected streaming and app access</td></tr>
+				<tr><td>02</td><td><code>02-private-podcast-feeds.png</code><br />Alt: Private podcast feeds for each subscriber</td></tr>
+				<tr><td>03</td><td><code>03-app-api-quotas.png</code><br />Alt: Subscription API, plan features, quotas and webhooks for your app</td></tr>
+				<tr><td>04</td><td><code>04-access-portal-devices.png</code><br />Alt: Self-service access portal with usage and devices</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>SEO (Yoast)</b><small>The Yoast box at the bottom of the product</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>SEO title</td><td>Rinnovo Media Archives Pro – Sell Streaming &amp; SaaS Access with WooCommerce</td></tr>
+				<tr><td>Slug</td><td>rinnovo-media-archives-pro</td></tr>
+				<tr><td>Meta description</td><td>Sell subscriptions to video, podcasts, music, art and your app: expiring streaming links, watermarked players, private feeds, quotas, API, webhooks and SSO.</td></tr>
+				<tr><td>Focus keyphrase</td><td>woocommerce streaming subscription</td></tr>
+			</table>
+		</div>
+	</div>
+
+</div>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (button) {
+	button.addEventListener('click', function () {
+		var el = document.getElementById(button.dataset.copy);
+		var done = function () { button.textContent = 'Copied!'; button.classList.add('done'); setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 2000); };
+		var html = el.innerHTML.trim();
+		if (navigator.clipboard && window.ClipboardItem) {
+			navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) })]).then(done, fallback);
+		} else { fallback(); }
+		function fallback() {
+			var range = document.createRange(); range.selectNodeContents(el);
+			var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+			try { document.execCommand('copy'); done(); } catch (e) {}
+			sel.removeAllRanges();
+		}
+	});
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Boxes Pro product page</title>
+<style>
+:root{--ink:#1d1f23;--mute:#5b6270;--line:#dfe2e8;--soft:#f6f7f9;--ac:#ea580c;--bg:#eef0f4;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8eaee;--mute:#a3a9b5;--line:#2c313b;--soft:#1b1f27;--bg:#111318;--card:#171a21}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:26px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 22px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 22px;overflow:hidden}
+.box__head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.box__head b{font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.box__head small{display:block;color:var(--mute);font-size:13px;text-transform:none;letter-spacing:0;font-weight:400}
+button{border:0;border-radius:8px;background:var(--ac);color:#fff;font:600 14px/1 inherit;padding:10px 16px;cursor:pointer;white-space:nowrap}
+button.done{background:#16a34a}
+.content{padding:18px 20px}
+.content h2{font-size:22px;margin:4px 0 10px}
+.content h3{font-size:18px;margin:20px 0 6px}
+.content p{margin:0 0 12px}
+.content ul{margin:0 0 12px;padding-left:22px}
+.content li{margin:0 0 6px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap;color:var(--mute);width:1%}
+code{background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:14px}
+@media (max-width:600px){.box__head{flex-direction:column;align-items:flex-start}td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<h1>Rinnovo Physical Subscription Boxes &amp; Goods Pro – product page</h1>
+	<p class="lead">For <code>laghavi.site/product/rinnovo-physical-subscription-boxes-pro/</code>. Click <b>Copy</b>, then paste into the WooCommerce editor's <b>Visual</b> tab (not the Text/Code tab). Headings and lists keep their formatting.</p>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product name</b><small>The title at the top of the product</small></div></div>
+		<div class="content">
+			<p>Rinnovo Physical Subscription Boxes &amp; Goods Pro</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product short description</b><small>The box under the main editor, called "Product short description"</small></div><button data-copy="short">Copy</button></div>
+		<div class="content" id="short">
+			<p>Run a subscription box or a "subscribe &amp; save" shop with WooCommerce: coffee, snacks, pet food, cosmetics, clothes and anything you ship.</p>
+			<p>Customers skip, swap and change their next box themselves. You bill everyone on one day, pack from one list and ship with your own rates. Prepaid and gift plans included.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product description</b><small>The main editor at the top of the product</small></div><button data-copy="long">Copy</button></div>
+		<div class="content" id="long">
+			<h2>Subscription boxes that pack and ship on schedule</h2>
+			<p>Rinnovo Physical Subscription Boxes &amp; Goods Pro adds everything a box business needs to the free Rinnovo Subscriptions &amp; Licenses plugin: any delivery frequency, self-service skips and swaps, one shipping day, renewal shipping rates, prepaid and gift plans, and packing lists.</p>
+
+			<h3>Any frequency</h3>
+			<ul>
+				<li>Daily, weekly, monthly, yearly or custom (every 2, 4 or 6 weeks, every 3 months…).</li>
+				<li>Offer several frequencies on one product; customers pick one and can switch later.</li>
+				<li><strong>First box offers:</strong> a discount on the first box, a free trial, and a packaging or setup fee with your own name.</li>
+			</ul>
+
+			<h3>Customers manage their own boxes</h3>
+			<ul>
+				<li><strong>Skip the next box</strong> (holiday, too much left over). Nothing is charged; you choose how many skips in a row. Undo any time before the date.</li>
+				<li><strong>Swap products</strong> in the next box (another roast, another size) and change quantities.</li>
+				<li><strong>Switch frequency,</strong> for example from every 4 weeks to every 6 weeks.</li>
+				<li><strong>One address and one card</strong> for all their boxes.</li>
+				<li><strong>Order cut-off:</strong> changes close before packing, so a box being packed never changes.</li>
+			</ul>
+
+			<h3>One shipping day</h3>
+			<ul>
+				<li>Bill every subscriber on the same day of the month (weekly boxes on the same weekday), so boxes are packed and shipped in one batch.</li>
+				<li>Sign-ups after the cut-off get their first box in the next cycle, and checkout tells them when it ships.</li>
+			</ul>
+
+			<h3>Shipping on every renewal</h3>
+			<ul>
+				<li>Renewal shipping uses your WooCommerce shipping zones: flat rates, table rates and live carrier rates (USPS, UPS, DHL, FedEx). Or keep the first order's shipping, or ship renewals free.</li>
+				<li>Card subscriptions include shipping in the recurring amount, updated in Stripe when the box or address changes.</li>
+			</ul>
+
+			<h3>Prepaid and gift plans</h3>
+			<ul>
+				<li>Pay once for 3, 6 or 12 boxes, with an optional discount. Each box becomes its own order on its delivery date.</li>
+				<li>A gift message printed on the packing list, and an email inviting the customer to order again with the last box.</li>
+			</ul>
+
+			<h3>Subscribe &amp; Save</h3>
+			<ul>
+				<li>On any normal product: "One-time purchase" or "Subscribe &amp; save 10%", with a frequency picker. The shop list shows "or subscribe &amp; save 10%".</li>
+				<li><strong>Build-a-box:</strong> works with WooCommerce Product Bundles, YITH, WPC, Mix and Match and Composite Products. The chosen items are re-sent every renewal and can be swapped.</li>
+			</ul>
+
+			<h3>Emails and packing</h3>
+			<ul>
+				<li><strong>Your next box</strong> (contents, date, amount, skip or swap button), Your box has shipped (with tracking), Your card expires soon, and Your prepaid plan has ended.</li>
+				<li><strong>WooCommerce &gt; Boxes:</strong> orders to pack by ship date with the total of each item (40 × Dark roast), a CSV for your label printer, and renewals for the next 45 days so you can buy stock.</li>
+			</ul>
+
+			<h3>Everything in the free plugin</h3>
+			<ul>
+				<li>Subscriptions on simple and variable products, with free trials, sign-up fees and a set number of payments, on any WooCommerce payment method.</li>
+				<li>Automatic Stripe renewals, and "Pay now" renewal emails for every other payment method.</li>
+				<li>A better My Account: next payment, payment history, update card, cancel and resume.</li>
+			</ul>
+
+			<h3>Your license</h3>
+			<ul>
+				<li>Choose 1 site, 5 sites or unlimited sites, billed yearly.</li>
+				<li>Automatic updates from your WordPress dashboard and email support.</li>
+				<li>Your license key and download in My Account right after paying.</li>
+				<li>Cancel any time: your license keeps working until the end of the year you paid for.</li>
+			</ul>
+
+			<h3>Requirements</h3>
+			<p>WordPress 6.0 or later, WooCommerce 8.0 or later, PHP 7.4 or later, and the free Rinnovo Subscriptions &amp; Licenses plugin. Works on its own or next to the other Rinnovo Pro plugins.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Prices</b><small>Product data: Variable product, attribute "Sites" (used for variations), one variation per row. In each variation tick Subscription, every 1 year, Number of payments 0, and License with the sites per key.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>1 site</td><td><b>$79</b> / year · License: 1 site per key</td></tr>
+				<tr><td>5 sites</td><td><b>$159</b> / year · License: 5 sites per key</td></tr>
+				<tr><td>Unlimited sites</td><td><b>$319</b> / year · License: 0 (unlimited)</td></tr>
+				<tr><td>License tab</td><td>Slug <code>rinnovo-physical-subscription-boxes-pro</code>, upload <code>rinnovo-physical-subscription-boxes-pro.zip</code>, version 1.0.0</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Images</b><small>Product image = 01. Product gallery = 02 to 04, in this order. Alt text: Media Library › image › Alternative Text.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>01</td><td><code>01-subscription-boxes-pro.png</code><br />Alt: Rinnovo Physical Subscription Boxes &amp; Goods Pro for WooCommerce</td></tr>
+				<tr><td>02</td><td><code>02-skip-swap-switch.png</code><br />Alt: Customers skip, swap and change their next box in My Account</td></tr>
+				<tr><td>03</td><td><code>03-packing-ship-day.png</code><br />Alt: Orders to pack by ship date with item totals and CSV export</td></tr>
+				<tr><td>04</td><td><code>04-subscribe-save-prepaid.png</code><br />Alt: Subscribe and save, prepaid plans and gift boxes</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>SEO (Yoast)</b><small>The Yoast box at the bottom of the product</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>SEO title</td><td>Rinnovo Boxes Pro – WooCommerce Subscription Box Plugin</td></tr>
+				<tr><td>Slug</td><td>rinnovo-physical-subscription-boxes-pro</td></tr>
+				<tr><td>Meta description</td><td>Run a WooCommerce subscription box: skip and swap, one shipping day, renewal shipping rates, prepaid and gift plans, subscribe and save, and packing lists.</td></tr>
+				<tr><td>Focus keyphrase</td><td>woocommerce subscription box</td></tr>
+			</table>
+		</div>
+	</div>
+
+</div>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (button) {
+	button.addEventListener('click', function () {
+		var el = document.getElementById(button.dataset.copy);
+		var done = function () { button.textContent = 'Copied!'; button.classList.add('done'); setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 2000); };
+		var html = el.innerHTML.trim();
+		if (navigator.clipboard && window.ClipboardItem) {
+			navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) })]).then(done, fallback);
+		} else { fallback(); }
+		function fallback() {
+			var range = document.createRange(); range.selectNodeContents(el);
+			var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+			try { document.execCommand('copy'); done(); } catch (e) {}
+			sel.removeAllRanges();
+		}
+	});
+});
+</script>
+</body>
+</html>

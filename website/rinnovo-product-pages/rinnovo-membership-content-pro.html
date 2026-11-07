@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Membership Pro product page</title>
+<style>
+:root{--ink:#1d1f23;--mute:#5b6270;--line:#dfe2e8;--soft:#f6f7f9;--ac:#ea580c;--bg:#eef0f4;--card:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#e8eaee;--mute:#a3a9b5;--line:#2c313b;--soft:#1b1f27;--bg:#111318;--card:#171a21}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:900px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:26px;margin:0 0 6px}
+.lead{color:var(--mute);margin:0 0 22px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;margin:0 0 22px;overflow:hidden}
+.box__head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.box__head b{font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.box__head small{display:block;color:var(--mute);font-size:13px;text-transform:none;letter-spacing:0;font-weight:400}
+button{border:0;border-radius:8px;background:var(--ac);color:#fff;font:600 14px/1 inherit;padding:10px 16px;cursor:pointer;white-space:nowrap}
+button.done{background:#16a34a}
+.content{padding:18px 20px}
+.content h2{font-size:22px;margin:4px 0 10px}
+.content h3{font-size:18px;margin:20px 0 6px}
+.content p{margin:0 0 12px}
+.content ul{margin:0 0 12px;padding-left:22px}
+.content li{margin:0 0 6px}
+table{width:100%;border-collapse:collapse;font-size:15px}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td:first-child{white-space:nowrap;color:var(--mute);width:1%}
+code{background:var(--soft);border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:14px}
+@media (max-width:600px){.box__head{flex-direction:column;align-items:flex-start}td:first-child{white-space:normal}}
+</style>
+</head>
+<body>
+<div class="wrap">
+	<h1>Rinnovo Membership Content Pro – product page</h1>
+	<p class="lead">For <code>laghavi.site/product/rinnovo-membership-content-pro/</code>. Click <b>Copy</b>, then paste into the WooCommerce editor's <b>Visual</b> tab (not the Text/Code tab). Headings and lists keep their formatting.</p>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product name</b><small>The title at the top of the product</small></div></div>
+		<div class="content">
+			<p>Rinnovo Membership Content Pro</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product short description</b><small>The box under the main editor, called "Product short description"</small></div><button data-copy="short">Copy</button></div>
+		<div class="content" id="short">
+			<p>Turn WooCommerce subscriptions into paid memberships: tiers, members-only pages, posts, courses, forums, files and private video.</p>
+			<p>Drip content, teasers with a paywall, team seats, member discounts and a My Content page. Access starts and ends with the payment, automatically.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Product description</b><small>The main editor at the top of the product</small></div><button data-copy="long">Copy</button></div>
+		<div class="content" id="long">
+			<h2>Paid memberships for any content</h2>
+			<p>Rinnovo Membership Content Pro adds membership tiers and content protection to the free Rinnovo Subscriptions &amp; Licenses plugin. Sell Silver, Gold and All-Access with any WooCommerce payment method, and protect pages, posts, products, courses, forums, files and videos.</p>
+
+			<h3>Tiers and rules</h3>
+			<ul>
+				<li><strong>Tiers that build on each other</strong> (Silver, Gold, All-Access), each given by WooCommerce products: subscriptions, Monthly / Yearly variations or one-time purchases for lifetime access.</li>
+				<li><strong>Protect anything:</strong> pages, posts, products, any custom post type, categories and tags, or a whole content type. Child pages follow their parent.</li>
+				<li><strong>Parts of a page:</strong> the Members only block, a CSS class on any block, or a shortcode. Show something only to non-members too.</li>
+			</ul>
+
+			<h3>Drip, teasers and paywalls</h3>
+			<ul>
+				<li><strong>Drip:</strong> unlock content N days after joining (module 2 after 7 days) or on a date.</li>
+				<li><strong>Teasers:</strong> an excerpt, the first words or a blurred preview, then a "Subscribe to unlock" box with the price. The rest never reaches the browser, feeds or the REST API.</li>
+			</ul>
+
+			<h3>Forums, communities and courses</h3>
+			<ul>
+				<li>bbPress and BuddyBoss forums, BuddyPress / BuddyBoss activity, profiles, groups and messages.</li>
+				<li>LearnDash and LifterLMS: members are enrolled in a tier's courses automatically, and unenrolled when it ends.</li>
+			</ul>
+
+			<h3>Protected files and private video</h3>
+			<ul>
+				<li><strong>Members-only files:</strong> served only to members, so shared links don't work. Audio and video can still seek. A digital library page for each member.</li>
+				<li><strong>Private video:</strong> Bunny Stream (signed links), Vimeo, Wistia, YouTube and Presto Player. The player is only in the page for members.</li>
+			</ul>
+
+			<h3>Members love it</h3>
+			<ul>
+				<li><strong>My Content:</strong> membership, renewal date, unlocked content and what unlocks next, courses, files, perks and billing in one place.</li>
+				<li><strong>Upgrades and downgrades</strong> between tiers or Monthly / Yearly, with the unused time credited.</li>
+				<li><strong>Member perks:</strong> a discount per tier with "Member price" in the shop, free shipping and bonus products.</li>
+				<li><strong>Member directory and badges.</strong></li>
+			</ul>
+
+			<h3>Teams and safety</h3>
+			<ul>
+				<li><strong>Team seats:</strong> a school, company or family buys seats and invites people by email.</li>
+				<li><strong>Access ends at once</strong> when a membership is cancelled or refunded, with a grace period for failed payments.</li>
+				<li><strong>No account sharing:</strong> a limit on devices logged in and videos playing at the same time.</li>
+			</ul>
+
+			<h3>Everything in the free plugin</h3>
+			<ul>
+				<li>Subscriptions on simple and variable products, with free trials, sign-up fees and a set number of payments, on any WooCommerce payment method.</li>
+				<li>Automatic Stripe renewals, and "Pay now" renewal emails for every other payment method.</li>
+				<li>A better My Account: next payment, payment history, update card, cancel and resume.</li>
+			</ul>
+
+			<h3>Your license</h3>
+			<ul>
+				<li>Choose 1 site, 5 sites or unlimited sites, billed yearly.</li>
+				<li>Automatic updates from your WordPress dashboard and email support.</li>
+				<li>Your license key and download in My Account right after paying.</li>
+				<li>Cancel any time: your license keeps working until the end of the year you paid for.</li>
+			</ul>
+
+			<h3>Requirements</h3>
+			<p>WordPress 6.0 or later, WooCommerce 8.0 or later, PHP 7.4 or later, and the free Rinnovo Subscriptions &amp; Licenses plugin. Works on its own or next to the other Rinnovo Pro plugins.</p>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Prices</b><small>Product data: Variable product, attribute "Sites" (used for variations), one variation per row. In each variation tick Subscription, every 1 year, Number of payments 0, and License with the sites per key.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>1 site</td><td><b>$79</b> / year · License: 1 site per key</td></tr>
+				<tr><td>5 sites</td><td><b>$159</b> / year · License: 5 sites per key</td></tr>
+				<tr><td>Unlimited sites</td><td><b>$319</b> / year · License: 0 (unlimited)</td></tr>
+				<tr><td>License tab</td><td>Slug <code>rinnovo-membership-content-pro</code>, upload <code>rinnovo-membership-content-pro.zip</code>, version 1.0.0</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>Images</b><small>Product image = 01. Product gallery = 02 to 04, in this order. Alt text: Media Library › image › Alternative Text.</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>01</td><td><code>01-membership-content-pro.png</code><br />Alt: Rinnovo Membership Content Pro: paid memberships for WooCommerce</td></tr>
+				<tr><td>02</td><td><code>02-tiers-drip.png</code><br />Alt: Membership tiers that build on each other, with drip content</td></tr>
+				<tr><td>03</td><td><code>03-courses-forums-files-video.png</code><br />Alt: Members-only courses, forums, files and private video</td></tr>
+				<tr><td>04</td><td><code>04-my-content-perks-teams.png</code><br />Alt: My Content page with perks, plan changes and team seats</td></tr>
+			</table>
+		</div>
+	</div>
+
+	<div class="box">
+		<div class="box__head"><div><b>SEO (Yoast)</b><small>The Yoast box at the bottom of the product</small></div></div>
+		<div class="content">
+			<table>
+				<tr><td>SEO title</td><td>Rinnovo Membership Pro – WooCommerce Membership &amp; Paywall Plugin</td></tr>
+				<tr><td>Slug</td><td>rinnovo-membership-content-pro</td></tr>
+				<tr><td>Meta description</td><td>Sell memberships with WooCommerce: tiers, members-only content, drip, paywalls, courses, forums, protected files, private video, team seats and member discounts.</td></tr>
+				<tr><td>Focus keyphrase</td><td>woocommerce membership plugin</td></tr>
+			</table>
+		</div>
+	</div>
+
+</div>
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (button) {
+	button.addEventListener('click', function () {
+		var el = document.getElementById(button.dataset.copy);
+		var done = function () { button.textContent = 'Copied!'; button.classList.add('done'); setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 2000); };
+		var html = el.innerHTML.trim();
+		if (navigator.clipboard && window.ClipboardItem) {
+			navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) })]).then(done, fallback);
+		} else { fallback(); }
+		function fallback() {
+			var range = document.createRange(); range.selectNodeContents(el);
+			var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+			try { document.execCommand('copy'); done(); } catch (e) {}
+			sel.removeAllRanges();
+		}
+	});
+});
+</script>
+</body>
+</html>
