@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -40,6 +40,11 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `GET /download` – the zip, for sites allowed to update
 
 == Changelog ==
+
+= 1.1.2 =
+* Invoices: payment details come from the order (payment method, date, transaction ID, and for subscriptions the billing period, automatic renewal and next payment date); the manual "Payment information" field is gone.
+* Invoices: a Preview button for each template on WooCommerce > Invoices shows a sample PDF with the values on the page, before saving.
+* Checkout: the legal details fields say "(for a tax invoice)" instead of "(optional)".
 
 = 1.1.1 =
 * Fix: My Account > Invoices showed "Page not found" after updating until permalinks were saved.

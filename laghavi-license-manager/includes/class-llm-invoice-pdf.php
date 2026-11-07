@@ -503,9 +503,11 @@ class LLM_Invoice_PDF {
 			$pdf->font( 'Helvetica', 9.5 );
 			$y = $pdf->paragraph( self::M, $y + 24, self::CW, $d['seller']['payment'], 13.5 ) + 10;
 		}
-		$pdf->fill( '#1d1f23' );
-		$pdf->font( 'Helvetica', 8.5 );
-		$pdf->paragraph( self::M, $y + 6, self::CW, $d['paid_text'] . ( '' !== trim( $d['seller']['footer'] ) ? ' · ' . $d['seller']['footer'] : '' ), 12 );
+		if ( '' !== trim( $d['seller']['footer'] ) ) {
+			$pdf->fill( '#1d1f23' );
+			$pdf->font( 'Helvetica', 8.5 );
+			$pdf->paragraph( self::M, $y + 6, self::CW, $d['seller']['footer'], 12 );
+		}
 	}
 
 	/*
@@ -571,7 +573,7 @@ class LLM_Invoice_PDF {
 		$half = ( self::CW - 30 ) / 2;
 		$tx  = self::M + $half + 30;
 		$yl  = $this->note( self::M, $y, $half, __( 'Payment instructions', 'laghavi-license-manager' ), $d['seller']['payment'] );
-		$this->note( self::M, $yl + 6, $half, __( 'Notes', 'laghavi-license-manager' ), $d['paid_text'] . ( '' !== trim( $d['seller']['footer'] ) ? "\n" . $d['seller']['footer'] : '' ) );
+		$this->note( self::M, $yl + 6, $half, __( 'Notes', 'laghavi-license-manager' ), $d['seller']['footer'] );
 
 		$rows   = $d['totals'];
 		$rows[] = array( __( 'Total', 'laghavi-license-manager' ), $d['total'], true );

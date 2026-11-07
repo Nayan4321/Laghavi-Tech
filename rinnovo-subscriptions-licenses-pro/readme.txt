@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 
 Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices, subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
@@ -17,6 +17,8 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * An invoice for every paid order, subscription renewals included, with numbers that follow on without gaps (for example INV-00001, prefix and start number of your choice).
 * Three templates: Classic, Bold (with a "Paid" stamp) and Modern, in your colour, with your logo.
 * Your legal company name, legal address and tax registration number (TRN, VAT No.…). With a number the title reads "Tax Invoice".
+* Payment details from the order: payment method, date, transaction ID, and for subscriptions the billing period, automatic renewal and next payment date.
+* Preview each template as a PDF before saving.
 * Customers add their own legal company name, address and TRN in My Account > Account details or at checkout (classic and block checkout). Choose optional, required, or off (billing details are used).
 * My Account > Invoices lists every invoice with View and Download PDF; order emails link to the invoice; an Invoice button on My Account > Orders.
 * An Invoice box on each order: view, create, or refresh the details after the customer adds them. Each invoice keeps the details it was issued with.
@@ -56,6 +58,11 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
 == Changelog ==
+
+= 1.1.2 =
+* Invoices: payment details come from the order (payment method, date, transaction ID, and for subscriptions the billing period, automatic renewal and next payment date); the manual "Payment information" field is gone.
+* Invoices: a Preview button for each template on WooCommerce > Invoices shows a sample PDF with the values on the page, before saving.
+* Checkout: the legal details fields say "(for a tax invoice)" instead of "(optional)".
 
 = 1.1.1 =
 * Fix: My Account > Invoices showed "Page not found" after updating until permalinks were saved.

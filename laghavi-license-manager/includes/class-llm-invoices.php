@@ -22,11 +22,19 @@ class LLM_Invoices {
 	const USERMETA = 'llm_legal_';
 
 	/**
+	 * Unsaved settings used while showing a preview.
+	 *
+	 * @var array|null
+	 */
+	private static $preview = null;
+
+	/**
 	 * Hook everything up.
 	 */
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 70 );
 		add_action( 'admin_post_' . self::PAGE, array( __CLASS__, 'save_settings' ) );
+		add_action( 'admin_post_' . self::PAGE . '_preview', array( __CLASS__, 'preview' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
 
 		if ( ! self::get( 'enabled' ) ) {
@@ -53,6 +61,7 @@ class LLM_Invoices {
 			add_action( 'woocommerce_save_account_details_errors', array( __CLASS__, 'validate_account_fields' ), 10, 2 );
 			add_action( 'woocommerce_save_account_details', array( __CLASS__, 'save_account_fields' ) );
 			add_filter( 'woocommerce_checkout_fields', array( __CLASS__, 'checkout_fields' ) );
+			add_filter( 'woocommerce_form_field', array( __CLASS__, 'tax_invoice_hint' ), 10, 3 );
 			add_action( 'woocommerce_checkout_create_order', array( __CLASS__, 'save_checkout_fields' ), 10, 2 );
 			add_action( 'woocommerce_init', array( __CLASS__, 'register_block_fields' ) );
 			add_action( 'show_user_profile', array( __CLASS__, 'profile_fields' ) );
@@ -93,7 +102,6 @@ class LLM_Invoices {
 			'website'        => '',
 			'prefix'         => 'INV-',
 			'digits'         => 5,
-			'payment_info'   => '',
 			'footer'         => __( 'Thank you for your business!', self::TD ), // phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralDomain -- Same domain as the rest of the plugin.
 			'customer_mode'  => 'optional',
 			'free_orders'    => 0,
@@ -110,7 +118,7 @@ class LLM_Invoices {
 	 */
 	public static function get( $key ) {
 		// WordPress caches the option itself; reading it each time keeps changes made in this request.
-		$saved    = get_option( self::OPTION, array() );
+		$saved    = null !== self::$preview ? self::$preview : get_option( self::OPTION, array() );
 		$settings = wp_parse_args( is_array( $saved ) ? $saved : array(), self::defaults() );
 		return isset( $settings[ $key ] ) ? $settings[ $key ] : null;
 	}
@@ -147,14 +155,12 @@ class LLM_Invoices {
 	}
 
 	/**
-	 * Save the settings.
+	 * Clean submitted settings.
+	 *
+	 * @param array $in Submitted values.
+	 * @return array
 	 */
-	public static function save_settings() {
-		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'laghavi-license-manager' ) );
-		}
-		check_admin_referer( self::PAGE );
-		$in    = isset( $_POST['inv'] ) && is_array( $_POST['inv'] ) ? wp_unslash( $_POST['inv'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value is cleaned below.
+	private static function clean( $in ) {
 		$text  = static function ( $key ) use ( $in ) {
 			return isset( $in[ $key ] ) ? sanitize_text_field( $in[ $key ] ) : '';
 		};
@@ -176,14 +182,34 @@ class LLM_Invoices {
 			'website'       => $text( 'website' ),
 			'prefix'        => substr( preg_replace( '/[^A-Za-z0-9\-\/_#]/', '', $text( 'prefix' ) ), 0, 20 ),
 			'digits'        => isset( $in['digits'] ) ? min( 10, max( 1, absint( $in['digits'] ) ) ) : 5,
-			'payment_info'  => $area( 'payment_info' ),
 			'footer'        => $area( 'footer' ),
 			'customer_mode' => isset( $in['customer_mode'] ) && in_array( $in['customer_mode'], array( 'optional', 'required', 'off' ), true ) ? $in['customer_mode'] : 'optional',
 			'free_orders'   => empty( $in['free_orders'] ) ? 0 : 1,
 			'email_link'    => empty( $in['email_link'] ) ? 0 : 1,
 			'email_pdf'     => empty( $in['email_pdf'] ) ? 0 : 1,
 		);
-		update_option( self::OPTION, $clean, false );
+		return $clean;
+	}
+
+	/**
+	 * Submitted settings form values.
+	 *
+	 * @return array
+	 */
+	private static function posted() {
+		return isset( $_POST['inv'] ) && is_array( $_POST['inv'] ) ? wp_unslash( $_POST['inv'] ) : array(); // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- The callers check the nonce; values are cleaned in clean().
+	}
+
+	/**
+	 * Save the settings.
+	 */
+	public static function save_settings() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'laghavi-license-manager' ) );
+		}
+		check_admin_referer( self::PAGE );
+		$in = self::posted();
+		update_option( self::OPTION, self::clean( $in ), false );
 
 		// The next number can be moved up, never down, so numbers are never used twice.
 		$next = isset( $in['next'] ) ? absint( $in['next'] ) : 0;
@@ -231,6 +257,8 @@ class LLM_Invoices {
 			<?php endif; ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="<?php echo esc_attr( self::PAGE ); ?>" />
+				<?php // Pressing Enter uses the first button of a form: keep that one "Save", not a Preview button. ?>
+				<button type="submit" name="action" value="<?php echo esc_attr( self::PAGE ); ?>" tabindex="-1" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></button>
 				<?php wp_nonce_field( self::PAGE ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
@@ -246,11 +274,15 @@ class LLM_Invoices {
 						<th scope="row"><?php esc_html_e( 'Template', 'laghavi-license-manager' ); ?></th>
 						<td>
 							<?php foreach ( self::templates() as $key => $tpl ) : ?>
-								<label style="display:block;margin-bottom:6px"><input type="radio" name="<?php echo esc_attr( $n( 'template' ) ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $s['template'], $key ); ?> /> <?php echo esc_html( $tpl[0] ); ?></label>
+								<p style="margin:0 0 8px">
+									<label><input type="radio" name="<?php echo esc_attr( $n( 'template' ) ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $s['template'], $key ); ?> /> <?php echo esc_html( $tpl[0] ); ?></label>
+									<button type="submit" class="button button-small" name="action" value="<?php echo esc_attr( self::PAGE . '_preview' ); ?>" formaction="<?php echo esc_url( admin_url( 'admin-post.php?preview_template=' . $key ) ); ?>" formtarget="_blank" style="margin-left:8px"><?php esc_html_e( 'Preview', 'laghavi-license-manager' ); ?></button>
+								</p>
 							<?php endforeach; ?>
 							<p><label><?php esc_html_e( 'Colour', 'laghavi-license-manager' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'color' ) ); ?>" value="<?php echo esc_attr( $s['color'] ); ?>" placeholder="#111111" class="small-text" style="width:90px" /></label> <span class="description"><?php esc_html_e( 'Leave empty for the template\'s own colour.', 'laghavi-license-manager' ); ?></span></p>
+							<p class="description"><?php esc_html_e( 'Preview opens a sample invoice (PDF) with what is filled in on this page, also before you save.', 'laghavi-license-manager' ); ?></p>
 							<?php if ( $sample ) : ?>
-								<p><a class="button" target="_blank" href="<?php echo esc_url( self::admin_url( $sample ) ); ?>"><?php esc_html_e( 'Preview with your latest invoice', 'laghavi-license-manager' ); ?></a> <span class="description"><?php esc_html_e( 'Save first to see your changes.', 'laghavi-license-manager' ); ?></span></p>
+								<p><a href="<?php echo esc_url( self::admin_url( $sample, true ) ); ?>"><?php esc_html_e( 'Download your latest real invoice (saved settings)', 'laghavi-license-manager' ); ?></a></p>
 							<?php endif; ?>
 						</td>
 					</tr>
@@ -279,7 +311,6 @@ class LLM_Invoices {
 					<tr><th scope="row"><label for="inv-email"><?php esc_html_e( 'Email', 'laghavi-license-manager' ); ?></label></th><td><input type="email" id="inv-email" name="<?php echo esc_attr( $n( 'email' ) ); ?>" value="<?php echo esc_attr( $s['email'] ); ?>" class="regular-text" /></td></tr>
 					<tr><th scope="row"><label for="inv-phone"><?php esc_html_e( 'Phone', 'laghavi-license-manager' ); ?></label></th><td><input type="text" id="inv-phone" name="<?php echo esc_attr( $n( 'phone' ) ); ?>" value="<?php echo esc_attr( $s['phone'] ); ?>" class="regular-text" /></td></tr>
 					<tr><th scope="row"><label for="inv-website"><?php esc_html_e( 'Website', 'laghavi-license-manager' ); ?></label></th><td><input type="text" id="inv-website" name="<?php echo esc_attr( $n( 'website' ) ); ?>" value="<?php echo esc_attr( $s['website'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>" /></td></tr>
-					<tr><th scope="row"><label for="inv-payment"><?php esc_html_e( 'Payment information', 'laghavi-license-manager' ); ?></label></th><td><textarea id="inv-payment" name="<?php echo esc_attr( $n( 'payment_info' ) ); ?>" rows="4" class="regular-text" placeholder="<?php esc_attr_e( 'Bank name, account name, IBAN…', 'laghavi-license-manager' ); ?>"><?php echo esc_textarea( $s['payment_info'] ); ?></textarea></td></tr>
 					<tr><th scope="row"><label for="inv-footer"><?php esc_html_e( 'Note at the bottom', 'laghavi-license-manager' ); ?></label></th><td><textarea id="inv-footer" name="<?php echo esc_attr( $n( 'footer' ) ); ?>" rows="2" class="regular-text"><?php echo esc_textarea( $s['footer'] ); ?></textarea></td></tr>
 				</table>
 
@@ -339,6 +370,113 @@ class LLM_Invoices {
 		}() );
 		</script>
 		<?php
+	}
+
+	/**
+	 * Sample invoice as PDF, with the values on the settings form (not saved).
+	 */
+	public static function preview() {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'laghavi-license-manager' ) );
+		}
+		check_admin_referer( self::PAGE );
+		$settings = self::clean( self::posted() );
+		$template = isset( $_GET['preview_template'] ) ? sanitize_key( wp_unslash( $_GET['preview_template'] ) ) : $settings['template'];
+		if ( array_key_exists( $template, self::templates() ) ) {
+			$settings['template'] = $template;
+		}
+		self::$preview = $settings;
+
+		$tpls  = self::templates();
+		$color = '' !== $settings['color'] ? $settings['color'] : $tpls[ $settings['template'] ][1];
+		$bytes = LLM_Invoice_PDF::build( self::sample_data(), $settings['template'], $color );
+		nocache_headers();
+		header( 'Content-Type: application/pdf' );
+		header( 'Content-Disposition: inline; filename="invoice-preview-' . $settings['template'] . '.pdf"' );
+		header( 'Content-Length: ' . strlen( $bytes ) );
+		echo $bytes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary PDF.
+		exit;
+	}
+
+	/**
+	 * A sample subscription invoice for the preview.
+	 *
+	 * @return array View data in the same shape as view_data().
+	 */
+	private static function sample_data() {
+		$order = new WC_Order();
+		$order->set_id( 1024 );
+		$order->set_currency( get_woocommerce_currency() );
+		$order->set_payment_method_title( __( 'Credit card', 'laghavi-license-manager' ) );
+		$money  = static function ( $amount ) use ( $order ) {
+			return self::money( $amount, $order, true );
+		};
+		$seller = self::seller();
+		$tax    = '' !== $seller['trn'] ? 0.05 : 0;
+		$items  = array(
+			array( __( 'Business plan – yearly subscription', 'laghavi-license-manager' ), __( 'Plan: 5 sites · License key included', 'laghavi-license-manager' ), 1, 199 ),
+			array( __( 'Priority support add-on', 'laghavi-license-manager' ), '', 1, 49 ),
+		);
+		$lines  = array();
+		$sub    = 0;
+		foreach ( $items as $it ) {
+			$sub    += $it[2] * $it[3];
+			$lines[] = array(
+				'name'  => $it[0],
+				'meta'  => $it[1],
+				'qty'   => $it[2],
+				'unit'  => $money( $it[3] ),
+				'tax'   => $money( $it[2] * $it[3] * $tax ),
+				'total' => $money( $it[2] * $it[3] ),
+			);
+		}
+		$totals = array( array( __( 'Subtotal', 'laghavi-license-manager' ), $money( $sub ) ) );
+		if ( $tax ) {
+			$totals[] = array( __( 'VAT 5%', 'laghavi-license-manager' ), $money( $sub * $tax ) );
+		}
+		$date              = get_option( 'date_format' );
+		$seller['payment'] = implode(
+			"\n",
+			array(
+				/* translators: %s: payment method. */
+				sprintf( __( 'Payment method: %s', 'laghavi-license-manager' ), __( 'Credit card', 'laghavi-license-manager' ) ),
+				/* translators: %s: date. */
+				sprintf( __( 'Paid on: %s', 'laghavi-license-manager' ), date_i18n( $date ) ),
+				__( 'Type: new subscription', 'laghavi-license-manager' ),
+				/* translators: 1: e.g. "every month", 2: how it renews. */
+				sprintf( __( 'Billing: recurring, %1$s – %2$s', 'laghavi-license-manager' ), self::every( 'year', 1 ), __( 'renews automatically', 'laghavi-license-manager' ) ),
+				/* translators: %s: date. */
+				sprintf( __( 'Next payment: %s', 'laghavi-license-manager' ), date_i18n( $date, strtotime( '+1 year' ) ) ),
+			)
+		);
+		$total = $sub * ( 1 + $tax );
+		return array(
+			'order'     => $order,
+			'invoice'   => array(
+				'number' => self::format_number( self::peek_next() ),
+				'date'   => time(),
+			),
+			'seller'    => $seller,
+			'buyer'     => array(
+				'name'    => __( 'Sample Customer LLC', 'laghavi-license-manager' ),
+				'contact' => __( 'Alex Morgan', 'laghavi-license-manager' ),
+				'address' => __( "Office 1204, Bay Square 5\nBusiness Bay, Dubai, UAE", 'laghavi-license-manager' ),
+				'trn'     => $tax ? '100000000000003' : '',
+				'email'   => 'billing@example.com',
+				'phone'   => '+971 50 123 4567',
+			),
+			'title'     => '' !== $seller['trn'] ? __( 'Tax Invoice', 'laghavi-license-manager' ) : __( 'Invoice', 'laghavi-license-manager' ),
+			'date'      => date_i18n( $date ),
+			'lines'     => $lines,
+			'totals'    => $totals,
+			'total'     => $money( $total ),
+			'paid'      => true,
+			/* translators: 1: date, 2: payment method. */
+			'paid_text' => sprintf( __( 'Paid on %1$s by %2$s', 'laghavi-license-manager' ), date_i18n( $date ), __( 'Credit card', 'laghavi-license-manager' ) ),
+			'due'       => $money( 0 ),
+			'has_tax'   => (bool) $tax,
+			'currency'  => get_woocommerce_currency(),
+		);
 	}
 
 	/*
@@ -465,7 +603,7 @@ class LLM_Invoices {
 			'phone'     => (string) self::get( 'phone' ),
 			'website'   => '' !== (string) self::get( 'website' ) ? self::get( 'website' ) : wp_parse_url( home_url(), PHP_URL_HOST ),
 			'logo'      => $logo,
-			'payment'   => (string) self::get( 'payment_info' ),
+			'payment'   => '',
 			'footer'    => (string) self::get( 'footer' ),
 		);
 	}
@@ -537,6 +675,94 @@ class LLM_Invoices {
 	}
 
 	/**
+	 * The subscription an order belongs to (Rinnovo or Laghavi Subscriptions), or null.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return array|null array( subscription row, renewal ).
+	 */
+	private static function subscription( $order ) {
+		foreach ( array( 'RINNOVO_Subscriptions' => '_rinnovo_', 'LSUB_Subscriptions' => '_lsub_' ) as $class => $prefix ) {
+			if ( ! class_exists( $class ) ) {
+				continue;
+			}
+			$id  = (int) $order->get_meta( $prefix . 'subscription_id' );
+			$sub = $id ? call_user_func( array( $class, 'get' ), $id ) : null;
+			if ( ! $sub && is_callable( array( $class, 'for_order' ) ) ) {
+				$subs = call_user_func( array( $class, 'for_order' ), $order->get_id() );
+				$sub  = $subs ? $subs[0] : null;
+			}
+			if ( $sub ) {
+				return array( $sub, (bool) $order->get_meta( $prefix . 'renewal' ) );
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * "Every month", "every 3 months", "every year"…
+	 *
+	 * @param string $period   day, week, month or year.
+	 * @param int    $interval Interval.
+	 * @return string
+	 */
+	private static function every( $period, $interval ) {
+		$interval = max( 1, (int) $interval );
+		$names    = array(
+			/* translators: %d: number of days. */
+			'day'   => _n( 'every day', 'every %d days', $interval, 'laghavi-license-manager' ),
+			/* translators: %d: number of weeks. */
+			'week'  => _n( 'every week', 'every %d weeks', $interval, 'laghavi-license-manager' ),
+			/* translators: %d: number of months. */
+			'month' => _n( 'every month', 'every %d months', $interval, 'laghavi-license-manager' ),
+			/* translators: %d: number of years. */
+			'year'  => _n( 'every year', 'every %d years', $interval, 'laghavi-license-manager' ),
+		);
+		return sprintf( isset( $names[ $period ] ) ? $names[ $period ] : $names['month'], $interval );
+	}
+
+	/**
+	 * Payment details, from the order and its subscription.
+	 *
+	 * @param WC_Order $order Order.
+	 * @param bool     $paid  Whether it is paid.
+	 * @return string One item per line.
+	 */
+	private static function payment_text( $order, $paid ) {
+		$date  = get_option( 'date_format' );
+		$lines = array();
+		/* translators: %s: payment method, e.g. Credit card (Stripe). */
+		$lines[] = sprintf( __( 'Payment method: %s', 'laghavi-license-manager' ), $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Online payment', 'laghavi-license-manager' ) );
+		if ( $paid ) {
+			$when = $order->get_date_paid() ? $order->get_date_paid() : $order->get_date_created();
+			/* translators: %s: date. */
+			$lines[] = sprintf( __( 'Paid on: %s', 'laghavi-license-manager' ), $when ? date_i18n( $date, $when->getTimestamp() ) : '' );
+		} else {
+			$lines[] = __( 'Status: not paid yet', 'laghavi-license-manager' );
+		}
+		if ( '' !== (string) $order->get_transaction_id() ) {
+			/* translators: %s: transaction ID from the payment provider. */
+			$lines[] = sprintf( __( 'Transaction ID: %s', 'laghavi-license-manager' ), $order->get_transaction_id() );
+		}
+		$found = self::subscription( $order );
+		if ( $found ) {
+			list( $sub, $renewal ) = $found;
+			$automatic             = '' !== (string) $sub->gateway_subscription_id || '' !== (string) $sub->gateway_customer_id;
+			$lines[]               = $renewal ? __( 'Type: subscription renewal', 'laghavi-license-manager' ) : __( 'Type: new subscription', 'laghavi-license-manager' );
+			$lines[]               = sprintf(
+				/* translators: 1: e.g. "every month", 2: how it renews. */
+				__( 'Billing: recurring, %1$s – %2$s', 'laghavi-license-manager' ),
+				self::every( (string) $sub->period, (int) $sub->interval_count ),
+				$automatic ? __( 'renews automatically', 'laghavi-license-manager' ) : __( 'renewal invoice sent by email', 'laghavi-license-manager' )
+			);
+			if ( 'active' === $sub->status && ! empty( $sub->next_payment ) ) {
+				/* translators: %s: date. */
+				$lines[] = sprintf( __( 'Next payment: %s', 'laghavi-license-manager' ), date_i18n( $date, strtotime( $sub->next_payment . ' UTC' ) ) );
+			}
+		}
+		return implode( "\n", $lines );
+	}
+
+	/**
 	 * Everything a template needs.
 	 *
 	 * @param WC_Order $order Order.
@@ -580,6 +806,8 @@ class LLM_Invoices {
 			$totals[] = array( $tax->label, self::money( (float) $tax->amount, $order, $pdf ) );
 		}
 		$paid      = $order->is_paid() || in_array( $order->get_status(), array( 'processing', 'completed' ), true );
+		// Payment details always come from the order, never from typed-in text.
+		$invoice['seller']['payment'] = self::payment_text( $order, $paid );
 		$paid_date = $order->get_date_paid() ? $order->get_date_paid() : $order->get_date_created();
 		return array(
 			'order'      => $order,
@@ -928,7 +1156,9 @@ td,th{padding:10px 8px;vertical-align:top}
 				<div class="label sect"><?php esc_html_e( 'Payment information', 'laghavi-license-manager' ); ?></div>
 				<p><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?></p>
 			<?php endif; ?>
-			<p class="small"><?php echo esc_html( $d['paid_text'] ); ?><?php echo '' !== trim( $s['footer'] ) ? ' · ' . esc_html( $s['footer'] ) : ''; ?></p>
+			<?php if ( '' !== trim( $s['footer'] ) ) : ?>
+				<p class="small"><?php echo esc_html( $s['footer'] ); ?></p>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -966,8 +1196,10 @@ td,th{padding:10px 8px;vertical-align:top}
 					<div class="label"><?php esc_html_e( 'Payment instructions', 'laghavi-license-manager' ); ?></div>
 					<p><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?></p>
 				<?php endif; ?>
-				<div class="label"><?php esc_html_e( 'Notes', 'laghavi-license-manager' ); ?></div>
-				<p><?php echo esc_html( $d['paid_text'] ); ?><?php echo '' !== trim( $s['footer'] ) ? '<br />' . esc_html( $s['footer'] ) : ''; ?></p>
+				<?php if ( '' !== trim( $s['footer'] ) ) : ?>
+					<div class="label"><?php esc_html_e( 'Notes', 'laghavi-license-manager' ); ?></div>
+					<p><?php echo esc_html( $s['footer'] ); ?></p>
+				<?php endif; ?>
 			</div>
 			<table class="totals">
 				<?php foreach ( $d['totals'] as $row ) : ?>
@@ -1302,6 +1534,21 @@ td,th{padding:10px 8px;vertical-align:top}
 	}
 
 	/**
+	 * Classic checkout: "(for a tax invoice)" instead of WooCommerce's "(optional)" on these fields.
+	 *
+	 * @param string $field Field HTML.
+	 * @param string $key   Field key.
+	 * @param array  $args  Field settings.
+	 * @return string
+	 */
+	public static function tax_invoice_hint( $field, $key, $args ) {
+		if ( 0 !== strpos( (string) $key, 'llm_legal_' ) || ! empty( $args['required'] ) ) {
+			return $field;
+		}
+		return preg_replace( '#<span class="optional">.*?</span>#', '<span class="optional">' . esc_html__( '(for a tax invoice)', 'laghavi-license-manager' ) . '</span>', $field, 1 );
+	}
+
+	/**
 	 * Keep checkout values on the order and on the customer's account.
 	 *
 	 * @param WC_Order $order Order.
@@ -1333,8 +1580,10 @@ td,th{padding:10px 8px;vertical-align:top}
 					'id'       => 'laghavi/legal-' . $key,
 					'label'    => $label,
 					'location' => 'contact',
-					'type'     => 'text',
-					'required' => self::required( $key ),
+					'type'          => 'text',
+					'required'      => self::required( $key ),
+					/* translators: %s: field name. */
+					'optionalLabel' => sprintf( __( '%s (for a tax invoice)', 'laghavi-license-manager' ), $label ),
 				)
 			);
 		}
