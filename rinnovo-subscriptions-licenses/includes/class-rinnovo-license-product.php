@@ -1,7 +1,8 @@
 <?php
 /**
  * "License" tab on WooCommerce products: what the product licenses, for how many sites and how long,
- * and the plugin zip delivered as updates.
+ * and the plugin zip delivered as updates. On variable products each variation can be its own plan
+ * (1 site, 5 sites, unlimited) with its own number of sites.
  *
  * @package RinnovoSubscriptions
  */
@@ -20,6 +21,8 @@ class RINNOVO_License_Product {
 		add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
 		add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
 		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save' ) );
+		add_action( 'woocommerce_product_after_variable_attributes', array( __CLASS__, 'variation_fields' ), 20, 3 );
+		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation' ), 10, 2 );
 		add_action( 'post_edit_form_tag', array( __CLASS__, 'form_enctype' ) );
 		add_filter( 'woocommerce_is_sold_individually', array( __CLASS__, 'sold_individually' ), 20, 2 );
 	}
@@ -46,7 +49,17 @@ class RINNOVO_License_Product {
 	 * @return array
 	 */
 	public static function settings( $product_id ) {
-		$id       = (int) $product_id;
+		$id = (int) $product_id;
+		// A variation sells its product's license, with its own number of sites when set.
+		$parent = 'product_variation' === get_post_type( $id ) ? wp_get_post_parent_id( $id ) : 0;
+		if ( $parent ) {
+			$settings = self::settings( $parent );
+			if ( '' !== (string) get_post_meta( $id, '_rinnovo_license_sites', true ) ) {
+				$settings['sites'] = (int) get_post_meta( $id, '_rinnovo_license_sites', true );
+			}
+			/** This filter is documented below. */
+			return (array) apply_filters( 'rinnovo_license_settings', $settings, $product_id );
+		}
 		$settings = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_rinnovo_license_enabled', true ),
@@ -70,7 +83,7 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * Clean a plugin slug the way WordPress names plugin folders: "Sarala Login Page Pro" -> "sarala-login-page-pro".
+	 * Clean a plugin slug the way WordPress names plugin folders: "My Plugin" -> "my-plugin".
 	 *
 	 * @param string $slug Slug as typed.
 	 * @return string
@@ -81,7 +94,7 @@ class RINNOVO_License_Product {
 
 	/**
 	 * Whether two slugs name the same plugin, ignoring case, spaces and dashes
-	 * (so "saralaloginpagepro" saved by older versions still matches "sarala-login-page-pro").
+	 * (so "myplugin" saved by older versions still matches "my-plugin").
 	 *
 	 * @param string $a Slug.
 	 * @param string $b Slug.
@@ -114,7 +127,7 @@ class RINNOVO_License_Product {
 		$tabs['rinnovo_license_license'] = array(
 			'label'    => __( 'License', 'rinnovo-subscriptions-licenses' ),
 			'target'   => 'rinnovo_license_license_data',
-			'class'    => array( 'show_if_simple' ),
+			'class'    => array( 'show_if_simple', 'show_if_variable' ),
 			'priority' => 75,
 		);
 		return $tabs;
@@ -142,9 +155,9 @@ class RINNOVO_License_Product {
 					array(
 						'id'          => '_rinnovo_license_slug',
 						'label'       => __( 'Plugin slug', 'rinnovo-subscriptions-licenses' ),
-						'description' => __( 'The plugin\'s folder name, e.g. sarala-login-page-pro. Keys only activate in the plugin with this name.', 'rinnovo-subscriptions-licenses' ),
+						'description' => __( 'The plugin\'s folder name, e.g. my-plugin. Keys only activate in the plugin with this name.', 'rinnovo-subscriptions-licenses' ),
 						'desc_tip'    => true,
-						'placeholder' => 'sarala-login-page-pro',
+						'placeholder' => 'my-plugin',
 						'value'       => $s['slug'],
 					)
 				);
@@ -283,6 +296,49 @@ class RINNOVO_License_Product {
 					update_post_meta( $product_id, '_rinnovo_license_file', basename( $result['file'] ) );
 				}
 			}
+		}
+	}
+
+	/**
+	 * "Sites per key" on each variation.
+	 *
+	 * @param int     $loop           Variation index.
+	 * @param array   $variation_data Variation data.
+	 * @param WP_Post $variation      Variation post.
+	 */
+	public static function variation_fields( $loop, $variation_data, $variation ) {
+		woocommerce_wp_text_input(
+			array(
+				'id'                => '_rinnovo_license_var_sites_' . $loop,
+				'name'              => '_rinnovo_license_var_sites[' . $loop . ']',
+				'label'             => __( 'License: sites per key', 'rinnovo-subscriptions-licenses' ),
+				'description'       => __( '0 = unlimited. Leave empty to use the License tab\'s number.', 'rinnovo-subscriptions-licenses' ),
+				'desc_tip'          => true,
+				'type'              => 'number',
+				'custom_attributes' => array( 'min' => 0 ),
+				'value'             => (string) get_post_meta( $variation->ID, '_rinnovo_license_sites', true ),
+				'wrapper_class'     => 'form-row form-row-full',
+			)
+		);
+	}
+
+	/**
+	 * Save a variation's number of sites.
+	 *
+	 * @param int $variation_id Variation ID.
+	 * @param int $i            Variation index.
+	 */
+	public static function save_variation( $variation_id, $i ) {
+		$ajax = isset( $_POST['security'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['security'] ) ), 'save-variations' );
+		$form = isset( $_POST['woocommerce_meta_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' );
+		if ( ( ! $ajax && ! $form ) || ! current_user_can( 'edit_product', $variation_id ) ) {
+			return;
+		}
+		$value = isset( $_POST['_rinnovo_license_var_sites'][ $i ] ) ? trim( sanitize_text_field( wp_unslash( $_POST['_rinnovo_license_var_sites'][ $i ] ) ) ) : '';
+		if ( '' === $value ) {
+			delete_post_meta( $variation_id, '_rinnovo_license_sites' );
+		} else {
+			update_post_meta( $variation_id, '_rinnovo_license_sites', absint( $value ) );
 		}
 	}
 }

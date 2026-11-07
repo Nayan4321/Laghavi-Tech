@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Subscriptions & Licenses Pro
  * Plugin URI:           https://laghavi.site/rinnovo-subscriptions-licenses/
  * Description:          Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices for every payment, license keys for variable products (1 site, 5 sites, unlimited at different prices), "Ask for price" products with contact page and WhatsApp buttons, and a currency switcher with exchange rates and per-country currencies.
- * Version:              1.1.2
+ * Version:              1.1.3
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOPRO_VERSION', '1.1.2' );
+define( 'RINNOVOPRO_VERSION', '1.1.3' );
 define( 'RINNOVOPRO_FILE', __FILE__ );
 define( 'RINNOVOPRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOPRO_URL', plugin_dir_url( __FILE__ ) );
@@ -61,8 +61,11 @@ add_action(
 		}
 
 		RINNOVOPRO_Settings::init();
-		RINNOVOPRO_License_Variations::init();
-		RINNOVOPRO_Variation_Subscriptions::init();
+		// Rinnovo Subscriptions & Licenses 1.0.0 and later handles variations itself.
+		if ( ! method_exists( 'RINNOVO_Product', 'variation_fields' ) ) {
+			RINNOVOPRO_License_Variations::init();
+			RINNOVOPRO_Variation_Subscriptions::init();
+		}
 		RINNOVO_Currency::init();
 		RINNOVO_Ask_Price::init();
 		RINNOVOPRO_Invoices::init();

@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 
 Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices, subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
@@ -58,6 +58,9 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. B
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
 == Changelog ==
+
+= 1.1.3 =
+* Subscriptions and licenses on variations now come from the free plugin; Pro no longer adds a second copy of these fields.
 
 = 1.1.2 =
 * Invoices: payment details come from the order (payment method, date, transaction ID, and for subscriptions the billing period, automatic renewal and next payment date); the manual "Payment information" field is gone.

@@ -16,7 +16,8 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 
 = Subscription products =
 
-* Tick "Subscription" on any simple product.
+* Tick "Subscription" on a simple product, or on each variation of a variable product.
+* Variable products: every variation is its own plan, for example Monthly and Yearly, each with its own price, period, trial, sign-up fee and number of payments. Customers pick their plan on one product page.
 * Bill every N days, weeks, months or years, with an optional sign-up fee, free trial and number of payments (or until cancelled).
 * Prices show as "$99.00 / month · 7-day free trial · $20.00 sign-up fee". The button says "Subscribe".
 * One subscription per order; other products can be bought together with it.
@@ -52,6 +53,7 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 * Tick "Sell a license" in a product's License tab: every paid order gets a license key, shown on the thank-you page, in the order email and in My Account > Licenses.
 * Upload your plugin's zip on the product. Customers download it from My Account, and licensed sites get automatic updates under Dashboard > Updates.
 * Set how many sites a key works on and how long it gets updates. Customers move a key between sites themselves.
+* Sell one plugin as several plans on a variable product (1 site, 5 sites, unlimited), each variation with its own price and number of sites. Combine with subscription variations for yearly or monthly plans.
 * Keys sold with a subscription follow it: renewals keep the same key, cancelling stops renewals, and the key keeps working until the paid period ends.
 * WooCommerce > Licenses: search, revoke or restore keys, add a year, change sites, or create a key by hand.
 * A small REST API for your plugin to activate, check and update (see "License API" below).
@@ -63,15 +65,11 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 * Each review shows when the reviewer bought the product, as month and year: "Purchased in March 2026".
 * Tick "Show downloads" on a product to show "1,234 downloads" under its price, counted from paid orders. `[rinnovo_downloads]` shows it anywhere.
 
-= Rinnovo Subscriptions & Licenses Pro =
-
-[Rinnovo Subscriptions & Licenses Pro](https://laghavi.site/rinnovo-subscriptions-licenses/) adds subscriptions and licenses on variable products (Monthly / Yearly, or 1 site / 5 sites / unlimited), "Ask for price" products with contact page and WhatsApp buttons, and a currency switcher with exchange rates and per-country currencies.
-
 == Installation ==
 
 1. Install and activate WooCommerce, then Rinnovo Subscriptions & Licenses. Go to Settings > Permalinks and click Save once.
 2. **Stripe:** in Stripe go to Developers > API keys and copy the secret key. In WooCommerce > Settings > Payments open "Stripe", tick Enable, paste the key and save. The webhook line turns green ("Connected"). Try test mode first with the card 4242 4242 4242 4242.
-3. **Products:** edit a product and tick "Subscription" in the General tab, then set the billing period.
+3. **Products:** edit a simple product and tick "Subscription" in the General tab, then set the billing period. On a variable product, open each variation and tick "Subscription" there.
 4. **Settings:** WooCommerce > Settings > Subscriptions for reminders, grace periods, checkout and reviews.
 5. **Selling software:** in the product's License tab, tick "Sell a license", enter your plugin's folder name as Plugin slug, upload the zip and set the version.
 

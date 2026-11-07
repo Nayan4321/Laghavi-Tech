@@ -1,7 +1,6 @@
 <?php
 /**
  * Plugin Name:          Rinnovo Subscriptions & Licenses
- * Plugin URI:           https://laghavi.site/rinnovo-subscriptions-licenses/
  * Description:          Subscription products for WooCommerce with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, buyer-only reviews, download counts, and license keys with downloads and automatic updates for the plugins and software you sell.
  * Version:              1.0.0
  * Requires at least:    6.2
@@ -113,7 +112,6 @@ require_once RINNOVO_DIR . 'includes/class-rinnovo-license-orders.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-api.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-account.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-admin.php';
-require_once RINNOVO_DIR . 'includes/class-rinnovo-pro-features.php';
 
 // HPOS (custom order tables) and block checkout are supported.
 add_action(
@@ -162,7 +160,6 @@ add_action(
 		RINNOVO_License_Orders::init();
 		RINNOVO_License_Account::init();
 		RINNOVO_License_Admin::init();
-		RINNOVO_Pro_Features::init();
 
 		add_action( 'woocommerce_blocks_payment_method_type_registration', array( 'RINNOVO_Gateway_Stripe', 'register_block_support' ) );
 

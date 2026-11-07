@@ -45,7 +45,7 @@ class RINNOVO_Settings {
 			'rinnovo_reviews_bought_date' => 'yes',
 		);
 		/**
-		 * Defaults for settings added by add-ons (Rinnovo Subscriptions & Licenses Pro).
+		 * Defaults for settings added by add-ons.
 		 *
 		 * @param array $defaults Defaults.
 		 */
@@ -209,7 +209,7 @@ class RINNOVO_Settings {
 			),
 		);
 		/**
-		 * Settings sections added by add-ons (Rinnovo Subscriptions & Licenses Pro).
+		 * Settings sections added by add-ons.
 		 *
 		 * @param array $fields WooCommerce settings fields.
 		 */
