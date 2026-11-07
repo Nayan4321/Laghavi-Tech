@@ -1,0 +1,16 @@
+/* Rinnovo Session Membership Pro */
+.rinnovose-schedule h3{margin:18px 0 6px}
+.rinnovose-schedule ul{list-style:none;margin:0;padding:0}
+.rinnovose-slot{display:grid;grid-template-columns:70px 1fr auto auto;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}
+.rinnovose-slot__time{font-weight:700}
+.rinnovose-slot__class small{display:block;opacity:.7}
+.rinnovose-slot__left{font-size:.85em;opacity:.8}
+.rinnovose-inline{display:inline-block;margin:4px 6px 4px 0}
+.rinnovose-section{margin:0 0 24px}
+.rinnovose-credits{font-size:1.05em}
+.rinnovose-booking{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;border-bottom:1px solid #eee;padding:8px 0}
+.rinnovose-alert{background:#fff7ed;border-left:4px solid #ea580c;padding:10px 12px}
+.rinnovose-ok{color:#15803d}
+.rinnovose-waiver{border:1px solid #e5e7eb;border-radius:10px;padding:12px 14px;margin:0 0 14px}
+.rinnovose-waiver__text{max-height:140px;overflow:auto;font-size:.9em;background:#f8fafc;padding:8px;border-radius:6px}
+@media (max-width:600px){.rinnovose-slot{grid-template-columns:60px 1fr}.rinnovose-slot form,.rinnovose-slot__left{grid-column:2}}
