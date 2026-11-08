@@ -173,7 +173,7 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 
 = 1.1.1 =
 * The "Powered by Laghavi Digital" link is on for new installs and links to the plugin page. Its setting is now under Login page URL.
-* Upgrade links open the plugin page, with the free and Pro comparison.
+* Upgrade links open the plugin page.
 
 = 1.1.0 =
 * New: sign up and log in with X (Twitter), using OAuth 2.0 with PKCE.
