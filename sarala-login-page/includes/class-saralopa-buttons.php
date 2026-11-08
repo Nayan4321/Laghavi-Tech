@@ -237,7 +237,7 @@ class SARALOPA_Buttons {
 			$html .= '<p class="saralopa-credit">' . sprintf(
 				/* translators: %s: link to Laghavi Digital. */
 				esc_html__( 'Powered by %s', 'sarala-login-page' ),
-				'<a href="https://laghavi.site/" target="_blank" rel="noopener">Laghavi Digital</a>'
+				'<a href="https://laghavi.site/sarala-login-page/" target="_blank" rel="noopener">Laghavi Digital</a>'
 			) . '</p>';
 		}
 

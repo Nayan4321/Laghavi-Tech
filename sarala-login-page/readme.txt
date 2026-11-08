@@ -4,7 +4,7 @@ Tags: social login, google login, limit login attempts, hide login, woocommerce 
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -140,9 +140,9 @@ Back to the page they came from when it is known (for example checkout), otherwi
 
 The four questions are 11 + 2, 7 + 9, 2 + 6 and 4 + 13; one is picked at random. You can turn the question off for login or registration in the settings.
 
-= Can I show a "Powered by Laghavi Digital" link? =
+= What is the "Powered by Laghavi Digital" link? =
 
-Yes, it is off by default. Tick "Show a small Powered by Laghavi Digital link" in the settings if you would like to support us.
+A small link under the login buttons to the plugin's page. It is on when you install the plugin. To hide it, untick "Show a small Powered by Laghavi Digital link under the buttons" in Sarala Login › Settings › Login page URL.
 
 == External services ==
 
@@ -171,6 +171,10 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 
 == Changelog ==
 
+= 1.1.1 =
+* The "Powered by Laghavi Digital" link is on for new installs and links to the plugin page. Its setting is now under Login page URL.
+* Upgrade links open the plugin page, with the free and Pro comparison.
+
 = 1.1.0 =
 * New: sign up and log in with X (Twitter), using OAuth 2.0 with PKCE.
 * New: limit login attempts. Lock out an IP address after too many failed logins, with an allow list, and see and unlock lockouts on the Failed logins screen. On by default (5 attempts in 15 minutes, 30-minute lockout).
@@ -187,6 +191,9 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 * First release: Google, Facebook, Apple, Microsoft and LinkedIn login and sign-up, WooCommerce My Account and checkout support, connected accounts, and a math question on login and registration forms.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+The "Powered by" setting moved to the Login page URL section.
 
 = 1.1.0 =
 Adds X (Twitter) login, limit login attempts (on by default) and optional password expiry.

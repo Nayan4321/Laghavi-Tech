@@ -15,7 +15,7 @@ defined( 'ABSPATH' ) || exit;
 class SARALOPA_Pro_Features {
 
 	const PAGE = 'sarala-login-page-pro-features';
-	const URL  = 'https://laghavi.site/product/sarala-login-page-pro/';
+	const URL  = 'https://laghavi.site/sarala-login-page/#compare';
 
 	/**
 	 * Hook everything up, unless Pro is active.

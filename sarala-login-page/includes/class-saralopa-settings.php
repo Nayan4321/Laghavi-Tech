@@ -31,54 +31,6 @@ class SARALOPA_Settings {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'update_option_' . self::OPTION, array( __CLASS__, 'flush_cache' ) );
 		add_action( 'update_option_' . self::OPTION, array( 'SARALOPA_Login_Url', 'notify_change' ), 10, 2 );
-		add_action( 'admin_notices', array( __CLASS__, 'credit_notice' ) );
-		add_action( 'admin_post_saralopa_credit', array( __CLASS__, 'credit_answer' ) );
-	}
-
-	/**
-	 * Ask once whether the site owner wants to show the "Powered by Laghavi Digital" link.
-	 * WordPress.org only allows front-end credit links the owner has agreed to.
-	 */
-	public static function credit_notice() {
-		if ( ! current_user_can( 'manage_options' ) || get_option( 'saralopa_credit_asked' ) || self::get( 'show_credit' ) ) {
-			return;
-		}
-		$screen = get_current_screen();
-		if ( ! $screen || 'toplevel_page_' . self::PAGE !== $screen->id ) {
-			return;
-		}
-		$url = wp_nonce_url( admin_url( 'admin-post.php?action=saralopa_credit' ), 'saralopa_credit' );
-		?>
-		<div class="notice notice-info">
-			<p>
-				<strong><?php esc_html_e( 'Thanks for using Sarala Login Page!', 'sarala-login-page' ); ?></strong>
-				<?php esc_html_e( 'This plugin is free. Would you support it by showing a small "Powered by Laghavi Digital" link under the login buttons? You can change this any time in the settings.', 'sarala-login-page' ); ?>
-			</p>
-			<p>
-				<a href="<?php echo esc_url( add_query_arg( 'answer', 'yes', $url ) ); ?>" class="button button-primary"><?php esc_html_e( 'Yes, show it', 'sarala-login-page' ); ?></a>
-				<a href="<?php echo esc_url( add_query_arg( 'answer', 'no', $url ) ); ?>" class="button"><?php esc_html_e( 'No thanks', 'sarala-login-page' ); ?></a>
-			</p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Save the answer to the credit notice.
-	 */
-	public static function credit_answer() {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'sarala-login-page' ) );
-		}
-		check_admin_referer( 'saralopa_credit' );
-
-		update_option( 'saralopa_credit_asked', 1, false );
-		if ( isset( $_GET['answer'] ) && 'yes' === $_GET['answer'] ) {
-			$settings                = self::get();
-			$settings['show_credit'] = 1;
-			update_option( self::OPTION, $settings );
-		}
-		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url() );
-		exit;
 	}
 
 	/**
@@ -104,8 +56,7 @@ class SARALOPA_Settings {
 			'show_wc_checkout'   => 1,
 			'captcha_login'      => 1,
 			'captcha_register'   => 1,
-			// WordPress.org guideline 10: a front-end credit link must be opted into by the site owner.
-			'show_credit'        => 0,
+			'show_credit'        => 1,
 			'login_slug'         => '',
 			'log_failed_logins'  => 1,
 			'log_retention_days' => 30,
@@ -498,7 +449,6 @@ class SARALOPA_Settings {
 							</td>
 						</tr>
 					</table>
-					<?php self::checkbox( 'show_credit', __( 'Show a small "Powered by Laghavi Digital" link under the buttons', 'sarala-login-page' ) ); ?>
 				</div>
 
 				<div class="saralopa-card">
@@ -520,6 +470,7 @@ class SARALOPA_Settings {
 						<?php endif; ?>
 						<p class="description"><?php esc_html_e( 'Locked out? Deactivate this plugin (for example by renaming its folder over FTP) and wp-login.php works again. WooCommerce\'s My Account login is not affected.', 'sarala-login-page' ); ?></p>
 					<?php endif; ?>
+					<?php self::checkbox( 'show_credit', __( 'Show a small "Powered by Laghavi Digital" link under the buttons', 'sarala-login-page' ) ); ?>
 				</div>
 
 				<div class="saralopa-card">
