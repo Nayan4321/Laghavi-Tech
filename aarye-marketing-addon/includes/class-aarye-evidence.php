@@ -3,7 +3,7 @@
  * Visit evidence: how sure we can be about where a lead came from, and whether a person or a bot sent it.
  *
  * Signals are recorded when a form is sent (see collect()) and explained in plain words on each entry
- * (see analyse()). Nothing here blocks or deletes anything: it explains. Aarye Pro can act on it.
+ * (see analyse()). Nothing here blocks or deletes anything: it explains.
  *
  * @package AaryeMarketingAddon
  */
@@ -130,15 +130,15 @@ class AARYE_Evidence {
 			}
 		}
 		$steps = array(
-			array( __( 'Tags in the address', 'aarye-marketing-addon-for-forms' ), $tags ? implode( ' · ', $tags ) : __( 'none', 'aarye-marketing-addon-for-forms' ) ),
-			array( __( 'Website the browser came from (referrer)', 'aarye-marketing-addon-for-forms' ), '' !== $host ? $host : __( 'none reported', 'aarye-marketing-addon-for-forms' ) ),
-			array( __( 'Ad click ID', 'aarye-marketing-addon-for-forms' ), '' !== (string) $e->click_id ? $e->click_param . ' = ' . $e->click_id : __( 'none', 'aarye-marketing-addon-for-forms' ) ),
+			array( __( 'Tags in the address', 'aarye-marketing-addon' ), $tags ? implode( ' · ', $tags ) : __( 'none', 'aarye-marketing-addon' ) ),
+			array( __( 'Website the browser came from (referrer)', 'aarye-marketing-addon' ), '' !== $host ? $host : __( 'none reported', 'aarye-marketing-addon' ) ),
+			array( __( 'Ad click ID', 'aarye-marketing-addon' ), '' !== (string) $e->click_id ? $e->click_param . ' = ' . $e->click_id : __( 'none', 'aarye-marketing-addon' ) ),
 		);
 		$out   = array(
 			'level'  => 'none',
-			'label'  => __( 'No source info', 'aarye-marketing-addon-for-forms' ),
+			'label'  => __( 'No source info', 'aarye-marketing-addon' ),
 			'status' => 'info',
-			'text'   => __( 'No tags, no click ID and no referrer: the address was typed, opened from a bookmark or an app, or the link hid where it came from. Recorded as Direct.', 'aarye-marketing-addon-for-forms' ),
+			'text'   => __( 'No tags, no click ID and no referrer: the address was typed, opened from a bookmark or an app, or the link hid where it came from. Recorded as Direct.', 'aarye-marketing-addon' ),
 			'steps'  => $steps,
 		);
 		if ( ! empty( $attr['imported'] ) ) {
@@ -146,8 +146,8 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level' => 'imported',
-					'label' => __( 'Not tracked', 'aarye-marketing-addon-for-forms' ),
-					'text'  => __( 'This entry was sent before Aarye was installed, so how the visitor arrived was not recorded.', 'aarye-marketing-addon-for-forms' ),
+					'label' => __( 'Not tracked', 'aarye-marketing-addon' ),
+					'text'  => __( 'This entry was sent before Aarye was installed, so how the visitor arrived was not recorded.', 'aarye-marketing-addon' ),
 				)
 			);
 		}
@@ -156,10 +156,10 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level'  => 'click',
-					'label'  => __( 'Ad click ID', 'aarye-marketing-addon-for-forms' ),
+					'label'  => __( 'Ad click ID', 'aarye-marketing-addon' ),
 					'status' => 'ok',
 					/* translators: 1: click parameter such as gclid, 2: ad network. */
-					'text'   => sprintf( __( 'The address carried %1$s, an ID the ad network adds to each real ad click. You can look this click up in %2$s to confirm it.', 'aarye-marketing-addon-for-forms' ), $e->click_param, $e->source_label ),
+					'text'   => sprintf( __( 'The address carried %1$s, an ID the ad network adds to each real ad click. You can look this click up in %2$s to confirm it.', 'aarye-marketing-addon' ), $e->click_param, $e->source_label ),
 				)
 			);
 		}
@@ -170,10 +170,10 @@ class AARYE_Evidence {
 					$out,
 					array(
 						'level'  => 'both',
-						'label'  => __( 'Tags + browser agree', 'aarye-marketing-addon-for-forms' ),
+						'label'  => __( 'Tags + browser agree', 'aarye-marketing-addon' ),
 						'status' => 'ok',
 						/* translators: %s: website. */
-						'text'   => sprintf( __( 'The tags in the address and the browser both say the visitor came from %s. This is the strongest proof a website can get for a visit (a determined bot can still fake both).', 'aarye-marketing-addon-for-forms' ), $host ),
+						'text'   => sprintf( __( 'The tags in the address and the browser both say the visitor came from %s. This is the strongest proof a website can get for a visit (a determined bot can still fake both).', 'aarye-marketing-addon' ), $host ),
 					)
 				);
 			}
@@ -181,10 +181,10 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level'  => 'mismatch',
-					'label'  => __( 'Tags ≠ browser', 'aarye-marketing-addon-for-forms' ),
+					'label'  => __( 'Tags ≠ browser', 'aarye-marketing-addon' ),
 					'status' => 'warn',
 					/* translators: 1: utm_source value, 2: referrer website. */
-					'text'   => sprintf( __( 'The tags say %1$s, but the browser came from %2$s. The tagged link was probably copied and shared on another website, or the tags are wrong. The source shown follows the tags.', 'aarye-marketing-addon-for-forms' ), $source, $host ),
+					'text'   => sprintf( __( 'The tags say %1$s, but the browser came from %2$s. The tagged link was probably copied and shared on another website, or the tags are wrong. The source shown follows the tags.', 'aarye-marketing-addon' ), $source, $host ),
 				)
 			);
 		}
@@ -194,13 +194,13 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level'  => 'tags',
-					'label'  => __( 'Tags only', 'aarye-marketing-addon-for-forms' ),
+					'label'  => __( 'Tags only', 'aarye-marketing-addon' ),
 					'status' => $referral ? 'warn' : 'info',
 					'text'   => $referral
 						/* translators: %s: utm_source value. */
-						? sprintf( __( 'Only the tags in the address name %1$s (utm_source). The browser did not report coming from that website, although a real click on a link on another website normally does. Anyone can add these tags to a link, and spammers do it to look like a real referral. Check whether you are actually listed on %2$s before trusting it.', 'aarye-marketing-addon-for-forms' ), $source, $source )
+						? sprintf( __( 'Only the tags in the address name %1$s (utm_source). The browser did not report coming from that website, although a real click on a link on another website normally does. Anyone can add these tags to a link, and spammers do it to look like a real referral. Check whether you are actually listed on %2$s before trusting it.', 'aarye-marketing-addon' ), $source, $source )
 						/* translators: %s: utm_source value. */
-						: sprintf( __( 'Only the tags in the address name %s (utm_source). This is normal for e-mails, apps, QR codes and ads, which often hide the website they come from. Tags can be added to any link, so they are a claim, not a proof.', 'aarye-marketing-addon-for-forms' ), $source ),
+						: sprintf( __( 'Only the tags in the address name %s (utm_source). This is normal for e-mails, apps, QR codes and ads, which often hide the website they come from. Tags can be added to any link, so they are a claim, not a proof.', 'aarye-marketing-addon' ), $source ),
 				)
 			);
 		}
@@ -209,10 +209,10 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level'  => 'referrer',
-					'label'  => __( 'Browser referrer', 'aarye-marketing-addon-for-forms' ),
+					'label'  => __( 'Browser referrer', 'aarye-marketing-addon' ),
 					'status' => 'ok',
 					/* translators: %s: website. */
-					'text'   => sprintf( __( 'The browser reported that the visitor clicked a link on %s. Browsers set this themselves; a web page cannot fake it, a bot can.', 'aarye-marketing-addon-for-forms' ), $host ),
+					'text'   => sprintf( __( 'The browser reported that the visitor clicked a link on %s. Browsers set this themselves; a web page cannot fake it, a bot can.', 'aarye-marketing-addon' ), $host ),
 				)
 			);
 		}
@@ -221,9 +221,9 @@ class AARYE_Evidence {
 				$out,
 				array(
 					'level'  => 'fbclid',
-					'label'  => __( 'Facebook click ID', 'aarye-marketing-addon-for-forms' ),
+					'label'  => __( 'Facebook click ID', 'aarye-marketing-addon' ),
 					'status' => 'ok',
-					'text'   => __( 'The address carried fbclid, which Facebook and Instagram add to links clicked in their apps (ads and normal posts alike).', 'aarye-marketing-addon-for-forms' ),
+					'text'   => __( 'The address carried fbclid, which Facebook and Instagram add to links clicked in their apps (ads and normal posts alike).', 'aarye-marketing-addon' ),
 				)
 			);
 		}
@@ -279,67 +279,67 @@ class AARYE_Evidence {
 			);
 		};
 		$imported = ! empty( $attr['imported'] );
-		$na       = __( 'Not recorded', 'aarye-marketing-addon-for-forms' );
+		$na       = __( 'Not recorded', 'aarye-marketing-addon' );
 
 		// Browser.
 		if ( $imported && '' === $ua ) {
-			$add( 'browser', __( 'Browser', 'aarye-marketing-addon-for-forms' ), $na, 'na', __( 'Imported entries have no browser details.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'browser', __( 'Browser', 'aarye-marketing-addon' ), $na, 'na', __( 'Imported entries have no browser details.', 'aarye-marketing-addon' ) );
 		} elseif ( $e->is_bot ) {
-			$add( 'browser', __( 'Browser', 'aarye-marketing-addon-for-forms' ), '' !== $ua ? ( preg_match( '/headless\w*|bot|crawl\w*|spider|curl|wget|python[\w-]*|scrapy|phantom\w*|axios|okhttp|go-http[\w-]*|java/i', $ua, $m ) ? $m[0] : mb_substr( $ua, 0, 60 ) ) : __( 'empty', 'aarye-marketing-addon-for-forms' ), 'bad', __( 'The browser introduced itself as a bot or a script (or did not introduce itself at all). People\'s browsers don\'t do that.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'browser', __( 'Browser', 'aarye-marketing-addon' ), '' !== $ua ? ( preg_match( '/headless\w*|bot|crawl\w*|spider|curl|wget|python[\w-]*|scrapy|phantom\w*|axios|okhttp|go-http[\w-]*|java/i', $ua, $m ) ? $m[0] : mb_substr( $ua, 0, 60 ) ) : __( 'empty', 'aarye-marketing-addon' ), 'bad', __( 'The browser introduced itself as a bot or a script (or did not introduce itself at all). People\'s browsers don\'t do that.', 'aarye-marketing-addon' ) );
 		} else {
-			$add( 'browser', __( 'Browser', 'aarye-marketing-addon-for-forms' ), ucfirst( $e->device ) . ( '' !== $e->browser ? ' · ' . $e->browser : '' ), 'ok', __( 'An ordinary browser. Bots can pretend to be one, so the checks below matter more.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'browser', __( 'Browser', 'aarye-marketing-addon' ), ucfirst( $e->device ) . ( '' !== $e->browser ? ' · ' . $e->browser : '' ), 'ok', __( 'An ordinary browser. Bots can pretend to be one, so the checks below matter more.', 'aarye-marketing-addon' ) );
 		}
 
 		if ( $ev ) {
 			// Did our page script run at all?
 			if ( empty( $ev['tracker'] ) ) {
 				if ( ! empty( $ev['consent'] ) ) {
-					$add( 'script', __( 'Page script', 'aarye-marketing-addon-for-forms' ), __( 'No cookie', 'aarye-marketing-addon-for-forms' ), 'info', __( 'The visitor did not accept marketing cookies, so the visit was not recorded. Nothing can be said about where they came from.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'No cookie', 'aarye-marketing-addon' ), 'info', __( 'The visitor did not accept marketing cookies, so the visit was not recorded. Nothing can be said about where they came from.', 'aarye-marketing-addon' ) );
 				} else {
-					$add( 'script', __( 'Page script', 'aarye-marketing-addon-for-forms' ), __( 'Never ran', 'aarye-marketing-addon-for-forms' ), 'bad', __( 'The form was sent without the website ever running in a browser: no page of the site was opened before. This is how spam bots post forms directly. (A page cache serving an old page without the script can cause it too.)', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'Never ran', 'aarye-marketing-addon' ), 'bad', __( 'The form was sent without the website ever running in a browser: no page of the site was opened before. This is how spam bots post forms directly. (A page cache serving an old page without the script can cause it too.)', 'aarye-marketing-addon' ) );
 				}
 			} else {
-				$add( 'script', __( 'Page script', 'aarye-marketing-addon-for-forms' ), __( 'Ran normally', 'aarye-marketing-addon-for-forms' ), 'ok', __( 'The visitor opened pages of the website in a browser before sending the form.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'Ran normally', 'aarye-marketing-addon' ), 'ok', __( 'The visitor opened pages of the website in a browser before sending the form.', 'aarye-marketing-addon' ) );
 			}
 			if ( null !== $ev['automation'] && $ev['automation'] ) {
-				$add( 'automation', __( 'Automation', 'aarye-marketing-addon-for-forms' ), __( 'Controlled by software', 'aarye-marketing-addon-for-forms' ), 'bad', __( 'The browser reported that automation software (Selenium, Puppeteer, Playwright…) was controlling it.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'automation', __( 'Automation', 'aarye-marketing-addon' ), __( 'Controlled by software', 'aarye-marketing-addon' ), 'bad', __( 'The browser reported that automation software (Selenium, Puppeteer, Playwright…) was controlling it.', 'aarye-marketing-addon' ) );
 			}
 			if ( null !== $ev['interacted'] ) {
 				if ( $ev['interacted'] ) {
-					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon-for-forms' ), __( 'Yes', 'aarye-marketing-addon-for-forms' ), 'ok', __( 'The visitor moved the mouse, touched, scrolled or typed on the form page.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon' ), __( 'Yes', 'aarye-marketing-addon' ), 'ok', __( 'The visitor moved the mouse, touched, scrolled or typed on the form page.', 'aarye-marketing-addon' ) );
 				} else {
-					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon-for-forms' ), __( 'None', 'aarye-marketing-addon-for-forms' ), 'bad', __( 'Nobody moved the mouse, touched the screen, scrolled or pressed a key on the form page before it was sent. A person filling a form always does.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon' ), __( 'None', 'aarye-marketing-addon' ), 'bad', __( 'Nobody moved the mouse, touched the screen, scrolled or pressed a key on the form page before it was sent. A person filling a form always does.', 'aarye-marketing-addon' ) );
 				}
 			}
 			if ( null !== $ev['seconds'] ) {
 				$s    = (int) $ev['seconds'];
-				$time = $s < 120 ? sprintf( /* translators: %d: seconds. */ _n( '%d second', '%d seconds', $s, 'aarye-marketing-addon-for-forms' ), $s ) : sprintf( /* translators: %d: minutes. */ _n( '%d minute', '%d minutes', (int) round( $s / 60 ), 'aarye-marketing-addon-for-forms' ), (int) round( $s / 60 ) );
+				$time = $s < 120 ? sprintf( /* translators: %d: seconds. */ _n( '%d second', '%d seconds', $s, 'aarye-marketing-addon' ), $s ) : sprintf( /* translators: %d: minutes. */ _n( '%d minute', '%d minutes', (int) round( $s / 60 ), 'aarye-marketing-addon' ), (int) round( $s / 60 ) );
 				if ( $s < 3 ) {
-					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon-for-forms' ), $time, 'bad', __( 'Sent almost the moment the page opened: faster than anyone can read and type.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon' ), $time, 'bad', __( 'Sent almost the moment the page opened: faster than anyone can read and type.', 'aarye-marketing-addon' ) );
 				} elseif ( $s < 8 ) {
-					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon-for-forms' ), $time, 'warn', __( 'Very quick. Possible with browser autofill, but typical of bots.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon' ), $time, 'warn', __( 'Very quick. Possible with browser autofill, but typical of bots.', 'aarye-marketing-addon' ) );
 				} else {
-					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon-for-forms' ), $time, 'ok', __( 'A normal time to fill a form.', 'aarye-marketing-addon-for-forms' ) );
+					$add( 'speed', __( 'Time on the form page', 'aarye-marketing-addon' ), $time, 'ok', __( 'A normal time to fill a form.', 'aarye-marketing-addon' ) );
 				}
 			}
 			$own = AARYE_Sources::is_own( (string) $ev['post_ref'] );
 			if ( '' === (string) $ev['post_ref'] ) {
-				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon-for-forms' ), __( 'Not reported', 'aarye-marketing-addon-for-forms' ), 'warn', __( 'The browser did not say which page sent the form. Some privacy tools hide it; bots that post directly usually have none.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon' ), __( 'Not reported', 'aarye-marketing-addon' ), 'warn', __( 'The browser did not say which page sent the form. Some privacy tools hide it; bots that post directly usually have none.', 'aarye-marketing-addon' ) );
 			} elseif ( ! $own ) {
-				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon-for-forms' ), self::host( $ev['post_ref'] ), 'bad', __( 'The form was submitted from another website, not from a page of yours.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon' ), self::host( $ev['post_ref'] ), 'bad', __( 'The form was submitted from another website, not from a page of yours.', 'aarye-marketing-addon' ) );
 			} else {
-				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon-for-forms' ), (string) wp_parse_url( $ev['post_ref'], PHP_URL_PATH ), 'ok', __( 'Sent from a page of your website, as expected.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'sent_from', __( 'Submission sent from', 'aarye-marketing-addon' ), (string) wp_parse_url( $ev['post_ref'], PHP_URL_PATH ), 'ok', __( 'Sent from a page of your website, as expected.', 'aarye-marketing-addon' ) );
 			}
 			if ( null !== $ev['pages'] ) {
 				/* translators: %d: number of pages or visits. */
-				$add( 'pages', __( 'Pages viewed', 'aarye-marketing-addon-for-forms' ), sprintf( _n( '%d page', '%d pages', (int) $ev['pages'], 'aarye-marketing-addon-for-forms' ), (int) $ev['pages'] ) . ' · ' . sprintf( _n( '%d visit', '%d visits', max( 1, (int) $e->visits ), 'aarye-marketing-addon-for-forms' ), max( 1, (int) $e->visits ) ), 'info', (int) $ev['pages'] <= 1 ? __( 'Opened only the page with the form. Normal for ad landing pages; also typical of spam.', 'aarye-marketing-addon-for-forms' ) : __( 'Looked around the website before sending.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'pages', __( 'Pages viewed', 'aarye-marketing-addon' ), sprintf( _n( '%d page', '%d pages', (int) $ev['pages'], 'aarye-marketing-addon' ), (int) $ev['pages'] ) . ' · ' . sprintf( _n( '%d visit', '%d visits', max( 1, (int) $e->visits ), 'aarye-marketing-addon' ), max( 1, (int) $e->visits ) ), 'info', (int) $ev['pages'] <= 1 ? __( 'Opened only the page with the form. Normal for ad landing pages; also typical of spam.', 'aarye-marketing-addon' ) : __( 'Looked around the website before sending.', 'aarye-marketing-addon' ) );
 			}
 			if ( ! empty( $ev['repeat'] ) ) {
 				/* translators: %d: number of entries. */
-				$add( 'repeat', __( 'Repeated', 'aarye-marketing-addon-for-forms' ), sprintf( _n( '%d earlier entry in the hour before', '%d earlier entries in the hour before', (int) $ev['repeat'], 'aarye-marketing-addon-for-forms' ), (int) $ev['repeat'] ), (int) $ev['repeat'] >= 2 ? 'bad' : 'warn', __( 'The same email address or browser sent other entries shortly before.', 'aarye-marketing-addon-for-forms' ) );
+				$add( 'repeat', __( 'Repeated', 'aarye-marketing-addon' ), sprintf( _n( '%d earlier entry in the hour before', '%d earlier entries in the hour before', (int) $ev['repeat'], 'aarye-marketing-addon' ), (int) $ev['repeat'] ), (int) $ev['repeat'] >= 2 ? 'bad' : 'warn', __( 'The same email address or browser sent other entries shortly before.', 'aarye-marketing-addon' ) );
 			}
 		} elseif ( ! $imported ) {
-			$add( 'script', __( 'Visit checks', 'aarye-marketing-addon-for-forms' ), $na, 'na', __( 'Not recorded for this entry: it was saved before Aarye 1.1 added the visit checks (page script, mouse and keys, time on the page, where the submission came from), or it came from another service.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'script', __( 'Visit checks', 'aarye-marketing-addon' ), $na, 'na', __( 'Not recorded for this entry: it was saved before Aarye 1.1 added the visit checks (page script, mouse and keys, time on the page, where the submission came from), or it came from another service.', 'aarye-marketing-addon' ) );
 		}
 
 		// What was written.
@@ -355,10 +355,10 @@ class AARYE_Evidence {
 		}
 		if ( $links >= 3 ) {
 			/* translators: %d: number of links. */
-			$add( 'links', __( 'Links in the message', 'aarye-marketing-addon-for-forms' ), sprintf( __( '%d links', 'aarye-marketing-addon-for-forms' ), $links ), 'bad', __( 'Several links in a contact form message is a classic sign of spam.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'links', __( 'Links in the message', 'aarye-marketing-addon' ), sprintf( __( '%d links', 'aarye-marketing-addon' ), $links ), 'bad', __( 'Several links in a contact form message is a classic sign of spam.', 'aarye-marketing-addon' ) );
 		} elseif ( $links > 0 ) {
 			/* translators: %d: number of links. */
-			$add( 'links', __( 'Links in the message', 'aarye-marketing-addon-for-forms' ), sprintf( _n( '%d link', '%d links', $links, 'aarye-marketing-addon-for-forms' ), $links ), 'warn', __( 'People sometimes paste a link; spammers almost always do.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'links', __( 'Links in the message', 'aarye-marketing-addon' ), sprintf( _n( '%d link', '%d links', $links, 'aarye-marketing-addon' ), $links ), 'warn', __( 'People sometimes paste a link; spammers almost always do.', 'aarye-marketing-addon' ) );
 		}
 		$found = array();
 		foreach ( self::spam_phrases() as $phrase ) {
@@ -367,12 +367,12 @@ class AARYE_Evidence {
 			}
 		}
 		if ( $found ) {
-			$add( 'phrases', __( 'Sales-pitch words', 'aarye-marketing-addon-for-forms' ), '"' . implode( '", "', array_slice( $found, 0, 4 ) ) . '"', count( $found ) >= 2 ? 'bad' : 'warn', __( 'Words often used in unsolicited sales messages sent through contact forms.', 'aarye-marketing-addon-for-forms' ) );
+			$add( 'phrases', __( 'Sales-pitch words', 'aarye-marketing-addon' ), '"' . implode( '", "', array_slice( $found, 0, 4 ) ) . '"', count( $found ) >= 2 ? 'bad' : 'warn', __( 'Words often used in unsolicited sales messages sent through contact forms.', 'aarye-marketing-addon' ) );
 		}
 
 		// The source itself.
 		if ( in_array( $proof['level'], array( 'tags', 'mismatch' ), true ) ) {
-			$add( 'source', __( 'Source', 'aarye-marketing-addon-for-forms' ), $proof['label'], $proof['status'], $proof['text'] );
+			$add( 'source', __( 'Source', 'aarye-marketing-addon' ), $proof['label'], $proof['status'], $proof['text'] );
 		}
 
 		$score   = 0;
@@ -392,13 +392,13 @@ class AARYE_Evidence {
 
 		$details = array();
 		if ( '' !== $ua ) {
-			$details[ __( 'Browser identification (user agent)', 'aarye-marketing-addon-for-forms' ) ] = $ua;
+			$details[ __( 'Browser identification (user agent)', 'aarye-marketing-addon' ) ] = $ua;
 		}
 		if ( $ev ) {
-			$details[ __( 'Browser languages', 'aarye-marketing-addon-for-forms' ) ]   = (string) $ev['accept_lang'];
-			$details[ __( 'Clock time zone', 'aarye-marketing-addon-for-forms' ) ]     = (string) $ev['timezone'];
-			$details[ __( 'Screen', 'aarye-marketing-addon-for-forms' ) ]              = str_replace( 'x', ' × ', (string) $ev['screen'] );
-			$details[ __( 'Submission referrer', 'aarye-marketing-addon-for-forms' ) ] = (string) $ev['post_ref'];
+			$details[ __( 'Browser languages', 'aarye-marketing-addon' ) ]   = (string) $ev['accept_lang'];
+			$details[ __( 'Clock time zone', 'aarye-marketing-addon' ) ]     = (string) $ev['timezone'];
+			$details[ __( 'Screen', 'aarye-marketing-addon' ) ]              = str_replace( 'x', ' × ', (string) $ev['screen'] );
+			$details[ __( 'Submission referrer', 'aarye-marketing-addon' ) ] = (string) $ev['post_ref'];
 		}
 
 		/**
@@ -429,9 +429,9 @@ class AARYE_Evidence {
 	 */
 	public static function verdicts() {
 		return array(
-			'ok'    => __( 'Looks genuine', 'aarye-marketing-addon-for-forms' ),
-			'doubt' => __( 'Some doubts', 'aarye-marketing-addon-for-forms' ),
-			'spam'  => __( 'Likely spam', 'aarye-marketing-addon-for-forms' ),
+			'ok'    => __( 'Looks genuine', 'aarye-marketing-addon' ),
+			'doubt' => __( 'Some doubts', 'aarye-marketing-addon' ),
+			'spam'  => __( 'Likely spam', 'aarye-marketing-addon' ),
 		);
 	}
 }

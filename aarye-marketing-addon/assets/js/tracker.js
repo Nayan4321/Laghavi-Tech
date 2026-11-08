@@ -1,5 +1,5 @@
-/* Aarye Marketing Addon for Forms – remembers how a visitor arrived (ad click IDs, UTM tags, referrer)
-   in a first-party cookie, so the form entry they submit later can say which ad or source it came from.
+/* Aarye Marketing Addon – remembers how a visitor arrived (ad click IDs, UTM tags, referrer)
+   in a first-party cookie, so the lead they send later can say which ad or source it came from.
    Nothing is sent anywhere by this script. */
 ( function () {
 	'use strict';

@@ -244,7 +244,7 @@ class AARYE_Integrations {
 	 * @param array $fields    Processed fields.
 	 * @param array $entry     Raw entry.
 	 * @param array $form_data Form settings.
-	 * @param int   $entry_id  Entry ID (Pro; 0 in Lite).
+	 * @param int   $entry_id  Entry ID.
 	 */
 	public static function wpforms( $fields, $entry, $form_data, $entry_id = 0 ) {
 		self::safely(

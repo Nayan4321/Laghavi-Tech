@@ -1,8 +1,7 @@
 <?php
 /**
- * Plugin Name:       Aarye Marketing Addon for Forms
- * Plugin URI:        https://laghavi.site/aarye-marketing-addon-for-forms/
- * Description:       See which ad, campaign or source every form entry came from. Works with Contact Form 7, WPForms, Elementor Pro Forms, Fluent Forms, Gravity Forms, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder and MetForm: one dashboard for all entries, attachments and custom fields, a setup guide for every ad network, and Google Sheets.
+ * Plugin Name:       Aarye Marketing Addon
+ * Description:       A helper for your marketing team: see which ad, campaign, keyword or website brought every lead, check whether each lead is real, keep every lead in one dashboard, and send them to Google Sheets.
  * Version:           1.1.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
@@ -10,7 +9,7 @@
  * Author URI:        https://laghavi.site/
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       aarye-marketing-addon-for-forms
+ * Text Domain:       aarye-marketing-addon
  *
  * @package AaryeMarketingAddon
  */

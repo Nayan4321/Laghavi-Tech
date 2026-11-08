@@ -205,7 +205,7 @@ class AARYE_Entries {
 				array(
 					'channel' => 'unknown',
 					'source'  => 'unknown',
-					'label'   => __( 'Not tracked (imported)', 'aarye-marketing-addon-for-forms' ),
+					'label'   => __( 'Not tracked (imported)', 'aarye-marketing-addon' ),
 				)
 			);
 		}
@@ -660,12 +660,12 @@ class AARYE_Entries {
 	 */
 	public static function statuses() {
 		return array(
-			'new'       => __( 'New', 'aarye-marketing-addon-for-forms' ),
-			'contacted' => __( 'Contacted', 'aarye-marketing-addon-for-forms' ),
-			'qualified' => __( 'Qualified', 'aarye-marketing-addon-for-forms' ),
-			'won'       => __( 'Won', 'aarye-marketing-addon-for-forms' ),
-			'lost'      => __( 'Lost', 'aarye-marketing-addon-for-forms' ),
-			'spam'      => __( 'Spam', 'aarye-marketing-addon-for-forms' ),
+			'new'       => __( 'New', 'aarye-marketing-addon' ),
+			'contacted' => __( 'Contacted', 'aarye-marketing-addon' ),
+			'qualified' => __( 'Qualified', 'aarye-marketing-addon' ),
+			'won'       => __( 'Won', 'aarye-marketing-addon' ),
+			'lost'      => __( 'Lost', 'aarye-marketing-addon' ),
+			'spam'      => __( 'Spam', 'aarye-marketing-addon' ),
 		);
 	}
 }

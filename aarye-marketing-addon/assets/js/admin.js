@@ -1,4 +1,4 @@
-/* Aarye Marketing Addon for Forms – "Copy" buttons, confirmations and the past entries import. */
+/* Aarye Marketing Addon – "Copy" buttons, confirmations and the past entries import. */
 ( function () {
 	'use strict';
 	document.addEventListener( 'click', function ( e ) {

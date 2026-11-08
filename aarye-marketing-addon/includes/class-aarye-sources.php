@@ -20,14 +20,14 @@ class AARYE_Sources {
 	 */
 	public static function channels() {
 		return array(
-			'paid'           => __( 'Paid ads', 'aarye-marketing-addon-for-forms' ),
-			'organic_search' => __( 'Search engines', 'aarye-marketing-addon-for-forms' ),
-			'organic_social' => __( 'Social media', 'aarye-marketing-addon-for-forms' ),
-			'ai'             => __( 'AI assistants', 'aarye-marketing-addon-for-forms' ),
-			'email'          => __( 'Email', 'aarye-marketing-addon-for-forms' ),
-			'referral'       => __( 'Other websites', 'aarye-marketing-addon-for-forms' ),
-			'direct'         => __( 'Direct', 'aarye-marketing-addon-for-forms' ),
-			'unknown'        => __( 'Not tracked (imported)', 'aarye-marketing-addon-for-forms' ),
+			'paid'           => __( 'Paid ads', 'aarye-marketing-addon' ),
+			'organic_search' => __( 'Search engines', 'aarye-marketing-addon' ),
+			'organic_social' => __( 'Social media', 'aarye-marketing-addon' ),
+			'ai'             => __( 'AI assistants', 'aarye-marketing-addon' ),
+			'email'          => __( 'Email', 'aarye-marketing-addon' ),
+			'referral'       => __( 'Other websites', 'aarye-marketing-addon' ),
+			'direct'         => __( 'Direct', 'aarye-marketing-addon' ),
+			'unknown'        => __( 'Not tracked (imported)', 'aarye-marketing-addon' ),
 		);
 	}
 
@@ -396,7 +396,7 @@ class AARYE_Sources {
 		$out    = array(
 			'channel'     => 'direct',
 			'source'      => 'direct',
-			'label'       => __( 'Direct', 'aarye-marketing-addon-for-forms' ),
+			'label'       => __( 'Direct', 'aarye-marketing-addon' ),
 			'campaign'    => self::first( $p, array( 'utm_campaign', 'campaign_name', 'campaign_id', 'utm_id' ) ),
 			'ad_group'    => self::first( $p, array( 'utm_adgroup', 'adset_name', 'adgroup_name', 'adset_id', 'adgroup_id' ) ),
 			'ad'          => self::first( $p, array( 'utm_content', 'ad_name', 'ad_id', 'creative' ) ),
@@ -453,12 +453,12 @@ class AARYE_Sources {
 						'channel' => 'paid',
 						'source'  => 'other_ads',
 						/* translators: %s: utm_source value. */
-						'label'   => sprintf( __( 'Paid: %s', 'aarye-marketing-addon-for-forms' ), $p['utm_source'] ),
+						'label'   => sprintf( __( 'Paid: %s', 'aarye-marketing-addon' ), $p['utm_source'] ),
 					)
 				);
 			}
 			if ( in_array( $medium, array( 'email', 'e-mail', 'newsletter', 'mail' ), true ) ) {
-				return array_merge( $out, array( 'channel' => 'email', 'source' => 'email', 'label' => sprintf( /* translators: %s: utm_source value. */ __( 'Email: %s', 'aarye-marketing-addon-for-forms' ), $p['utm_source'] ) ) );
+				return array_merge( $out, array( 'channel' => 'email', 'source' => 'email', 'label' => sprintf( /* translators: %s: utm_source value. */ __( 'Email: %s', 'aarye-marketing-addon' ), $p['utm_source'] ) ) );
 			}
 			$ai = self::match_host( $source, self::ai_assistants() );
 			if ( '' !== $ai ) {
@@ -480,7 +480,7 @@ class AARYE_Sources {
 				array(
 					'channel'     => 'organic_social',
 					'source'      => 'meta',
-					'label'       => __( 'Facebook / Instagram', 'aarye-marketing-addon-for-forms' ),
+					'label'       => __( 'Facebook / Instagram', 'aarye-marketing-addon' ),
 					'click_id'    => $p['fbclid'],
 					'click_param' => 'fbclid',
 					'confirmed'   => false,
@@ -498,7 +498,7 @@ class AARYE_Sources {
 		}
 		foreach ( self::webmail() as $pattern ) {
 			if ( self::host_is( $host, $pattern ) ) {
-				return array_merge( $out, array( 'channel' => 'email', 'source' => 'email', 'label' => __( 'Email', 'aarye-marketing-addon-for-forms' ) ) );
+				return array_merge( $out, array( 'channel' => 'email', 'source' => 'email', 'label' => __( 'Email', 'aarye-marketing-addon' ) ) );
 			}
 		}
 		$name = self::match_host( $host, self::search_engines() );

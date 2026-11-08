@@ -47,21 +47,21 @@ class AARYE_Admin {
 	 */
 	public static function menu() {
 		$cap = self::cap();
-		add_menu_page( __( 'Aarye Leads', 'aarye-marketing-addon-for-forms' ), __( 'Aarye Leads', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG, array( __CLASS__, 'page_overview' ), 'dashicons-chart-area', 26 );
-		add_submenu_page( self::SLUG, __( 'Overview', 'aarye-marketing-addon-for-forms' ), __( 'Overview', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG, array( __CLASS__, 'page_overview' ) );
-		add_submenu_page( self::SLUG, __( 'All entries', 'aarye-marketing-addon-for-forms' ), __( 'All entries', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-entries', array( __CLASS__, 'page_entries' ) );
-		add_submenu_page( self::SLUG, __( 'Connect your ads', 'aarye-marketing-addon-for-forms' ), __( 'Connect your ads', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-guide', array( __CLASS__, 'page_guide' ) );
-		add_submenu_page( self::SLUG, __( 'Forms', 'aarye-marketing-addon-for-forms' ), __( 'Forms', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-forms', array( __CLASS__, 'page_forms' ) );
-		add_submenu_page( self::SLUG, __( 'Import past entries', 'aarye-marketing-addon-for-forms' ), __( 'Import past entries', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-import', array( __CLASS__, 'page_import' ) );
-		add_submenu_page( self::SLUG, __( 'Google Sheets', 'aarye-marketing-addon-for-forms' ), __( 'Google Sheets', 'aarye-marketing-addon-for-forms' ), $cap, self::SLUG . '-sheets', array( __CLASS__, 'page_sheets' ) );
+		add_menu_page( __( 'Aarye Leads', 'aarye-marketing-addon' ), __( 'Aarye Leads', 'aarye-marketing-addon' ), $cap, self::SLUG, array( __CLASS__, 'page_overview' ), 'dashicons-chart-area', 26 );
+		add_submenu_page( self::SLUG, __( 'Overview', 'aarye-marketing-addon' ), __( 'Overview', 'aarye-marketing-addon' ), $cap, self::SLUG, array( __CLASS__, 'page_overview' ) );
+		add_submenu_page( self::SLUG, __( 'All entries', 'aarye-marketing-addon' ), __( 'All entries', 'aarye-marketing-addon' ), $cap, self::SLUG . '-entries', array( __CLASS__, 'page_entries' ) );
+		add_submenu_page( self::SLUG, __( 'Connect your ads', 'aarye-marketing-addon' ), __( 'Connect your ads', 'aarye-marketing-addon' ), $cap, self::SLUG . '-guide', array( __CLASS__, 'page_guide' ) );
+		add_submenu_page( self::SLUG, __( 'Lead capture', 'aarye-marketing-addon' ), __( 'Lead capture', 'aarye-marketing-addon' ), $cap, self::SLUG . '-forms', array( __CLASS__, 'page_forms' ) );
+		add_submenu_page( self::SLUG, __( 'Import past entries', 'aarye-marketing-addon' ), __( 'Import past entries', 'aarye-marketing-addon' ), $cap, self::SLUG . '-import', array( __CLASS__, 'page_import' ) );
+		add_submenu_page( self::SLUG, __( 'Google Sheets', 'aarye-marketing-addon' ), __( 'Google Sheets', 'aarye-marketing-addon' ), $cap, self::SLUG . '-sheets', array( __CLASS__, 'page_sheets' ) );
 		/**
-		 * Add more screens under Aarye Leads (Aarye Pro).
+		 * Add more screens under Aarye Leads.
 		 *
 		 * @param string $parent Menu slug.
 		 * @param string $cap    Capability.
 		 */
 		do_action( 'aarye_admin_menu', self::SLUG, $cap );
-		add_submenu_page( self::SLUG, __( 'Settings', 'aarye-marketing-addon-for-forms' ), __( 'Settings', 'aarye-marketing-addon-for-forms' ), 'manage_options', self::SLUG . '-settings', array( __CLASS__, 'page_settings' ) );
+		add_submenu_page( self::SLUG, __( 'Settings', 'aarye-marketing-addon' ), __( 'Settings', 'aarye-marketing-addon' ), 'manage_options', self::SLUG . '-settings', array( __CLASS__, 'page_settings' ) );
 	}
 
 	/**
@@ -71,7 +71,7 @@ class AARYE_Admin {
 	 * @return array
 	 */
 	public static function action_links( $links ) {
-		array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Leads', 'aarye-marketing-addon-for-forms' ) . '</a>' );
+		array_unshift( $links, '<a href="' . esc_url( admin_url( 'admin.php?page=' . self::SLUG ) ) . '">' . esc_html__( 'Leads', 'aarye-marketing-addon' ) . '</a>' );
 		return $links;
 	}
 
@@ -90,14 +90,14 @@ class AARYE_Admin {
 			'aarye-admin',
 			'aaryeAdmin',
 			array(
-				'copied'   => __( 'Copied', 'aarye-marketing-addon-for-forms' ),
+				'copied'   => __( 'Copied', 'aarye-marketing-addon' ),
 				'ajax'     => admin_url( 'admin-ajax.php' ),
 				'nonce'    => wp_create_nonce( 'aarye_import' ),
 				/* translators: 1: entries handled, 2: total. */
-				'progress' => __( 'Working… %1$s of %2$s', 'aarye-marketing-addon-for-forms' ),
+				'progress' => __( 'Working… %1$s of %2$s', 'aarye-marketing-addon' ),
 				/* translators: 1: imported, 2: already in Aarye. */
-				'done'     => __( 'Done: %1$s imported, %2$s were already in Aarye.', 'aarye-marketing-addon-for-forms' ),
-				'error'    => __( 'The import stopped:', 'aarye-marketing-addon-for-forms' ),
+				'done'     => __( 'Done: %1$s imported, %2$s were already in Aarye.', 'aarye-marketing-addon' ),
+				'error'    => __( 'The import stopped:', 'aarye-marketing-addon' ),
 			)
 		);
 	}
@@ -171,7 +171,7 @@ class AARYE_Admin {
 		}
 		$out = '<span class="' . esc_attr( $class ) . '">' . esc_html( $title ) . '</span>';
 		if ( ! $e->confirmed ) {
-			$out .= ' <span class="aarye-hint" title="' . esc_attr__( 'Facebook and Instagram add fbclid to ads and normal posts alike. Add the URL parameters from "Connect your ads" to confirm ad clicks.', 'aarye-marketing-addon-for-forms' ) . '">' . esc_html__( 'ad or post?', 'aarye-marketing-addon-for-forms' ) . '</span>';
+			$out .= ' <span class="aarye-hint" title="' . esc_attr__( 'Facebook and Instagram add fbclid to ads and normal posts alike. Add the URL parameters from "Connect your ads" to confirm ad clicks.', 'aarye-marketing-addon' ) . '">' . esc_html__( 'ad or post?', 'aarye-marketing-addon' ) . '</span>';
 		}
 		$bits = array_filter( array( $e->campaign, $e->ad_group, $e->ad ) );
 		if ( $bits ) {
@@ -219,53 +219,53 @@ class AARYE_Admin {
 			<select name="range" onchange="this.form.from.value='';this.form.to.value='';this.form.submit()">
 				<?php
 				foreach ( array(
-					'7'   => __( 'Last 7 days', 'aarye-marketing-addon-for-forms' ),
-					'30'  => __( 'Last 30 days', 'aarye-marketing-addon-for-forms' ),
-					'90'  => __( 'Last 90 days', 'aarye-marketing-addon-for-forms' ),
-					'365' => __( 'Last 12 months', 'aarye-marketing-addon-for-forms' ),
-					'all' => __( 'All time', 'aarye-marketing-addon-for-forms' ),
+					'7'   => __( 'Last 7 days', 'aarye-marketing-addon' ),
+					'30'  => __( 'Last 30 days', 'aarye-marketing-addon' ),
+					'90'  => __( 'Last 90 days', 'aarye-marketing-addon' ),
+					'365' => __( 'Last 12 months', 'aarye-marketing-addon' ),
+					'all' => __( 'All time', 'aarye-marketing-addon' ),
 				) as $k => $label ) :
 					?>
 					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['range'], $k ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
-			<input type="date" name="from" value="<?php echo esc_attr( $f['from'] ); ?>" aria-label="<?php esc_attr_e( 'From', 'aarye-marketing-addon-for-forms' ); ?>" />
-			<input type="date" name="to" value="<?php echo esc_attr( $f['to'] ); ?>" aria-label="<?php esc_attr_e( 'To', 'aarye-marketing-addon-for-forms' ); ?>" />
+			<input type="date" name="from" value="<?php echo esc_attr( $f['from'] ); ?>" aria-label="<?php esc_attr_e( 'From', 'aarye-marketing-addon' ); ?>" />
+			<input type="date" name="to" value="<?php echo esc_attr( $f['to'] ); ?>" aria-label="<?php esc_attr_e( 'To', 'aarye-marketing-addon' ); ?>" />
 			<select name="channel">
-				<option value=""><?php esc_html_e( 'All sources', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<option value=""><?php esc_html_e( 'All sources', 'aarye-marketing-addon' ); ?></option>
 				<?php foreach ( AARYE_Sources::channels() as $k => $label ) : ?>
 					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['channel'], $k ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<select name="source">
-				<option value=""><?php esc_html_e( 'All ad networks', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<option value=""><?php esc_html_e( 'All ad networks', 'aarye-marketing-addon' ); ?></option>
 				<?php foreach ( AARYE_Sources::ad_networks() as $k => $net ) : ?>
 					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['source'], $k ); ?>><?php echo esc_html( $net['name'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<select name="form">
-				<option value=""><?php esc_html_e( 'All forms', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<option value=""><?php esc_html_e( 'All forms', 'aarye-marketing-addon' ); ?></option>
 				<?php foreach ( $forms as $form ) : ?>
 					<option value="<?php echo esc_attr( $form['plugin'] . ':' . $form['id'] ); ?>" <?php selected( $f['form'], $form['plugin'] . ':' . $form['id'] ); ?>><?php echo esc_html( $form['plugin_name'] . ' – ' . $form['title'] ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<select name="status">
-				<option value=""><?php esc_html_e( 'All leads (not spam)', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<option value=""><?php esc_html_e( 'All leads (not spam)', 'aarye-marketing-addon' ); ?></option>
 				<?php foreach ( AARYE_Entries::statuses() as $k => $label ) : ?>
 					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['status'], $k ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
 			<select name="quality">
-				<option value=""><?php esc_html_e( 'Any spam check', 'aarye-marketing-addon-for-forms' ); ?></option>
+				<option value=""><?php esc_html_e( 'Any spam check', 'aarye-marketing-addon' ); ?></option>
 				<?php foreach ( AARYE_Evidence::verdicts() as $k => $label ) : ?>
 					<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $f['quality'], $k ); ?>><?php echo esc_html( $label ); ?></option>
 				<?php endforeach; ?>
 			</select>
-			<input type="search" name="s" value="<?php echo esc_attr( $f['s'] ); ?>" placeholder="<?php esc_attr_e( 'Name, email, campaign…', 'aarye-marketing-addon-for-forms' ); ?>" />
+			<input type="search" name="s" value="<?php echo esc_attr( $f['s'] ); ?>" placeholder="<?php esc_attr_e( 'Name, email, campaign…', 'aarye-marketing-addon' ); ?>" />
 			<?php if ( '' !== $f['campaign'] ) : ?>
 				<input type="hidden" name="campaign" value="<?php echo esc_attr( $f['campaign'] ); ?>" />
 			<?php endif; ?>
-			<button class="button"><?php esc_html_e( 'Filter', 'aarye-marketing-addon-for-forms' ); ?></button>
+			<button class="button"><?php esc_html_e( 'Filter', 'aarye-marketing-addon' ); ?></button>
 		</form>
 		<?php
 	}
@@ -288,12 +288,12 @@ class AARYE_Admin {
 		<div class="aarye-card <?php echo esc_attr( $class ); ?>">
 			<h2><?php echo esc_html( $title ); ?></h2>
 			<?php if ( ! $rows ) : ?>
-				<p class="aarye-muted"><?php echo esc_html( '' !== $empty ? $empty : __( 'No entries yet.', 'aarye-marketing-addon-for-forms' ) ); ?></p>
+				<p class="aarye-muted"><?php echo esc_html( '' !== $empty ? $empty : __( 'No entries yet.', 'aarye-marketing-addon' ) ); ?></p>
 			<?php else : ?>
 				<ul class="aarye-bars">
 					<?php foreach ( $rows as $row ) : ?>
 						<?php
-						$label = '' !== $row['label'] ? $row['label'] : __( '(not set)', 'aarye-marketing-addon-for-forms' );
+						$label = '' !== $row['label'] ? $row['label'] : __( '(not set)', 'aarye-marketing-addon' );
 						$url   = '' !== $link && '' !== $row['key'] ? self::url( 'entries', array( $link => $row['key'] ) ) : '';
 						?>
 						<li>
@@ -326,22 +326,19 @@ class AARYE_Admin {
 		$share        = $all['total'] ? round( 100 * $paid['total'] / $all['total'] ) : 0;
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Leads overview', 'aarye-marketing-addon-for-forms' ); ?></h1>
+			<h1><?php esc_html_e( 'Leads overview', 'aarye-marketing-addon' ); ?></h1>
 			<?php self::filter_bar( $f, self::SLUG ); ?>
-			<?php if ( ! AARYE_Integrations::active() ) : ?>
-				<div class="notice notice-warning inline"><p><?php esc_html_e( 'No supported form plugin is active yet. Aarye works with Contact Form 7, WPForms, Elementor Pro Forms, Fluent Forms, Gravity Forms, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder and MetForm.', 'aarye-marketing-addon-for-forms' ); ?></p></div>
-			<?php endif; ?>
 			<div class="aarye-kpis">
-				<div class="aarye-kpi"><b><?php echo esc_html( number_format_i18n( $all['total'] ) ); ?></b><span><?php esc_html_e( 'Leads', 'aarye-marketing-addon-for-forms' ); ?></span></div>
-				<div class="aarye-kpi aarye-kpi--paid"><b><?php echo esc_html( number_format_i18n( $paid['total'] ) ); ?></b><span><?php /* translators: %d: percentage. */ echo esc_html( sprintf( __( 'From ads (%d%%)', 'aarye-marketing-addon-for-forms' ), $share ) ); ?></span></div>
-				<div class="aarye-kpi"><b><?php echo esc_html( $networks ? $networks[0]['label'] : '—' ); ?></b><span><?php esc_html_e( 'Top ad network', 'aarye-marketing-addon-for-forms' ); ?></span></div>
-				<div class="aarye-kpi"><b class="aarye-kpi__text"><?php echo esc_html( $top_campaign && '' !== $top_campaign[0]['label'] ? $top_campaign[0]['label'] : '—' ); ?></b><span><?php esc_html_e( 'Top campaign', 'aarye-marketing-addon-for-forms' ); ?></span></div>
+				<div class="aarye-kpi"><b><?php echo esc_html( number_format_i18n( $all['total'] ) ); ?></b><span><?php esc_html_e( 'Leads', 'aarye-marketing-addon' ); ?></span></div>
+				<div class="aarye-kpi aarye-kpi--paid"><b><?php echo esc_html( number_format_i18n( $paid['total'] ) ); ?></b><span><?php /* translators: %d: percentage. */ echo esc_html( sprintf( __( 'From ads (%d%%)', 'aarye-marketing-addon' ), $share ) ); ?></span></div>
+				<div class="aarye-kpi"><b><?php echo esc_html( $networks ? $networks[0]['label'] : '—' ); ?></b><span><?php esc_html_e( 'Top ad network', 'aarye-marketing-addon' ); ?></span></div>
+				<div class="aarye-kpi"><b class="aarye-kpi__text"><?php echo esc_html( $top_campaign && '' !== $top_campaign[0]['label'] ? $top_campaign[0]['label'] : '—' ); ?></b><span><?php esc_html_e( 'Top campaign', 'aarye-marketing-addon' ); ?></span></div>
 			</div>
 			<div class="aarye-grid">
 				<?php
-				self::bars( __( 'Leads by source', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'channel', $f ), 'channel' );
-				self::bars( __( 'Leads from ads, by ad network', 'aarye-marketing-addon-for-forms' ), $networks, 'source', 'aarye-card--paid' );
-				self::bars( __( 'Ad campaigns', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'campaign', $paid_f ), 'campaign' );
+				self::bars( __( 'Leads by source', 'aarye-marketing-addon' ), AARYE_Entries::grouped( 'channel', $f ), 'channel' );
+				self::bars( __( 'Leads from ads, by ad network', 'aarye-marketing-addon' ), $networks, 'source', 'aarye-card--paid' );
+				self::bars( __( 'Ad campaigns', 'aarye-marketing-addon' ), AARYE_Entries::grouped( 'campaign', $paid_f ), 'campaign' );
 				$ads = array_values(
 					array_filter(
 						AARYE_Entries::grouped( 'ad', $paid_f ),
@@ -350,9 +347,9 @@ class AARYE_Admin {
 						}
 					)
 				);
-				self::bars( __( 'Ads', 'aarye-marketing-addon-for-forms' ), $ads, '', '', $paid['total'] ? __( 'Add utm_content (the ad name) to your ad links to see which ad brought each lead. See "Connect your ads".', 'aarye-marketing-addon-for-forms' ) : '' );
+				self::bars( __( 'Ads', 'aarye-marketing-addon' ), $ads, '', '', $paid['total'] ? __( 'Add utm_content (the ad name) to your ad links to see which ad brought each lead. See "Connect your ads".', 'aarye-marketing-addon' ) : '' );
 				self::bars(
-					__( 'Search, social, AI and other websites', 'aarye-marketing-addon-for-forms' ),
+					__( 'Search, social, AI and other websites', 'aarye-marketing-addon' ),
 					AARYE_Entries::grouped(
 						'source_label',
 						array_merge(
@@ -365,18 +362,18 @@ class AARYE_Admin {
 						12
 					)
 				);
-				self::bars( __( 'Forms', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'form_name', $f ) );
-				self::bars( __( 'Languages', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'language', $f ), 'lang' );
-				self::bars( __( 'Devices', 'aarye-marketing-addon-for-forms' ), AARYE_Entries::grouped( 'device', $f ) );
+				self::bars( __( 'Lead capture', 'aarye-marketing-addon' ), AARYE_Entries::grouped( 'form_name', $f ) );
+				self::bars( __( 'Languages', 'aarye-marketing-addon' ), AARYE_Entries::grouped( 'language', $f ), 'lang' );
+				self::bars( __( 'Devices', 'aarye-marketing-addon' ), AARYE_Entries::grouped( 'device', $f ) );
 				/**
-				 * More cards on the overview (Aarye Pro).
+				 * More cards on the overview.
 				 *
 				 * @param array $f Filters.
 				 */
 				do_action( 'aarye_overview_cards', $f );
 				?>
 			</div>
-			<p><a class="button button-primary" href="<?php echo esc_url( self::url( 'entries', array_filter( $f ) ) ); ?>"><?php esc_html_e( 'See all entries', 'aarye-marketing-addon-for-forms' ); ?></a></p>
+			<p><a class="button button-primary" href="<?php echo esc_url( self::url( 'entries', array_filter( $f ) ) ); ?>"><?php esc_html_e( 'See all entries', 'aarye-marketing-addon' ); ?></a></p>
 		</div>
 		<?php
 	}
@@ -399,33 +396,33 @@ class AARYE_Admin {
 		$plugins = AARYE_Integrations::plugins();
 		?>
 		<div class="wrap aarye">
-			<h1 class="wp-heading-inline"><?php esc_html_e( 'All entries', 'aarye-marketing-addon-for-forms' ); ?></h1>
-			<a class="page-title-action" href="<?php echo esc_url( $export ); ?>"><?php esc_html_e( 'Export CSV', 'aarye-marketing-addon-for-forms' ); ?></a>
+			<h1 class="wp-heading-inline"><?php esc_html_e( 'All entries', 'aarye-marketing-addon' ); ?></h1>
+			<a class="page-title-action" href="<?php echo esc_url( $export ); ?>"><?php esc_html_e( 'Export CSV', 'aarye-marketing-addon' ); ?></a>
 			<?php self::filter_bar( $f, self::SLUG . '-entries' ); ?>
 			<p class="aarye-muted">
 				<?php
 				/* translators: %s: number of entries. */
-				echo esc_html( sprintf( _n( '%s entry', '%s entries', $result['total'], 'aarye-marketing-addon-for-forms' ), number_format_i18n( $result['total'] ) ) );
+				echo esc_html( sprintf( _n( '%s entry', '%s entries', $result['total'], 'aarye-marketing-addon' ), number_format_i18n( $result['total'] ) ) );
 				if ( '' !== $f['campaign'] ) {
 					/* translators: %s: campaign name. */
-					echo ' · ' . esc_html( sprintf( __( 'Campaign: %s', 'aarye-marketing-addon-for-forms' ), $f['campaign'] ) );
+					echo ' · ' . esc_html( sprintf( __( 'Campaign: %s', 'aarye-marketing-addon' ), $f['campaign'] ) );
 				}
 				?>
 			</p>
 			<table class="widefat striped aarye-table">
 				<thead><tr>
-					<th><?php esc_html_e( 'Date', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Contact', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Came from', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Source proof', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Spam check', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Form', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Language', 'aarye-marketing-addon-for-forms' ); ?></th>
-					<th><?php esc_html_e( 'Status', 'aarye-marketing-addon-for-forms' ); ?></th>
+					<th><?php esc_html_e( 'Date', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Contact', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Came from', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Source proof', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Spam check', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Form', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Language', 'aarye-marketing-addon' ); ?></th>
+					<th><?php esc_html_e( 'Status', 'aarye-marketing-addon' ); ?></th>
 				</tr></thead>
 				<tbody>
 				<?php if ( ! $result['rows'] ) : ?>
-					<tr><td colspan="8"><?php esc_html_e( 'No entries match. New form entries appear here as soon as they are sent.', 'aarye-marketing-addon-for-forms' ); ?></td></tr>
+					<tr><td colspan="8"><?php esc_html_e( 'No entries match. New leads appear here as soon as they arrive.', 'aarye-marketing-addon' ); ?></td></tr>
 				<?php endif; ?>
 				<?php foreach ( $result['rows'] as $e ) : ?>
 					<?php
@@ -447,11 +444,11 @@ class AARYE_Admin {
 							<?php
 							if ( $files ) :
 								?>
-								<br /><span class="aarye-muted"><span class="dashicons dashicons-paperclip" aria-label="<?php esc_attr_e( 'Attachments', 'aarye-marketing-addon-for-forms' ); ?>"></span> <?php echo esc_html( (string) count( $files ) ); ?></span><?php endif; ?>
+								<br /><span class="aarye-muted"><span class="dashicons dashicons-paperclip" aria-label="<?php esc_attr_e( 'Attachments', 'aarye-marketing-addon' ); ?>"></span> <?php echo esc_html( (string) count( $files ) ); ?></span><?php endif; ?>
 							<?php
 							if ( $e->is_bot ) :
 								?>
-								<span class="aarye-badge aarye-badge--bot"><?php esc_html_e( 'Bot?', 'aarye-marketing-addon-for-forms' ); ?></span><?php endif; ?>
+								<span class="aarye-badge aarye-badge--bot"><?php esc_html_e( 'Bot?', 'aarye-marketing-addon' ); ?></span><?php endif; ?>
 						</td>
 						<td><?php echo wp_kses_post( self::badge( $e ) ); ?></td>
 						<td><?php echo wp_kses_post( self::proof_badge( $check['proof'] ) ); ?></td>
@@ -495,7 +492,7 @@ class AARYE_Admin {
 	private static function page_entry( $id ) {
 		$e = AARYE_Entries::get( $id );
 		if ( ! $e ) {
-			echo '<div class="wrap"><p>' . esc_html__( 'This entry no longer exists.', 'aarye-marketing-addon-for-forms' ) . '</p></div>';
+			echo '<div class="wrap"><p>' . esc_html__( 'This entry no longer exists.', 'aarye-marketing-addon' ) . '</p></div>';
 			return;
 		}
 		$fields  = AARYE_Entries::json( $e, 'fields' );
@@ -507,19 +504,19 @@ class AARYE_Admin {
 		$back    = wp_get_referer() ? wp_get_referer() : self::url( 'entries' );
 		?>
 		<div class="wrap aarye">
-			<p><a href="<?php echo esc_url( $back ); ?>">← <?php esc_html_e( 'All entries', 'aarye-marketing-addon-for-forms' ); ?></a></p>
+			<p><a href="<?php echo esc_url( $back ); ?>">← <?php esc_html_e( 'All entries', 'aarye-marketing-addon' ); ?></a></p>
 			<h1><?php echo esc_html( '' !== $e->name ? $e->name : ( '' !== $e->email ? $e->email : '#' . $e->id ) ); ?></h1>
 			<p class="aarye-entry-source"><?php echo wp_kses_post( self::badge( $e ) ); ?></p>
 			<div class="aarye-grid aarye-grid--entry">
 				<div class="aarye-card">
-					<h2><?php esc_html_e( 'Form entry', 'aarye-marketing-addon-for-forms' ); ?></h2>
+					<h2><?php esc_html_e( 'Lead', 'aarye-marketing-addon' ); ?></h2>
 					<table class="aarye-details">
 						<?php foreach ( $fields as $field ) : ?>
 							<tr><th><?php echo esc_html( '' !== $field['label'] ? $field['label'] : $field['name'] ); ?></th><td><?php echo nl2br( esc_html( $field['value'] ) ); ?></td></tr>
 						<?php endforeach; ?>
 					</table>
 					<?php if ( $files ) : ?>
-						<h3><?php esc_html_e( 'Attachments', 'aarye-marketing-addon-for-forms' ); ?></h3>
+						<h3><?php esc_html_e( 'Attachments', 'aarye-marketing-addon' ); ?></h3>
 						<ul class="aarye-files">
 							<?php foreach ( $files as $i => $file ) : ?>
 								<li><span class="dashicons dashicons-paperclip" aria-hidden="true"></span> <a href="<?php echo esc_url( '' !== $file['stored'] ? self::file_url( $e->id, $i ) : $file['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $file['name'] ); ?></a><?php echo '' !== $file['label'] ? ' <span class="aarye-muted">(' . esc_html( $file['label'] ) . ')</span>' : ''; ?></li>
@@ -531,22 +528,22 @@ class AARYE_Admin {
 						echo esc_html( $e->form_name . ' · ' . ( isset( $plugins[ $e->form_plugin ] ) ? $plugins[ $e->form_plugin ]['name'] : $e->form_plugin ) . ' · ' . get_date_from_gmt( $e->created_at, get_option( 'date_format' ) . ' H:i' ) );
 						$link = AARYE_Integrations::entry_link( $e );
 						if ( $link ) {
-							echo ' · <a href="' . esc_url( $link ) . '">' . esc_html__( 'Open in the form plugin', 'aarye-marketing-addon-for-forms' ) . '</a>';
+							echo ' · <a href="' . esc_url( $link ) . '">' . esc_html__( 'Open in the form plugin', 'aarye-marketing-addon' ) . '</a>';
 						}
 						?>
 					</p>
 				</div>
 				<div class="aarye-card">
-					<h2><?php esc_html_e( 'Where this lead came from', 'aarye-marketing-addon-for-forms' ); ?></h2>
+					<h2><?php esc_html_e( 'Where this lead came from', 'aarye-marketing-addon' ); ?></h2>
 					<table class="aarye-details">
-						<tr><th><?php esc_html_e( 'Source', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( $e->source_label . ' · ' . AARYE_Sources::channel_label( $e->channel ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Source', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( $e->source_label . ' · ' . AARYE_Sources::channel_label( $e->channel ) ); ?></td></tr>
 						<?php
 						$rows = array(
-							__( 'Campaign', 'aarye-marketing-addon-for-forms' )          => $e->campaign,
-							__( 'Ad set / ad group', 'aarye-marketing-addon-for-forms' ) => $e->ad_group,
-							__( 'Ad', 'aarye-marketing-addon-for-forms' )                => $e->ad,
-							__( 'Keyword', 'aarye-marketing-addon-for-forms' )           => $e->keyword,
-							__( 'Click ID', 'aarye-marketing-addon-for-forms' )          => '' !== $e->click_id ? $e->click_param . ' = ' . $e->click_id : '',
+							__( 'Campaign', 'aarye-marketing-addon' )          => $e->campaign,
+							__( 'Ad set / ad group', 'aarye-marketing-addon' ) => $e->ad_group,
+							__( 'Ad', 'aarye-marketing-addon' )                => $e->ad,
+							__( 'Keyword', 'aarye-marketing-addon' )           => $e->keyword,
+							__( 'Click ID', 'aarye-marketing-addon' )          => '' !== $e->click_id ? $e->click_param . ' = ' . $e->click_id : '',
 						);
 						foreach ( $rows as $label => $value ) {
 							if ( '' !== (string) $value ) {
@@ -554,28 +551,28 @@ class AARYE_Admin {
 							}
 						}
 						?>
-						<tr><th><?php esc_html_e( 'Landing page', 'aarye-marketing-addon-for-forms' ); ?></th><td class="aarye-break"><?php echo esc_html( (string) $e->landing_page ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Landing page', 'aarye-marketing-addon' ); ?></th><td class="aarye-break"><?php echo esc_html( (string) $e->landing_page ); ?></td></tr>
 						<?php
 						if ( '' !== (string) $e->referrer ) :
 							?>
-							<tr><th><?php esc_html_e( 'Referrer', 'aarye-marketing-addon-for-forms' ); ?></th><td class="aarye-break"><?php echo esc_html( $e->referrer ); ?></td></tr><?php endif; ?>
-						<tr><th><?php esc_html_e( 'Form sent from', 'aarye-marketing-addon-for-forms' ); ?></th><td class="aarye-break"><?php echo esc_html( (string) $e->page_url ); ?></td></tr>
+							<tr><th><?php esc_html_e( 'Referrer', 'aarye-marketing-addon' ); ?></th><td class="aarye-break"><?php echo esc_html( $e->referrer ); ?></td></tr><?php endif; ?>
+						<tr><th><?php esc_html_e( 'Sent from page', 'aarye-marketing-addon' ); ?></th><td class="aarye-break"><?php echo esc_html( (string) $e->page_url ); ?></td></tr>
 						<?php if ( $first && ( $first['label'] !== $e->source_label || $first['campaign'] !== $e->campaign ) ) : ?>
-							<tr><th><?php esc_html_e( 'First visit came from', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( $first['label'] . ( '' !== $first['campaign'] ? ' · ' . $first['campaign'] : '' ) ); ?></td></tr>
+							<tr><th><?php esc_html_e( 'First visit came from', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( $first['label'] . ( '' !== $first['campaign'] ? ' · ' . $first['campaign'] : '' ) ); ?></td></tr>
 						<?php endif; ?>
-						<tr><th><?php esc_html_e( 'Visits before sending', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( (string) $e->visits ); ?><?php echo null !== $days ? esc_html( ' · ' . sprintf( /* translators: %d: days. */ _n( '%d day after the first visit', '%d days after the first visit', $days, 'aarye-marketing-addon-for-forms' ), $days ) ) : ''; ?></td></tr>
-						<tr><th><?php esc_html_e( 'Device', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( ucfirst( $e->device ) . ( '' !== $e->browser ? ' · ' . $e->browser : '' ) ); ?></td></tr>
-						<tr><th><?php esc_html_e( 'Language', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( strtoupper( $e->language ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Visits before sending', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( (string) $e->visits ); ?><?php echo null !== $days ? esc_html( ' · ' . sprintf( /* translators: %d: days. */ _n( '%d day after the first visit', '%d days after the first visit', $days, 'aarye-marketing-addon' ), $days ) ) : ''; ?></td></tr>
+						<tr><th><?php esc_html_e( 'Device', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( ucfirst( $e->device ) . ( '' !== $e->browser ? ' · ' . $e->browser : '' ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Language', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( strtoupper( $e->language ) ); ?></td></tr>
 						<?php
 						if ( '' !== $e->ip ) :
 							?>
-							<tr><th><?php esc_html_e( 'IP address', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( $e->ip ); ?></td></tr><?php endif; ?>
+							<tr><th><?php esc_html_e( 'IP address', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( $e->ip ); ?></td></tr><?php endif; ?>
 					</table>
 					<?php
 					$params = isset( $attr['last']['params'] ) && is_array( $attr['last']['params'] ) ? $attr['last']['params'] : array();
 					if ( $params ) :
 						?>
-						<details><summary><?php esc_html_e( 'All tracking parameters', 'aarye-marketing-addon-for-forms' ); ?></summary>
+						<details><summary><?php esc_html_e( 'All tracking parameters', 'aarye-marketing-addon' ); ?></summary>
 							<table class="aarye-details aarye-details--small">
 								<?php foreach ( $params as $k => $v ) : ?>
 									<tr><th><code><?php echo esc_html( $k ); ?></code></th><td class="aarye-break"><?php echo esc_html( $v ); ?></td></tr>
@@ -586,16 +583,16 @@ class AARYE_Admin {
 				</div>
 				<?php $check = AARYE_Evidence::analyse( $e ); ?>
 				<div class="aarye-card aarye-evidence">
-					<h2><?php esc_html_e( 'Can you trust this lead?', 'aarye-marketing-addon-for-forms' ); ?></h2>
-					<h3><?php esc_html_e( 'Source proof', 'aarye-marketing-addon-for-forms' ); ?> <?php echo wp_kses_post( self::proof_badge( $check['proof'] ) ); ?></h3>
+					<h2><?php esc_html_e( 'Can you trust this lead?', 'aarye-marketing-addon' ); ?></h2>
+					<h3><?php esc_html_e( 'Source proof', 'aarye-marketing-addon' ); ?> <?php echo wp_kses_post( self::proof_badge( $check['proof'] ) ); ?></h3>
 					<p><?php echo esc_html( $check['proof']['text'] ); ?></p>
 					<table class="aarye-details aarye-details--small">
 						<?php foreach ( $check['proof']['steps'] as $step ) : ?>
 							<tr><th><?php echo esc_html( $step[0] ); ?></th><td class="aarye-break"><?php echo esc_html( $step[1] ); ?></td></tr>
 						<?php endforeach; ?>
-						<tr><th><?php esc_html_e( 'Recorded as', 'aarye-marketing-addon-for-forms' ); ?></th><td><?php echo esc_html( $e->source_label . ' · ' . AARYE_Sources::channel_label( $e->channel ) ); ?></td></tr>
+						<tr><th><?php esc_html_e( 'Recorded as', 'aarye-marketing-addon' ); ?></th><td><?php echo esc_html( $e->source_label . ' · ' . AARYE_Sources::channel_label( $e->channel ) ); ?></td></tr>
 					</table>
-					<h3><?php esc_html_e( 'Spam check', 'aarye-marketing-addon-for-forms' ); ?> <?php echo wp_kses_post( self::spam_badge( $check ) ); ?></h3>
+					<h3><?php esc_html_e( 'Spam check', 'aarye-marketing-addon' ); ?> <?php echo wp_kses_post( self::spam_badge( $check ) ); ?></h3>
 					<table class="aarye-checks">
 						<?php foreach ( $check['checks'] as $c ) : ?>
 							<tr class="aarye-check aarye-check--<?php echo esc_attr( $c['status'] ); ?>">
@@ -605,9 +602,9 @@ class AARYE_Admin {
 							</tr>
 						<?php endforeach; ?>
 					</table>
-					<p class="aarye-muted"><?php esc_html_e( 'Score: each red sign adds 40, each orange sign 15. 60 or more is likely spam, 25 or more has doubts. The check explains; it never deletes or blocks an entry.', 'aarye-marketing-addon-for-forms' ); ?></p>
+					<p class="aarye-muted"><?php esc_html_e( 'Score: each red sign adds 40, each orange sign 15. 60 or more is likely spam, 25 or more has doubts. The check explains; it never deletes or blocks an entry.', 'aarye-marketing-addon' ); ?></p>
 					<?php if ( $check['details'] ) : ?>
-						<details><summary><?php esc_html_e( 'Recorded browser details', 'aarye-marketing-addon-for-forms' ); ?></summary>
+						<details><summary><?php esc_html_e( 'Recorded browser details', 'aarye-marketing-addon' ); ?></summary>
 							<table class="aarye-details aarye-details--small">
 								<?php foreach ( $check['details'] as $label => $value ) : ?>
 									<tr><th><?php echo esc_html( $label ); ?></th><td class="aarye-break"><?php echo esc_html( $value ); ?></td></tr>
@@ -618,7 +615,7 @@ class AARYE_Admin {
 				</div>
 				<?php
 				/**
-				 * More cards on an entry (Aarye Pro: pages viewed, deliveries).
+				 * More cards on an entry.
 				 *
 				 * @param object $e Entry.
 				 */
@@ -629,15 +626,15 @@ class AARYE_Admin {
 				<input type="hidden" name="action" value="aarye_entry" />
 				<input type="hidden" name="entry" value="<?php echo esc_attr( (string) $e->id ); ?>" />
 				<?php wp_nonce_field( 'aarye_entry_' . $e->id ); ?>
-				<label><?php esc_html_e( 'Lead status', 'aarye-marketing-addon-for-forms' ); ?>
+				<label><?php esc_html_e( 'Lead status', 'aarye-marketing-addon' ); ?>
 					<select name="status">
 						<?php foreach ( AARYE_Entries::statuses() as $k => $label ) : ?>
 							<option value="<?php echo esc_attr( $k ); ?>" <?php selected( $e->status, $k ); ?>><?php echo esc_html( $label ); ?></option>
 						<?php endforeach; ?>
 					</select>
 				</label>
-				<button type="submit" class="button button-primary" name="todo" value="status"><?php esc_html_e( 'Save', 'aarye-marketing-addon-for-forms' ); ?></button>
-				<button type="submit" class="button aarye-danger" name="todo" value="delete" data-confirm="<?php esc_attr_e( 'Delete this entry and its files?', 'aarye-marketing-addon-for-forms' ); ?>"><?php esc_html_e( 'Delete', 'aarye-marketing-addon-for-forms' ); ?></button>
+				<button type="submit" class="button button-primary" name="todo" value="status"><?php esc_html_e( 'Save', 'aarye-marketing-addon' ); ?></button>
+				<button type="submit" class="button aarye-danger" name="todo" value="delete" data-confirm="<?php esc_attr_e( 'Delete this entry and its files?', 'aarye-marketing-addon' ); ?>"><?php esc_html_e( 'Delete', 'aarye-marketing-addon' ); ?></button>
 			</form>
 		</div>
 		<?php
@@ -649,7 +646,7 @@ class AARYE_Admin {
 	public static function entry_action() {
 		$id = isset( $_POST['entry'] ) ? absint( $_POST['entry'] ) : 0;
 		if ( ! current_user_can( self::cap() ) || ! check_admin_referer( 'aarye_entry_' . $id ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) );
 		}
 		$todo = isset( $_POST['todo'] ) ? sanitize_key( wp_unslash( $_POST['todo'] ) ) : '';
 		if ( 'delete' === $todo ) {
@@ -678,18 +675,18 @@ class AARYE_Admin {
 	public static function download_file() {
 		$id = isset( $_GET['entry'] ) ? absint( $_GET['entry'] ) : 0;
 		if ( ! current_user_can( self::cap() ) || ! check_admin_referer( 'aarye_file_' . $id ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) );
 		}
 		$i     = isset( $_GET['file'] ) ? absint( $_GET['file'] ) : 0;
 		$entry = AARYE_Entries::get( $id );
 		$files = $entry ? AARYE_Entries::json( $entry, 'files' ) : array();
 		if ( empty( $files[ $i ]['stored'] ) ) {
-			wp_die( esc_html__( 'File not found.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'File not found.', 'aarye-marketing-addon' ) );
 		}
 		$base = realpath( AARYE_Entries::files_dir() );
 		$path = realpath( AARYE_Entries::files_dir() . $files[ $i ]['stored'] );
 		if ( ! $path || ! $base || 0 !== strpos( $path, $base ) || ! is_file( $path ) ) {
-			wp_die( esc_html__( 'File not found.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'File not found.', 'aarye-marketing-addon' ) );
 		}
 		$type = wp_check_filetype( $path );
 		nocache_headers();
@@ -706,7 +703,7 @@ class AARYE_Admin {
 	 */
 	public static function export() {
 		if ( ! current_user_can( self::cap() ) || ! check_admin_referer( 'aarye_export' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) );
 		}
 		$result = AARYE_Entries::query( self::filters(), 10000 );
 		$rows   = array();
@@ -747,20 +744,20 @@ class AARYE_Admin {
 		$sources = AARYE_Import::sources();
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Import past entries', 'aarye-marketing-addon-for-forms' ); ?></h1>
-			<p class="aarye-lead"><?php esc_html_e( 'Bring in the entries your form plugins saved before Aarye was installed, with their original dates, fields and files.', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<h1><?php esc_html_e( 'Import past entries', 'aarye-marketing-addon' ); ?></h1>
+			<p class="aarye-lead"><?php esc_html_e( 'Bring in the entries your form plugins saved before Aarye was installed, with their original dates, fields and files.', 'aarye-marketing-addon' ); ?></p>
 			<div class="aarye-card">
 				<ul class="aarye-steps">
-					<li><?php esc_html_e( 'The source of a past entry is known only when the page address saved with it carries ad tags (gclid, fbclid, utm_…). Other past entries show as "Not tracked (imported)": everything sent from now on is tracked.', 'aarye-marketing-addon-for-forms' ); ?></li>
-					<li><?php esc_html_e( 'Imported entries are not sent to Google Sheets or any connection, so nobody is contacted again.', 'aarye-marketing-addon-for-forms' ); ?></li>
-					<li><?php esc_html_e( 'Entries already in Aarye are skipped, so you can run an import again at any time.', 'aarye-marketing-addon-for-forms' ); ?></li>
+					<li><?php esc_html_e( 'The source of a past entry is known only when the page address saved with it carries ad tags (gclid, fbclid, utm_…). Other past entries show as "Not tracked (imported)": everything sent from now on is tracked.', 'aarye-marketing-addon' ); ?></li>
+					<li><?php esc_html_e( 'Imported entries are not sent to Google Sheets or any connection, so nobody is contacted again.', 'aarye-marketing-addon' ); ?></li>
+					<li><?php esc_html_e( 'Entries already in Aarye are skipped, so you can run an import again at any time.', 'aarye-marketing-addon' ); ?></li>
 				</ul>
 			</div>
 			<?php if ( ! $sources ) : ?>
-				<div class="aarye-card"><p><?php esc_html_e( 'None of your form plugins has saved entries that can be imported.', 'aarye-marketing-addon-for-forms' ); ?></p></div>
+				<div class="aarye-card"><p><?php esc_html_e( 'None of your form plugins has saved entries that can be imported.', 'aarye-marketing-addon' ); ?></p></div>
 			<?php else : ?>
 				<table class="widefat striped aarye-table aarye-import">
-					<thead><tr><th><?php esc_html_e( 'Form plugin', 'aarye-marketing-addon-for-forms' ); ?></th><th><?php esc_html_e( 'Saved entries', 'aarye-marketing-addon-for-forms' ); ?></th><th></th></tr></thead>
+					<thead><tr><th><?php esc_html_e( 'Form plugin', 'aarye-marketing-addon' ); ?></th><th><?php esc_html_e( 'Saved entries', 'aarye-marketing-addon' ); ?></th><th></th></tr></thead>
 					<tbody>
 						<?php foreach ( $sources as $key => $src ) : ?>
 							<tr>
@@ -768,7 +765,7 @@ class AARYE_Admin {
 								<td><?php echo esc_html( number_format_i18n( $src['total'] ) ); ?></td>
 								<td>
 									<?php if ( $src['total'] > 0 ) : ?>
-										<button type="button" class="button button-primary aarye-import__go" data-source="<?php echo esc_attr( $key ); ?>" data-total="<?php echo esc_attr( (string) $src['total'] ); ?>"><?php esc_html_e( 'Import', 'aarye-marketing-addon-for-forms' ); ?></button>
+										<button type="button" class="button button-primary aarye-import__go" data-source="<?php echo esc_attr( $key ); ?>" data-total="<?php echo esc_attr( (string) $src['total'] ); ?>"><?php esc_html_e( 'Import', 'aarye-marketing-addon' ); ?></button>
 										<span class="aarye-import__status aarye-muted" aria-live="polite"></span>
 									<?php endif; ?>
 								</td>
@@ -790,7 +787,7 @@ class AARYE_Admin {
 	private static function used_on( $plugin, $form ) {
 		$posts = AARYE_Placements::of( $plugin, $form );
 		if ( ! $posts ) {
-			echo '<span class="aarye-muted">' . esc_html__( 'Not found on a page', 'aarye-marketing-addon-for-forms' ) . '</span>';
+			echo '<span class="aarye-muted">' . esc_html__( 'Not found on a page', 'aarye-marketing-addon' ) . '</span>';
 			return;
 		}
 		$links = array();
@@ -799,10 +796,10 @@ class AARYE_Admin {
 			$url     = 'publish' === get_post_status( $post_id ) && is_post_type_viewable( get_post_type( $post_id ) ) ? get_permalink( $post_id ) : get_edit_post_link( $post_id );
 			$links[] = $url ? '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html( '' !== $title ? $title : '#' . $post_id ) . '</a>' : esc_html( $title );
 		}
-		echo '<span class="aarye-muted">' . esc_html__( 'On:', 'aarye-marketing-addon-for-forms' ) . '</span> ' . wp_kses_post( implode( ', ', $links ) );
+		echo '<span class="aarye-muted">' . esc_html__( 'On:', 'aarye-marketing-addon' ) . '</span> ' . wp_kses_post( implode( ', ', $links ) );
 		if ( count( $posts ) > 3 ) {
 			/* translators: %d: number of other pages. */
-			echo ' <span class="aarye-muted">' . esc_html( sprintf( _n( 'and %d more', 'and %d more', count( $posts ) - 3, 'aarye-marketing-addon-for-forms' ), count( $posts ) - 3 ) ) . '</span>';
+			echo ' <span class="aarye-muted">' . esc_html( sprintf( _n( 'and %d more', 'and %d more', count( $posts ) - 3, 'aarye-marketing-addon' ), count( $posts ) - 3 ) ) . '</span>';
 		}
 	}
 
@@ -814,16 +811,16 @@ class AARYE_Admin {
 		$test = isset( $_GET['test_url'] ) ? esc_url_raw( wp_unslash( $_GET['test_url'] ) ) : '';
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Connect your ads', 'aarye-marketing-addon-for-forms' ); ?></h1>
-			<p class="aarye-lead"><?php esc_html_e( 'Aarye recognises ad clicks from the tags ad networks add to your links. Google, Microsoft, TikTok, LinkedIn, X, Snapchat, Pinterest and Reddit add a click ID by themselves. Add the URL parameters below once per ad account to also see the campaign, ad set and ad of every lead. Nothing to install in your ad accounts and no passwords needed.', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<h1><?php esc_html_e( 'Connect your ads', 'aarye-marketing-addon' ); ?></h1>
+			<p class="aarye-lead"><?php esc_html_e( 'Aarye recognises ad clicks from the tags ad networks add to your links. Google, Microsoft, TikTok, LinkedIn, X, Snapchat, Pinterest and Reddit add a click ID by themselves. Add the URL parameters below once per ad account to also see the campaign, ad set and ad of every lead. Nothing to install in your ad accounts and no passwords needed.', 'aarye-marketing-addon' ); ?></p>
 
 			<div class="aarye-card">
-				<h2><?php esc_html_e( 'Test a link', 'aarye-marketing-addon-for-forms' ); ?></h2>
-				<p class="aarye-muted"><?php esc_html_e( 'Paste the address an ad opens (copy it from the ad preview, or click your ad and copy the address bar) to see how its leads will be shown.', 'aarye-marketing-addon-for-forms' ); ?></p>
+				<h2><?php esc_html_e( 'Test a link', 'aarye-marketing-addon' ); ?></h2>
+				<p class="aarye-muted"><?php esc_html_e( 'Paste the address an ad opens (copy it from the ad preview, or click your ad and copy the address bar) to see how its leads will be shown.', 'aarye-marketing-addon' ); ?></p>
 				<form method="get">
 					<input type="hidden" name="page" value="<?php echo esc_attr( self::SLUG . '-guide' ); ?>" />
 					<input type="url" name="test_url" class="large-text" value="<?php echo esc_attr( $test ); ?>" placeholder="https://example.com/?utm_source=facebook&utm_medium=paid&utm_campaign=..." />
-					<p><button class="button button-primary"><?php esc_html_e( 'Test', 'aarye-marketing-addon-for-forms' ); ?></button></p>
+					<p><button class="button button-primary"><?php esc_html_e( 'Test', 'aarye-marketing-addon' ); ?></button></p>
 				</form>
 				<?php
 				if ( '' !== $test ) {
@@ -839,17 +836,17 @@ class AARYE_Admin {
 					);
 					echo '<div class="aarye-test-result"><p>' . wp_kses_post( self::badge( $fake ) ) . '</p><table class="aarye-details">';
 					foreach ( array(
-						__( 'Counted as an ad', 'aarye-marketing-addon-for-forms' ) => 'paid' === $result['channel'] ? __( 'Yes', 'aarye-marketing-addon-for-forms' ) : __( 'No', 'aarye-marketing-addon-for-forms' ),
-						__( 'Campaign', 'aarye-marketing-addon-for-forms' ) => $result['campaign'],
-						__( 'Ad set / ad group', 'aarye-marketing-addon-for-forms' ) => $result['ad_group'],
-						__( 'Ad', 'aarye-marketing-addon-for-forms' )       => $result['ad'],
-						__( 'Keyword', 'aarye-marketing-addon-for-forms' )  => $result['keyword'],
+						__( 'Counted as an ad', 'aarye-marketing-addon' ) => 'paid' === $result['channel'] ? __( 'Yes', 'aarye-marketing-addon' ) : __( 'No', 'aarye-marketing-addon' ),
+						__( 'Campaign', 'aarye-marketing-addon' ) => $result['campaign'],
+						__( 'Ad set / ad group', 'aarye-marketing-addon' ) => $result['ad_group'],
+						__( 'Ad', 'aarye-marketing-addon' )       => $result['ad'],
+						__( 'Keyword', 'aarye-marketing-addon' )  => $result['keyword'],
 					) as $label => $value ) {
 						echo '<tr><th>' . esc_html( $label ) . '</th><td>' . esc_html( '' !== $value ? $value : '—' ) . '</td></tr>';
 					}
 					echo '</table>';
 					if ( 'direct' === $result['channel'] ) {
-						echo '<p>' . esc_html__( 'This link has no tracking tags: leads from it look like direct visits. Add the URL parameters for your ad network below.', 'aarye-marketing-addon-for-forms' ) . '</p>';
+						echo '<p>' . esc_html__( 'This link has no tracking tags: leads from it look like direct visits. Add the URL parameters for your ad network below.', 'aarye-marketing-addon' ) . '</p>';
 					}
 					echo '</div>';
 				}
@@ -867,7 +864,7 @@ class AARYE_Admin {
 					</ol>
 					<div class="aarye-copy">
 						<code><?php echo esc_html( $p['template'] ); ?></code>
-						<button type="button" class="button aarye-copy__btn" data-copy="<?php echo esc_attr( $p['template'] ); ?>"><?php esc_html_e( 'Copy', 'aarye-marketing-addon-for-forms' ); ?></button>
+						<button type="button" class="button aarye-copy__btn" data-copy="<?php echo esc_attr( $p['template'] ); ?>"><?php esc_html_e( 'Copy', 'aarye-marketing-addon' ); ?></button>
 					</div>
 					<?php if ( '' !== $p['note'] ) : ?>
 						<p class="aarye-muted"><?php echo esc_html( $p['note'] ); ?></p>
@@ -876,9 +873,9 @@ class AARYE_Admin {
 			<?php endforeach; ?>
 
 			<div class="aarye-card">
-				<h2><?php esc_html_e( 'Every ad network Aarye recognises', 'aarye-marketing-addon-for-forms' ); ?></h2>
+				<h2><?php esc_html_e( 'Every ad network Aarye recognises', 'aarye-marketing-addon' ); ?></h2>
 				<table class="widefat striped">
-					<thead><tr><th><?php esc_html_e( 'Ad network', 'aarye-marketing-addon-for-forms' ); ?></th><th><?php esc_html_e( 'Covers', 'aarye-marketing-addon-for-forms' ); ?></th><th><?php esc_html_e( 'Recognised by', 'aarye-marketing-addon-for-forms' ); ?></th></tr></thead>
+					<thead><tr><th><?php esc_html_e( 'Ad network', 'aarye-marketing-addon' ); ?></th><th><?php esc_html_e( 'Covers', 'aarye-marketing-addon' ); ?></th><th><?php esc_html_e( 'Recognised by', 'aarye-marketing-addon' ); ?></th></tr></thead>
 					<tbody>
 					<?php foreach ( AARYE_Sources::ad_networks() as $net ) : ?>
 						<tr>
@@ -889,10 +886,10 @@ class AARYE_Admin {
 								$how = array();
 								if ( $net['click'] ) {
 									/* translators: %s: parameter names. */
-									$how[] = sprintf( __( 'click ID %s (automatic)', 'aarye-marketing-addon-for-forms' ), implode( ', ', $net['click'] ) );
+									$how[] = sprintf( __( 'click ID %s (automatic)', 'aarye-marketing-addon' ), implode( ', ', $net['click'] ) );
 								}
 								/* translators: %s: utm_source values. */
-								$how[] = sprintf( __( 'utm_source = %s with a paid utm_medium', 'aarye-marketing-addon-for-forms' ), implode( ', ', array_slice( $net['utm'], 0, 4 ) ) );
+								$how[] = sprintf( __( 'utm_source = %s with a paid utm_medium', 'aarye-marketing-addon' ), implode( ', ', array_slice( $net['utm'], 0, 4 ) ) );
 								echo esc_html( implode( ' · ', $how ) );
 								?>
 							</td>
@@ -900,7 +897,7 @@ class AARYE_Admin {
 					<?php endforeach; ?>
 					</tbody>
 				</table>
-				<p class="aarye-muted"><?php esc_html_e( 'Also recognised without ads: search engines (Google, Bing, Yahoo, DuckDuckGo, Baidu, Yandex…), social networks, AI assistants (ChatGPT, Perplexity, Gemini, Copilot, Claude…), email, other websites and direct visits.', 'aarye-marketing-addon-for-forms' ); ?></p>
+				<p class="aarye-muted"><?php esc_html_e( 'Also recognised without ads: search engines (Google, Bing, Yahoo, DuckDuckGo, Baidu, Yandex…), social networks, AI assistants (ChatGPT, Perplexity, Gemini, Copilot, Claude…), email, other websites and direct visits.', 'aarye-marketing-addon' ); ?></p>
 			</div>
 		</div>
 		<?php
@@ -918,17 +915,22 @@ class AARYE_Admin {
 		}
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Forms', 'aarye-marketing-addon-for-forms' ); ?></h1>
-			<p class="aarye-lead"><?php esc_html_e( 'Every form of these plugins is captured automatically: no setup per form. Entries are saved in Aarye even if the form plugin doesn\'t keep entries itself.', 'aarye-marketing-addon-for-forms' ); ?></p>
-			<p class="aarye-muted"><?php esc_html_e( '"On" shows the pages, posts, templates and popups where each form is placed (shortcodes, blocks and Elementor widgets).', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<h1><?php esc_html_e( 'Lead capture', 'aarye-marketing-addon' ); ?></h1>
+			<p class="aarye-lead"><?php esc_html_e( 'Leads are saved automatically from every place on your site where visitors send their details: no setup needed. They are kept in Aarye even when nothing else on the site stores them.', 'aarye-marketing-addon' ); ?></p>
+			<p class="aarye-muted"><?php esc_html_e( '"On" shows the pages, posts, templates and popups where each form is placed (shortcodes, blocks and Elementor widgets).', 'aarye-marketing-addon' ); ?></p>
 			<?php foreach ( AARYE_Integrations::plugins() as $key => $plugin ) : ?>
-				<?php $active = AARYE_Integrations::is_active( $key ); ?>
+				<?php
+				$active = AARYE_Integrations::is_active( $key );
+				if ( ! $active ) {
+					continue;
+				}
+				?>
 				<div class="aarye-card aarye-plugin <?php echo $active ? '' : 'aarye-plugin--off'; ?>">
-					<h2><?php echo esc_html( $plugin['name'] ); ?> <span class="aarye-badge aarye-badge--<?php echo $active ? 'ok' : 'off'; ?>"><?php echo $active ? esc_html__( 'Connected', 'aarye-marketing-addon-for-forms' ) : esc_html__( 'Not installed', 'aarye-marketing-addon-for-forms' ); ?></span></h2>
+					<h2><?php echo esc_html( $plugin['name'] ); ?> <span class="aarye-badge aarye-badge--<?php echo $active ? 'ok' : 'off'; ?>"><?php echo $active ? esc_html__( 'Connected', 'aarye-marketing-addon' ) : esc_html__( 'Not installed', 'aarye-marketing-addon' ); ?></span></h2>
 					<?php if ( $active ) : ?>
 						<?php $forms = AARYE_Integrations::forms( $key ); ?>
 						<?php if ( ! $forms ) : ?>
-							<p class="aarye-muted"><?php esc_html_e( 'No forms found yet.', 'aarye-marketing-addon-for-forms' ); ?></p>
+							<p class="aarye-muted"><?php esc_html_e( 'No forms found yet.', 'aarye-marketing-addon' ); ?></p>
 						<?php else : ?>
 							<table class="widefat striped"><tbody>
 								<?php foreach ( $forms as $form ) : ?>
@@ -946,10 +948,10 @@ class AARYE_Admin {
 													'range' => 'all',
 												)
 											)
-										) . '">' . esc_html( sprintf( /* translators: %s: number. */ _n( '%s entry', '%s entries', (int) $c->n, 'aarye-marketing-addon-for-forms' ), number_format_i18n( (int) $c->n ) ) ) . '</a>' : '<span class="aarye-muted">' . esc_html__( 'No entries yet', 'aarye-marketing-addon-for-forms' ) . '</span>';
+										) . '">' . esc_html( sprintf( /* translators: %s: number. */ _n( '%s entry', '%s entries', (int) $c->n, 'aarye-marketing-addon' ), number_format_i18n( (int) $c->n ) ) ) . '</a>' : '<span class="aarye-muted">' . esc_html__( 'No entries yet', 'aarye-marketing-addon' ) . '</span>';
 										?>
 											</td>
-										<td class="aarye-muted"><?php echo $c ? esc_html( sprintf( /* translators: %s: date. */ __( 'Last: %s', 'aarye-marketing-addon-for-forms' ), get_date_from_gmt( $c->last, get_option( 'date_format' ) ) ) ) : ''; ?></td>
+										<td class="aarye-muted"><?php echo $c ? esc_html( sprintf( /* translators: %s: date. */ __( 'Last: %s', 'aarye-marketing-addon' ), get_date_from_gmt( $c->last, get_option( 'date_format' ) ) ) ) : ''; ?></td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody></table>
@@ -972,28 +974,28 @@ class AARYE_Admin {
 		$msg = isset( $_GET['msg'] ) ? sanitize_text_field( wp_unslash( $_GET['msg'] ) ) : '';
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Google Sheets', 'aarye-marketing-addon-for-forms' ); ?></h1>
+			<h1><?php esc_html_e( 'Google Sheets', 'aarye-marketing-addon' ); ?></h1>
 			<?php if ( '' !== $msg ) : ?>
-				<div class="notice <?php echo 'ok' === $msg ? 'notice-success' : 'notice-error'; ?> inline"><p><?php echo esc_html( 'ok' === $msg ? __( 'Connected: a test reached your spreadsheet. New entries will appear there as rows.', 'aarye-marketing-addon-for-forms' ) : $msg ); ?></p></div>
+				<div class="notice <?php echo 'ok' === $msg ? 'notice-success' : 'notice-error'; ?> inline"><p><?php echo esc_html( 'ok' === $msg ? __( 'Connected: a test reached your spreadsheet. New entries will appear there as rows.', 'aarye-marketing-addon' ) : $msg ); ?></p></div>
 			<?php endif; ?>
-			<p class="aarye-lead"><?php esc_html_e( 'Every new entry is added to your spreadsheet as a row with its source, campaign and ad, and every form field in its own column. Your Google account stays with you: WordPress only gets a private web address of your sheet.', 'aarye-marketing-addon-for-forms' ); ?></p>
+			<p class="aarye-lead"><?php esc_html_e( 'Every new entry is added to your spreadsheet as a row with its source, campaign and ad, and every detail in its own column. Your Google account stays with you: WordPress only gets a private web address of your sheet.', 'aarye-marketing-addon' ); ?></p>
 			<div class="aarye-card">
 				<ol class="aarye-steps">
-					<li><?php echo wp_kses_post( __( 'Create a Google Sheet (or open one) and choose <strong>Extensions → Apps Script</strong>.', 'aarye-marketing-addon-for-forms' ) ); ?></li>
-					<li><?php esc_html_e( 'Delete what is in the editor, paste this script and click the save icon:', 'aarye-marketing-addon-for-forms' ); ?>
-						<div class="aarye-copy aarye-copy--block"><pre><?php echo esc_html( AARYE_Sheets::script() ); ?></pre><button type="button" class="button aarye-copy__btn" data-copy="<?php echo esc_attr( AARYE_Sheets::script() ); ?>"><?php esc_html_e( 'Copy script', 'aarye-marketing-addon-for-forms' ); ?></button></div>
+					<li><?php echo wp_kses_post( __( 'Create a Google Sheet (or open one) and choose <strong>Extensions → Apps Script</strong>.', 'aarye-marketing-addon' ) ); ?></li>
+					<li><?php esc_html_e( 'Delete what is in the editor, paste this script and click the save icon:', 'aarye-marketing-addon' ); ?>
+						<div class="aarye-copy aarye-copy--block"><pre><?php echo esc_html( AARYE_Sheets::script() ); ?></pre><button type="button" class="button aarye-copy__btn" data-copy="<?php echo esc_attr( AARYE_Sheets::script() ); ?>"><?php esc_html_e( 'Copy script', 'aarye-marketing-addon' ); ?></button></div>
 					</li>
-					<li><?php echo wp_kses_post( __( 'Click <strong>Deploy → New deployment</strong>, choose type <strong>Web app</strong>, set "Execute as" to <strong>Me</strong> and "Who has access" to <strong>Anyone</strong>, then <strong>Deploy</strong> and allow access.', 'aarye-marketing-addon-for-forms' ) ); ?></li>
-					<li><?php esc_html_e( 'Copy the Web app URL (it ends in /exec), paste it below and save. A test is sent right away.', 'aarye-marketing-addon-for-forms' ); ?></li>
+					<li><?php echo wp_kses_post( __( 'Click <strong>Deploy → New deployment</strong>, choose type <strong>Web app</strong>, set "Execute as" to <strong>Me</strong> and "Who has access" to <strong>Anyone</strong>, then <strong>Deploy</strong> and allow access.', 'aarye-marketing-addon' ) ); ?></li>
+					<li><?php esc_html_e( 'Copy the Web app URL (it ends in /exec), paste it below and save. A test is sent right away.', 'aarye-marketing-addon' ); ?></li>
 				</ol>
 				<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 					<input type="hidden" name="action" value="aarye_sheets" />
 					<?php wp_nonce_field( 'aarye_sheets' ); ?>
 					<p><input type="url" name="sheets_url" class="large-text" value="<?php echo esc_attr( (string) AARYE_Settings::get( 'sheets_url' ) ); ?>" placeholder="https://script.google.com/macros/s/.../exec" /></p>
-					<p><label><input type="checkbox" name="sheets_tab_per_form" value="yes" <?php checked( AARYE_Settings::on( 'sheets_tab_per_form' ) ); ?> /> <?php esc_html_e( 'One tab per form (otherwise all entries go to a tab named "Leads")', 'aarye-marketing-addon-for-forms' ); ?></label></p>
-					<p><button class="button button-primary"><?php esc_html_e( 'Save and test', 'aarye-marketing-addon-for-forms' ); ?></button> <button class="button" name="sheets_url_clear" value="1"><?php esc_html_e( 'Disconnect', 'aarye-marketing-addon-for-forms' ); ?></button></p>
+					<p><label><input type="checkbox" name="sheets_tab_per_form" value="yes" <?php checked( AARYE_Settings::on( 'sheets_tab_per_form' ) ); ?> /> <?php esc_html_e( 'One tab per lead source page (otherwise all leads go to a tab named "Leads")', 'aarye-marketing-addon' ); ?></label></p>
+					<p><button class="button button-primary"><?php esc_html_e( 'Save and test', 'aarye-marketing-addon' ); ?></button> <button class="button" name="sheets_url_clear" value="1"><?php esc_html_e( 'Disconnect', 'aarye-marketing-addon' ); ?></button></p>
 				</form>
-				<p class="aarye-muted"><?php esc_html_e( 'Changed the script? Deploy → Manage deployments → edit → New version, so the same address keeps working.', 'aarye-marketing-addon-for-forms' ); ?></p>
+				<p class="aarye-muted"><?php esc_html_e( 'Changed the script? Deploy → Manage deployments → edit → New version, so the same address keeps working.', 'aarye-marketing-addon' ); ?></p>
 			</div>
 		</div>
 		<?php
@@ -1004,11 +1006,11 @@ class AARYE_Admin {
 	 */
 	public static function save_sheets() {
 		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'aarye_sheets' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) );
 		}
 		$url = ! empty( $_POST['sheets_url_clear'] ) ? '' : ( isset( $_POST['sheets_url'] ) ? esc_url_raw( wp_unslash( $_POST['sheets_url'] ) ) : '' );
 		if ( '' !== $url && 0 !== strpos( $url, 'https://script.google.com/' ) ) {
-			wp_safe_redirect( self::url( 'sheets', array( 'msg' => rawurlencode( __( 'Paste the Web app URL from Apps Script: it starts with https://script.google.com/', 'aarye-marketing-addon-for-forms' ) ) ) ) );
+			wp_safe_redirect( self::url( 'sheets', array( 'msg' => rawurlencode( __( 'Paste the Web app URL from Apps Script: it starts with https://script.google.com/', 'aarye-marketing-addon' ) ) ) ) );
 			exit;
 		}
 		AARYE_Settings::update(
@@ -1033,27 +1035,27 @@ class AARYE_Admin {
 		$s = AARYE_Settings::all();
 		?>
 		<div class="wrap aarye">
-			<h1><?php esc_html_e( 'Settings', 'aarye-marketing-addon-for-forms' ); ?></h1>
+			<h1><?php esc_html_e( 'Settings', 'aarye-marketing-addon' ); ?></h1>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aarye-card">
 				<input type="hidden" name="action" value="aarye_settings" />
 				<?php wp_nonce_field( 'aarye_settings' ); ?>
 				<table class="form-table" role="presentation">
-					<tr><th><?php esc_html_e( 'Remember the source for', 'aarye-marketing-addon-for-forms' ); ?></th><td><input type="number" name="cookie_days" min="1" max="730" value="<?php echo esc_attr( (string) $s['cookie_days'] ); ?>" class="small-text" /> <?php esc_html_e( 'days', 'aarye-marketing-addon-for-forms' ); ?><p class="description"><?php esc_html_e( 'A visitor who clicks an ad today and sends the form within this time is still credited to the ad.', 'aarye-marketing-addon-for-forms' ); ?></p></td></tr>
-					<tr><th><?php esc_html_e( 'Cookie consent', 'aarye-marketing-addon-for-forms' ); ?></th><td><label><input type="checkbox" name="wait_for_consent" value="yes" <?php checked( $s['wait_for_consent'], 'yes' ); ?> /> <?php esc_html_e( 'Only remember the source after the visitor accepts marketing cookies (needs a cookie banner that supports the WP Consent API)', 'aarye-marketing-addon-for-forms' ); ?></label></td></tr>
-					<tr><th><?php esc_html_e( 'IP address', 'aarye-marketing-addon-for-forms' ); ?></th><td><label><input type="checkbox" name="store_ip" value="yes" <?php checked( $s['store_ip'], 'yes' ); ?> /> <?php esc_html_e( 'Save the visitor\'s IP address with each entry', 'aarye-marketing-addon-for-forms' ); ?></label></td></tr>
-					<tr><th><?php esc_html_e( 'Attachments', 'aarye-marketing-addon-for-forms' ); ?></th><td><label><input type="checkbox" name="keep_files" value="yes" <?php checked( $s['keep_files'], 'yes' ); ?> /> <?php esc_html_e( 'Keep a private copy of uploaded files (some form plugins delete them after sending the email)', 'aarye-marketing-addon-for-forms' ); ?></label></td></tr>
-					<tr><th><?php esc_html_e( 'Bots', 'aarye-marketing-addon-for-forms' ); ?></th><td><label><input type="checkbox" name="skip_bots" value="yes" <?php checked( $s['skip_bots'], 'yes' ); ?> /> <?php esc_html_e( 'Don\'t save entries sent by bots and scripts (otherwise they are saved and marked "Bot?")', 'aarye-marketing-addon-for-forms' ); ?></label></td></tr>
-					<tr><th><?php esc_html_e( 'When deleting the plugin', 'aarye-marketing-addon-for-forms' ); ?></th><td><label><input type="checkbox" name="delete_on_remove" value="yes" <?php checked( $s['delete_on_remove'], 'yes' ); ?> /> <?php esc_html_e( 'Also delete all saved entries and files', 'aarye-marketing-addon-for-forms' ); ?></label></td></tr>
+					<tr><th><?php esc_html_e( 'Remember the source for', 'aarye-marketing-addon' ); ?></th><td><input type="number" name="cookie_days" min="1" max="730" value="<?php echo esc_attr( (string) $s['cookie_days'] ); ?>" class="small-text" /> <?php esc_html_e( 'days', 'aarye-marketing-addon' ); ?><p class="description"><?php esc_html_e( 'A visitor who clicks an ad today and sends the form within this time is still credited to the ad.', 'aarye-marketing-addon' ); ?></p></td></tr>
+					<tr><th><?php esc_html_e( 'Cookie consent', 'aarye-marketing-addon' ); ?></th><td><label><input type="checkbox" name="wait_for_consent" value="yes" <?php checked( $s['wait_for_consent'], 'yes' ); ?> /> <?php esc_html_e( 'Only remember the source after the visitor accepts marketing cookies (needs a cookie banner that supports the WP Consent API)', 'aarye-marketing-addon' ); ?></label></td></tr>
+					<tr><th><?php esc_html_e( 'IP address', 'aarye-marketing-addon' ); ?></th><td><label><input type="checkbox" name="store_ip" value="yes" <?php checked( $s['store_ip'], 'yes' ); ?> /> <?php esc_html_e( 'Save the visitor\'s IP address with each entry', 'aarye-marketing-addon' ); ?></label></td></tr>
+					<tr><th><?php esc_html_e( 'Attachments', 'aarye-marketing-addon' ); ?></th><td><label><input type="checkbox" name="keep_files" value="yes" <?php checked( $s['keep_files'], 'yes' ); ?> /> <?php esc_html_e( 'Keep a private copy of uploaded files (some form plugins delete them after sending the email)', 'aarye-marketing-addon' ); ?></label></td></tr>
+					<tr><th><?php esc_html_e( 'Bots', 'aarye-marketing-addon' ); ?></th><td><label><input type="checkbox" name="skip_bots" value="yes" <?php checked( $s['skip_bots'], 'yes' ); ?> /> <?php esc_html_e( 'Don\'t save entries sent by bots and scripts (otherwise they are saved and marked "Bot?")', 'aarye-marketing-addon' ); ?></label></td></tr>
+					<tr><th><?php esc_html_e( 'When deleting the plugin', 'aarye-marketing-addon' ); ?></th><td><label><input type="checkbox" name="delete_on_remove" value="yes" <?php checked( $s['delete_on_remove'], 'yes' ); ?> /> <?php esc_html_e( 'Also delete all saved entries and files', 'aarye-marketing-addon' ); ?></label></td></tr>
 					<?php
 					/**
-					 * More settings rows (Aarye Pro).
+					 * More settings rows.
 					 *
 					 * @param array $s Settings.
 					 */
 					do_action( 'aarye_settings_rows', $s );
 					?>
 				</table>
-				<p><button class="button button-primary"><?php esc_html_e( 'Save settings', 'aarye-marketing-addon-for-forms' ); ?></button></p>
+				<p><button class="button button-primary"><?php esc_html_e( 'Save settings', 'aarye-marketing-addon' ); ?></button></p>
 			</form>
 		</div>
 		<?php
@@ -1064,14 +1066,14 @@ class AARYE_Admin {
 	 */
 	public static function save_settings() {
 		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'aarye_settings' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) );
 		}
 		$values = array( 'cookie_days' => isset( $_POST['cookie_days'] ) ? min( 730, max( 1, absint( $_POST['cookie_days'] ) ) ) : 90 );
 		foreach ( array( 'wait_for_consent', 'store_ip', 'keep_files', 'skip_bots', 'delete_on_remove' ) as $key ) {
 			$values[ $key ] = ! empty( $_POST[ $key ] ) ? 'yes' : 'no';
 		}
 		/**
-		 * Settings from the form, before saving (Aarye Pro adds its own).
+		 * Settings from the settings screen, before saving.
 		 *
 		 * @param array $values Values.
 		 */

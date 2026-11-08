@@ -49,7 +49,7 @@ class AARYE_Other_Forms {
 	 * @return array
 	 */
 	public static function add_source( $plugins ) {
-		$plugins[ self::KEY ] = array( 'name' => __( 'Other forms (theme and custom forms)', 'aarye-marketing-addon-for-forms' ) );
+		$plugins[ self::KEY ] = array( 'name' => __( 'Theme and custom enquiries', 'aarye-marketing-addon' ) );
 		return $plugins;
 	}
 
@@ -219,11 +219,11 @@ class AARYE_Other_Forms {
 	public static function settings_rows( $s ) {
 		?>
 		<tr>
-			<th><?php esc_html_e( 'Other forms', 'aarye-marketing-addon-for-forms' ); ?></th>
+			<th><?php esc_html_e( 'Other forms', 'aarye-marketing-addon' ); ?></th>
 			<td>
-				<label><input type="checkbox" name="other_forms" value="yes" <?php checked( isset( $s['other_forms'] ) ? $s['other_forms'] : 'yes', 'yes' ); ?> /> <?php esc_html_e( 'Also save forms made by your theme or by hand (for example Houzez enquiry forms) when they have an email or phone field', 'aarye-marketing-addon-for-forms' ); ?></label>
-				<p class="description"><?php esc_html_e( 'Saved when the visitor clicks send. Logins, searches, carts, checkouts, comments and payment forms are never saved. If the form rejects the message and the visitor corrects it, the same entry is updated.', 'aarye-marketing-addon-for-forms' ); ?></p>
-				<p><label><?php esc_html_e( 'Ignore these forms (CSS selectors, one per line)', 'aarye-marketing-addon-for-forms' ); ?><br /><textarea class="large-text code" rows="2" name="other_forms_exclude" placeholder="#newsletter-form&#10;.mortgage-calculator"><?php echo esc_textarea( isset( $s['other_forms_exclude'] ) ? $s['other_forms_exclude'] : '' ); ?></textarea></label></p>
+				<label><input type="checkbox" name="other_forms" value="yes" <?php checked( isset( $s['other_forms'] ) ? $s['other_forms'] : 'yes', 'yes' ); ?> /> <?php esc_html_e( 'Also save forms made by your theme or by hand (for example Houzez enquiry forms) when they have an email or phone field', 'aarye-marketing-addon' ); ?></label>
+				<p class="description"><?php esc_html_e( 'Saved when the visitor clicks send. Logins, searches, carts, checkouts, comments and payment forms are never saved. If the form rejects the message and the visitor corrects it, the same entry is updated.', 'aarye-marketing-addon' ); ?></p>
+				<p><label><?php esc_html_e( 'Ignore these forms (CSS selectors, one per line)', 'aarye-marketing-addon' ); ?><br /><textarea class="large-text code" rows="2" name="other_forms_exclude" placeholder="#newsletter-form&#10;.mortgage-calculator"><?php echo esc_textarea( isset( $s['other_forms_exclude'] ) ? $s['other_forms_exclude'] : '' ); ?></textarea></label></p>
 			</td>
 		</tr>
 		<?php

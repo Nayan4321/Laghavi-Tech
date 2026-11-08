@@ -85,7 +85,7 @@ class AARYE_Async {
 	 */
 	public static function jobs() {
 		/**
-		 * Background jobs (Google Sheets, and Aarye Pro's connections).
+		 * Background jobs (Google Sheets and extensions).
 		 */
 		do_action( 'aarye_async_run' );
 	}

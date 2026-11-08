@@ -102,7 +102,7 @@ class AARYE_Import {
 			$out['wpforms'] = array(
 				'name'  => 'WPForms',
 				'total' => $has ? (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM %i WHERE status NOT IN ('trash','spam')", $wpdb->prefix . 'wpforms_entries' ) ) : 0,
-				'note'  => $has ? '' : __( 'WPForms Lite does not save entries, so there is nothing to import.', 'aarye-marketing-addon-for-forms' ),
+				'note'  => $has ? '' : __( 'WPForms Lite does not save entries, so there is nothing to import.', 'aarye-marketing-addon' ),
 			);
 		}
 		if ( self::table_exists( $wpdb->prefix . 'frmt_form_entry' ) ) {
@@ -128,12 +128,12 @@ class AARYE_Import {
 			$out['cf7'] = array(
 				'name'  => 'Contact Form 7',
 				'total' => $flamingo,
-				'note'  => $flamingo ? __( 'From the Flamingo plugin, which stores Contact Form 7 messages.', 'aarye-marketing-addon-for-forms' ) : __( 'Contact Form 7 does not save entries. If you used the Flamingo plugin, its messages are imported from here.', 'aarye-marketing-addon-for-forms' ),
+				'note'  => $flamingo ? __( 'From the Flamingo plugin, which stores Contact Form 7 messages.', 'aarye-marketing-addon' ) : __( 'Contact Form 7 does not save entries. If you used the Flamingo plugin, its messages are imported from here.', 'aarye-marketing-addon' ),
 			);
 		}
 		foreach ( self::houzez_tables() as $id => $table ) {
 			/* translators: %s: leads or enquiries. */
-			$out[ 'houzez:' . $id ] = array( 'name' => sprintf( __( 'Houzez CRM – %s', 'aarye-marketing-addon-for-forms' ), 'leads' === $id ? __( 'leads', 'aarye-marketing-addon-for-forms' ) : __( 'enquiries', 'aarye-marketing-addon-for-forms' ) ), 'total' => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ), 'note' => '' );
+			$out[ 'houzez:' . $id ] = array( 'name' => sprintf( __( 'Houzez CRM – %s', 'aarye-marketing-addon' ), 'leads' === $id ? __( 'leads', 'aarye-marketing-addon' ) : __( 'enquiries', 'aarye-marketing-addon' ) ), 'total' => (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) ), 'note' => '' );
 		}
 		// phpcs:enable
 		return $out;
@@ -537,7 +537,7 @@ class AARYE_Import {
 					array(
 						'plugin'          => 'houzez',
 						'form_id'         => $id,
-						'form_name'       => 'leads' === $id ? __( 'Houzez CRM leads', 'aarye-marketing-addon-for-forms' ) : __( 'Houzez CRM enquiries', 'aarye-marketing-addon-for-forms' ),
+						'form_name'       => 'leads' === $id ? __( 'Houzez CRM leads', 'aarye-marketing-addon' ) : __( 'Houzez CRM enquiries', 'aarye-marketing-addon' ),
 						'source_entry_id' => $pk,
 						'fields'          => $fields,
 					)
@@ -657,13 +657,13 @@ class AARYE_Import {
 	 */
 	public static function ajax() {
 		if ( ! current_user_can( AARYE_Admin::cap() ) || ! check_ajax_referer( 'aarye_import', 'nonce', false ) ) {
-			wp_send_json_error( array( 'message' => __( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon-for-forms' ) ), 403 );
+			wp_send_json_error( array( 'message' => __( 'Sorry, you are not allowed to do that.', 'aarye-marketing-addon' ) ), 403 );
 		}
 		$key     = isset( $_POST['source'] ) ? sanitize_text_field( wp_unslash( $_POST['source'] ) ) : '';
 		$offset  = isset( $_POST['offset'] ) ? absint( $_POST['offset'] ) : 0;
 		$sources = self::sources();
 		if ( ! isset( $sources[ $key ] ) ) {
-			wp_send_json_error( array( 'message' => __( 'Unknown source.', 'aarye-marketing-addon-for-forms' ) ), 400 );
+			wp_send_json_error( array( 'message' => __( 'Unknown source.', 'aarye-marketing-addon' ) ), 400 );
 		}
 		if ( function_exists( 'set_time_limit' ) ) {
 			set_time_limit( 120 ); // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged -- Large imports.

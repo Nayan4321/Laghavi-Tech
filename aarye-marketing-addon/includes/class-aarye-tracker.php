@@ -171,7 +171,7 @@ class AARYE_Tracker {
 				return $name;
 			}
 		}
-		return '' !== $ua ? __( 'Other', 'aarye-marketing-addon-for-forms' ) : '';
+		return '' !== $ua ? __( 'Other', 'aarye-marketing-addon' ) : '';
 	}
 
 	/**

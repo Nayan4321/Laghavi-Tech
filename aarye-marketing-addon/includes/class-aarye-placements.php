@@ -123,11 +123,11 @@ class AARYE_Placements {
 						$add( 'elementor', $id, $post_id );
 						if ( ! isset( $seen[ $id ] ) ) {
 							$seen[ $id ] = true;
-							$name        = isset( $set['form_name'] ) && '' !== trim( (string) $set['form_name'] ) ? (string) $set['form_name'] : __( 'Form', 'aarye-marketing-addon-for-forms' );
+							$name        = isset( $set['form_name'] ) && '' !== trim( (string) $set['form_name'] ) ? (string) $set['form_name'] : __( 'Form', 'aarye-marketing-addon' );
 							$elementor[] = array(
 								'id'    => $id,
 								/* translators: 1: form name, 2: page title. */
-								'title' => sprintf( __( '%1$s (on "%2$s")', 'aarye-marketing-addon-for-forms' ), $name, $page ),
+								'title' => sprintf( __( '%1$s (on "%2$s")', 'aarye-marketing-addon' ), $name, $page ),
 							);
 						}
 					} elseif ( 'metform' === $type && ! empty( $set['mf_form_id'] ) ) {

@@ -6,7 +6,7 @@
  * Version:           1.0.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
- * Requires Plugins:  aarye-marketing-addon-for-forms
+ * Requires Plugins:  aarye-marketing-addon
  * Author:            Laghavi Digital
  * Author URI:        https://laghavi.site/
  * License:           GPL-2.0-or-later

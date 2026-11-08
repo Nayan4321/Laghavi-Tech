@@ -1,5 +1,5 @@
 /*
- * Aarye Marketing Addon for Forms – catches forms that no supported form plugin handles (theme forms such
+ * Aarye Marketing Addon – saves enquiries sent from theme and custom pages (theme forms such
  * as Houzez property enquiries, page-builder and hand-made forms). When such a form with an email or phone
  * field is sent, its fields go to Aarye, which saves them with the visitor's source.
  */

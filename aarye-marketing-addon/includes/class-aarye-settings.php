@@ -21,7 +21,7 @@ class AARYE_Settings {
 	 */
 	public static function defaults() {
 		/**
-		 * Defaults for settings added by add-ons (Aarye Pro).
+		 * Defaults for settings added by extensions.
 		 *
 		 * @param array $defaults Defaults.
 		 */
