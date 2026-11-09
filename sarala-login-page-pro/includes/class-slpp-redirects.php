@@ -26,6 +26,132 @@ class SLPP_Redirects {
 		add_filter( 'login_redirect', array( __CLASS__, 'login_redirect' ), 50, 3 );
 		add_filter( 'woocommerce_login_redirect', array( __CLASS__, 'woocommerce_login_redirect' ), 50, 2 );
 		add_filter( 'logout_redirect', array( __CLASS__, 'logout_redirect' ), 50, 3 );
+
+		// Blocked addresses: checked last, after every other plugin.
+		add_filter( 'login_redirect', array( __CLASS__, 'block_login' ), 999, 3 );
+		add_filter( 'saralopa_login_redirect', array( __CLASS__, 'block_social' ), 999, 2 );
+		add_filter( 'woocommerce_login_redirect', array( __CLASS__, 'block_wc' ), 999, 2 );
+		add_filter( 'logout_redirect', array( __CLASS__, 'block_logout' ), 999, 3 );
+	}
+
+	/**
+	 * Blocked redirect patterns, one per line.
+	 *
+	 * @return string[]
+	 */
+	public static function blocked_list() {
+		$text = (string) self::settings()['blocked'];
+		return array_values( array_filter( array_map( 'trim', preg_split( '/\r\n|\r|\n/', $text ) ) ) );
+	}
+
+	/**
+	 * Whether an address matches a blocked pattern. Patterns: a full address, a path such as
+	 * /wp-admin/* (the * matches anything), or a domain such as example.com.
+	 *
+	 * @param string $url Address.
+	 * @return bool
+	 */
+	public static function is_blocked( $url ) {
+		$url = (string) $url;
+		if ( '' === $url ) {
+			return false;
+		}
+		$full = preg_match( '#^https?://#i', $url ) ? $url : home_url( '/' . ltrim( $url, '/' ) );
+		$host = strtolower( (string) wp_parse_url( $full, PHP_URL_HOST ) );
+		$path = (string) wp_parse_url( $full, PHP_URL_PATH );
+		$path = '' === $path ? '/' : $path;
+		foreach ( self::blocked_list() as $pattern ) {
+			$pattern = strtolower( $pattern );
+			if ( preg_match( '#^https?://#', $pattern ) ) {
+				$subject = strtolower( untrailingslashit( strtok( $full, '?#' ) ) );
+				$pattern = untrailingslashit( $pattern );
+			} elseif ( '/' === $pattern[0] ) {
+				$subject = strtolower( untrailingslashit( $path ) );
+				$pattern = '/' === $pattern ? '' : untrailingslashit( $pattern );
+				if ( '' === $pattern && '' === $subject ) {
+					return true;
+				}
+			} else {
+				// A domain: blocks it and its subdomains.
+				$pattern = ltrim( $pattern, '.' );
+				if ( $host === $pattern || substr( $host, -strlen( '.' . $pattern ) ) === '.' . $pattern ) {
+					return true;
+				}
+				continue;
+			}
+			$regex = '#^' . str_replace( '\\*', '.*', preg_quote( $pattern, '#' ) ) . '$#';
+			if ( preg_match( $regex, $subject ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Safe page when the requested one is blocked.
+	 *
+	 * @param WP_User|null $user User.
+	 * @param string       $when login or logout.
+	 * @return string
+	 */
+	private static function safe_target( $user, $when ) {
+		$target = $user instanceof WP_User ? self::target( $user, $when ) : '';
+		if ( '' !== $target && ! self::is_blocked( $target ) ) {
+			return $target;
+		}
+		if ( 'login' === $when && $user instanceof WP_User && user_can( $user, 'edit_posts' ) && ! self::is_blocked( admin_url() ) ) {
+			return admin_url();
+		}
+		if ( 'login' === $when && function_exists( 'wc_get_page_permalink' ) && ! self::is_blocked( wc_get_page_permalink( 'myaccount' ) ) ) {
+			return wc_get_page_permalink( 'myaccount' );
+		}
+		return home_url( '/' );
+	}
+
+	/**
+	 * Login redirect: never to a blocked address.
+	 *
+	 * @param string           $redirect_to Address.
+	 * @param string           $requested   Requested address.
+	 * @param WP_User|WP_Error $user        User.
+	 * @return string
+	 */
+	public static function block_login( $redirect_to, $requested, $user ) {
+		return self::is_blocked( $redirect_to ) ? self::safe_target( $user instanceof WP_User ? $user : null, 'login' ) : $redirect_to;
+	}
+
+	/**
+	 * Social login redirect.
+	 *
+	 * @param string  $redirect Address.
+	 * @param WP_User $user     User.
+	 * @return string
+	 */
+	public static function block_social( $redirect, $user ) {
+		return self::is_blocked( $redirect ) ? self::safe_target( $user, 'login' ) : $redirect;
+	}
+
+	/**
+	 * WooCommerce login redirect.
+	 *
+	 * @param string  $redirect Address.
+	 * @param WP_User $user     User.
+	 * @return string
+	 */
+	public static function block_wc( $redirect, $user ) {
+		return self::is_blocked( $redirect ) ? self::safe_target( $user instanceof WP_User ? $user : null, 'login' ) : $redirect;
+	}
+
+	/**
+	 * Logout redirect.
+	 *
+	 * @param string           $redirect_to Address.
+	 * @param string           $requested   Requested address.
+	 * @param WP_User|WP_Error $user        User.
+	 * @return string
+	 */
+	public static function block_logout( $redirect_to, $requested, $user ) {
+		return self::is_blocked( $redirect_to ) ? self::safe_target( $user instanceof WP_User ? $user : null, 'logout' ) : $redirect_to;
 	}
 
 	/**
@@ -40,6 +166,7 @@ class SLPP_Redirects {
 			'roles'          => isset( $saved['roles'] ) && is_array( $saved['roles'] ) ? $saved['roles'] : array(),
 			'default'        => isset( $saved['default'] ) && is_array( $saved['default'] ) ? $saved['default'] : array(),
 			'keep_requested' => isset( $saved['keep_requested'] ) ? (int) $saved['keep_requested'] : 1,
+			'blocked'        => isset( $saved['blocked'] ) ? (string) $saved['blocked'] : '',
 		);
 	}
 
@@ -195,6 +322,7 @@ class SLPP_Redirects {
 			'roles'          => array(),
 			'default'        => array(),
 			'keep_requested' => empty( $posted['keep_requested'] ) ? 0 : 1,
+			'blocked'        => isset( $posted['blocked'] ) ? implode( "\n", array_filter( array_map( 'trim', explode( "\n", sanitize_textarea_field( (string) $posted['blocked'] ) ) ) ) ) : '',
 		);
 		foreach ( array_keys( wp_roles()->get_names() ) as $role ) {
 			foreach ( array( 'login', 'logout' ) as $when ) {
@@ -237,7 +365,12 @@ class SLPP_Redirects {
 			$list[ __( 'WooCommerce My Account', 'sarala-login-page-pro' ) ] = wc_get_page_permalink( 'myaccount' );
 			$list[ __( 'Shop', 'sarala-login-page-pro' ) ]                   = wc_get_page_permalink( 'shop' );
 		}
-		foreach ( get_pages( array( 'number' => 60, 'sort_column' => 'post_title' ) ) as $page ) {
+		foreach ( get_pages(
+			array(
+				'number'      => 60,
+				'sort_column' => 'post_title',
+			)
+		) as $page ) {
 			$list[ $page->post_title ] = get_permalink( $page );
 		}
 		return $list;
@@ -323,6 +456,11 @@ class SLPP_Redirects {
 					?>
 					<?php esc_html_e( 'These rules apply to password logins, social logins, WooCommerce and the Sarala login widget.', 'sarala-login-page-pro' ); ?>
 				</p>
+
+				<h2><?php esc_html_e( 'Blocked redirects', 'sarala-login-page-pro' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Never send anyone to these addresses after logging in or out, whatever a link, plugin or rule asks for. They go to their role\'s page above instead (or the dashboard, My Account or home page).', 'sarala-login-page-pro' ); ?></p>
+				<textarea name="slpp_redirects[blocked]" rows="5" class="large-text code" placeholder="/wp-admin/*&#10;/checkout/&#10;https://example.com/old-page/&#10;spam-domain.com"><?php echo esc_textarea( $settings['blocked'] ); ?></textarea>
+				<p class="description"><?php esc_html_e( 'One per line: a path such as /wp-admin/* (the * matches anything), a full address, or a domain (blocks it and its subdomains).', 'sarala-login-page-pro' ); ?></p>
 				<?php submit_button(); ?>
 			</form>
 		</div>

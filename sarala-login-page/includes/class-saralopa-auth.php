@@ -259,6 +259,8 @@ class SARALOPA_Auth {
 			array(
 				'user'     => (string) $request->get_param( 'user' ),
 				'verifier' => isset( $data['verifier'] ) ? (string) $data['verifier'] : '',
+				// Everything the provider sent back (some, such as VK ID, add values the token request needs).
+				'params'   => array_map( 'sanitize_text_field', array_filter( (array) $request->get_query_params() + (array) $request->get_body_params(), 'is_scalar' ) ),
 			)
 		);
 		if ( is_wp_error( $profile ) ) {

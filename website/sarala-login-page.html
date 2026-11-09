@@ -162,13 +162,13 @@
       <div>
         <span class="slp-badge">Free on WordPress.org</span>
         <h1>Sarala Login Page</h1>
-        <p>Let people sign up and log in with Google, Facebook, Apple, Microsoft, LinkedIn or X in one click. Works with WooCommerce, limits login attempts, stops bots with a simple math question, hides your login address, can make passwords expire and shows you every failed login.</p>
+        <p>Let people sign up and log in with Google, Facebook, Apple, Microsoft, LinkedIn, X, GitHub, Discord, Yahoo or Reddit in one click. Works with WooCommerce, limits login attempts, stops bots with a simple math question, hides your login address, can make passwords expire and shows you every failed login.</p>
         <div class="slp-hero__ctas">
           <a class="slp-btn slp-btn--white" href="https://wordpress.org/plugins/sarala-login-page/" target="_blank" rel="noopener">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-8.4 10c0-1.2.3-2.4.7-3.4l4 11a8.4 8.4 0 0 1-4.7-7.6zm8.4 8.4c-.8 0-1.6-.1-2.4-.3l2.5-7.3 2.6 7.1v.1a8.4 8.4 0 0 1-2.7.4zm1.2-12.4c.5 0 1-.1 1-.1.5-.1.4-.7 0-.7 0 0-1.4.1-2.3.1-.9 0-2.3-.1-2.3-.1-.5 0-.5.7 0 .7l.9.1 1.3 3.7-1.9 5.6L6.8 8l1-.1c.5-.1.4-.7 0-.7 0 0-1.4.1-2.3.1h-.6A8.4 8.4 0 0 1 17.6 5.8h-.1c-.9 0-1.5.8-1.5 1.6 0 .7.4 1.3.8 2.1.3.6.7 1.3.7 2.3 0 .7-.3 1.6-.6 2.7l-.8 2.8-3-8.9zm3.1 11.3 2.6-7.4c.5-1.2.6-2.2.6-3.1v-.6a8.4 8.4 0 0 1-3.2 11.1z"/></svg>
             Get it free on WordPress.org
           </a>
-          <a class="slp-btn slp-btn--ghost" href="https://laghavi.site/product/sarala-login-page-pro/">Buy Pro – from $49/year</a>
+          <a class="slp-btn slp-btn--ghost" href="https://laghavi.site/product/sarala-login-page-pro/">Buy Pro – from $54/year</a>
         </div>
         <div class="slp-stats">
           <div><b>6</b><span>social logins</span></div>
@@ -204,7 +204,7 @@
       <div class="slp-card">
         <div class="slp-card__head"><span class="slp-icon" style="background:#4f46e5"><svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/></svg></span><div><h3>Social login</h3><small>Sign up or log in instantly</small></div></div>
         <ul>
-          <li>Google, Facebook, Apple, Microsoft, LinkedIn and X (Twitter)</li>
+          <li>Google, Facebook, Apple, Microsoft, LinkedIn, X, GitHub, Discord, Yahoo and Reddit</li>
           <li>Existing users log straight into their account</li>
           <li>Buttons on login, register and anywhere with a shortcode</li>
         </ul>
@@ -246,6 +246,7 @@
         <ul>
           <li>Nothing is sent to Laghavi Digital</li>
           <li>Accounts are only linked when the provider confirms the email</li>
+          <li>Login tokens are checked against each provider's public keys, so logins can't be forged</li>
           <li>You can change any user's role at any time</li>
         </ul>
       </div>
@@ -290,14 +291,15 @@
   <!-- Free vs Pro -->
   <section>
     <h2>Free plugin vs Sarala Login Page Pro</h2>
-    <p class="lead">The free plugin is complete on its own. Pro adds a branded login page, login redirects, a login widget, profile pictures and full control over your admin area, for teams and agencies.</p>
+    <p class="lead">The free plugin is complete on its own. Pro adds 7 more providers, button styles in your brand colours, a CAPTCHA that can't lock you out, encrypted keys, a branded login page, login redirects, a login widget, profile pictures and full control over your admin area.</p>
     <div class="slp-table-wrap">
       <table class="slp-table">
         <thead><tr><th>Feature</th><th>Free plugin</th><th>Pro</th></tr></thead>
         <tbody>
-          <tr><td>Social login (6 providers, including X)</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Social login</td><td>10 providers: Google, Facebook, Apple, Microsoft, LinkedIn, X, GitHub, Discord, Yahoo, Reddit</td><td>17: also Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus</td></tr>
+          <tr><td>Forgery-proof logins (token signature, audience and expiry checks)</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
           <tr><td>WooCommerce &amp; checkout sign-up</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
-          <tr><td>Math question against bots</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
+          <tr><td>Bot protection</td><td>Math security question</td><td>Cloudflare Turnstile, reCAPTCHA or hCaptcha, with the security question as automatic backup</td></tr>
           <tr><td>Custom login URL</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
           <tr><td>Failed login log</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
           <tr><td>Limit login attempts</td><td class="slp-yes">✓</td><td class="slp-yes">✓</td></tr>
@@ -305,6 +307,9 @@
           <tr><td>Login page design</td><td>WordPress default</td><td>5 templates with your logo, colours, fonts, background images and text</td></tr>
           <tr><td>Forgot &amp; reset password pages</td><td>WordPress default</td><td>Match your login template</td></tr>
           <tr><td>Login redirects</td><td>WordPress default</td><td>A page per role after login and after logout</td></tr>
+          <tr><td>Button style</td><td>Full-width buttons or icons</td><td>Icon tiles, outline boxes or brand pills, corners and your own colours</td></tr>
+          <tr><td>Provider keys</td><td>Stored by WordPress</td><td>Encrypted with your site's own security keys</td></tr>
+          <tr><td>Blocked redirects</td><td class="slp-no">—</td><td>Addresses nobody is sent to after login or logout</td></tr>
           <tr><td>Login widget</td><td class="slp-no">—</td><td>AJAX login box for sidebars and pages, with your own HTML and CSS</td></tr>
           <tr><td>Profile pictures</td><td>Gravatar</td><td>Users upload their own picture</td></tr>
           <tr><td>Disconnecting social accounts</td><td>Users and admins</td><td>Choose who may, lock-out protection and a bulk action</td></tr>
@@ -326,20 +331,20 @@
     <div class="slp-prices">
       <div class="slp-price">
         <h3>Personal</h3><div class="slp-price__sites">1 website</div>
-        <div class="slp-price__amt">$49<span> / year</span></div>
+        <div class="slp-price__amt">$54<span> / year</span></div>
         <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
         <a class="slp-btn slp-btn--line" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=1+site">Buy Personal</a>
       </div>
       <div class="slp-price slp-price--pop">
         <span class="slp-price__tag">Most popular</span>
         <h3>Business</h3><div class="slp-price__sites">Up to 5 websites</div>
-        <div class="slp-price__amt">$99<span> / year</span></div>
+        <div class="slp-price__amt">$104<span> / year</span></div>
         <ul><li>All Pro features</li><li>Automatic updates</li><li>Email support</li></ul>
         <a class="slp-btn slp-btn--brand" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=5+sites">Buy Business</a>
       </div>
       <div class="slp-price">
         <h3>Agency</h3><div class="slp-price__sites">Unlimited websites</div>
-        <div class="slp-price__amt">$199<span> / year</span></div>
+        <div class="slp-price__amt">$204<span> / year</span></div>
         <ul><li>All Pro features</li><li>Use on every client site</li><li>Email support</li></ul>
         <a class="slp-btn slp-btn--line" href="https://laghavi.site/product/sarala-login-page-pro/?attribute_sites=Unlimited+sites">Buy Agency</a>
       </div>
@@ -358,7 +363,7 @@
       <details><summary>Does it limit login attempts?</summary><p>Yes, for free. After 5 failed logins in 15 minutes the IP address is locked out for 30 minutes, even with the right password. You choose the numbers, can add your own IP addresses to a "never lock out" list, and unlock anyone from the Failed logins screen.</p></details>
       <details><summary>Can I log in with X (Twitter)?</summary><p>Yes. Create a free app in the X Developer Portal and paste its keys. Switch on "Request email from users" in the app so new users can sign up with their X email address.</p></details>
       <details><summary>Does it slow my site down?</summary><p>No. Its small stylesheet only loads on pages that show the login buttons, and nothing runs on the rest of your site.</p></details>
-      <details><summary>What do I get with Pro?</summary><p>Five login page templates with your branding, matching forgot and reset password pages, login and logout redirects per role, an AJAX login widget, user profile pictures, control over disconnecting social accounts, a protected super admin, a full user activity log and per-role control over admin menus, editor blocks, custom fields, widgets and front-end content. You get the download and your license key in My Account straight after paying.</p></details>
+      <details><summary>What do I get with Pro?</summary><p>Seven more login providers (Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus), button styles with your own colours, Cloudflare Turnstile, reCAPTCHA or hCaptcha with the security question as automatic backup, encrypted provider keys, blocked redirects, five login page templates with your branding, matching forgot and reset password pages, login and logout redirects per role, an AJAX login widget, user profile pictures, a super admin, a user activity log and per-role control over your admin area.</p></details>
       <details><summary>Can I cancel Pro?</summary><p>Yes, any time from My Account. Your subscription won't renew, and your license keeps working until the end of the year you paid for.</p></details>
     </div>
   </section>

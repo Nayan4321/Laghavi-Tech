@@ -8,7 +8,8 @@
 defined( 'ABSPATH' ) || exit;
 
 /**
- * Talks to Google, Facebook, Apple, Microsoft and LinkedIn.
+ * Talks to Google, Facebook, Apple, Microsoft, LinkedIn, X, Reddit, GitHub, Discord and Yahoo. More
+ * providers can be added with the saralopa_providers filter (see generic()).
  *
  * Every provider returns the same normalized profile:
  * id, email, email_verified, first_name, last_name, display_name.
@@ -26,7 +27,11 @@ class SARALOPA_Providers {
 	 * @return array<string, array>
 	 */
 	public static function all() {
-		return array(
+		static $list = null;
+		if ( null !== $list && did_action( 'init' ) ) {
+			return $list;
+		}
+		$all = array(
 			'google'    => array(
 				'label'   => 'Google',
 				'console' => 'https://console.cloud.google.com/apis/credentials',
@@ -58,7 +63,64 @@ class SARALOPA_Providers {
 				'console' => 'https://developer.x.com/en/portal/dashboard',
 				'fields'  => array( 'client_id', 'client_secret' ),
 			),
+			'reddit'    => array(
+				'label'       => 'Reddit',
+				'console'     => 'https://www.reddit.com/prefs/apps',
+				'fields'      => array( 'client_id', 'client_secret' ),
+				'authorize'   => 'https://www.reddit.com/api/v1/authorize',
+				'token'       => 'https://www.reddit.com/api/v1/access_token',
+				'token_auth'  => 'basic',
+				'scope'       => 'identity',
+				'auth_params' => array( 'duration' => 'temporary' ),
+				'profile'     => array( __CLASS__, 'reddit_profile' ),
+				'no_email'    => true,
+			),
+			'github'    => array(
+				'label'     => 'GitHub',
+				'console'   => 'https://github.com/settings/developers',
+				'fields'    => array( 'client_id', 'client_secret' ),
+				'authorize' => 'https://github.com/login/oauth/authorize',
+				'token'     => 'https://github.com/login/oauth/access_token',
+				'scope'     => 'read:user user:email',
+				'profile'   => array( __CLASS__, 'github_profile' ),
+			),
+			'discord'   => array(
+				'label'     => 'Discord',
+				'console'   => 'https://discord.com/developers/applications',
+				'fields'    => array( 'client_id', 'client_secret' ),
+				'authorize' => 'https://discord.com/oauth2/authorize',
+				'token'     => 'https://discord.com/api/oauth2/token',
+				'scope'     => 'identify email',
+				'profile'   => array( __CLASS__, 'discord_profile' ),
+			),
+			'yahoo'     => array(
+				'label'     => 'Yahoo',
+				'console'   => 'https://developer.yahoo.com/apps/',
+				'fields'    => array( 'client_id', 'client_secret' ),
+				'authorize' => 'https://api.login.yahoo.com/oauth2/request_auth',
+				'token'     => 'https://api.login.yahoo.com/oauth2/get_token',
+				'scope'     => 'openid email profile',
+				'issuer'    => 'https://api.login.yahoo.com',
+				'jwks'      => 'https://api.login.yahoo.com/openid/v1/certs',
+				'profile'   => array( __CLASS__, 'yahoo_profile' ),
+			),
 		);
+
+		/**
+		 * Add login providers. Each one needs: label, console, fields, authorize, token, scope and a
+		 * profile callback that receives ( $token, $config, $extra, $id ) and returns the normalized
+		 * profile (id, email, email_verified, first_name, last_name, display_name) or a WP_Error.
+		 * Optional: pkce, token_auth (body|basic), client_param, auth_params, token_params, steps,
+		 * labels, no_email.
+		 *
+		 * @param array $all Providers.
+		 */
+		$filtered = apply_filters( 'saralopa_providers', $all );
+		// Cached only once every plugin has loaded, so add-ons' providers are never left out.
+		if ( did_action( 'init' ) ) {
+			$list = $filtered;
+		}
+		return $filtered;
 	}
 
 	/**
@@ -252,7 +314,25 @@ class SARALOPA_Providers {
 				break;
 
 			default:
-				return '';
+				$def = isset( self::all()[ $id ] ) ? self::all()[ $id ] : array();
+				if ( empty( $def['authorize'] ) ) {
+					return '';
+				}
+				$base   = $def['authorize'];
+				$params = array_merge(
+					array(
+						! empty( $def['client_param'] ) ? $def['client_param'] : 'client_id' => isset( $config['client_id'] ) ? $config['client_id'] : '',
+						'redirect_uri'  => $redirect,
+						'response_type' => 'code',
+						'scope'         => isset( $def['scope'] ) ? $def['scope'] : '',
+						'state'         => $state,
+					),
+					isset( $def['auth_params'] ) ? (array) $def['auth_params'] : array()
+				);
+				if ( ! empty( $def['pkce'] ) ) {
+					$params['code_challenge']        = self::pkce_challenge( $verifier );
+					$params['code_challenge_method'] = 'S256';
+				}
 		}
 
 		return $base . '?' . http_build_query( $params, '', '&', PHP_QUERY_RFC3986 );
@@ -287,7 +367,7 @@ class SARALOPA_Providers {
 				$profile = self::twitter( $code, isset( $extra['verifier'] ) ? (string) $extra['verifier'] : '' );
 				break;
 			default:
-				return new WP_Error( 'saralopa_unknown_provider', 'Unknown provider.' );
+				$profile = self::generic( $id, $code, $extra );
 		}
 
 		if ( is_wp_error( $profile ) ) {
@@ -344,9 +424,17 @@ class SARALOPA_Providers {
 			return $token;
 		}
 
+		$claims = self::id_token_claims( $token, 'https://accounts.google.com', $config['client_id'], 'https://www.googleapis.com/oauth2/v3/certs' );
+		if ( is_wp_error( $claims ) ) {
+			return $claims;
+		}
+
 		$info = self::get_json( 'https://openidconnect.googleapis.com/v1/userinfo', $token['access_token'] );
 		if ( is_wp_error( $info ) ) {
 			return $info;
+		}
+		if ( ! isset( $info['sub'] ) || ! isset( $claims['sub'] ) || (string) $info['sub'] !== (string) $claims['sub'] ) {
+			return new WP_Error( 'saralopa_bad_token', 'Google returned a different account than the one in the signed ID token.' );
 		}
 
 		return array(
@@ -446,7 +534,7 @@ class SARALOPA_Providers {
 			return $token;
 		}
 
-		$claims = self::id_token_claims( $token, 'https://appleid.apple.com', $config['client_id'] );
+		$claims = self::id_token_claims( $token, 'https://appleid.apple.com', $config['client_id'], 'https://appleid.apple.com/auth/keys' );
 		if ( is_wp_error( $claims ) ) {
 			return $claims;
 		}
@@ -496,7 +584,7 @@ class SARALOPA_Providers {
 		}
 
 		// With the /common endpoint the issuer contains the user's tenant, so it is checked below instead.
-		$claims = self::id_token_claims( $token, '', $config['client_id'] );
+		$claims = self::id_token_claims( $token, '', $config['client_id'], 'https://login.microsoftonline.com/common/discovery/v2.0/keys' );
 		if ( is_wp_error( $claims ) ) {
 			return $claims;
 		}
@@ -553,9 +641,17 @@ class SARALOPA_Providers {
 			return $token;
 		}
 
+		$claims = self::id_token_claims( $token, 'https://www.linkedin.com/oauth', $config['client_id'], 'https://www.linkedin.com/oauth/openid/jwks' );
+		if ( is_wp_error( $claims ) ) {
+			return $claims;
+		}
+
 		$info = self::get_json( 'https://api.linkedin.com/v2/userinfo', $token['access_token'] );
 		if ( is_wp_error( $info ) ) {
 			return $info;
+		}
+		if ( ! isset( $info['sub'] ) || ! isset( $claims['sub'] ) || (string) $info['sub'] !== (string) $claims['sub'] ) {
+			return new WP_Error( 'saralopa_bad_token', 'LinkedIn returned a different account than the one in the signed ID token.' );
 		}
 
 		return array(
@@ -611,6 +707,175 @@ class SARALOPA_Providers {
 			'first_name'     => $parts[0],
 			'last_name'      => isset( $parts[1] ) ? $parts[1] : '',
 			'display_name'   => '' !== $name ? $name : ( isset( $data['username'] ) ? (string) $data['username'] : '' ),
+		);
+	}
+
+	/**
+	 * Any provider defined with authorize/token/profile keys (built-in ones below and add-ons).
+	 *
+	 * @param string $id    Provider ID.
+	 * @param string $code  Authorization code.
+	 * @param array  $extra Callback data: verifier (PKCE) and params (everything the provider sent back).
+	 * @return array|WP_Error
+	 */
+	private static function generic( $id, $code, $extra ) {
+		$def = isset( self::all()[ $id ] ) ? self::all()[ $id ] : array();
+		if ( empty( $def['token'] ) || empty( $def['profile'] ) || ! is_callable( $def['profile'] ) ) {
+			return new WP_Error( 'saralopa_unknown_provider', 'Unknown provider.' );
+		}
+		$token = self::exchange_code( $id, $code, $extra );
+		if ( is_wp_error( $token ) ) {
+			return $token;
+		}
+		return call_user_func( $def['profile'], $token, self::config( $id ), $extra, $id );
+	}
+
+	/**
+	 * Exchange an authorization code for tokens at a provider's token endpoint.
+	 *
+	 * @param string $id    Provider ID.
+	 * @param string $code  Authorization code.
+	 * @param array  $extra Callback data (verifier for PKCE).
+	 * @return array|WP_Error Token response.
+	 */
+	public static function exchange_code( $id, $code, $extra = array() ) {
+		$def     = self::all()[ $id ];
+		$config  = self::config( $id );
+		$client  = ! empty( $def['client_param'] ) ? $def['client_param'] : 'client_id';
+		$body    = array(
+			'code'         => $code,
+			'grant_type'   => 'authorization_code',
+			'redirect_uri' => self::callback_url( $id ),
+		);
+		$headers = array();
+		if ( isset( $def['token_auth'] ) && 'basic' === $def['token_auth'] ) {
+			$headers['Authorization'] = 'Basic ' . base64_encode( $config['client_id'] . ':' . ( isset( $config['client_secret'] ) ? $config['client_secret'] : '' ) ); // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.obfuscation_base64_encode -- HTTP Basic authentication.
+		} else {
+			$body[ $client ] = $config['client_id'];
+			if ( isset( $config['client_secret'] ) && '' !== $config['client_secret'] ) {
+				$body['client_secret'] = $config['client_secret'];
+			}
+		}
+		if ( ! empty( $def['pkce'] ) && ! empty( $extra['verifier'] ) ) {
+			$body['code_verifier'] = (string) $extra['verifier'];
+		}
+		if ( ! empty( $def['token_params'] ) ) {
+			$body = array_merge( $body, is_callable( $def['token_params'] ) ? (array) call_user_func( $def['token_params'], $extra ) : (array) $def['token_params'] );
+		}
+		return self::post_json( $def['token'], $body, $headers );
+	}
+
+	/**
+	 * Split "First Last" into parts.
+	 *
+	 * @param string $name Full name.
+	 * @return string[] First and last name.
+	 */
+	public static function split_name( $name ) {
+		$parts = explode( ' ', trim( (string) $name ), 2 );
+		return array( $parts[0], isset( $parts[1] ) ? $parts[1] : '' );
+	}
+
+	/**
+	 * Reddit: username only, Reddit never shares an email address.
+	 *
+	 * @param array $token Token response.
+	 * @return array|WP_Error
+	 */
+	public static function reddit_profile( $token ) {
+		$me = self::get_json( 'https://oauth.reddit.com/api/v1/me', $token['access_token'] );
+		if ( is_wp_error( $me ) ) {
+			return $me;
+		}
+		return array(
+			'id'           => isset( $me['id'] ) ? $me['id'] : '',
+			'display_name' => isset( $me['name'] ) ? $me['name'] : '',
+		);
+	}
+
+	/**
+	 * GitHub: the account's primary email, when GitHub has verified it.
+	 *
+	 * @param array $token Token response.
+	 * @return array|WP_Error
+	 */
+	public static function github_profile( $token ) {
+		$headers = array( 'Accept' => 'application/vnd.github+json' );
+		$user    = self::get_json( 'https://api.github.com/user', $token['access_token'], $headers );
+		if ( is_wp_error( $user ) ) {
+			return $user;
+		}
+		$email    = '';
+		$verified = false;
+		$emails   = self::get_json( 'https://api.github.com/user/emails', $token['access_token'], $headers );
+		if ( ! is_wp_error( $emails ) ) {
+			foreach ( $emails as $row ) {
+				if ( is_array( $row ) && ! empty( $row['primary'] ) && ! empty( $row['email'] ) ) {
+					$email    = (string) $row['email'];
+					$verified = ! empty( $row['verified'] );
+				}
+			}
+		}
+		$name                 = isset( $user['name'] ) && '' !== (string) $user['name'] ? (string) $user['name'] : ( isset( $user['login'] ) ? (string) $user['login'] : '' );
+		list( $first, $last ) = self::split_name( isset( $user['name'] ) ? (string) $user['name'] : '' );
+		return array(
+			'id'             => isset( $user['id'] ) ? $user['id'] : '',
+			'email'          => $email,
+			'email_verified' => $verified,
+			'first_name'     => $first,
+			'last_name'      => $last,
+			'display_name'   => $name,
+		);
+	}
+
+	/**
+	 * Discord: user and email, with Discord's own "verified" flag.
+	 *
+	 * @param array $token Token response.
+	 * @return array|WP_Error
+	 */
+	public static function discord_profile( $token ) {
+		$me = self::get_json( 'https://discord.com/api/users/@me', $token['access_token'] );
+		if ( is_wp_error( $me ) ) {
+			return $me;
+		}
+		$name                 = ! empty( $me['global_name'] ) ? (string) $me['global_name'] : ( isset( $me['username'] ) ? (string) $me['username'] : '' );
+		list( $first, $last ) = self::split_name( $name );
+		return array(
+			'id'             => isset( $me['id'] ) ? $me['id'] : '',
+			'email'          => isset( $me['email'] ) ? $me['email'] : '',
+			'email_verified' => ! empty( $me['verified'] ),
+			'first_name'     => $first,
+			'last_name'      => $last,
+			'display_name'   => $name,
+		);
+	}
+
+	/**
+	 * Yahoo: OpenID Connect, with the ID token signature checked against Yahoo's public keys.
+	 *
+	 * @param array $token  Token response.
+	 * @param array $config Yahoo settings.
+	 * @return array|WP_Error
+	 */
+	public static function yahoo_profile( $token, $config ) {
+		$claims = self::id_token_claims( $token, 'https://api.login.yahoo.com', $config['client_id'], 'https://api.login.yahoo.com/openid/v1/certs' );
+		if ( is_wp_error( $claims ) ) {
+			return $claims;
+		}
+		$info     = self::get_json( 'https://api.login.yahoo.com/openid/v1/userinfo', $token['access_token'] );
+		$info     = is_wp_error( $info ) ? array() : $info;
+		$get      = static function ( $key ) use ( $claims, $info ) {
+			return isset( $claims[ $key ] ) ? $claims[ $key ] : ( isset( $info[ $key ] ) ? $info[ $key ] : '' );
+		};
+		$verified = $get( 'email_verified' );
+		return array(
+			'id'             => isset( $claims['sub'] ) ? $claims['sub'] : '',
+			'email'          => (string) $get( 'email' ),
+			'email_verified' => true === $verified || 'true' === $verified,
+			'first_name'     => (string) $get( 'given_name' ),
+			'last_name'      => (string) $get( 'family_name' ),
+			'display_name'   => (string) $get( 'name' ),
 		);
 	}
 
@@ -689,17 +954,25 @@ class SARALOPA_Providers {
 	/**
 	 * Read the claims of an ID token received straight from the provider's token endpoint.
 	 *
-	 * The token comes over a direct TLS connection to the issuer, so per OpenID Connect Core 3.1.3.7
-	 * the TLS check stands in for verifying its signature. Audience, issuer and expiry are still checked.
+	 * The signature is checked against the provider's live public keys (JWKS), so a forged token is
+	 * refused even though it arrived over the direct TLS connection to the issuer. Audience, issuer
+	 * and expiry are checked too.
 	 *
 	 * @param array  $token    Token endpoint response.
 	 * @param string $issuer   Expected issuer, or '' to let the caller check it.
 	 * @param string $audience Expected audience (the client ID).
+	 * @param string $jwks_uri Address of the provider's public keys.
 	 * @return array|WP_Error
 	 */
-	public static function id_token_claims( $token, $issuer, $audience ) {
+	public static function id_token_claims( $token, $issuer, $audience, $jwks_uri = '' ) {
 		if ( empty( $token['id_token'] ) || ! is_string( $token['id_token'] ) ) {
 			return new WP_Error( 'saralopa_bad_token', 'The provider did not return an ID token.' );
+		}
+		if ( '' !== $jwks_uri ) {
+			$valid = SARALOPA_JWT::verify( $token['id_token'], $jwks_uri );
+			if ( is_wp_error( $valid ) ) {
+				return $valid;
+			}
 		}
 
 		$parts = explode( '.', $token['id_token'] );
@@ -722,6 +995,9 @@ class SARALOPA_Providers {
 		if ( ! isset( $claims['exp'] ) || (int) $claims['exp'] < time() - MINUTE_IN_SECONDS ) {
 			return new WP_Error( 'saralopa_bad_token', 'The ID token has expired.' );
 		}
+		if ( isset( $claims['iat'] ) && (int) $claims['iat'] > time() + 5 * MINUTE_IN_SECONDS ) {
+			return new WP_Error( 'saralopa_bad_token', 'The ID token was issued in the future.' );
+		}
 
 		return $claims;
 	}
@@ -731,10 +1007,11 @@ class SARALOPA_Providers {
 	 *
 	 * @param string $url     Endpoint.
 	 * @param array  $body    Form fields.
-	 * @param array  $headers Extra headers.
+	 * @param array  $headers    Extra headers.
+	 * @param bool   $want_token Whether the reply must contain an access token.
 	 * @return array|WP_Error
 	 */
-	private static function post_json( $url, $body, $headers = array() ) {
+	public static function post_json( $url, $body, $headers = array(), $want_token = true ) {
 		$response = wp_remote_post(
 			$url,
 			array(
@@ -743,18 +1020,19 @@ class SARALOPA_Providers {
 				'body'    => $body,
 			)
 		);
-		return self::decode( $response, true );
+		return self::decode( $response, $want_token );
 	}
 
 	/**
 	 * GET a JSON resource, optionally with a bearer token.
 	 *
 	 * @param string $url          Endpoint.
-	 * @param string $access_token Bearer token.
+	 * @param string $access_token  Bearer token.
+	 * @param array  $extra_headers More headers.
 	 * @return array|WP_Error
 	 */
-	private static function get_json( $url, $access_token = '' ) {
-		$headers = array( 'Accept' => 'application/json' );
+	public static function get_json( $url, $access_token = '', $extra_headers = array() ) {
+		$headers = array_merge( array( 'Accept' => 'application/json' ), $extra_headers );
 		if ( '' !== $access_token ) {
 			$headers['Authorization'] = 'Bearer ' . $access_token;
 		}

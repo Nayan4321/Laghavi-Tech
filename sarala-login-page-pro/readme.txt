@@ -4,15 +4,39 @@ Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Pro add-on for Sarala Login Page: login redirects, a login widget, profile pictures, a protected super admin, an activity log and per-role control.
+Pro add-on for Sarala Login Page: 7 more login providers, button styles, CAPTCHA with a backup, encrypted keys, login redirects, a login widget, profile pictures, a protected super admin, an activity log and per-role control.
 
 == Description ==
 
 Requires the free **Sarala Login Page** plugin. Buy a license at [laghavi.site](https://laghavi.site/).
+
+**More login providers**
+
+* Slack, TikTok, Twitch, VK (VKontakte), Patreon, Amazon and Disqus, set up in Sarala Login Page > Settings next to the free providers.
+* Slack and Twitch ID tokens are checked against their public keys. TikTok shares no email, so TikTok is used to log in to accounts that connected it.
+
+**Button style**
+
+* Icon tiles, outline boxes or brand pills, besides the standard buttons.
+* Rounded, pill, square or circle corners.
+* Each provider's own colours, or your brand colours (background, text, border, hover) for every button, with a live preview.
+
+**CAPTCHA with a backup**
+
+* Cloudflare Turnstile, Google reCAPTCHA v2 or hCaptcha on the login and registration forms (WordPress and WooCommerce).
+* If the CAPTCHA can't load or its service can't be reached, the security question appears instead, so a broken CAPTCHA never locks anyone out, the site owner included.
+
+**Encrypted provider keys**
+
+* Client secrets, the Apple private key and the CAPTCHA secret are stored encrypted (AES-256-GCM) with your site's own security keys from wp-config.php. When Pro is deactivated they are stored in plain form again, so the free plugin keeps working.
+
+**Blocked redirects**
+
+* Addresses nobody is ever sent to after logging in or out (paths with *, full addresses or whole domains), whatever a link or another plugin asks for.
 
 **Login redirects**
 
@@ -102,6 +126,13 @@ Yes. Click "Deactivate on this site" on the Pro license screen, then activate it
 Page caching plugins usually serve the same page to every logged-out visitor and skip the cache for logged-in users, so "logged-out visitors" rules and role rules both work. If your cache also serves logged-in users, exclude pages that use role-based blocks.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus login (needs Sarala Login Page 1.2.0).
+* New: button styles (icon tiles, outline boxes, brand pills), corners and your own colours.
+* New: Cloudflare Turnstile, reCAPTCHA or hCaptcha with the security question as automatic backup.
+* New: provider keys and the CAPTCHA secret are stored encrypted.
+* New: blocked redirects.
 
 = 1.1.0 =
 * New: login redirects per role, after login and after logout.

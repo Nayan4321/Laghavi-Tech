@@ -1,0 +1,104 @@
+/* Sarala Login Page Pro – button styles */
+
+/* Icon tiles: small square buttons with the brand icon, in a centred row. */
+.slpp-style-tiles .saralopa-buttons__list {
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 14px;
+}
+
+.slpp-style-tiles .saralopa-button {
+	width: 52px;
+	min-height: 52px;
+	padding: 0;
+	background: #fff;
+	border: 1px solid #e2e4e9;
+	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06);
+}
+
+/* Outline boxes: equal-width boxes in one row, icon in the middle. */
+.slpp-style-outline .saralopa-buttons__list {
+	flex-direction: row;
+	gap: 12px;
+}
+
+.slpp-style-outline .saralopa-button {
+	flex: 1 1 0;
+	width: auto;
+	min-width: 0;
+	min-height: 48px;
+	padding: 0 8px;
+	background: #fff;
+	border: 1px solid #d0d5dd;
+}
+
+/* Tiles and outline show the icon only. */
+.slpp-style-tiles .saralopa-button__label,
+.slpp-style-outline .saralopa-button__label {
+	position: absolute !important;
+	width: 1px;
+	height: 1px;
+	overflow: hidden;
+	clip: rect(1px, 1px, 1px, 1px);
+	white-space: nowrap;
+}
+
+/* Brand pills: coloured buttons with icon and name, side by side. */
+.slpp-style-pills .saralopa-buttons__list {
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 10px;
+}
+
+.slpp-style-pills .saralopa-button {
+	flex: 1 1 120px;
+	width: auto;
+	min-height: 42px;
+	padding: 6px 16px;
+	border-radius: 999px;
+	font-size: 14px;
+}
+
+/* Shapes. */
+.slpp-shape-rounded .saralopa-button {
+	border-radius: 10px;
+}
+
+.slpp-shape-pill .saralopa-button {
+	border-radius: 999px;
+}
+
+.slpp-shape-square .saralopa-button {
+	border-radius: 2px;
+}
+
+.slpp-shape-circle .saralopa-button {
+	border-radius: 50%;
+}
+
+/* Your own colours. */
+.slpp-colors-custom .saralopa-button {
+	background: var(--slpp-bg) !important;
+	color: var(--slpp-text) !important;
+	border-color: var(--slpp-border) !important;
+}
+
+.slpp-colors-custom .saralopa-button:hover {
+	background: var(--slpp-hover) !important;
+	filter: none;
+}
+
+.slpp-style-tiles .saralopa-button:hover,
+.slpp-style-outline .saralopa-button:hover {
+	filter: none;
+	border-color: #98a2b3;
+	box-shadow: 0 2px 6px rgba(16, 24, 40, 0.1);
+}
+
+@media (max-width: 360px) {
+	.slpp-style-outline .saralopa-buttons__list {
+		flex-wrap: wrap;
+	}
+}

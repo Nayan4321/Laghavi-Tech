@@ -266,7 +266,11 @@ class SARALOPA_Settings {
 			'key_id'        => __( 'Key ID', 'sarala-login-page' ),
 			'private_key'   => __( 'Private key (.p8 file contents)', 'sarala-login-page' ),
 		);
-		return $labels[ $field ];
+		$def = SARALOPA_Providers::all();
+		if ( isset( $def[ $provider ]['labels'][ $field ] ) ) {
+			return $def[ $provider ]['labels'][ $field ];
+		}
+		return isset( $labels[ $field ] ) ? $labels[ $field ] : ucwords( str_replace( '_', ' ', $field ) );
 	}
 
 	/**
@@ -319,6 +323,34 @@ class SARALOPA_Settings {
 					__( 'Add the Callback URI below and your website URL, then save.', 'sarala-login-page' ),
 					__( 'Keys and tokens tab: copy the OAuth 2.0 Client ID and Client Secret here.', 'sarala-login-page' ),
 				);
+			case 'reddit':
+				return array(
+					__( 'Log in to Reddit and open reddit.com/prefs/apps, then click "create another app".', 'sarala-login-page' ),
+					__( 'Choose "web app", enter a name and paste the Redirect URI below into "redirect uri".', 'sarala-login-page' ),
+					__( 'Copy the ID shown under the app name (Client ID) and the secret here and save.', 'sarala-login-page' ),
+					__( 'Reddit never shares email addresses: people can connect Reddit to their account from their profile and then log in with it, but new accounts can\'t be created with Reddit.', 'sarala-login-page' ),
+				);
+			case 'github':
+				return array(
+					__( 'GitHub > Settings > Developer settings > OAuth Apps > New OAuth App.', 'sarala-login-page' ),
+					__( 'Homepage URL: your site. Authorization callback URL: the Redirect URI below.', 'sarala-login-page' ),
+					__( 'Register the app, generate a client secret, and copy the Client ID and Client Secret here.', 'sarala-login-page' ),
+				);
+			case 'discord':
+				return array(
+					__( 'Discord Developer Portal > New Application.', 'sarala-login-page' ),
+					__( 'OAuth2 > Redirects: add the Redirect URI below and save.', 'sarala-login-page' ),
+					__( 'Copy the Client ID and reset/copy the Client Secret from the OAuth2 page here.', 'sarala-login-page' ),
+				);
+			case 'yahoo':
+				return array(
+					__( 'Yahoo Developer Network > My Apps > Create an App.', 'sarala-login-page' ),
+					__( 'Redirect URI(s): paste the Redirect URI below. Under OpenID Connect Permissions tick Email and Profile.', 'sarala-login-page' ),
+					__( 'Create the app and copy the Client ID (Consumer Key) and Client Secret (Consumer Secret) here.', 'sarala-login-page' ),
+				);
+			default:
+				$def = SARALOPA_Providers::all();
+				return isset( $def[ $provider ]['steps'] ) ? (array) $def[ $provider ]['steps'] : array();
 		}
 		return array();
 	}

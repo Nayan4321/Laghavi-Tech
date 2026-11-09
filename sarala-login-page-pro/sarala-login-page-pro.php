@@ -2,8 +2,8 @@
 /**
  * Plugin Name:       Sarala Login Page Pro
  * Plugin URI:        https://laghavi.site/sarala-login-page/
- * Description:       Pro add-on for Sarala Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets, login redirects per role, an AJAX login widget, custom profile pictures and control over disconnecting social accounts, plus login page templates.
- * Version:           1.1.0
+ * Description:       Pro add-on for Sarala Login Page: a protected super admin who manages the other admins, a log of every user's activity, and per-role or per-user control over admin menus, editor blocks and panels, custom fields, and front-end blocks and widgets, login redirects per role, an AJAX login widget, custom profile pictures and control over disconnecting social accounts, login page templates, button styles and brand colours, Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus login, CAPTCHA with a security question backup, encrypted provider keys and blocked redirects.
+ * Version:           1.2.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Requires Plugins:  sarala-login-page
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'SLPP_VERSION', '1.1.0' );
+define( 'SLPP_VERSION', '1.2.0' );
 define( 'SLPP_FILE', __FILE__ );
 define( 'SLPP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'SLPP_URL', plugin_dir_url( __FILE__ ) );
@@ -39,6 +39,13 @@ require_once SLPP_DIR . 'includes/class-slpp-login-design.php';
 require_once SLPP_DIR . 'includes/class-slpp-redirects.php';
 require_once SLPP_DIR . 'includes/class-slpp-login-widget.php';
 require_once SLPP_DIR . 'includes/class-slpp-profiles.php';
+require_once SLPP_DIR . 'includes/class-slpp-secrets.php';
+require_once SLPP_DIR . 'includes/class-slpp-providers.php';
+require_once SLPP_DIR . 'includes/class-slpp-button-style.php';
+require_once SLPP_DIR . 'includes/class-slpp-captcha.php';
+
+// Encrypted provider keys are always readable while Pro is active, license or not, so logins never break.
+SLPP_Secrets::init_decrypt();
 
 add_action(
 	'plugins_loaded',
@@ -63,6 +70,10 @@ add_action(
 		SLPP_Redirects::init();
 		SLPP_Login_Box::init();
 		SLPP_Profiles::init();
+		SLPP_Secrets::init_encrypt();
+		SLPP_Providers::init();
+		SLPP_Button_Style::init();
+		SLPP_Captcha::init();
 	},
 	20
 );
@@ -91,5 +102,7 @@ register_deactivation_hook(
 	__FILE__,
 	static function () {
 		wp_clear_scheduled_hook( 'slpp_daily' );
+		// Give the free plugin its keys back in plain form.
+		SLPP_Secrets::restore_plain();
 	}
 );

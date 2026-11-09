@@ -89,7 +89,7 @@ class SARALOPA_Pro_Features {
 	 */
 	private static function features() {
 		return array(
-			__( 'Login page design', 'sarala-login-page' )       => array(
+			__( 'Login page design', 'sarala-login-page' ) => array(
 				__( 'Your brand on every login screen, with a live preview on desktop and phone.', 'sarala-login-page' ),
 				array(
 					__( 'Five templates: Glass, Split screen, Wave card, Image card and Gradient', 'sarala-login-page' ),
@@ -100,7 +100,29 @@ class SARALOPA_Pro_Features {
 					__( 'Hide what you don\'t need: "Remember me", "Register", the language switcher, the brand panel on phones…', 'sarala-login-page' ),
 				),
 			),
-			__( 'Super admin', 'sarala-login-page' )             => array(
+			__( 'Button style', 'sarala-login-page' )      => array(
+				__( 'Login buttons that match your brand.', 'sarala-login-page' ),
+				array(
+					__( 'Icon tiles, outline boxes or brand pills, besides the standard buttons', 'sarala-login-page' ),
+					__( 'Rounded, pill, square or circle corners', 'sarala-login-page' ),
+					__( 'Your own colours for every button, with a live preview', 'sarala-login-page' ),
+				),
+			),
+			__( 'More login providers', 'sarala-login-page' ) => array(
+				__( 'Seven more ways to sign up and log in.', 'sarala-login-page' ),
+				array(
+					__( 'Slack, TikTok, Twitch, VK (VKontakte), Patreon, Amazon and Disqus', 'sarala-login-page' ),
+				),
+			),
+			__( 'Stronger login security', 'sarala-login-page' ) => array(
+				__( 'Extra protection that never locks you out.', 'sarala-login-page' ),
+				array(
+					__( 'Cloudflare Turnstile, Google reCAPTCHA or hCaptcha, with the security question as automatic backup if the CAPTCHA breaks', 'sarala-login-page' ),
+					__( 'Provider keys stored encrypted with your site\'s own security keys', 'sarala-login-page' ),
+					__( 'Blocked redirects: addresses nobody is ever sent to after logging in or out', 'sarala-login-page' ),
+				),
+			),
+			__( 'Super admin', 'sarala-login-page' )       => array(
 				__( 'You stay the owner of the site, even with other administrators.', 'sarala-login-page' ),
 				array(
 					__( 'Only the super admin can add or promote administrators', 'sarala-login-page' ),
@@ -109,7 +131,7 @@ class SARALOPA_Pro_Features {
 					__( 'Hide the super admin from other administrators', 'sarala-login-page' ),
 				),
 			),
-			__( 'User activity log', 'sarala-login-page' )       => array(
+			__( 'User activity log', 'sarala-login-page' ) => array(
 				__( 'Know who did what, and when.', 'sarala-login-page' ),
 				array(
 					__( '"Last activity" for every user on the Users screen', 'sarala-login-page' ),
@@ -127,7 +149,7 @@ class SARALOPA_Pro_Features {
 					__( 'Editor blocks, sidebar panels and editor features', 'sarala-login-page' ),
 				),
 			),
-			__( 'Login redirects', 'sarala-login-page' )        => array(
+			__( 'Login redirects', 'sarala-login-page' )   => array(
 				__( 'Send each role to the right page after login and logout.', 'sarala-login-page' ),
 				array(
 					__( 'A page for every role: admins to the dashboard, customers to My Account, members to their area', 'sarala-login-page' ),
@@ -135,7 +157,7 @@ class SARALOPA_Pro_Features {
 					__( 'Works with password logins, social logins and WooCommerce', 'sarala-login-page' ),
 				),
 			),
-			__( 'Login widget', 'sarala-login-page' )           => array(
+			__( 'Login widget', 'sarala-login-page' )      => array(
 				__( 'A login box for your sidebar, footer or any page.', 'sarala-login-page' ),
 				array(
 					__( 'AJAX login: no page reload, errors shown in place', 'sarala-login-page' ),
@@ -144,7 +166,7 @@ class SARALOPA_Pro_Features {
 					__( 'As a classic widget or anywhere with a shortcode', 'sarala-login-page' ),
 				),
 			),
-			__( 'Profiles', 'sarala-login-page' )               => array(
+			__( 'Profiles', 'sarala-login-page' )          => array(
 				__( 'Profile pictures and control over connected accounts.', 'sarala-login-page' ),
 				array(
 					__( 'Users upload their own profile picture, used instead of Gravatar everywhere', 'sarala-login-page' ),
@@ -183,7 +205,7 @@ class SARALOPA_Pro_Features {
 					<span class="saralopa-pro__badge"><?php esc_html_e( 'Sarala Login Page Pro', 'sarala-login-page' ); ?></span>
 					<h1><?php esc_html_e( 'Make your login page yours', 'sarala-login-page' ); ?></h1>
 					<p><?php esc_html_e( 'Everything in the free plugin keeps working. Pro is an add-on that adds login page templates with your brand, login redirects per role, a login widget, a super admin, a user activity log and per-role restrictions.', 'sarala-login-page' ); ?></p>
-					<p><a class="button button-hero saralopa-pro__cta" href="<?php echo esc_url( self::url( 'features-top' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get Pro – from USD 49 / year', 'sarala-login-page' ); ?></a></p>
+					<p><a class="button button-hero saralopa-pro__cta" href="<?php echo esc_url( self::url( 'features-top' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Get Pro – from USD 54 / year', 'sarala-login-page' ); ?></a></p>
 				</div>
 			</div>
 

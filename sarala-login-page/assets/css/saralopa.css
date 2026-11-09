@@ -99,6 +99,26 @@
 	color: #fff !important;
 }
 
+.saralopa-button--reddit {
+	background: #ff4500;
+	color: #fff !important;
+}
+
+.saralopa-button--github {
+	background: #181717;
+	color: #fff !important;
+}
+
+.saralopa-button--discord {
+	background: #5865f2;
+	color: #fff !important;
+}
+
+.saralopa-button--yahoo {
+	background: #6001d2;
+	color: #fff !important;
+}
+
 /* Icons-only layout */
 .saralopa-buttons--icons .saralopa-buttons__list {
 	flex-direction: row;

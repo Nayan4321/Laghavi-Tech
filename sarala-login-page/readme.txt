@@ -4,11 +4,11 @@ Tags: social login, google login, limit login attempts, hide login, woocommerce 
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Social login with Google, Facebook, Apple, Microsoft, LinkedIn and X, plus limit login attempts, a custom login URL and login security.
+Social login with Google, Facebook, Apple, Microsoft, LinkedIn, X, GitHub, Discord, Reddit and Yahoo, plus limit login attempts and a custom login URL.
 
 == Description ==
 
@@ -16,7 +16,8 @@ Sarala Login Page adds **one-click social login and sign-up** to WordPress and W
 
 = Features at a glance =
 
-* **Social login and registration**: Google, Facebook, Apple, Microsoft, LinkedIn and X (Twitter).
+* **Social login and registration**: Google, Facebook, Apple, Microsoft, LinkedIn, X (Twitter), GitHub, Discord, Reddit and Yahoo.
+* **Forgery-proof logins**: ID token signatures are checked against each provider's live public keys, so nobody can fake a social login to get into your site.
 * **WooCommerce login**: My Account, registration and checkout (guests sign up and come back to checkout with their cart).
 * **Limit login attempts**: lock out IP addresses after too many failed logins.
 * **Custom login URL**: hide wp-login.php and wp-admin from bots.
@@ -36,6 +37,10 @@ Visitors create an account or log in with one click using the accounts they alre
 * **Microsoft** (personal, work and school accounts)
 * **LinkedIn**
 * **X (Twitter)**
+* **GitHub**
+* **Discord**
+* **Yahoo**
+* **Reddit** (Reddit never shares email addresses, so people connect Reddit to an existing account from their profile and then log in with it)
 
 **Works with WordPress and WooCommerce**
 
@@ -156,6 +161,12 @@ When a visitor clicks a button, their browser is sent to the provider's login pa
 * **Microsoft** – login.microsoftonline.com, graph.microsoft.com. [Terms](https://www.microsoft.com/servicesagreement), [Privacy](https://privacy.microsoft.com/privacystatement)
 * **LinkedIn** – www.linkedin.com, api.linkedin.com. [Terms](https://www.linkedin.com/legal/user-agreement), [Privacy](https://www.linkedin.com/legal/privacy-policy)
 * **X (Twitter)** – x.com, api.x.com. [Terms](https://x.com/en/tos), [Privacy](https://x.com/en/privacy)
+* **GitHub** – github.com, api.github.com. [Terms](https://docs.github.com/en/site-policy/github-terms/github-terms-of-service), [Privacy](https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement)
+* **Discord** – discord.com. [Terms](https://discord.com/terms), [Privacy](https://discord.com/privacy)
+* **Reddit** – www.reddit.com, oauth.reddit.com. [Terms](https://redditinc.com/policies/user-agreement), [Privacy](https://www.reddit.com/policies/privacy-policy)
+* **Yahoo** – api.login.yahoo.com. [Terms](https://legal.yahoo.com/us/en/yahoo/terms/otos/index.html), [Privacy](https://legal.yahoo.com/us/en/yahoo/privacy/index.html)
+
+To check that a login really comes from the provider, the plugin also downloads the provider's public signing keys (Google: www.googleapis.com/oauth2/v3/certs, Apple: appleid.apple.com/auth/keys, Microsoft: login.microsoftonline.com, LinkedIn: www.linkedin.com/oauth/openid/jwks, Yahoo: api.login.yahoo.com/openid/v1/certs). Nothing is sent in these requests; the keys are kept for a few hours.
 
 The plugin stores the visitor's provider account ID and email on their WordPress user so they can log in again. This data is deleted when the plugin is deleted.
 
@@ -170,6 +181,10 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 5. Connected accounts on the user's profile.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: log in and sign up with GitHub, Discord and Yahoo, and log in with Reddit.
+* Security: ID token signatures (Google, Apple, Microsoft, LinkedIn, Yahoo) are now checked against each provider's live public keys, and tokens issued in the future are refused.
 
 = 1.1.1 =
 * The "Powered by Laghavi Digital" link is on for new installs and links to the plugin page. Its setting is now under Login page URL.
@@ -191,6 +206,9 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 * First release: Google, Facebook, Apple, Microsoft and LinkedIn login and sign-up, WooCommerce My Account and checkout support, connected accounts, and a math question on login and registration forms.
 
 == Upgrade Notice ==
+
+= 1.2.0 =
+GitHub, Discord, Reddit and Yahoo login, and ID token signature checks against each provider's public keys.
 
 = 1.1.1 =
 The "Powered by" setting moved to the Login page URL section.

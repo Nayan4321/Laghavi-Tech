@@ -82,6 +82,10 @@
 .saralopa-provider__icon.saralopa-button--apple { background: #000; color: #fff; border-color: #000; }
 .saralopa-provider__icon.saralopa-button--linkedin { background: #0a66c2; color: #fff; border-color: #0a66c2; }
 .saralopa-provider__icon.saralopa-button--twitter { background: #000; color: #fff; border-color: #000; }
+.saralopa-provider__icon.saralopa-button--reddit { background: #ff4500; color: #fff; border-color: #ff4500; }
+.saralopa-provider__icon.saralopa-button--github { background: #181717; color: #fff; border-color: #181717; }
+.saralopa-provider__icon.saralopa-button--discord { background: #5865f2; color: #fff; border-color: #5865f2; }
+.saralopa-provider__icon.saralopa-button--yahoo { background: #6001d2; color: #fff; border-color: #6001d2; }
 
 .saralopa-badge {
 	margin-left: auto;
