@@ -8,7 +8,7 @@ Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Social login with Google, Facebook, Apple, Microsoft, LinkedIn, X, GitHub, Discord, Reddit and Yahoo, plus limit login attempts and a custom login URL.
+Social login with Google, Facebook, Apple, Microsoft, GitHub, Discord and more, plus limit login attempts and a custom login URL.
 
 == Description ==
 
