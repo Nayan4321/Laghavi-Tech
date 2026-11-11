@@ -98,6 +98,7 @@ require_once RINNOVO_DIR . 'includes/class-rinnovo-subscriptions.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-settings.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-product.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-stripe-api.php';
+require_once RINNOVO_DIR . 'includes/class-rinnovo-lock.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-manager.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-webhooks.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-emails.php';

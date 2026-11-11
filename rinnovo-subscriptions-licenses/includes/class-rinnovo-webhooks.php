@@ -153,12 +153,30 @@ class RINNOVO_Webhooks {
 			return;
 		}
 
-		$lock = 'rinnovo_session_lock_' . $order->get_id();
-		if ( get_transient( $lock ) ) {
+		// Atomic lock: the webhook and the customer's return from Stripe can arrive at the same moment.
+		$lock = 'session_' . $order->get_id();
+		if ( ! RINNOVO_Lock::acquire( $lock, 60 ) ) {
 			return;
 		}
-		set_transient( $lock, 1, 30 );
+		try {
+			// Read the order again now that this request holds the lock: another request may have just finished it.
+			$order = wc_get_order( $order->get_id() );
+			if ( $order ) {
+				self::complete_locked_session( $order, $session );
+			}
+		} finally {
+			RINNOVO_Lock::release( $lock );
+		}
+	}
 
+	/**
+	 * The work of complete_session(), while the order's lock is held.
+	 *
+	 * @param WC_Order $order   Order.
+	 * @param array    $session Checkout Session.
+	 * @throws RuntimeException When Stripe or WooCommerce can't be reached (Stripe then retries the webhook).
+	 */
+	private static function complete_locked_session( $order, $session ) {
 		$customer = RINNOVO_Stripe_API::id( isset( $session['customer'] ) ? $session['customer'] : '' );
 		if ( '' !== $customer ) {
 			$order->update_meta_data( '_rinnovo_stripe_customer', $customer );
@@ -172,7 +190,6 @@ class RINNOVO_Webhooks {
 		if ( 'subscription' === $session['mode'] ) {
 			$stripe_sub = RINNOVO_Stripe_API::request( 'GET', 'subscriptions/' . rawurlencode( RINNOVO_Stripe_API::id( $session['subscription'] ) ) );
 			if ( is_wp_error( $stripe_sub ) ) {
-				delete_transient( $lock );
 				throw new RuntimeException( esc_html( $stripe_sub->get_error_message() ) );
 			}
 			$invoice_id = RINNOVO_Stripe_API::id( isset( $session['invoice'] ) ? $session['invoice'] : ( isset( $stripe_sub['latest_invoice'] ) ? $stripe_sub['latest_invoice'] : '' ) );
@@ -206,7 +223,6 @@ class RINNOVO_Webhooks {
 				self::sync_subscription( $stripe_sub );
 			}
 		}
-		delete_transient( $lock );
 	}
 
 	/**
@@ -287,6 +303,25 @@ class RINNOVO_Webhooks {
 		if ( empty( $invoice['subscription'] ) || ( isset( $invoice['billing_reason'] ) && 'subscription_create' === $invoice['billing_reason'] ) ) {
 			return;
 		}
+		// Atomic lock: Stripe can deliver the same invoice twice at the same moment.
+		$lock = 'invoice_' . ( isset( $invoice['id'] ) ? (string) $invoice['id'] : '' );
+		if ( ! RINNOVO_Lock::acquire( $lock, 120 ) ) {
+			return;
+		}
+		try {
+			self::invoice_paid_locked( $invoice );
+		} finally {
+			RINNOVO_Lock::release( $lock );
+		}
+	}
+
+	/**
+	 * The work of invoice_paid(), while the invoice's lock is held.
+	 *
+	 * @param array $invoice Stripe invoice.
+	 * @throws RuntimeException When Stripe or WooCommerce can't be reached (Stripe then retries the webhook).
+	 */
+	private static function invoice_paid_locked( $invoice ) {
 		$sub = RINNOVO_Subscriptions::get_by_gateway_id( RINNOVO_Stripe_API::id( $invoice['subscription'] ) );
 		if ( ! $sub ) {
 			return;

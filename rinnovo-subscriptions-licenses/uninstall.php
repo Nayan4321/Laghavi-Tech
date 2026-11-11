@@ -13,3 +13,8 @@ wp_clear_scheduled_hook( 'rinnovo_hourly' );
 foreach ( array( 'rinnovo_stripe_webhook_test', 'rinnovo_stripe_webhook_live' ) as $rinnovo_option ) {
 	delete_option( $rinnovo_option );
 }
+
+// Payment locks left behind by an interrupted request.
+global $wpdb;
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time cleanup on uninstall.
+$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE option_name LIKE %s', $wpdb->options, $wpdb->esc_like( 'rinnovo_lock_' ) . '%' ) );
