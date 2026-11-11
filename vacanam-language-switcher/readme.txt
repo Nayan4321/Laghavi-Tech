@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,10 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 == Changelog ==
 
+= 1.1.1 =
+* Fix: category filters built with "OR" (for example portfolio tabs) now keep working: the language is added with "AND", so each tab shows only its own category.
+* Fix: on right-to-left pages, slider arrows (Swiper, Slick, Owl and others) no longer stretch across the slider.
+
 = 1.1.0 =
 * New: import from Polylang, WPML and TranslatePress (Languages > Import, also offered by the setup): languages, settings, translated pages, posts, products, categories, menus and texts are taken over, nothing to edit again.
 * New: a text font and a headings font for each language (Languages > Fonts), with fonts of your site, system fonts or Google fonts downloaded into your site. Elementor's global fonts switch with the language.
@@ -181,6 +185,9 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 * First release.
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+Fixes category filters with OR conditions and slider arrows on right-to-left pages.
 
 = 1.1.0 =
 Import from Polylang, WPML and TranslatePress, a font per language (with Elementor global fonts), and a flag picker with country names.

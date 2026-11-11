@@ -43,6 +43,7 @@ class Vacanam_Frontend {
 		add_action( 'vacanam_language_changed', array( __CLASS__, 'text_direction' ) );
 		add_filter( 'language_attributes', array( __CLASS__, 'language_attributes' ), 20 );
 		add_filter( 'body_class', array( __CLASS__, 'body_class' ) );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'rtl_scripts' ) );
 
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_posts' ), 5 );
 		add_filter( 'get_terms_args', array( __CLASS__, 'filter_terms' ), 10, 2 );
@@ -234,8 +235,38 @@ class Vacanam_Frontend {
 				return; // Already filtered by language.
 			}
 		}
-		$tax[] = self::language_clause( $lang );
+		$clause = self::language_clause( $lang );
+		// If the query already has an OR group (for example "category A OR category B", as portfolio
+		// and filter plugins build), the language must not join that OR group, or it would match every
+		// post of the language. Keep the group and require the language with AND instead.
+		$has_clauses = false;
+		foreach ( $tax as $key => $existing ) {
+			if ( 'relation' !== $key && is_array( $existing ) ) {
+				$has_clauses = true;
+				break;
+			}
+		}
+		if ( $has_clauses && isset( $tax['relation'] ) && 'OR' === strtoupper( (string) $tax['relation'] ) ) {
+			$tax = array(
+				'relation' => 'AND',
+				$tax,
+				$clause,
+			);
+		} else {
+			$tax[] = $clause;
+		}
 		$query->set( 'tax_query', $tax );
+	}
+
+	/**
+	 * Right-to-left languages: keep slider arrows from stretching across the slider.
+	 */
+	public static function rtl_scripts() {
+		$lang = self::lang();
+		if ( ! $lang || empty( $lang['rtl'] ) ) {
+			return;
+		}
+		wp_enqueue_script( 'vacanam-rtl-sliders', VACANAM_URL . 'assets/js/rtl-sliders.js', array(), vacanam_asset_version( 'assets/js/rtl-sliders.js' ), array( 'in_footer' => true, 'strategy' => 'defer' ) );
 	}
 
 	/**
