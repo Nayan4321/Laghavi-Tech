@@ -9,7 +9,7 @@
 defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
-foreach ( array( 'jobs', 'form_stats', 'field_drops', 'pageviews' ) as $aaryepro_table ) {
+foreach ( array( 'jobs', 'form_stats', 'field_drops', 'pageviews', 'clicks' ) as $aaryepro_table ) {
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'aaryepro_' . $aaryepro_table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Our own tables.
 }
 foreach ( array( 'aaryepro_license', 'aaryepro_connections', 'aaryepro_stopped', 'aaryepro_rules', 'aaryepro_rule_counts', 'aaryepro_spam', 'aaryepro_db_version', 'aaryepro_hub_stats_final' ) as $aaryepro_option ) {

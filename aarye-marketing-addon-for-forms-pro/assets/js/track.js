@@ -246,6 +246,50 @@
 		}, 300 );
 	}
 
+	// Contact buttons: WhatsApp, call and email links are found by their address, wherever they are.
+	function contactKind( href ) {
+		var h = ( href || '' ).trim().toLowerCase();
+		if ( 0 === h.indexOf( 'tel:' ) || 0 === h.indexOf( 'callto:' ) ) {
+			return 'call';
+		}
+		if ( 0 === h.indexOf( 'mailto:' ) ) {
+			return 'email';
+		}
+		if ( 0 === h.indexOf( 'sms:' ) ) {
+			return 'sms';
+		}
+		if ( 0 === h.indexOf( 'whatsapp:' ) || /^https?:\/\/(www\.)?(wa\.me|api\.whatsapp\.com|web\.whatsapp\.com|chat\.whatsapp\.com|whatsapp\.com\/send|wa\.link)/.test( h ) ) {
+			return 'whatsapp';
+		}
+		return '';
+	}
+	var lastClick = 0;
+	if ( cfg.clicks ) {
+		document.addEventListener( 'click', function ( ev ) {
+			var el = ev.target && ev.target.closest ? ev.target.closest( 'a[href], [data-href], [data-url], [data-link]' ) : null;
+			var href = el ? ( el.getAttribute( 'href' ) || el.getAttribute( 'data-href' ) || el.getAttribute( 'data-url' ) || el.getAttribute( 'data-link' ) || '' ) : '';
+			var kind = contactKind( href );
+			if ( ! kind && ev.target && ev.target.closest ) {
+				// WhatsApp chat widgets that open WhatsApp from a script (Social Chat, Click to Chat, Joinchat…).
+				var w = ev.target.closest( '[class*="qlwapp__button"], [class*="joinchat__button"], [class*="ht_ctc_chat"], [class*="whatsapp-button"], [class*="whatsapp_button"], [class*="wa-button"], [data-whatsapp], [data-phone][class*="whatsapp"]' );
+				if ( w ) {
+					el = w;
+					kind = 'whatsapp';
+					href = 'whatsapp://send?phone=' + ( w.getAttribute( 'data-phone' ) || w.getAttribute( 'data-whatsapp' ) || '' ).replace( /[^0-9]/g, '' );
+				}
+			}
+			if ( ! el ) {
+				return;
+			}
+			if ( ! kind || Date.now() - lastClick < 800 ) {
+				return;
+			}
+			lastClick = Date.now();
+			var text = ( el.getAttribute( 'aria-label' ) || el.textContent || el.getAttribute( 'title' ) || '' ).replace( /\s+/g, ' ' ).trim().slice( 0, 100 );
+			send( { c: { k: kind, h: href.slice( 0, 300 ), x: text, u: location.href } }, true );
+		}, true );
+	}
+
 	document.addEventListener( 'visibilitychange', function () {
 		if ( 'hidden' === document.visibilityState ) {
 			leave();

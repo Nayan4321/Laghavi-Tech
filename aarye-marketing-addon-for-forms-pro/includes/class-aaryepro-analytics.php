@@ -40,6 +40,7 @@ class AARYEPRO_Analytics {
 				array(
 					'url'     => esc_url_raw( rest_url( 'aarye-pro/v1/track' ) ),
 					'journey' => AARYE_Settings::on( 'pro_journey' ),
+					'clicks'  => AARYE_Settings::on( 'pro_clicks' ),
 				)
 			) . ';',
 			'before'
@@ -118,6 +119,9 @@ class AARYEPRO_Analytics {
 				set_transient( $once, 1, 2 * HOUR_IN_SECONDS );
 			}
 			self::count( (string) $ev['t'], sanitize_key( $ev['p'] ), $form, $channel, $field );
+		}
+		if ( isset( $body['c'] ) && is_array( $body['c'] ) && AARYE_Settings::on( 'pro_clicks' ) ) {
+			AARYEPRO_Clicks::record( $visit['visitor'], $body['c'], $ip, $touch );
 		}
 		if ( '' !== $visit['visitor'] && AARYE_Settings::on( 'pro_journey' ) ) {
 			AARYEPRO_Journey::record( $visit['visitor'], $body, $ip );

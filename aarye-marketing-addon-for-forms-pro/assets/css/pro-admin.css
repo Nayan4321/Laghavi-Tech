@@ -19,3 +19,13 @@
 @media (max-width: 782px) {
 	.aaryepro-row select, .aaryepro-row input[type="text"] { width: 100%; }
 }
+
+/* Contact clicks */
+.aaryepro-kind{display:inline-block;padding:2px 8px;border-radius:999px;font-size:12px;font-weight:600;color:#fff;background:#646970}
+.aaryepro-kind--whatsapp{background:#25d366}
+.aaryepro-kind--call{background:#2271b1}
+.aaryepro-kind--email{background:#8c5e00}
+.aaryepro-kind--sms{background:#7c3aed}
+.aaryepro-yes{color:#1a7f37;font-weight:600}
+.aaryepro-clicks__table td{vertical-align:top}
+.aaryepro-clicks__table details summary{cursor:pointer}

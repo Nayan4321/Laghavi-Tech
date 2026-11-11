@@ -5,13 +5,19 @@ Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: aarye-marketing-addon
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Send every form lead with its ad source to your CRM and to Laghavi Ads Hub, see where people give up on your forms, and automate what happens next.
 
 == Description ==
+
+= Contact clicks =
+
+* Every click on a WhatsApp, call, SMS or email button anywhere on the site, found automatically: no setup per button.
+* Time, IP address, the page and button, where the visitor came from (ad, campaign, search…) and the pages they viewed before clicking.
+* "Also sent an enquiry" or "Clicked only" for each click, with a link to the lead.
 
 Pro add-on for the free [Aarye Marketing Addon for Forms](https://laghavi.site/aarye-marketing-addon-for-forms/). Needs the free plugin, which catches entries from Contact Form 7, WPForms, Elementor Pro Forms, Fluent Forms, Gravity Forms, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder and MetForm, and knows which ad, campaign or website each lead came from.
 
@@ -73,6 +79,9 @@ No. The hub receives the lead's ID, date, status, form name, pages, device and i
 Pro connects only to the services you set up under Connections, and sends each new entry to them as described there: Laghavi Ads Hub (your hub address), Zoho (accounts.zoho.* and zohoapis.*), HubSpot (api.hubapi.com), Airtable (api.airtable.com), Notion (api.notion.com), your database server and your webhook address. License checks and updates use laghavi.site (license key, site address, plugin version).
 
 == Changelog ==
+
+= 1.0.3 =
+* New: Contact clicks. Every click on a WhatsApp, call, SMS or email link or button is found automatically (also WhatsApp chat widgets) and saved with the time, IP address, page, button text and source, the pages viewed before it, and whether the same visitor also sent an enquiry. Filter by button and "enquired or clicked only", export to CSV, and see the clicks on each lead.
 
 = 1.0.2 =
 * Works with the free plugin under its new name, Aarye Marketing Addon (folder aarye-marketing-addon). Install it, then deactivate the old "Aarye Marketing Addon for Forms": your leads carry over.

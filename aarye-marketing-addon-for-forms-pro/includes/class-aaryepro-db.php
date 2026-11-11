@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class AARYEPRO_DB {
 
-	const VERSION = '1';
+	const VERSION = '2';
 
 	/**
 	 * Table name.
@@ -86,6 +86,25 @@ class AARYEPRO_DB {
 			PRIMARY KEY  (id),
 			KEY visitor (visitor_id,viewed_at),
 			KEY viewed_at (viewed_at)
+			) $c;"
+		);
+		dbDelta(
+			'CREATE TABLE ' . self::table( 'clicks' ) . " (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			visitor_id varchar(32) NOT NULL DEFAULT '',
+			clicked_at datetime NOT NULL,
+			kind varchar(10) NOT NULL DEFAULT '',
+			target varchar(300) NOT NULL DEFAULT '',
+			label varchar(100) NOT NULL DEFAULT '',
+			page varchar(500) NOT NULL DEFAULT '',
+			ip varchar(45) NOT NULL DEFAULT '',
+			channel varchar(30) NOT NULL DEFAULT '',
+			source_label varchar(150) NOT NULL DEFAULT '',
+			campaign varchar(255) NOT NULL DEFAULT '',
+			PRIMARY KEY  (id),
+			KEY visitor (visitor_id,clicked_at),
+			KEY clicked_at (clicked_at),
+			KEY ip (ip)
 			) $c;"
 		);
 		update_option( 'aaryepro_db_version', self::VERSION );
