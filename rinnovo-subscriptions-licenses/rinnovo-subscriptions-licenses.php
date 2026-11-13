@@ -115,6 +115,7 @@ require_once RINNOVO_DIR . 'includes/class-rinnovo-license-orders.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-api.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-account.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-admin.php';
+require_once RINNOVO_DIR . 'includes/class-rinnovo-license-guide.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-pro-features.php';
 
 // HPOS (custom order tables) and block checkout are supported.
@@ -165,6 +166,7 @@ add_action(
 		RINNOVO_License_Orders::init();
 		RINNOVO_License_Account::init();
 		RINNOVO_License_Admin::init();
+		RINNOVO_License_Guide::init();
 		RINNOVO_Pro_Features::init();
 
 		add_action( 'woocommerce_blocks_payment_method_type_registration', array( 'RINNOVO_Gateway_Stripe', 'register_block_support' ) );

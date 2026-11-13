@@ -287,6 +287,11 @@ class RINNOVO_License_Account {
 								<li><?php esc_html_e( 'Click Download to get the theme zip.', 'rinnovo-subscriptions-licenses' ); ?></li>
 								<li><?php esc_html_e( 'In your WordPress admin go to Appearance > Themes > Add New > Upload Theme, choose the zip and activate it.', 'rinnovo-subscriptions-licenses' ); ?></li>
 								<li><?php esc_html_e( 'Open the theme\'s license screen under Appearance, paste the key above and click Activate. Updates then arrive automatically.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php elseif ( 'asset' === $settings['type'] ) : ?>
+								<li><?php esc_html_e( 'Click Download to get the files.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'Your license key is your proof of license: keep it for your records and quote it when you contact support.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php elseif ( 'saas' === $settings['type'] ) : ?>
+								<li><?php esc_html_e( 'Sign in to the app and paste the key above in its license or account settings.', 'rinnovo-subscriptions-licenses' ); ?></li>
 							<?php else : ?>
 								<?php if ( $has_file ) : ?>
 									<li><?php esc_html_e( 'Click Download and install the product.', 'rinnovo-subscriptions-licenses' ); ?></li>

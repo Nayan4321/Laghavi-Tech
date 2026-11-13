@@ -52,7 +52,8 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 = License keys for the software you sell =
 
 * Tick "Sell a license" in a product's License tab: every paid order gets a license key, shown on the thank-you page, in the order email and in My Account > Licenses.
-* Choose what you sell: a WordPress plugin, a WordPress theme, software or an app (desktop, mobile, SaaS), or something else (a course, content, a service).
+* Choose what you sell: a WordPress plugin or theme, a desktop or mobile application, a browser extension, a SaaS or web application, a developer product, a game, a digital asset or creative product, or something else.
+* WooCommerce > License guide explains how each kind of product checks its key, with code examples in JavaScript, Python, C# (Unity, .NET), PHP and cURL.
 * Upload the file customers download (zip, exe, msi, dmg, apk, pdf and more), or give a download link (App Store, Google Play, cloud storage). Only customers with an active key can download it.
 * Set how many websites, computers or devices one key can be used on.
 * For a WordPress plugin or theme, download a ready-made license file made for that product: add it with two lines, and your customers get a license screen and automatic updates under Dashboard > Updates.
@@ -162,7 +163,7 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 * Automatic renewals with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless and Paystack: the card or mandate is saved at the first payment and charged on each renewal date, with retries after 1 and 3 days. Every other payment method keeps invoice renewals.
 * Settings list each payment method on the shop and how it renews.
 * Licenses: "Reissue key" gives a license a new key and emails it to the customer.
-* Licenses for any product, not only WordPress plugins: themes, desktop and mobile software, SaaS and more. Activations can be websites or any device ID, any file type can be uploaded (or a download link given), and the License tab shows how to connect the product.
+* Licenses for any product, not only WordPress plugins: themes, desktop and mobile applications, browser extensions, SaaS, developer products, games and digital assets, with a License guide and code examples. Activations can be websites or any device ID, any file type can be uploaded (or a download link given), and the License tab shows how to connect the product.
 * A ready-made license file for WordPress plugins and themes you sell, with a license screen and automatic updates.
 * The hourly renewal run can no longer run twice at the same time.
 * A "Rinnovo Pro" screen under WooCommerce.

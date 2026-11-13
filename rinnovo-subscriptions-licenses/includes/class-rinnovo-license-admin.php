@@ -147,6 +147,7 @@ class RINNOVO_License_Admin {
 		?>
 		<div class="wrap">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'Licenses', 'rinnovo-subscriptions-licenses' ); ?></h1>
+			<a class="page-title-action" href="<?php echo esc_url( admin_url( 'admin.php?page=' . RINNOVO_License_Guide::PAGE ) ); ?>"><?php esc_html_e( 'License guide', 'rinnovo-subscriptions-licenses' ); ?></a>
 			<?php foreach ( $products as $product ) : ?>
 				<?php if ( '' === RINNOVO_License_Product::settings( $product->ID )['slug'] ) : ?>
 					<div class="notice notice-error inline"><p>

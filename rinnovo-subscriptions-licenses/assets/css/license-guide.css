@@ -1,0 +1,8 @@
+.rinnovo-guide{max-width:980px}
+.rinnovo-guide__lead{font-size:15px;color:#50575e}
+.rinnovo-guide__card{background:#fff;border:1px solid #dcdcde;border-radius:10px;padding:18px 24px;margin:16px 0}
+.rinnovo-guide__card h2{margin-top:4px}
+.rinnovo-guide__card h3{margin:22px 0 6px}
+.rinnovo-guide__card ol li{margin-bottom:6px}
+.rinnovo-guide__card table{margin:12px 0}
+.rinnovo-guide__code{background:#1e1e2e;color:#e6e6f0;border-radius:8px;padding:14px 16px;overflow:auto;font-size:12.5px;line-height:1.55;white-space:pre}

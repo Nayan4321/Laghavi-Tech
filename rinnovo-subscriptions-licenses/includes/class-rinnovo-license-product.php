@@ -39,7 +39,13 @@ class RINNOVO_License_Product {
 		return array(
 			'wp_plugin' => __( 'WordPress plugin', 'rinnovo-subscriptions-licenses' ),
 			'wp_theme'  => __( 'WordPress theme', 'rinnovo-subscriptions-licenses' ),
-			'software'  => __( 'Software or app (desktop, mobile, SaaS…)', 'rinnovo-subscriptions-licenses' ),
+			'desktop'   => __( 'Desktop application (Windows, macOS, Linux)', 'rinnovo-subscriptions-licenses' ),
+			'mobile'    => __( 'Mobile application (Android, iOS)', 'rinnovo-subscriptions-licenses' ),
+			'extension' => __( 'Browser extension', 'rinnovo-subscriptions-licenses' ),
+			'saas'      => __( 'SaaS or web application (license key)', 'rinnovo-subscriptions-licenses' ),
+			'developer' => __( 'Developer product (SDK, library, CLI, API)', 'rinnovo-subscriptions-licenses' ),
+			'game'      => __( 'Game or game development product', 'rinnovo-subscriptions-licenses' ),
+			'asset'     => __( 'Digital asset or creative product (fonts, templates, presets, 3D, audio…)', 'rinnovo-subscriptions-licenses' ),
 			'other'     => __( 'Other (course, content, service…)', 'rinnovo-subscriptions-licenses' ),
 		);
 	}
@@ -145,6 +151,7 @@ class RINNOVO_License_Product {
 			return (array) apply_filters( 'rinnovo_license_settings', $settings, $product_id );
 		}
 		$type     = (string) get_post_meta( $id, '_rinnovo_license_type', true );
+		$type     = 'software' === $type ? 'desktop' : $type;
 		$settings = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_rinnovo_license_enabled', true ),
@@ -388,7 +395,10 @@ class RINNOVO_License_Product {
 				<a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=rinnovo_license_client&product=' . $product_id ), 'rinnovo_license_client_' . $product_id ) ); ?>"><?php esc_html_e( 'Download the license file for your plugin or theme', 'rinnovo-subscriptions-licenses' ); ?></a><br />
 				<span class="description"><?php esc_html_e( 'One PHP file, made for this product. Put it in your plugin or theme and add the two lines at its top: customers get a license screen to enter their key, and updates arrive in Dashboard > Updates while the key is active.', 'rinnovo-subscriptions-licenses' ); ?></span>
 			</p>
-			<p><?php esc_html_e( 'Any other software (desktop, mobile, SaaS) calls these addresses, from any programming language:', 'rinnovo-subscriptions-licenses' ); ?></p>
+			<p>
+				<?php esc_html_e( 'Any other product (desktop or mobile app, browser extension, SaaS, game, developer tool) calls these addresses, from any programming language:', 'rinnovo-subscriptions-licenses' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . RINNOVO_License_Guide::PAGE ) ); ?>" target="_blank"><?php esc_html_e( 'Read the license guide with code examples', 'rinnovo-subscriptions-licenses' ); ?></a>
+			</p>
 			<pre style="white-space:pre-wrap;background:#f6f7f7;padding:10px;border-radius:4px;font-size:12px">POST <?php echo esc_html( $api ); ?>license/activate
 POST <?php echo esc_html( $api ); ?>license/check
 POST <?php echo esc_html( $api ); ?>license/deactivate
