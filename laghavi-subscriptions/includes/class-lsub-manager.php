@@ -375,6 +375,21 @@ class LSUB_Manager {
 	 * Hourly: invoice renewals for non-Stripe subscriptions, overdue handling, period-end cancellations and reminders.
 	 */
 	public static function run_schedule() {
+		// Never two runs at once: a renewal must not be created twice.
+		if ( ! LSUB_Lock::acquire( 'schedule', 900 ) ) {
+			return;
+		}
+		try {
+			self::run_schedule_locked();
+		} finally {
+			LSUB_Lock::release( 'schedule' );
+		}
+	}
+
+	/**
+	 * The hourly run, while holding the schedule lock.
+	 */
+	private static function run_schedule_locked() {
 		global $wpdb;
 		$now   = current_time( 'mysql', true );
 		$batch = 50;

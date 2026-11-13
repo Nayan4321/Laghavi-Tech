@@ -4,7 +4,7 @@ Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
 WC requires at least: 8.0
-Stable tag: 1.0.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 
 Subscription products with automatic Stripe renewals, reminder emails, a better My Account, checkout without a cart page, and "Ask for price" products. No other subscription plugin needed.
@@ -87,6 +87,9 @@ Subscription products with automatic Stripe renewals, reminder emails, a better 
 * WooCommerce's built-in Analytics adds up orders without converting currencies; use WooCommerce > Subscriptions for recurring revenue in your store currency.
 
 == Changelog ==
+
+= 1.0.2 =
+* Stripe payments can no longer be recorded twice when the webhook and the customer's return from Stripe (or two deliveries of the same webhook) arrive at the same moment: atomic locks for checkout, renewal invoices and the hourly renewal run.
 
 = 1.0.0 =
 * First release.
