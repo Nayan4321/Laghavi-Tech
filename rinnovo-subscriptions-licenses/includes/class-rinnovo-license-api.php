@@ -1,6 +1,8 @@
 <?php
 /**
- * REST API the licensed plugins call: activate, deactivate, check, update and download.
+ * REST API the licensed products call (a WordPress plugin or theme, desktop or mobile software, a
+ * SaaS app…): activate, deactivate, check, update and download. Each website, computer or device
+ * the key is used on is one activation: products send site_url (a website) or instance (any ID).
  *
  * @package RinnovoSubscriptions
  */
@@ -42,7 +44,11 @@ class RINNOVO_License_Api {
 			),
 			'site_url'    => array(
 				'type'     => 'string',
-				'required' => true,
+				'required' => false,
+			),
+			'instance'    => array(
+				'type'     => 'string',
+				'required' => false,
 			),
 			'slug'        => array(
 				'type'     => 'string',
@@ -124,6 +130,17 @@ class RINNOVO_License_Api {
 	}
 
 	/**
+	 * Where the key is used: the website (site_url) or any device or computer ID (instance).
+	 *
+	 * @param WP_REST_Request $request Request.
+	 * @return string
+	 */
+	private static function instance( $request ) {
+		$instance = (string) $request['instance'];
+		return '' !== trim( $instance ) ? RINNOVO_Licenses::normalize_instance( $instance ) : RINNOVO_Licenses::normalize_site( (string) $request['site_url'] );
+	}
+
+	/**
 	 * Look up and check the license in a request.
 	 *
 	 * @param WP_REST_Request $request Request.
@@ -134,14 +151,14 @@ class RINNOVO_License_Api {
 			return self::fail( 'too_many', __( 'Too many attempts. Please try again in an hour.', 'rinnovo-subscriptions-licenses' ), 429 );
 		}
 		$license = RINNOVO_Licenses::get_by_key( (string) $request['license_key'] );
-		$site    = RINNOVO_Licenses::normalize_site( (string) $request['site_url'] );
+		$site    = self::instance( $request );
 		if ( ! $license || '' === $site ) {
 			self::throttled( true );
 			return self::fail( 'invalid', __( 'This license key is not valid.', 'rinnovo-subscriptions-licenses' ), 404 );
 		}
 		$settings = RINNOVO_License_Product::settings( $license->product_id );
 		if ( '' === $settings['slug'] ) {
-			return self::fail( 'not_configured', __( 'This product is not set up for activation yet (no plugin slug on the store). Please contact support.', 'rinnovo-subscriptions-licenses' ), 409 );
+			return self::fail( 'not_configured', __( 'This product is not set up for activation yet (no Product ID on the store). Please contact support.', 'rinnovo-subscriptions-licenses' ), 409 );
 		}
 		if ( ! RINNOVO_License_Product::slugs_match( $settings['slug'], (string) $request['slug'] ) ) {
 			return self::fail( 'invalid', __( 'This license key is for a different product.', 'rinnovo-subscriptions-licenses' ), 404 );
@@ -183,7 +200,7 @@ class RINNOVO_License_Api {
 				return self::fail(
 					'limit',
 					/* translators: %d: number of sites. */
-					sprintf( _n( 'This key is already used on %d site. Deactivate it there first, or remove that site in My Account > Licenses on the shop\'s website.', 'This key is already used on %d sites. Deactivate it on one of them first, or remove a site in My Account > Licenses on the shop\'s website.', $count, 'rinnovo-subscriptions-licenses' ), $count ),
+					sprintf( _n( 'This key is already used on %d site or device. Deactivate it there first, or remove it in My Account > Licenses on the shop\'s website.', 'This key is already used on %d sites or devices. Deactivate it on one of them first, or remove one in My Account > Licenses on the shop\'s website.', $count, 'rinnovo-subscriptions-licenses' ), $count ),
 					403
 				);
 			}
@@ -273,12 +290,15 @@ class RINNOVO_License_Api {
 		list( $license, $site, $settings ) = $resolved;
 
 		$package = '';
-		if ( self::may_update( $license, $site ) && '' !== $settings['file'] ) {
+		if ( self::may_update( $license, $site ) && ( '' !== $settings['file'] || '' !== $settings['url'] ) ) {
 			$package = add_query_arg(
-				array(
-					'license_key' => rawurlencode( $license->license_key ),
-					'site_url'    => rawurlencode( (string) $request['site_url'] ),
-					'slug'        => rawurlencode( $settings['slug'] ),
+				array_filter(
+					array(
+						'license_key' => rawurlencode( $license->license_key ),
+						'site_url'    => rawurlencode( (string) $request['site_url'] ),
+						'instance'    => rawurlencode( (string) $request['instance'] ),
+						'slug'        => rawurlencode( $settings['slug'] ),
+					)
 				),
 				rest_url( self::NS . '/license/download' )
 			);
@@ -298,7 +318,7 @@ class RINNOVO_License_Api {
 	}
 
 	/**
-	 * Send the plugin zip to a licensed site.
+	 * Send the product's file to a licensed site or device (or send it to the download link).
 	 *
 	 * @param WP_REST_Request $request Request.
 	 * @return WP_REST_Response|void
@@ -310,19 +330,17 @@ class RINNOVO_License_Api {
 		}
 		list( $license, $site, $settings ) = $resolved;
 		if ( ! self::may_update( $license, $site ) ) {
-			return self::fail( 'not_allowed', __( 'This site cannot download updates with this key.', 'rinnovo-subscriptions-licenses' ), 403 );
+			return self::fail( 'not_allowed', __( 'This key cannot download updates here. Activate it first.', 'rinnovo-subscriptions-licenses' ), 403 );
 		}
 
 		$path = RINNOVO_Licenses::private_dir() . basename( $settings['file'] );
 		if ( '' === $settings['file'] || ! is_readable( $path ) ) {
+			if ( '' !== $settings['url'] ) {
+				wp_redirect( $settings['url'] ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- The seller's own download link, often on another host.
+				exit;
+			}
 			return self::fail( 'missing', __( 'The download is not available right now.', 'rinnovo-subscriptions-licenses' ), 404 );
 		}
-
-		nocache_headers();
-		header( 'Content-Type: application/zip' );
-		header( 'Content-Disposition: attachment; filename="' . $settings['slug'] . '.zip"' );
-		header( 'Content-Length: ' . filesize( $path ) );
-		readfile( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
-		exit;
+		RINNOVO_Licenses::send_file( $path, $settings['slug'] );
 	}
 }

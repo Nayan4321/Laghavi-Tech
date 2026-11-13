@@ -8,11 +8,11 @@ Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Subscriptions for WooCommerce with any payment method, automatic Stripe renewals, reminders, and license keys for the plugins you sell.
+Subscriptions for WooCommerce with any payment method, automatic Stripe renewals, reminders, and license keys for the software you sell.
 
 == Description ==
 
-Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, without a separate subscription plugin. Sell monthly or yearly plans, charge renewals automatically with Stripe, and if you sell plugins or software, hand out license keys, downloads and automatic updates from the same shop.
+Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, without a separate subscription plugin. Sell monthly or yearly plans, charge renewals automatically with Stripe, and if you sell software (WordPress plugins and themes, desktop or mobile apps, SaaS), hand out license keys, downloads and updates from the same shop.
 
 = Subscription products =
 
@@ -52,12 +52,16 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 = License keys for the software you sell =
 
 * Tick "Sell a license" in a product's License tab: every paid order gets a license key, shown on the thank-you page, in the order email and in My Account > Licenses.
-* Upload your plugin's zip on the product. Customers download it from My Account, and licensed sites get automatic updates under Dashboard > Updates.
-* Set how many sites a key works on and how long it gets updates. Customers move a key between sites themselves.
-* Sell one plugin as several plans on a variable product (1 site, 5 sites, unlimited), each variation with its own price and number of sites. Combine with subscription variations for yearly or monthly plans.
+* Choose what you sell: a WordPress plugin, a WordPress theme, software or an app (desktop, mobile, SaaS), or something else (a course, content, a service).
+* Upload the file customers download (zip, exe, msi, dmg, apk, pdf and more), or give a download link (App Store, Google Play, cloud storage). Only customers with an active key can download it.
+* Set how many websites, computers or devices one key can be used on.
+* For a WordPress plugin or theme, download a ready-made license file made for that product: add it with two lines, and your customers get a license screen and automatic updates under Dashboard > Updates.
+* Any other software connects with four simple web requests, from any programming language (see "How does my product check its license key?" below).
+* Customers move a key between their websites or devices themselves, in My Account.
+* Sell one product as several plans on a variable product (1, 5 or unlimited activations), each variation with its own price and number of activations. Combine with subscription variations for yearly or monthly plans.
 * Keys sold with a subscription follow it: renewals keep the same key, cancelling stops renewals, and the key keeps working until the paid period ends.
-* WooCommerce > Licenses: search, revoke or restore keys, add a year, change sites, or create a key by hand.
-* A small REST API for your plugin to activate, check and update (see "License API" below).
+* WooCommerce > Licenses: search, revoke, restore or reissue keys, add a year, change the activation limit, or create a key by hand.
+* A small REST API for your product to activate, check and update.
 
 
 = Reviews and download counts =
@@ -72,7 +76,7 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 2. **Stripe:** in Stripe go to Developers > API keys and copy the secret key. In WooCommerce > Settings > Payments open "Stripe", tick Enable, paste the key and save. The webhook line turns green ("Connected"). Try test mode first with the card 4242 4242 4242 4242.
 3. **Products:** edit a simple product and tick "Subscription" in the General tab, then set the billing period. On a variable product, open each variation and tick "Subscription" there.
 4. **Settings:** WooCommerce > Settings > Subscriptions for reminders, grace periods, checkout and reviews.
-5. **Selling software:** in the product's License tab, tick "Sell a license", enter your plugin's folder name as Plugin slug, upload the zip and set the version.
+5. **Selling software:** in the product's License tab, tick "Sell a license", choose what you sell, enter a Product ID (for a WordPress plugin or theme, its folder name), and upload the file or add a download link. The tab shows how to connect your product.
 
 == Frequently Asked Questions ==
 
@@ -104,13 +108,15 @@ Yes, from My Account (you can turn this off). They keep access until the end of 
 
 Stripe and subscriptions work with the Checkout block. Editing quantities on the checkout page needs the classic checkout (the `[woocommerce_checkout]` shortcode).
 
-= How does my plugin talk to the license API? =
+= How does my product check its license key? =
 
-Send `license_key`, `site_url` and `slug` (your plugin's folder name) to these routes under `/wp-json/rinnovo-subscriptions-licenses/v1/`:
+A WordPress plugin or theme: download the ready-made license file from the product's License tab and follow the two lines at its top.
+
+Any other software sends `license_key`, `slug` (the Product ID) and either `site_url` (a website) or `instance` (any device, computer or account ID) to these routes under `/wp-json/rinnovo-subscriptions-licenses/v1/`:
 
 * `POST license/activate`, `POST license/deactivate`, `POST license/check`
 * `GET license/update` returns the latest version, with a download link for sites allowed to update
-* `GET license/download` returns the zip for sites allowed to update
+* `GET license/download` returns the file (or goes to the download link) for activated keys
 
 Replies are JSON with `success`, `status` (active, expired, revoked, invalid or inactive), `expires` and a `message` for the customer.
 
@@ -135,7 +141,7 @@ Paystack's terms: https://paystack.com/terms and privacy policy: https://paystac
 
 Renewals with the other supported payment plugins are charged by those plugins themselves, under their own terms.
 
-No other data leaves your site. The license API runs on your own site and is only called by the plugins you sell.
+No other data leaves your site. The license API runs on your own site and is only called by the products you sell.
 
 == Rinnovo Pro ==
 
@@ -146,7 +152,7 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 1. A subscription product with its price, trial and sign-up fee.
 2. The checkout with the recurring total.
 3. My Account: subscriptions with payment history, Cancel and Update card.
-4. My Account: license keys, downloads and sites.
+4. My Account: license keys, downloads and activations.
 5. WooCommerce > Subscriptions with monthly recurring revenue.
 6. WooCommerce > Licenses.
 
@@ -156,6 +162,8 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 * Automatic renewals with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless and Paystack: the card or mandate is saved at the first payment and charged on each renewal date, with retries after 1 and 3 days. Every other payment method keeps invoice renewals.
 * Settings list each payment method on the shop and how it renews.
 * Licenses: "Reissue key" gives a license a new key and emails it to the customer.
+* Licenses for any product, not only WordPress plugins: themes, desktop and mobile software, SaaS and more. Activations can be websites or any device ID, any file type can be uploaded (or a download link given), and the License tab shows how to connect the product.
+* A ready-made license file for WordPress plugins and themes you sell, with a license screen and automatic updates.
 * The hourly renewal run can no longer run twice at the same time.
 * A "Rinnovo Pro" screen under WooCommerce.
 

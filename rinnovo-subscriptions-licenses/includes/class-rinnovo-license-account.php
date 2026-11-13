@@ -83,14 +83,14 @@ class RINNOVO_License_Account {
 		$user    = wp_get_current_user();
 		if ( $license && ( (int) $license->user_id === $user->ID || ( '' !== $license->email && $license->email === $user->user_email ) ) ) {
 			RINNOVO_Licenses::remove_activation( $license->id, sanitize_text_field( wp_unslash( $_POST['rinnovo_license_remove_site'] ) ) );
-			wc_add_notice( __( 'The site was removed. You can activate the key somewhere else now.', 'rinnovo-subscriptions-licenses' ) );
+			wc_add_notice( __( 'Removed. You can activate the key somewhere else now.', 'rinnovo-subscriptions-licenses' ) );
 		}
 		wp_safe_redirect( wc_get_account_endpoint_url( self::ENDPOINT ) );
 		exit;
 	}
 
 	/**
-	 * Send the plugin zip to the logged-in owner of an active license.
+	 * Send the product's file (or go to its download link) for the logged-in owner of an active license.
 	 */
 	public static function handle_download() {
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Nonce checked below.
@@ -117,22 +117,19 @@ class RINNOVO_License_Account {
 			wp_safe_redirect( $back );
 			exit;
 		}
-		$path = RINNOVO_Licenses::file_path( $license );
+		$path     = RINNOVO_Licenses::file_path( $license );
+		$settings = RINNOVO_License_Product::settings( $license->product_id );
+		if ( '' === $path && '' !== $settings['url'] ) {
+			wp_redirect( $settings['url'] ); // phpcs:ignore WordPress.Security.SafeRedirect.wp_redirect_wp_redirect -- The seller's own download link, often on another host.
+			exit;
+		}
 		if ( '' === $path ) {
 			wc_add_notice( __( 'The download is being prepared. Please try again a little later or contact us.', 'rinnovo-subscriptions-licenses' ), 'error' );
 			wp_safe_redirect( $back );
 			exit;
 		}
 
-		$settings = RINNOVO_License_Product::settings( $license->product_id );
-		$name     = ( '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( get_the_title( $license->product_id ) ) ) . '.zip';
-		nocache_headers();
-		header( 'Content-Type: application/zip' );
-		header( 'Content-Disposition: attachment; filename="' . $name . '"' );
-		header( 'Content-Length: ' . filesize( $path ) );
-		header( 'X-Content-Type-Options: nosniff' );
-		readfile( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
-		exit;
+		RINNOVO_Licenses::send_file( $path, '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( get_the_title( $license->product_id ) ) );
 	}
 
 	/**
@@ -214,7 +211,7 @@ class RINNOVO_License_Account {
 		$user     = wp_get_current_user();
 		$licenses = RINNOVO_Licenses::for_customer( $user->ID, $user->user_email );
 		if ( ! $licenses ) {
-			echo '<div class="rinnovo-lic-empty"><p>' . esc_html__( 'You have no licenses yet.', 'rinnovo-subscriptions-licenses' ) . '</p><a class="button" href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Browse plugins', 'rinnovo-subscriptions-licenses' ) . '</a></div>';
+			echo '<div class="rinnovo-lic-empty"><p>' . esc_html__( 'You have no licenses yet.', 'rinnovo-subscriptions-licenses' ) . '</p><a class="button" href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'Browse products', 'rinnovo-subscriptions-licenses' ) . '</a></div>';
 			return;
 		}
 		echo '<div class="rinnovo-licenses">';
@@ -222,7 +219,7 @@ class RINNOVO_License_Account {
 			$sites    = RINNOVO_Licenses::activations( $license->id );
 			$status   = RINNOVO_Licenses::status( $license );
 			$settings = RINNOVO_License_Product::settings( $license->product_id );
-			$has_file = '' !== RINNOVO_Licenses::file_path( $license );
+			$has_file = '' !== RINNOVO_Licenses::file_path( $license ) || '' !== $settings['url'];
 			?>
 			<article class="rinnovo-lic-license rinnovo-lic-license--<?php echo esc_attr( $status ); ?>">
 				<header class="rinnovo-lic-license__head">
@@ -251,7 +248,7 @@ class RINNOVO_License_Account {
 				<dl class="rinnovo-lic-facts">
 					<div><dt><?php esc_html_e( 'Valid', 'rinnovo-subscriptions-licenses' ); ?></dt><dd><?php echo esc_html( RINNOVO_Licenses::expiry_label( $license ) ); ?></dd></div>
 					<div>
-						<dt><?php esc_html_e( 'Sites', 'rinnovo-subscriptions-licenses' ); ?></dt>
+						<dt><?php esc_html_e( 'Activations', 'rinnovo-subscriptions-licenses' ); ?></dt>
 						<dd>
 							<?php
 							/* translators: 1: sites used, 2: sites allowed. */
@@ -271,7 +268,7 @@ class RINNOVO_License_Account {
 								<form method="post">
 									<?php wp_nonce_field( 'rinnovo_license_remove_site' ); ?>
 									<input type="hidden" name="license_id" value="<?php echo esc_attr( $license->id ); ?>" />
-									<button type="submit" name="rinnovo_license_remove_site" value="<?php echo esc_attr( $site->site ); ?>" class="rinnovo-lic-link"><?php esc_html_e( 'Remove site', 'rinnovo-subscriptions-licenses' ); ?></button>
+									<button type="submit" name="rinnovo_license_remove_site" value="<?php echo esc_attr( $site->site ); ?>" class="rinnovo-lic-link"><?php esc_html_e( 'Remove', 'rinnovo-subscriptions-licenses' ); ?></button>
 								</form>
 							</li>
 						<?php endforeach; ?>
@@ -282,9 +279,21 @@ class RINNOVO_License_Account {
 					<details class="rinnovo-lic-help">
 						<summary><?php esc_html_e( 'How to install', 'rinnovo-subscriptions-licenses' ); ?></summary>
 						<ol>
-							<li><?php esc_html_e( 'Click Download to get the plugin zip.', 'rinnovo-subscriptions-licenses' ); ?></li>
-							<li><?php esc_html_e( 'In your WordPress admin go to Plugins > Add New > Upload Plugin, choose the zip and activate it.', 'rinnovo-subscriptions-licenses' ); ?></li>
-							<li><?php esc_html_e( 'Open the plugin\'s license screen, paste the key above and click Activate. Updates then arrive automatically.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php if ( 'wp_plugin' === $settings['type'] ) : ?>
+								<li><?php esc_html_e( 'Click Download to get the plugin zip.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'In your WordPress admin go to Plugins > Add New > Upload Plugin, choose the zip and activate it.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'Open the plugin\'s license screen, paste the key above and click Activate. Updates then arrive automatically.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php elseif ( 'wp_theme' === $settings['type'] ) : ?>
+								<li><?php esc_html_e( 'Click Download to get the theme zip.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'In your WordPress admin go to Appearance > Themes > Add New > Upload Theme, choose the zip and activate it.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'Open the theme\'s license screen under Appearance, paste the key above and click Activate. Updates then arrive automatically.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php else : ?>
+								<?php if ( $has_file ) : ?>
+									<li><?php esc_html_e( 'Click Download and install the product.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<?php endif; ?>
+								<li><?php esc_html_e( 'When the product asks for a license key, paste the key above.', 'rinnovo-subscriptions-licenses' ); ?></li>
+								<li><?php esc_html_e( 'Moving to another computer or device? Remove the old one above, then activate the key on the new one.', 'rinnovo-subscriptions-licenses' ); ?></li>
+							<?php endif; ?>
 						</ol>
 					</details>
 				<?php endif; ?>

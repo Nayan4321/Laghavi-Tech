@@ -28,7 +28,7 @@ class RINNOVO_Licenses {
 	}
 
 	/**
-	 * Create the tables and the private folder for plugin zips.
+	 * Create the tables and the private folder for product files.
 	 */
 	public static function install() {
 		global $wpdb;
@@ -71,7 +71,7 @@ class RINNOVO_Licenses {
 	}
 
 	/**
-	 * Private folder for plugin zips: a random name, blocked from direct download.
+	 * Private folder for product files: a random name, blocked from direct download.
 	 *
 	 * @return string Absolute path with trailing slash.
 	 */
@@ -233,6 +233,21 @@ class RINNOVO_Licenses {
 		$host = preg_replace( '/^www\./', '', $parts['host'] );
 		$path = isset( $parts['path'] ) ? untrailingslashit( $parts['path'] ) : '';
 		return substr( $host . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' ) . $path, 0, 191 );
+	}
+
+	/**
+	 * Name of the place a key is used: a website address (normalized as above) or any device,
+	 * computer or account ID the seller's software sends.
+	 *
+	 * @param string $value Website address or ID.
+	 * @return string
+	 */
+	public static function normalize_instance( $value ) {
+		$value = trim( (string) $value );
+		if ( false !== strpos( $value, '://' ) || preg_match( '/^[a-z0-9-]+(\.[a-z0-9-]+)+(:\d+)?(\/.*)?$/i', $value ) ) {
+			return self::normalize_site( $value );
+		}
+		return substr( preg_replace( '/[^a-z0-9._:@-]/', '', strtolower( $value ) ), 0, 191 );
 	}
 
 	/**
@@ -415,7 +430,7 @@ class RINNOVO_Licenses {
 	}
 
 	/**
-	 * Path of the zip for a license's product, or '' if none is uploaded.
+	 * Path of the file for a license's product, or '' if none is uploaded.
 	 *
 	 * @param object $license License.
 	 * @return string
@@ -427,6 +442,24 @@ class RINNOVO_Licenses {
 		}
 		$path = self::private_dir() . basename( $settings['file'] );
 		return is_readable( $path ) ? $path : '';
+	}
+
+	/**
+	 * Send a product file to the browser and stop.
+	 *
+	 * @param string $path File path.
+	 * @param string $name File name without extension.
+	 */
+	public static function send_file( $path, $name ) {
+		$ext   = strtolower( pathinfo( $path, PATHINFO_EXTENSION ) );
+		$types = RINNOVO_License_Product::file_types();
+		nocache_headers();
+		header( 'Content-Type: ' . ( isset( $types[ $ext ] ) ? $types[ $ext ] : 'application/octet-stream' ) );
+		header( 'Content-Disposition: attachment; filename="' . sanitize_file_name( $name ) . '.' . $ext . '"' );
+		header( 'Content-Length: ' . filesize( $path ) );
+		header( 'X-Content-Type-Options: nosniff' );
+		readfile( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile
+		exit;
 	}
 
 	/**

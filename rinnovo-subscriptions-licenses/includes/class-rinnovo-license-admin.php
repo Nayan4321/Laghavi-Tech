@@ -72,7 +72,7 @@ class RINNOVO_License_Admin {
 						/* translators: 1: product name. */
 						$html  = '<p>' . esc_html( sprintf( __( 'We have issued a new license key for %1$s. Your previous key no longer works.', 'rinnovo-subscriptions-licenses' ), $product ? $product->get_name() : '' ) ) . '</p>';
 						$html .= '<p style="font-size:18px"><code>' . esc_html( $license->license_key ) . '</code></p>';
-						$html .= '<p>' . esc_html__( 'Enter the new key on each of your sites to activate them again. You can always find it in My Account > Licenses.', 'rinnovo-subscriptions-licenses' ) . '</p>';
+						$html .= '<p>' . esc_html__( 'Enter the new key on each website or device to activate it again. You can always find it in My Account > Licenses.', 'rinnovo-subscriptions-licenses' ) . '</p>';
 						RINNOVO_Emails::send( $license->email, __( 'Your new license key', 'rinnovo-subscriptions-licenses' ), __( 'New license key', 'rinnovo-subscriptions-licenses' ), $html );
 						$back = add_query_arg( 's', $license->license_key, admin_url( 'admin.php?page=' . self::PAGE ) );
 					}
@@ -152,7 +152,7 @@ class RINNOVO_License_Admin {
 					<div class="notice notice-error inline"><p>
 						<?php
 						/* translators: %s: product name. */
-						echo esc_html( sprintf( __( '"%s" has no Plugin slug, so its keys cannot be activated. Edit the product and fill in Plugin slug in its License tab.', 'rinnovo-subscriptions-licenses' ), $product->post_title ) );
+						echo esc_html( sprintf( __( '"%s" has no Product ID, so its keys cannot be activated. Edit the product and fill in Product ID in its License tab.', 'rinnovo-subscriptions-licenses' ), $product->post_title ) );
 						?>
 						<a href="<?php echo esc_url( get_edit_post_link( $product->ID ) ); ?>"><?php esc_html_e( 'Edit product', 'rinnovo-subscriptions-licenses' ); ?></a>
 					</p></div>
@@ -172,7 +172,7 @@ class RINNOVO_License_Admin {
 						<th><?php esc_html_e( 'Customer', 'rinnovo-subscriptions-licenses' ); ?></th>
 						<th><?php esc_html_e( 'Status', 'rinnovo-subscriptions-licenses' ); ?></th>
 						<th><?php esc_html_e( 'Updates until', 'rinnovo-subscriptions-licenses' ); ?></th>
-						<th><?php esc_html_e( 'Sites', 'rinnovo-subscriptions-licenses' ); ?></th>
+						<th><?php esc_html_e( 'Activations', 'rinnovo-subscriptions-licenses' ); ?></th>
 						<th><?php esc_html_e( 'Actions', 'rinnovo-subscriptions-licenses' ); ?></th>
 					</tr>
 				</thead>
@@ -212,7 +212,7 @@ class RINNOVO_License_Admin {
 							}
 							$form( $license, 'extend', __( '+1 year', 'rinnovo-subscriptions-licenses' ) );
 							$form( $license, 'reissue', __( 'Reissue key', 'rinnovo-subscriptions-licenses' ), '', __( 'Give this license a new key? The old key stops working, its sites must be activated again, and the customer is emailed the new key.', 'rinnovo-subscriptions-licenses' ) );
-							$form( $license, 'sites', __( 'Set sites', 'rinnovo-subscriptions-licenses' ), '<input type="number" name="sites_allowed" min="0" class="small-text" value="' . esc_attr( $license->sites_allowed ) . '" />' );
+							$form( $license, 'sites', __( 'Set limit', 'rinnovo-subscriptions-licenses' ), '<input type="number" name="sites_allowed" min="0" class="small-text" value="' . esc_attr( $license->sites_allowed ) . '" />' );
 							?>
 						</td>
 					</tr>

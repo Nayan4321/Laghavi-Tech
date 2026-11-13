@@ -1,8 +1,9 @@
 <?php
 /**
- * "License" tab on WooCommerce products: what the product licenses, for how many sites and how long,
- * and the plugin zip delivered as updates. On variable products each variation can be its own plan
- * (1 site, 5 sites, unlimited) with its own number of sites.
+ * "License" tab on WooCommerce products: any product sold with a license key (a WordPress plugin or
+ * theme, desktop or mobile software, a SaaS app, an online course…), for how many activations and
+ * how long, the file (or link) customers download, and a ready-made connector for the product. On
+ * variable products each variation can be its own plan (1, 5, unlimited activations).
  *
  * @package RinnovoSubscriptions
  */
@@ -25,6 +26,89 @@ class RINNOVO_License_Product {
 		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation' ), 10, 2 );
 		add_action( 'post_edit_form_tag', array( __CLASS__, 'form_enctype' ) );
 		add_filter( 'woocommerce_is_sold_individually', array( __CLASS__, 'sold_individually' ), 20, 2 );
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
+		add_action( 'admin_post_rinnovo_license_client', array( __CLASS__, 'download_client' ) );
+	}
+
+	/**
+	 * What a licensed product can be.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function types() {
+		return array(
+			'wp_plugin' => __( 'WordPress plugin', 'rinnovo-subscriptions-licenses' ),
+			'wp_theme'  => __( 'WordPress theme', 'rinnovo-subscriptions-licenses' ),
+			'software'  => __( 'Software or app (desktop, mobile, SaaS…)', 'rinnovo-subscriptions-licenses' ),
+			'other'     => __( 'Other (course, content, service…)', 'rinnovo-subscriptions-licenses' ),
+		);
+	}
+
+	/**
+	 * File types that can be uploaded for download (never scripts or web pages).
+	 *
+	 * @return array<string, string> Extension => MIME type.
+	 */
+	public static function file_types() {
+		/**
+		 * File types sellers may upload on the License tab.
+		 *
+		 * @param array $types Extension => MIME type.
+		 */
+		return (array) apply_filters(
+			'rinnovo_license_file_types',
+			array(
+				'zip'      => 'application/zip',
+				'rar'      => 'application/vnd.rar',
+				'7z'       => 'application/x-7z-compressed',
+				'gz'       => 'application/gzip',
+				'tgz'      => 'application/gzip',
+				'tar'      => 'application/x-tar',
+				'exe'      => 'application/vnd.microsoft.portable-executable',
+				'msi'      => 'application/x-msi',
+				'dmg'      => 'application/x-apple-diskimage',
+				'pkg'      => 'application/octet-stream',
+				'apk'      => 'application/vnd.android.package-archive',
+				'aab'      => 'application/octet-stream',
+				'ipa'      => 'application/octet-stream',
+				'appimage' => 'application/octet-stream',
+				'deb'      => 'application/vnd.debian.binary-package',
+				'rpm'      => 'application/x-rpm',
+				'jar'      => 'application/java-archive',
+				'pdf'      => 'application/pdf',
+				'epub'     => 'application/epub+zip',
+				'mp3'      => 'audio/mpeg',
+				'mp4'      => 'video/mp4',
+				'psd'      => 'image/vnd.adobe.photoshop',
+				'ai'       => 'application/postscript',
+				'fig'      => 'application/octet-stream',
+				'sketch'   => 'application/octet-stream',
+				'ttf'      => 'font/ttf',
+				'otf'      => 'font/otf',
+				'woff2'    => 'font/woff2',
+			)
+		);
+	}
+
+	/**
+	 * Whether a product type is a WordPress plugin or theme.
+	 *
+	 * @param string $type Type.
+	 * @return bool
+	 */
+	public static function is_wordpress( $type ) {
+		return in_array( $type, array( 'wp_plugin', 'wp_theme' ), true );
+	}
+
+	/**
+	 * Script that shows the WordPress-only fields for plugins and themes.
+	 *
+	 * @param string $hook Admin page.
+	 */
+	public static function assets( $hook ) {
+		if ( in_array( $hook, array( 'post.php', 'post-new.php' ), true ) && 'product' === get_post_type() ) {
+			wp_enqueue_script( 'rinnovo-license-product', RINNOVO_URL . 'assets/js/license-product.js', array( 'jquery' ), rinnovo_asset_version( 'assets/js/license-product.js' ), true );
+		}
 	}
 
 	/**
@@ -60,9 +144,12 @@ class RINNOVO_License_Product {
 			/** This filter is documented below. */
 			return (array) apply_filters( 'rinnovo_license_settings', $settings, $product_id );
 		}
+		$type     = (string) get_post_meta( $id, '_rinnovo_license_type', true );
 		$settings = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_rinnovo_license_enabled', true ),
+			// Products saved before product types existed were WordPress plugins.
+			'type'         => isset( self::types()[ $type ] ) ? $type : 'wp_plugin',
 			'slug'         => (string) get_post_meta( $id, '_rinnovo_license_slug', true ),
 			'sites'        => '' === get_post_meta( $id, '_rinnovo_license_sites', true ) ? 1 : (int) get_post_meta( $id, '_rinnovo_license_sites', true ),
 			'days'         => '' === get_post_meta( $id, '_rinnovo_license_days', true ) ? 365 : (int) get_post_meta( $id, '_rinnovo_license_days', true ),
@@ -72,6 +159,7 @@ class RINNOVO_License_Product {
 			'requires_php' => (string) get_post_meta( $id, '_rinnovo_license_requires_php', true ),
 			'changelog'    => (string) get_post_meta( $id, '_rinnovo_license_changelog', true ),
 			'file'         => (string) get_post_meta( $id, '_rinnovo_license_file', true ),
+			'url'          => (string) get_post_meta( $id, '_rinnovo_license_url', true ),
 		);
 		/**
 		 * License settings of a product.
@@ -83,7 +171,7 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * Clean a plugin slug the way WordPress names plugin folders: "My Plugin" -> "my-plugin".
+	 * Clean a product ID the way WordPress names plugin folders: "My App" -> "my-app".
 	 *
 	 * @param string $slug Slug as typed.
 	 * @return string
@@ -93,7 +181,7 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * Whether two slugs name the same plugin, ignoring case, spaces and dashes
+	 * Whether two product IDs name the same product, ignoring case, spaces and dashes
 	 * (so "myplugin" saved by older versions still matches "my-plugin").
 	 *
 	 * @param string $a Slug.
@@ -151,24 +239,32 @@ class RINNOVO_License_Product {
 						'value'       => $s['enabled'] ? 'yes' : 'no',
 					)
 				);
+				woocommerce_wp_select(
+					array(
+						'id'      => '_rinnovo_license_type',
+						'label'   => __( 'What you sell', 'rinnovo-subscriptions-licenses' ),
+						'options' => self::types(),
+						'value'   => $s['type'],
+					)
+				);
 				woocommerce_wp_text_input(
 					array(
 						'id'          => '_rinnovo_license_slug',
-						'label'       => __( 'Plugin slug', 'rinnovo-subscriptions-licenses' ),
-						'description' => __( 'The plugin\'s folder name, e.g. my-plugin. Keys only activate in the plugin with this name.', 'rinnovo-subscriptions-licenses' ),
+						'label'       => __( 'Product ID', 'rinnovo-subscriptions-licenses' ),
+						'description' => __( 'A short ID your product sends with the key, so a key only works for this product. For a WordPress plugin or theme, use its folder name.', 'rinnovo-subscriptions-licenses' ),
 						'desc_tip'    => true,
-						'placeholder' => 'my-plugin',
+						'placeholder' => 'my-product',
 						'value'       => $s['slug'],
 					)
 				);
 				if ( $s['enabled'] && '' === $s['slug'] ) {
-					echo '<p class="form-field" style="color:#b32d2e"><strong>' . esc_html__( 'Fill in the Plugin slug, otherwise license keys for this product cannot be activated.', 'rinnovo-subscriptions-licenses' ) . '</strong></p>';
+					echo '<p class="form-field" style="color:#b32d2e"><strong>' . esc_html__( 'Fill in the Product ID, otherwise license keys for this product cannot be activated.', 'rinnovo-subscriptions-licenses' ) . '</strong></p>';
 				}
 				woocommerce_wp_text_input(
 					array(
 						'id'                => '_rinnovo_license_sites',
-						'label'             => __( 'Sites per license', 'rinnovo-subscriptions-licenses' ),
-						'description'       => __( '0 = unlimited sites.', 'rinnovo-subscriptions-licenses' ),
+						'label'             => __( 'Activations per license', 'rinnovo-subscriptions-licenses' ),
+						'description'       => __( 'How many websites, computers or devices can use one key. 0 = unlimited.', 'rinnovo-subscriptions-licenses' ),
 						'type'              => 'number',
 						'custom_attributes' => array( 'min' => 0 ),
 						'value'             => $s['sites'],
@@ -177,8 +273,8 @@ class RINNOVO_License_Product {
 				woocommerce_wp_text_input(
 					array(
 						'id'                => '_rinnovo_license_days',
-						'label'             => __( 'Updates for (days)', 'rinnovo-subscriptions-licenses' ),
-						'description'       => __( '0 = lifetime. After this, the plugin keeps working but stops getting updates.', 'rinnovo-subscriptions-licenses' ),
+						'label'             => __( 'License valid for (days)', 'rinnovo-subscriptions-licenses' ),
+						'description'       => __( '0 = lifetime. With a subscription, the license follows the subscription instead. After this the key shows as expired: no new activations, downloads or updates. Your product decides what else stops.', 'rinnovo-subscriptions-licenses' ),
 						'type'              => 'number',
 						'custom_attributes' => array( 'min' => 0 ),
 						'value'             => $s['days'],
@@ -190,11 +286,14 @@ class RINNOVO_License_Product {
 				<?php
 				woocommerce_wp_text_input(
 					array(
-						'id'    => '_rinnovo_license_version',
-						'label' => __( 'Latest version', 'rinnovo-subscriptions-licenses' ),
-						'value' => $s['version'],
+						'id'          => '_rinnovo_license_version',
+						'label'       => __( 'Latest version', 'rinnovo-subscriptions-licenses' ),
+						'description' => __( 'Your product can ask for it to show an "update available" message.', 'rinnovo-subscriptions-licenses' ),
+						'desc_tip'    => true,
+						'value'       => $s['version'],
 					)
 				);
+				echo '<div class="rinnovo-license-wp-only">';
 				woocommerce_wp_text_input(
 					array(
 						'id'    => '_rinnovo_license_requires',
@@ -216,6 +315,7 @@ class RINNOVO_License_Product {
 						'value' => $s['requires_php'],
 					)
 				);
+				echo '</div>';
 				woocommerce_wp_textarea_input(
 					array(
 						'id'    => '_rinnovo_license_changelog',
@@ -225,22 +325,125 @@ class RINNOVO_License_Product {
 				);
 				?>
 				<p class="form-field">
-					<label for="rinnovo_license_zip"><?php esc_html_e( 'Plugin zip', 'rinnovo-subscriptions-licenses' ); ?></label>
-					<input type="file" name="rinnovo_license_zip" id="rinnovo_license_zip" accept=".zip" />
+					<label for="rinnovo_license_zip"><?php esc_html_e( 'File to download', 'rinnovo-subscriptions-licenses' ); ?></label>
+					<input type="file" name="rinnovo_license_zip" id="rinnovo_license_zip" accept="<?php echo esc_attr( '.' . implode( ',.', array_keys( self::file_types() ) ) ); ?>" />
 					<span class="description">
 						<?php
 						if ( '' !== $s['file'] ) {
 							/* translators: %s: file name. */
-							echo esc_html( sprintf( __( 'Current file: %s. Upload a new zip to replace it, and update "Latest version" to match.', 'rinnovo-subscriptions-licenses' ), $s['file'] ) );
+							echo esc_html( sprintf( __( 'Current file: %s. Upload a new file to replace it, and update "Latest version" to match.', 'rinnovo-subscriptions-licenses' ), $s['file'] ) );
 						} else {
-							esc_html_e( 'Upload the plugin zip. It is stored privately and only licensed sites can download it.', 'rinnovo-subscriptions-licenses' );
+							/* translators: %s: file types. */
+							echo esc_html( sprintf( __( 'Optional. Stored privately: only customers with an active key can download it. Allowed: %s.', 'rinnovo-subscriptions-licenses' ), implode( ', ', array_keys( self::file_types() ) ) ) );
 						}
 						?>
 					</span>
 				</p>
+				<?php
+				woocommerce_wp_text_input(
+					array(
+						'id'          => '_rinnovo_license_url',
+						'label'       => __( 'Or a download link', 'rinnovo-subscriptions-licenses' ),
+						'description' => __( 'For files kept elsewhere (App Store, Google Play, cloud storage, your app\'s sign-in page). Used when no file is uploaded; only customers with an active key see it.', 'rinnovo-subscriptions-licenses' ),
+						'desc_tip'    => true,
+						'type'        => 'url',
+						'placeholder' => 'https://',
+						'value'       => $s['url'],
+					)
+				);
+				?>
 			</div>
+			<?php if ( 'auto-draft' !== $post->post_status ) : ?>
+				<div class="options_group rinnovo-license-connect">
+					<?php self::connect_help( $post->ID, $s ); ?>
+				</div>
+			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Store's license API address.
+	 *
+	 * @return string
+	 */
+	public static function api_url() {
+		return trailingslashit( rest_url( RINNOVO_License_Api::NS ) );
+	}
+
+	/**
+	 * "Connect your product": how the product checks its key.
+	 *
+	 * @param int   $product_id Product ID.
+	 * @param array $s          Settings.
+	 */
+	private static function connect_help( $product_id, $s ) {
+		$id  = '' !== $s['slug'] ? $s['slug'] : 'my-product';
+		$api = self::api_url();
+		?>
+		<p class="form-field"><strong><?php esc_html_e( 'Connect your product to its license', 'rinnovo-subscriptions-licenses' ); ?></strong></p>
+		<div class="form-field" style="padding:0 12px 12px 162px">
+			<p><?php esc_html_e( 'Your product asks this store whether a key is valid. It sends the key, the Product ID and something that names where it is used (a website address, or a device or computer ID). The store answers active, expired, revoked, invalid or inactive, and counts each website or device as one activation.', 'rinnovo-subscriptions-licenses' ); ?></p>
+			<p class="rinnovo-license-wp-only">
+				<a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=rinnovo_license_client&product=' . $product_id ), 'rinnovo_license_client_' . $product_id ) ); ?>"><?php esc_html_e( 'Download the license file for your plugin or theme', 'rinnovo-subscriptions-licenses' ); ?></a><br />
+				<span class="description"><?php esc_html_e( 'One PHP file, made for this product. Put it in your plugin or theme and add the two lines at its top: customers get a license screen to enter their key, and updates arrive in Dashboard > Updates while the key is active.', 'rinnovo-subscriptions-licenses' ); ?></span>
+			</p>
+			<p><?php esc_html_e( 'Any other software (desktop, mobile, SaaS) calls these addresses, from any programming language:', 'rinnovo-subscriptions-licenses' ); ?></p>
+			<pre style="white-space:pre-wrap;background:#f6f7f7;padding:10px;border-radius:4px;font-size:12px">POST <?php echo esc_html( $api ); ?>license/activate
+POST <?php echo esc_html( $api ); ?>license/check
+POST <?php echo esc_html( $api ); ?>license/deactivate
+GET  <?php echo esc_html( $api ); ?>license/update
+
+license_key=XXXXX-XXXXX-XXXXX-XXXXX
+slug=<?php echo esc_html( $id ); ?>
+
+instance=<?php esc_html_e( 'device or computer ID', 'rinnovo-subscriptions-licenses' ); ?>   (<?php esc_html_e( 'or', 'rinnovo-subscriptions-licenses' ); ?> site_url=https://example.com)
+
+<?php esc_html_e( 'Answer (JSON):', 'rinnovo-subscriptions-licenses' ); ?> {"success":true,"status":"active","expires":"2027-01-31 00:00:00"}
+<?php esc_html_e( 'Example:', 'rinnovo-subscriptions-licenses' ); ?> curl -X POST <?php echo esc_html( $api ); ?>license/check -d license_key=XXXXX-XXXXX-XXXXX-XXXXX -d slug=<?php echo esc_html( $id ); ?> -d instance=LAPTOP-01</pre>
+			<p class="description"><?php esc_html_e( 'Call activate once when the customer enters the key, check once a day, and deactivate when they move to another device. license/update returns the latest version, the changelog and a download link while the key is active.', 'rinnovo-subscriptions-licenses' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * The ready-made license file for a WordPress plugin or theme, filled in for one product.
+	 */
+	public static function download_client() {
+		$product_id = isset( $_GET['product'] ) ? absint( $_GET['product'] ) : 0;
+		check_admin_referer( 'rinnovo_license_client_' . $product_id );
+		if ( ! current_user_can( 'edit_product', $product_id ) ) {
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-subscriptions-licenses' ) );
+		}
+		$s     = self::settings( $product_id );
+		$slug  = '' !== $s['slug'] ? $s['slug'] : self::clean_slug( get_the_title( $product_id ) );
+		$kind  = 'wp_theme' === $s['type'] ? 'theme' : 'plugin';
+		$class = str_replace( ' ', '_', ucwords( str_replace( '-', ' ', preg_replace( '/[^a-z0-9-]/', '', $slug ) ) ) ) . '_License';
+		if ( ! preg_match( '/^[A-Za-z]/', $class ) ) {
+			$class = 'Product_' . $class;
+		}
+		$name = wp_strip_all_tags( get_the_title( $product_id ) );
+		$code = (string) file_get_contents( RINNOVO_DIR . 'templates/license-client/wordpress.txt' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local template file.
+		$code = strtr(
+			$code,
+			array(
+				'{{NAME}}'        => str_replace( array( "'", '\\' ), '', $name ),
+				'{{STORE_NAME}}'  => str_replace( array( "'", '\\' ), '', wp_specialchars_decode( get_bloginfo( 'name' ), ENT_QUOTES ) ),
+				'{{KIND}}'        => $kind,
+				'{{MAIN_HINT}}'   => 'theme' === $kind ? 'functions.php' : 'the file with the "Plugin Name:" header',
+				'{{SCREEN_HINT}}' => 'theme' === $kind ? 'Appearance > ' . $name . ' license; the theme folder must be named ' . $slug : 'Settings > ' . $name . ' license',
+				'{{FILE}}'        => $slug . '-license.php',
+				'{{CLASS}}'       => $class,
+				'{{API}}'         => self::api_url(),
+				'{{PRODUCT_ID}}'  => $slug,
+				'{{OPTION}}'      => str_replace( '-', '_', $slug ) . '_license',
+			)
+		);
+		nocache_headers();
+		header( 'Content-Type: text/plain; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="' . $slug . '-license.php"' );
+		echo $code; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- A PHP file for the seller to download, not HTML.
+		exit;
 	}
 
 	/**
@@ -256,20 +459,25 @@ class RINNOVO_License_Product {
 			return;
 		}
 		update_post_meta( $product_id, '_rinnovo_license_enabled', isset( $_POST['_rinnovo_license_enabled'] ) ? 'yes' : 'no' );
+		$type = isset( $_POST['_rinnovo_license_type'] ) ? sanitize_key( wp_unslash( $_POST['_rinnovo_license_type'] ) ) : 'wp_plugin';
+		update_post_meta( $product_id, '_rinnovo_license_type', isset( self::types()[ $type ] ) ? $type : 'wp_plugin' );
 		$text = array( '_rinnovo_license_slug', '_rinnovo_license_version', '_rinnovo_license_tested', '_rinnovo_license_requires', '_rinnovo_license_requires_php' );
 		foreach ( $text as $key ) {
 			$value = isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : '';
 			update_post_meta( $product_id, $key, '_rinnovo_license_slug' === $key ? self::clean_slug( $value ) : $value );
 		}
+		update_post_meta( $product_id, '_rinnovo_license_url', isset( $_POST['_rinnovo_license_url'] ) ? esc_url_raw( wp_unslash( $_POST['_rinnovo_license_url'] ), array( 'https', 'http' ) ) : '' );
 		update_post_meta( $product_id, '_rinnovo_license_sites', isset( $_POST['_rinnovo_license_sites'] ) ? absint( $_POST['_rinnovo_license_sites'] ) : 1 );
 		update_post_meta( $product_id, '_rinnovo_license_days', isset( $_POST['_rinnovo_license_days'] ) ? absint( $_POST['_rinnovo_license_days'] ) : 365 );
 		update_post_meta( $product_id, '_rinnovo_license_changelog', isset( $_POST['_rinnovo_license_changelog'] ) ? wp_kses_post( wp_unslash( $_POST['_rinnovo_license_changelog'] ) ) : '' );
 
 		if ( ! empty( $_FILES['rinnovo_license_zip']['tmp_name'] ) && isset( $_FILES['rinnovo_license_zip']['error'] ) && UPLOAD_ERR_OK === $_FILES['rinnovo_license_zip']['error'] ) {
-			$name = isset( $_FILES['rinnovo_license_zip']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['rinnovo_license_zip']['name'] ) ) : '';
-			if ( '.zip' === strtolower( substr( $name, -4 ) ) && is_uploaded_file( $_FILES['rinnovo_license_zip']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP's temporary path.
-				$slug   = (string) get_post_meta( $product_id, '_rinnovo_license_slug', true );
-				$target = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-' . gmdate( 'YmdHis' ) . '.zip';
+			$name  = isset( $_FILES['rinnovo_license_zip']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['rinnovo_license_zip']['name'] ) ) : '';
+			$ext   = strtolower( pathinfo( $name, PATHINFO_EXTENSION ) );
+			$types = self::file_types();
+			if ( isset( $types[ $ext ] ) && is_uploaded_file( $_FILES['rinnovo_license_zip']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP's temporary path.
+				$slug       = (string) get_post_meta( $product_id, '_rinnovo_license_slug', true );
+				$target     = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-' . gmdate( 'YmdHis' ) . '.' . $ext;
 				$dir        = RINNOVO_Licenses::private_dir();
 				$to_private = static function ( $uploads ) use ( $dir ) {
 					$uploads['path']   = untrailingslashit( $dir );
@@ -285,7 +493,9 @@ class RINNOVO_License_Product {
 					$_FILES['rinnovo_license_zip'], // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checked by wp_handle_upload().
 					array(
 						'test_form'                => false,
-						'mimes'                    => array( 'zip' => 'application/zip' ),
+						// Only the extensions above are accepted; installers and archives have no reliable MIME type to test.
+						'test_type'                => false,
+						'mimes'                    => array( $ext => $types[ $ext ] ),
 						'unique_filename_callback' => static function () use ( $target ) {
 							return $target;
 						},
@@ -300,7 +510,7 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * "Sites per key" on each variation.
+	 * "Activations per key" on each variation.
 	 *
 	 * @param int     $loop           Variation index.
 	 * @param array   $variation_data Variation data.
@@ -311,7 +521,7 @@ class RINNOVO_License_Product {
 			array(
 				'id'                => '_rinnovo_license_var_sites_' . $loop,
 				'name'              => '_rinnovo_license_var_sites[' . $loop . ']',
-				'label'             => __( 'License: sites per key', 'rinnovo-subscriptions-licenses' ),
+				'label'             => __( 'License: activations per key', 'rinnovo-subscriptions-licenses' ),
 				'description'       => __( '0 = unlimited. Leave empty to use the License tab\'s number.', 'rinnovo-subscriptions-licenses' ),
 				'desc_tip'          => true,
 				'type'              => 'number',
@@ -323,7 +533,7 @@ class RINNOVO_License_Product {
 	}
 
 	/**
-	 * Save a variation's number of sites.
+	 * Save a variation's number of activations.
 	 *
 	 * @param int $variation_id Variation ID.
 	 * @param int $i            Variation index.

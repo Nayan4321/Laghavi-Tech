@@ -156,14 +156,14 @@ class RINNOVO_License_Orders {
 			foreach ( $licenses as $license ) {
 				echo esc_html( get_the_title( $license->product_id ) . ': ' . $license->license_key ) . "\n";
 			}
-			echo "\n" . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses:', 'rinnovo-subscriptions-licenses' ) . ' ' . esc_url( wc_get_account_endpoint_url( RINNOVO_License_Account::ENDPOINT ) ) . "\n\n";
+			echo "\n" . esc_html__( 'Download and manage your activations in My Account > Licenses:', 'rinnovo-subscriptions-licenses' ) . ' ' . esc_url( wc_get_account_endpoint_url( RINNOVO_License_Account::ENDPOINT ) ) . "\n\n";
 			return;
 		}
 		echo '<h2>' . esc_html__( 'Your license keys', 'rinnovo-subscriptions-licenses' ) . '</h2><ul>';
 		foreach ( $licenses as $license ) {
 			echo '<li>' . esc_html( get_the_title( $license->product_id ) ) . ': <strong style="font-family:monospace">' . esc_html( $license->license_key ) . '</strong></li>';
 		}
-		echo '</ul><p>' . esc_html__( 'Enter the key in the plugin\'s license screen.', 'rinnovo-subscriptions-licenses' ) . ' <a href="' . esc_url( wc_get_account_endpoint_url( RINNOVO_License_Account::ENDPOINT ) ) . '">' . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses.', 'rinnovo-subscriptions-licenses' ) . '</a></p>';
+		echo '</ul><p>' . esc_html__( 'Enter the key in the product when it asks for it.', 'rinnovo-subscriptions-licenses' ) . ' <a href="' . esc_url( wc_get_account_endpoint_url( RINNOVO_License_Account::ENDPOINT ) ) . '">' . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses.', 'rinnovo-subscriptions-licenses' ) . '</a></p>';
 	}
 
 	/**
