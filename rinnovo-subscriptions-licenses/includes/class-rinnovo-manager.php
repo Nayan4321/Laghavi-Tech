@@ -1,6 +1,7 @@
 <?php
 /**
- * Subscription lifecycle: creation, renewals for non-Stripe payment methods, reminders, cancel and resume.
+ * Subscription lifecycle: creation, renewals for non-Stripe payment methods (charged to a saved card
+ * or emailed as an invoice), reminders, cancel and resume.
  *
  * @package RinnovoSubscriptions
  */
@@ -43,6 +44,17 @@ class RINNOVO_Manager {
 	 */
 	public static function is_automatic( $sub ) {
 		return 'rinnovo_stripe' === $sub->gateway && '' !== $sub->gateway_subscription_id;
+	}
+
+	/**
+	 * Whether renewals are charged without the customer doing anything (Stripe Billing, or a saved
+	 * card or mandate in another payment plugin).
+	 *
+	 * @param object $sub Subscription.
+	 * @return bool
+	 */
+	public static function charges_automatically( $sub ) {
+		return self::is_automatic( $sub ) || RINNOVO_Saved_Cards::can_charge( $sub );
 	}
 
 	/**
@@ -109,6 +121,8 @@ class RINNOVO_Manager {
 
 		/* translators: %d: subscription ID. */
 		$order->add_order_note( sprintf( __( 'Subscription #%d started.', 'rinnovo-subscriptions-licenses' ), $id ) );
+		$sub = RINNOVO_Subscriptions::get( $id );
+		RINNOVO_Saved_Cards::remember( $sub, $order );
 		$sub = RINNOVO_Subscriptions::get( $id );
 
 		// A one-payment plan is finished right away.
@@ -207,6 +221,8 @@ class RINNOVO_Manager {
 		}
 		$order->update_meta_data( '_rinnovo_counted', 1 );
 		$order->save();
+		// Paid with a card that can be saved: renewals are charged to it from now on.
+		RINNOVO_Saved_Cards::remember( $sub, $order );
 
 		$due  = $sub->next_payment ? strtotime( $sub->next_payment . ' UTC' ) : time();
 		$made = (int) $sub->payments_made + 1;
@@ -376,6 +392,21 @@ class RINNOVO_Manager {
 	 * Hourly: invoice renewals for non-Stripe subscriptions, overdue handling, period-end cancellations and reminders.
 	 */
 	public static function run_schedule() {
+		// Never two runs at once: a renewal must not be created or charged twice.
+		if ( ! RINNOVO_Lock::acquire( 'schedule', 900 ) ) {
+			return;
+		}
+		try {
+			self::run_schedule_locked();
+		} finally {
+			RINNOVO_Lock::release( 'schedule' );
+		}
+	}
+
+	/**
+	 * The hourly run, while holding the schedule lock.
+	 */
+	private static function run_schedule_locked() {
 		global $wpdb;
 		$now   = current_time( 'mysql', true );
 		$batch = 50;
@@ -393,7 +424,12 @@ class RINNOVO_Manager {
 			}
 			$order->update_status( 'pending' );
 			RINNOVO_Subscriptions::update( $sub->id, array( 'pending_order_id' => $order->get_id() ) );
-			RINNOVO_Emails::invoice( $order );
+			if ( RINNOVO_Saved_Cards::can_charge( $sub ) ) {
+				// Charged through the shop's payment plugin; paying the order moves the schedule on.
+				RINNOVO_Saved_Cards::charge( $sub, $order );
+			} else {
+				RINNOVO_Emails::invoice( $order );
+			}
 		}
 
 		// 2. Unpaid renewal invoices: on hold after the grace period, cancelled later.
@@ -403,6 +439,10 @@ class RINNOVO_Manager {
 		foreach ( $unpaid as $sub ) {
 			$order = wc_get_order( $sub->pending_order_id );
 			if ( ! $order || $order->is_paid() ) {
+				continue;
+			}
+			// A failed automatic charge is tried again after 1 and 3 days.
+			if ( RINNOVO_Saved_Cards::retry_due( $order ) && RINNOVO_Saved_Cards::can_charge( $sub ) && false !== RINNOVO_Saved_Cards::charge( $sub, $order ) ) {
 				continue;
 			}
 			$age = time() - ( $order->get_date_created() ? $order->get_date_created()->getTimestamp() : time() );

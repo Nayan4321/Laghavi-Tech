@@ -4,7 +4,7 @@ Tags: subscriptions, recurring payments, stripe, license manager, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,8 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 
 * **Stripe** is added under WooCommerce > Settings > Payments. Customers pay on Stripe's secure checkout page (cards, Apple Pay, Google Pay, 3D Secure). Subscriptions become Stripe Billing subscriptions, so Stripe charges each renewal automatically and retries failed cards. Refunds work from the WooCommerce order screen.
 * The Stripe webhook is created automatically when you save your secret key.
-* **Any other payment method** (bank transfer, cheque, another gateway): on each renewal date the customer gets an invoice email with a "Pay now" link. Unpaid invoices put the subscription on hold after 7 days and cancel it after 30 (both adjustable).
+* **Your own payment plugin, charged automatically:** with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless or Paystack, the card (or bank mandate) is saved at the first payment and charged automatically on each renewal date, through that payment plugin. No other subscription plugin is needed. A failed charge is tried again after 1 and 3 days, and the customer gets a "Pay now" link.
+* **Any other payment method** (bank transfer, cheque, a gateway that doesn't save cards): on each renewal date the customer gets an invoice email with a "Pay now" link. Unpaid invoices put the subscription on hold after 7 days and cancel it after 30 (both adjustable).
 
 = Reminders and emails =
 
@@ -85,7 +86,15 @@ No. Rinnovo Subscriptions & Licenses handles the subscription products, renewals
 
 = Which payment methods work? =
 
-Stripe charges renewals automatically. Any other WooCommerce payment method works with invoice renewals: the customer gets a "Pay now" email on each renewal date.
+All of them. Renewals are charged automatically with Rinnovo's own Stripe, and with these payment plugins when they save cards: WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net (official WooCommerce extension), Mollie, Checkout.com, GoCardless and Paystack. WooCommerce > Settings > Subscriptions lists each payment method on your shop and how it renews. Every other payment method works with invoice renewals: the customer gets a "Pay now" email on each renewal date.
+
+= Where do customers find their license key after a renewal? =
+
+In My Account > Licenses, with Copy and Download buttons. Renewals keep the same key and extend it, so nothing changes on their sites. You can revoke, restore, extend or reissue a key (a new key, emailed to the customer) in WooCommerce > Licenses.
+
+= Does cancelling stop the payments? =
+
+Yes. A cancellation in My Account or in WooCommerce > Subscriptions also cancels the subscription in Stripe, at the end of the paid period or right away. With other payment plugins nothing is charged after a cancellation, because Rinnovo creates every renewal charge itself.
 
 = Can customers cancel? =
 
@@ -120,7 +129,17 @@ This plugin connects to **Stripe** (stripe.com) to take payments, but only when 
 
 Stripe's terms: https://stripe.com/legal/ssa and privacy policy: https://stripe.com/privacy
 
+**Mollie** (mollie.com) and **Paystack** (paystack.com), only when their own WooCommerce payment plugins are installed and a subscription was bought with them: on each renewal date the plugin asks Mollie or Paystack to charge the customer's saved payment method, with the order number, amount, currency and the customer's Mollie customer ID or Paystack card reference and email address, using the API key saved in that payment plugin. Mollie then calls your shop's address (/wp-json/rinnovo/v1/mollie) with the payment ID, and the payment status is read back from Mollie.
+Mollie's terms: https://www.mollie.com/legal and privacy policy: https://www.mollie.com/privacy
+Paystack's terms: https://paystack.com/terms and privacy policy: https://paystack.com/privacy
+
+Renewals with the other supported payment plugins are charged by those plugins themselves, under their own terms.
+
 No other data leaves your site. The license API runs on your own site and is only called by the plugins you sell.
+
+== Rinnovo Pro ==
+
+Separate Pro plugins add invoices and tax invoices, free trials and first-payment offers, VAT / GST for digital goods, "Ask for price" products and a currency switcher, plus plugins for subscription boxes, memberships, media, service contracts, sessions and bundles. Everything in this plugin works without them. See https://laghavi.site/rinnovo-subscriptions-licenses/
 
 == Screenshots ==
 
@@ -132,6 +151,13 @@ No other data leaves your site. The license API runs on your own site and is onl
 6. WooCommerce > Licenses.
 
 == Changelog ==
+
+= 1.1.0 =
+* Automatic renewals with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless and Paystack: the card or mandate is saved at the first payment and charged on each renewal date, with retries after 1 and 3 days. Every other payment method keeps invoice renewals.
+* Settings list each payment method on the shop and how it renews.
+* Licenses: "Reissue key" gives a license a new key and emails it to the customer.
+* The hourly renewal run can no longer run twice at the same time.
+* A "Rinnovo Pro" screen under WooCommerce.
 
 = 1.0.0 =
 * First release.

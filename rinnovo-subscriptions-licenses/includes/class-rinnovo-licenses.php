@@ -280,6 +280,27 @@ class RINNOVO_Licenses {
 	}
 
 	/**
+	 * Give a license a new key: the old key stops working at once and every site must be activated
+	 * again with the new key (for a leaked key). Everything else stays the same.
+	 *
+	 * @param object $license License.
+	 * @return object|null The license with its new key.
+	 */
+	public static function reissue( $license ) {
+		global $wpdb;
+		self::update( $license->id, array( 'license_key' => self::generate_key() ) );
+		$wpdb->delete( self::tables()['activations'], array( 'license_id' => $license->id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		$license = self::get( $license->id );
+		/**
+		 * A license was given a new key.
+		 *
+		 * @param object $license License (new key).
+		 */
+		do_action( 'rinnovo_license_reissued', $license );
+		return $license;
+	}
+
+	/**
 	 * Remove a site.
 	 *
 	 * @param int    $license_id License ID.

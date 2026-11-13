@@ -240,6 +240,7 @@ class RINNOVO_Account {
 	public static function card( $sub ) {
 		$product   = wc_get_product( $sub->product_id );
 		$automatic = RINNOVO_Manager::is_automatic( $sub );
+		$saved     = RINNOVO_Saved_Cards::can_charge( $sub );
 		$pending   = $sub->pending_order_id ? wc_get_order( $sub->pending_order_id ) : null;
 		$orders    = RINNOVO_Subscriptions::orders( $sub );
 		?>
@@ -268,14 +269,14 @@ class RINNOVO_Account {
 				<?php if ( $sub->end_date ) : ?>
 					<div><dt><?php esc_html_e( 'Ended', 'rinnovo-subscriptions-licenses' ); ?></dt><dd><?php echo esc_html( RINNOVO_Subscriptions::date_label( $sub->end_date ) ); ?></dd></div>
 				<?php endif; ?>
-				<div><dt><?php esc_html_e( 'Payment', 'rinnovo-subscriptions-licenses' ); ?></dt><dd><?php echo esc_html( $automatic ? __( 'Automatic (card)', 'rinnovo-subscriptions-licenses' ) : __( 'By invoice', 'rinnovo-subscriptions-licenses' ) ); ?></dd></div>
+				<div><dt><?php esc_html_e( 'Payment', 'rinnovo-subscriptions-licenses' ); ?></dt><dd><?php echo esc_html( $automatic ? __( 'Automatic (card)', 'rinnovo-subscriptions-licenses' ) : ( $saved ? sprintf( /* translators: %s: card or payment method. */ __( 'Automatic (%s)', 'rinnovo-subscriptions-licenses' ), RINNOVO_Saved_Cards::method_label( $sub ) ) : __( 'By invoice', 'rinnovo-subscriptions-licenses' ) ) ); ?></dd></div>
 				<?php if ( $sub->max_payments ) : ?>
 					<div><dt><?php esc_html_e( 'Payments', 'rinnovo-subscriptions-licenses' ); ?></dt><dd><?php echo esc_html( (int) $sub->payments_made . ' / ' . (int) $sub->max_payments ); ?></dd></div>
 				<?php endif; ?>
 			</dl>
 
 			<?php if ( 'on-hold' === $sub->status ) : ?>
-				<p class="rinnovo-alert"><?php echo esc_html( $automatic ? __( 'Your last payment did not go through. Please update your card.', 'rinnovo-subscriptions-licenses' ) : __( 'Your renewal payment is due.', 'rinnovo-subscriptions-licenses' ) ); ?></p>
+				<p class="rinnovo-alert"><?php echo esc_html( $automatic ? __( 'Your last payment did not go through. Please update your card.', 'rinnovo-subscriptions-licenses' ) : ( $saved ? __( 'We could not charge your saved payment method. Please pay now; the card you use is kept for future renewals.', 'rinnovo-subscriptions-licenses' ) : __( 'Your renewal payment is due.', 'rinnovo-subscriptions-licenses' ) ) ); ?></p>
 			<?php endif; ?>
 
 			<footer class="rinnovo-card__actions">
@@ -284,6 +285,9 @@ class RINNOVO_Account {
 				<?php endif; ?>
 				<?php if ( $automatic && in_array( $sub->status, RINNOVO_Subscriptions::live_statuses(), true ) ) : ?>
 					<?php self::action_button( $sub, 'update_card', __( 'Update card', 'rinnovo-subscriptions-licenses' ), 'on-hold' === $sub->status ? 'alt' : '' ); ?>
+				<?php endif; ?>
+				<?php if ( $saved && in_array( $sub->status, RINNOVO_Subscriptions::live_statuses(), true ) ) : ?>
+					<a class="button" href="<?php echo esc_url( wc_get_account_endpoint_url( 'payment-methods' ) ); ?>"><?php esc_html_e( 'Payment methods', 'rinnovo-subscriptions-licenses' ); ?></a>
 				<?php endif; ?>
 				<?php if ( 'pending-cancel' === $sub->status ) : ?>
 					<?php self::action_button( $sub, 'resume', __( 'Resume subscription', 'rinnovo-subscriptions-licenses' ), 'alt' ); ?>

@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class RINNOVO_Subscriptions {
 
-	const DB_VERSION = '1';
+	const DB_VERSION = '2';
 
 	/**
 	 * Table name.
@@ -47,6 +47,7 @@ class RINNOVO_Subscriptions {
 				gateway varchar(50) NOT NULL DEFAULT '',
 				gateway_subscription_id varchar(100) NOT NULL DEFAULT '',
 				gateway_customer_id varchar(100) NOT NULL DEFAULT '',
+				payment_token_id bigint(20) unsigned NOT NULL DEFAULT 0,
 				start_date datetime DEFAULT NULL,
 				trial_end datetime DEFAULT NULL,
 				next_payment datetime DEFAULT NULL,

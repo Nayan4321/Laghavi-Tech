@@ -21,6 +21,51 @@ class RINNOVO_Settings {
 		add_filter( 'woocommerce_settings_tabs_array', array( __CLASS__, 'tab' ), 50 );
 		add_action( 'woocommerce_settings_tabs_' . self::TAB, array( __CLASS__, 'render' ) );
 		add_action( 'woocommerce_update_options_' . self::TAB, array( __CLASS__, 'save' ) );
+		add_action( 'woocommerce_admin_field_rinnovo_gateways', array( __CLASS__, 'gateways_field' ) );
+	}
+
+	/**
+	 * Table of automatic-renewal payment plugins, and how each payment method on this shop renews.
+	 */
+	public static function gateways_field() {
+		$on = self::on( 'rinnovo_saved_cards' );
+		?>
+		<tr valign="top">
+			<th scope="row" class="titledesc"><?php esc_html_e( 'This shop', 'rinnovo-subscriptions-licenses' ); ?></th>
+			<td class="forminp">
+				<table class="widefat striped" style="max-width:760px">
+					<thead><tr><th><?php esc_html_e( 'Payment method', 'rinnovo-subscriptions-licenses' ); ?></th><th><?php esc_html_e( 'Renewals', 'rinnovo-subscriptions-licenses' ); ?></th></tr></thead>
+					<tbody>
+					<?php foreach ( RINNOVO_Saved_Cards::gateways() as $id => $gateway ) : ?>
+						<?php
+						if ( 'yes' !== $gateway->enabled ) {
+							continue;
+						}
+						if ( 'rinnovo_stripe' === $id ) {
+							$how = __( 'Automatic (Stripe Billing)', 'rinnovo-subscriptions-licenses' );
+						} elseif ( $on && RINNOVO_Saved_Cards::supports( $id ) ) {
+							$how = __( 'Automatic (saved card or mandate)', 'rinnovo-subscriptions-licenses' );
+						} else {
+							$how = __( 'Invoice email with a "Pay now" link', 'rinnovo-subscriptions-licenses' );
+						}
+						?>
+						<tr><td><?php echo esc_html( wp_strip_all_tags( $gateway->get_method_title() ? $gateway->get_method_title() : $gateway->get_title() ) ); ?></td><td><?php echo esc_html( $how ); ?></td></tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+				<p class="description" style="margin:14px 0 6px"><?php esc_html_e( 'Payment plugins that renew automatically with Rinnovo (no other subscription plugin needed):', 'rinnovo-subscriptions-licenses' ); ?></p>
+				<table class="widefat striped" style="max-width:760px">
+					<thead><tr><th><?php esc_html_e( 'Payment plugin', 'rinnovo-subscriptions-licenses' ); ?></th><th><?php esc_html_e( 'Region', 'rinnovo-subscriptions-licenses' ); ?></th><th><?php esc_html_e( 'What to turn on', 'rinnovo-subscriptions-licenses' ); ?></th></tr></thead>
+					<tbody>
+					<?php foreach ( RINNOVO_Saved_Cards::providers() as $row ) : ?>
+						<tr><td><?php echo esc_html( $row[0] ); ?></td><td><?php echo esc_html( $row[1] ); ?></td><td><?php echo esc_html( $row[2] ); ?></td></tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+				<p class="description"><?php esc_html_e( 'If you use one of these payment plugins, renewals are charged automatically to the card or bank mandate saved at the first payment. With any other payment method (bank transfer, cash on delivery, Razorpay and others that don\'t save cards), nothing changes: the customer gets an invoice email with a "Pay now" link on each renewal date.', 'rinnovo-subscriptions-licenses' ); ?></p>
+			</td>
+		</tr>
+		<?php
 	}
 
 	/**
@@ -40,6 +85,7 @@ class RINNOVO_Settings {
 			'rinnovo_grace_days'          => '7',
 			'rinnovo_cancel_after_days'   => '30',
 			'rinnovo_customer_cancel'     => 'yes',
+			'rinnovo_saved_cards'         => 'yes',
 			'rinnovo_account_design'      => 'yes',
 			'rinnovo_reviews_buyers_only' => 'yes',
 			'rinnovo_reviews_bought_date' => 'yes',
@@ -137,8 +183,18 @@ class RINNOVO_Settings {
 			array(
 				'title' => __( 'Renewals and reminders', 'rinnovo-subscriptions-licenses' ),
 				'type'  => 'title',
-				'desc'  => __( 'With Stripe, renewals are charged automatically. With any other payment method, the customer gets an invoice email with a "Pay now" link on each renewal date.', 'rinnovo-subscriptions-licenses' ),
+				'desc'  => __( 'With Stripe, and with the payment plugins listed below, renewals are charged automatically. With any other payment method, the customer gets an invoice email with a "Pay now" link on each renewal date.', 'rinnovo-subscriptions-licenses' ),
 				'id'    => 'rinnovo_renewals',
+			),
+			array(
+				'title'   => __( 'Automatic renewals with other payment plugins', 'rinnovo-subscriptions-licenses' ),
+				'desc'    => __( 'Save the card (or bank mandate) at the first payment and charge it automatically on each renewal date. A failed charge is tried again after 1 and 3 days, and the customer gets a "Pay now" link.', 'rinnovo-subscriptions-licenses' ),
+				'id'      => 'rinnovo_saved_cards',
+				'type'    => 'checkbox',
+				'default' => $d['rinnovo_saved_cards'],
+			),
+			array(
+				'type' => 'rinnovo_gateways',
 			),
 			array(
 				'title'             => __( 'Reminder before renewal (days)', 'rinnovo-subscriptions-licenses' ),
@@ -150,7 +206,7 @@ class RINNOVO_Settings {
 			),
 			array(
 				'title'             => __( 'Unpaid invoice: put on hold after (days)', 'rinnovo-subscriptions-licenses' ),
-				'desc'              => __( 'For invoice renewals only.', 'rinnovo-subscriptions-licenses' ),
+				'desc'              => __( 'Counted from the renewal date, for invoices and for automatic charges that keep failing.', 'rinnovo-subscriptions-licenses' ),
 				'id'                => 'rinnovo_grace_days',
 				'type'              => 'number',
 				'custom_attributes' => array( 'min' => 0 ),
@@ -158,7 +214,7 @@ class RINNOVO_Settings {
 			),
 			array(
 				'title'             => __( 'Unpaid invoice: cancel after (days)', 'rinnovo-subscriptions-licenses' ),
-				'desc'              => __( 'For invoice renewals only. 0 = never cancel automatically.', 'rinnovo-subscriptions-licenses' ),
+				'desc'              => __( 'Counted from the renewal date. 0 = never cancel automatically.', 'rinnovo-subscriptions-licenses' ),
 				'id'                => 'rinnovo_cancel_after_days',
 				'type'              => 'number',
 				'custom_attributes' => array( 'min' => 0 ),

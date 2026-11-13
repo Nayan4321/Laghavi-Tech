@@ -107,7 +107,7 @@ class RINNOVO_Emails {
 	 */
 	public static function reminder( $sub ) {
 		$date      = RINNOVO_Subscriptions::date_label( $sub->next_payment );
-		$automatic = RINNOVO_Manager::is_automatic( $sub );
+		$automatic = RINNOVO_Manager::charges_automatically( $sub );
 		$trial     = 'trial' === $sub->status;
 
 		/* translators: 1: first name. */
@@ -138,15 +138,23 @@ class RINNOVO_Emails {
 	/**
 	 * A card payment failed.
 	 *
-	 * @param object $sub Subscription.
+	 * @param object        $sub   Subscription.
+	 * @param WC_Order|null $order Unpaid renewal order (saved-card renewals through another payment plugin).
 	 */
-	public static function payment_failed( $sub ) {
+	public static function payment_failed( $sub, $order = null ) {
 		/* translators: 1: first name. */
-		$html  = '<p>' . esc_html( sprintf( __( 'Hi %s,', 'rinnovo-subscriptions-licenses' ), self::first_name( $sub ) ) ) . '</p>';
-		/* translators: 1: plan. */
-		$html .= '<p>' . esc_html( sprintf( __( 'We could not charge your card for %1$s. Please update your card so your subscription continues. We will try again automatically over the next few days.', 'rinnovo-subscriptions-licenses' ), $sub->name ) ) . '</p>';
-		$html .= self::summary( $sub );
-		$html .= self::button( self::account_url(), __( 'Update card', 'rinnovo-subscriptions-licenses' ) );
+		$html = '<p>' . esc_html( sprintf( __( 'Hi %s,', 'rinnovo-subscriptions-licenses' ), self::first_name( $sub ) ) ) . '</p>';
+		if ( $order instanceof WC_Order && $order->needs_payment() ) {
+			/* translators: 1: plan. */
+			$html .= '<p>' . esc_html( sprintf( __( 'We could not charge your saved payment method for %1$s. We will try again automatically over the next few days, or you can pay now with another card, which is then used for future renewals.', 'rinnovo-subscriptions-licenses' ), $sub->name ) ) . '</p>';
+			$html .= self::summary( $sub );
+			$html .= self::button( $order->get_checkout_payment_url(), __( 'Pay now', 'rinnovo-subscriptions-licenses' ) );
+		} else {
+			/* translators: 1: plan. */
+			$html .= '<p>' . esc_html( sprintf( __( 'We could not charge your card for %1$s. Please update your card so your subscription continues. We will try again automatically over the next few days.', 'rinnovo-subscriptions-licenses' ), $sub->name ) ) . '</p>';
+			$html .= self::summary( $sub );
+			$html .= self::button( self::account_url(), __( 'Update card', 'rinnovo-subscriptions-licenses' ) );
+		}
 		self::send(
 			self::recipient( $sub ),
 			/* translators: %s: plan. */

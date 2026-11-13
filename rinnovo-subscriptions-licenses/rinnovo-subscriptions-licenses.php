@@ -1,8 +1,9 @@
 <?php
 /**
  * Plugin Name:          Rinnovo Subscriptions & Licenses
- * Description:          Subscription products for WooCommerce with automatic Stripe Billing renewals (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, buyer-only reviews, download counts, and license keys with downloads and automatic updates for the plugins and software you sell.
- * Version:              1.0.0
+ * Plugin URI:           https://laghavi.site/rinnovo-subscriptions-licenses/
+ * Description:          Subscription products for WooCommerce with automatic renewals through Stripe and other payment plugins that save cards (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, buyer-only reviews, download counts, and license keys with downloads and automatic updates for the plugins and software you sell.
+ * Version:              1.1.0
  * Requires at least:    6.2
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
@@ -19,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVO_VERSION', '1.0.0' );
+define( 'RINNOVO_VERSION', '1.1.0' );
 define( 'RINNOVO_FILE', __FILE__ );
 define( 'RINNOVO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVO_URL', plugin_dir_url( __FILE__ ) );
@@ -100,6 +101,7 @@ require_once RINNOVO_DIR . 'includes/class-rinnovo-product.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-stripe-api.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-lock.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-manager.php';
+require_once RINNOVO_DIR . 'includes/class-rinnovo-saved-cards.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-webhooks.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-emails.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-account.php';
@@ -113,6 +115,7 @@ require_once RINNOVO_DIR . 'includes/class-rinnovo-license-orders.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-api.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-account.php';
 require_once RINNOVO_DIR . 'includes/class-rinnovo-license-admin.php';
+require_once RINNOVO_DIR . 'includes/class-rinnovo-pro-features.php';
 
 // HPOS (custom order tables) and block checkout are supported.
 add_action(
@@ -150,6 +153,7 @@ add_action(
 		RINNOVO_Settings::init();
 		RINNOVO_Product::init();
 		RINNOVO_Manager::init();
+		RINNOVO_Saved_Cards::init();
 		RINNOVO_Webhooks::init();
 		RINNOVO_Account::init();
 		RINNOVO_Checkout::init();
@@ -161,6 +165,7 @@ add_action(
 		RINNOVO_License_Orders::init();
 		RINNOVO_License_Account::init();
 		RINNOVO_License_Admin::init();
+		RINNOVO_Pro_Features::init();
 
 		add_action( 'woocommerce_blocks_payment_method_type_registration', array( 'RINNOVO_Gateway_Stripe', 'register_block_support' ) );
 

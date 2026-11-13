@@ -238,7 +238,7 @@ class RINNOVO_Admin {
 					<td><?php echo esc_html( $sub->name ); ?><br /><span class="description"><?php echo esc_html( RINNOVO_Subscriptions::price_string( $sub->recurring_amount, $sub->period, $sub->interval_count, $sub->currency ) ); ?></span></td>
 					<td><span class="rinnovo-badge rinnovo-badge--<?php echo esc_attr( $sub->status ); ?>"><?php echo esc_html( RINNOVO_Subscriptions::status_label( $sub->status ) ); ?></span></td>
 					<td><?php echo esc_html( RINNOVO_Subscriptions::date_label( $sub->next_payment ) ); ?></td>
-					<td><?php echo esc_html( RINNOVO_Manager::is_automatic( $sub ) ? __( 'Stripe (automatic)', 'rinnovo-subscriptions-licenses' ) : __( 'Invoice', 'rinnovo-subscriptions-licenses' ) . ' · ' . $sub->gateway ); ?></td>
+					<td><?php echo esc_html( self::payment_label( $sub ) ); ?></td>
 					<td><?php echo esc_html( RINNOVO_Subscriptions::date_label( $sub->start_date ) ); ?></td>
 				</tr>
 			<?php endforeach; ?>
@@ -257,6 +257,23 @@ class RINNOVO_Admin {
 				)
 			) . '</p>';
 		}
+	}
+
+	/**
+	 * How a subscription is paid, for the list.
+	 *
+	 * @param object $sub Subscription.
+	 * @return string
+	 */
+	private static function payment_label( $sub ) {
+		if ( RINNOVO_Manager::is_automatic( $sub ) ) {
+			return __( 'Stripe (automatic)', 'rinnovo-subscriptions-licenses' );
+		}
+		if ( RINNOVO_Saved_Cards::can_charge( $sub ) ) {
+			/* translators: %s: card or payment method. */
+			return sprintf( __( 'Automatic · %s', 'rinnovo-subscriptions-licenses' ), RINNOVO_Saved_Cards::method_label( $sub ) );
+		}
+		return __( 'Invoice', 'rinnovo-subscriptions-licenses' ) . ' · ' . $sub->gateway;
 	}
 
 	/**
@@ -288,6 +305,7 @@ class RINNOVO_Admin {
 	private static function details( $sub ) {
 		$user      = get_userdata( (int) $sub->user_id );
 		$automatic = RINNOVO_Manager::is_automatic( $sub );
+		$saved     = RINNOVO_Saved_Cards::can_charge( $sub );
 		$mode      = RINNOVO_Stripe_API::test_mode() ? 'test/' : '';
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
 		$error = isset( $_GET['rinnovo_error'] ) ? sanitize_text_field( wp_unslash( $_GET['rinnovo_error'] ) ) : '';
@@ -322,6 +340,11 @@ class RINNOVO_Admin {
 					<?php if ( $automatic ) : ?>
 						<?php esc_html_e( 'Stripe, charged automatically', 'rinnovo-subscriptions-licenses' ); ?> ·
 						<a href="<?php echo esc_url( 'https://dashboard.stripe.com/' . $mode . 'subscriptions/' . rawurlencode( $sub->gateway_subscription_id ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Open in Stripe', 'rinnovo-subscriptions-licenses' ); ?></a>
+					<?php elseif ( $saved ) : ?>
+						<?php
+						/* translators: %s: card or payment method. */
+						echo esc_html( sprintf( __( 'Charged automatically on each renewal date: %s', 'rinnovo-subscriptions-licenses' ), RINNOVO_Saved_Cards::method_label( $sub ) ) );
+						?>
 					<?php else : ?>
 						<?php
 						/* translators: %s: payment method ID. */
@@ -345,7 +368,7 @@ class RINNOVO_Admin {
 				self::button( $sub, 'cancel_now', __( 'Cancel now', 'rinnovo-subscriptions-licenses' ), __( 'End this subscription immediately? This does not refund anything.', 'rinnovo-subscriptions-licenses' ) );
 			}
 			if ( ! $automatic && in_array( $sub->status, array( 'active', 'trial' ), true ) && ! $sub->pending_order_id ) {
-				self::button( $sub, 'invoice_now', __( 'Send renewal invoice now', 'rinnovo-subscriptions-licenses' ) );
+				self::button( $sub, 'invoice_now', $saved ? __( 'Charge renewal now', 'rinnovo-subscriptions-licenses' ) : __( 'Send renewal invoice now', 'rinnovo-subscriptions-licenses' ), $saved ? __( 'Charge the next renewal to the saved payment method now?', 'rinnovo-subscriptions-licenses' ) : '' );
 			}
 			if ( ! $automatic && in_array( $sub->status, array( 'on-hold', 'pending' ), true ) ) {
 				self::button( $sub, 'activate', __( 'Mark as active', 'rinnovo-subscriptions-licenses' ) );

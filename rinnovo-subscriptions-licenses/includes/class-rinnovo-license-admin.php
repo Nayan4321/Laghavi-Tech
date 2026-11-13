@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce > Licenses: search, revoke, extend and add licenses.
+ * WooCommerce > Licenses: search, revoke, reissue, extend and add licenses.
  *
  * @package RinnovoSubscriptions
  */
@@ -65,6 +65,18 @@ class RINNOVO_License_Admin {
 				case 'revoke':
 					RINNOVO_Licenses::update( $license->id, array( 'status' => 'revoked' ) );
 					break;
+				case 'reissue':
+					$license = RINNOVO_Licenses::reissue( $license );
+					if ( $license && is_email( $license->email ) ) {
+						$product = wc_get_product( $license->product_id );
+						/* translators: 1: product name. */
+						$html  = '<p>' . esc_html( sprintf( __( 'We have issued a new license key for %1$s. Your previous key no longer works.', 'rinnovo-subscriptions-licenses' ), $product ? $product->get_name() : '' ) ) . '</p>';
+						$html .= '<p style="font-size:18px"><code>' . esc_html( $license->license_key ) . '</code></p>';
+						$html .= '<p>' . esc_html__( 'Enter the new key on each of your sites to activate them again. You can always find it in My Account > Licenses.', 'rinnovo-subscriptions-licenses' ) . '</p>';
+						RINNOVO_Emails::send( $license->email, __( 'Your new license key', 'rinnovo-subscriptions-licenses' ), __( 'New license key', 'rinnovo-subscriptions-licenses' ), $html );
+						$back = add_query_arg( 's', $license->license_key, admin_url( 'admin.php?page=' . self::PAGE ) );
+					}
+					break;
 				case 'restore':
 					RINNOVO_Licenses::update( $license->id, array( 'status' => 'active' ) );
 					break;
@@ -119,7 +131,7 @@ class RINNOVO_License_Admin {
 				'meta_value'     => 'yes', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
 			)
 		);
-		$form     = static function ( $license, $todo, $label, $extra = '' ) use ( $back ) {
+		$form     = static function ( $license, $todo, $label, $extra = '', $confirm = '' ) use ( $back ) {
 			?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin:2px 4px 2px 0">
 				<input type="hidden" name="action" value="rinnovo_license_admin" />
@@ -128,7 +140,7 @@ class RINNOVO_License_Admin {
 				<input type="hidden" name="back" value="<?php echo esc_attr( $back ); ?>" />
 				<?php wp_nonce_field( 'rinnovo_license_admin' ); ?>
 				<?php echo $extra; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from escaped parts below. ?>
-				<button type="submit" class="button button-small"><?php echo esc_html( $label ); ?></button>
+				<button type="submit" class="button button-small"<?php echo '' !== $confirm ? ' onclick="return confirm( this.dataset.confirm );" data-confirm="' . esc_attr( $confirm ) . '"' : ''; ?>><?php echo esc_html( $label ); ?></button>
 			</form>
 			<?php
 		};
@@ -199,6 +211,7 @@ class RINNOVO_License_Admin {
 								$form( $license, 'revoke', __( 'Revoke', 'rinnovo-subscriptions-licenses' ) );
 							}
 							$form( $license, 'extend', __( '+1 year', 'rinnovo-subscriptions-licenses' ) );
+							$form( $license, 'reissue', __( 'Reissue key', 'rinnovo-subscriptions-licenses' ), '', __( 'Give this license a new key? The old key stops working, its sites must be activated again, and the customer is emailed the new key.', 'rinnovo-subscriptions-licenses' ) );
 							$form( $license, 'sites', __( 'Set sites', 'rinnovo-subscriptions-licenses' ), '<input type="number" name="sites_allowed" min="0" class="small-text" value="' . esc_attr( $license->sites_allowed ) . '" />' );
 							?>
 						</td>
