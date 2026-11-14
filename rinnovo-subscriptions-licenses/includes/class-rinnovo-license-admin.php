@@ -214,6 +214,12 @@ class RINNOVO_License_Admin {
 							$form( $license, 'extend', __( '+1 year', 'rinnovo-subscriptions-licenses' ) );
 							$form( $license, 'reissue', __( 'Reissue key', 'rinnovo-subscriptions-licenses' ), '', __( 'Give this license a new key? The old key stops working, its sites must be activated again, and the customer is emailed the new key.', 'rinnovo-subscriptions-licenses' ) );
 							$form( $license, 'sites', __( 'Set limit', 'rinnovo-subscriptions-licenses' ), '<input type="number" name="sites_allowed" min="0" class="small-text" value="' . esc_attr( $license->sites_allowed ) . '" />' );
+							/**
+							 * After a license's actions (add-ons show its history).
+							 *
+							 * @param object $license License.
+							 */
+							do_action( 'rinnovo_license_admin_row', $license );
 							?>
 						</td>
 					</tr>

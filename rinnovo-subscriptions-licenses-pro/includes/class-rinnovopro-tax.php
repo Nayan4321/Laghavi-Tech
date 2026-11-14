@@ -67,6 +67,8 @@ class RINNOVOPRO_Tax {
 		// Renewals, admin and invoices.
 		add_action( 'woocommerce_after_order_object_save', array( __CLASS__, 'renewal_saved' ) );
 		add_action( 'woocommerce_admin_order_data_after_billing_address', array( __CLASS__, 'admin_order' ) );
+		add_action( 'show_user_profile', array( __CLASS__, 'profile' ) );
+		add_action( 'edit_user_profile', array( __CLASS__, 'profile' ) );
 		add_filter( 'woocommerce_order_is_vat_exempt', array( __CLASS__, 'order_is_exempt' ), 10, 2 );
 	}
 
@@ -461,12 +463,114 @@ class RINNOVOPRO_Tax {
 			$order->add_order_note( __( 'VIES was not reachable, so the VAT number was accepted on its format. Please check it.', self::TD ) );
 		}
 
+		$ip = '';
 		if ( RINNOVO_Settings::on( 'rinnovopro_vat_evidence' ) ) {
 			$ip = self::ip_country();
 			$order->update_meta_data( '_rinnovopro_ip_country', $ip );
 			$order->update_meta_data( '_rinnovopro_billing_country', $order->get_billing_country() );
 			$order->update_meta_data( '_rinnovopro_evidence_match', '' === $ip ? 'unknown' : ( $ip === $order->get_billing_country() ? 'yes' : 'no' ) );
 		}
+		self::decide( $order, $check, $reverse, $ip );
+	}
+
+	/**
+	 * Keep the tax decision of an order: what was checked, which rule applied and the evidence used. The
+	 * check of the number (valid or not) and the tax treatment (charged or reverse charge) are kept apart,
+	 * so a valid number that still pays VAT (same country, rule off) is clear later.
+	 *
+	 * @param WC_Order $order   Order.
+	 * @param array    $check   Result of check().
+	 * @param bool     $reverse Reverse charge applied.
+	 * @param string   $ip      IP address country.
+	 */
+	private static function decide( $order, $check, $reverse, $ip ) {
+		$store    = strtoupper( WC()->countries->get_base_country() );
+		$buyer    = strtoupper( (string) $order->get_billing_country() );
+		$rule     = (string) RINNOVO_Settings::get( 'rinnovopro_vat_reverse' );
+		$decision = array(
+			'time'      => time(),
+			'number'    => (string) $check['number'],
+			'check'     => (string) $check['how'],
+			'valid'     => ! empty( $check['valid'] ),
+			'customer'  => '' !== $check['number'] && ! empty( $check['valid'] ) ? 'business' : 'consumer',
+			'store'     => $store,
+			'buyer'     => $buyer,
+			'rule'      => $rule,
+			'treatment' => $reverse ? 'reverse_charge' : 'charged',
+			'reason'    => self::reason( $check, $reverse, $store, $rule ),
+			'ip'        => $ip,
+			'match'     => '' === $ip ? 'unknown' : ( $ip === $buyer ? 'yes' : 'no' ),
+		);
+		$order->update_meta_data( '_rinnovopro_tax_decision', $decision );
+		$user = (int) $order->get_customer_id();
+		if ( $user && '' !== $decision['number'] ) {
+			$history = (array) get_user_meta( $user, 'rinnovopro_tax_history', true );
+			$last    = $history ? end( $history ) : array();
+			if ( ! $last || $last['number'] !== $decision['number'] || $last['treatment'] !== $decision['treatment'] || $last['valid'] !== $decision['valid'] ) {
+				$history[] = array_merge( $decision, array( 'order' => (int) $order->get_id() ) );
+				update_user_meta( $user, 'rinnovopro_tax_history', array_slice( $history, -30 ) );
+			}
+		}
+	}
+
+	/**
+	 * Why the order was (not) reverse charged.
+	 *
+	 * @param array  $check   Check.
+	 * @param bool   $reverse Reverse charge.
+	 * @param string $store   Store country.
+	 * @param string $rule    Rule setting.
+	 * @return string
+	 */
+	private static function reason( $check, $reverse, $store, $rule ) {
+		if ( '' === $check['number'] ) {
+			return __( 'No tax number: tax charged.', self::TD );
+		}
+		if ( empty( $check['valid'] ) ) {
+			return __( 'Tax number not valid: tax charged.', self::TD );
+		}
+		if ( $reverse ) {
+			return 'eu' === $rule ? __( 'Valid EU VAT number in another EU country: reverse charge.', self::TD ) : __( 'Valid tax number in another country: reverse charge.', self::TD );
+		}
+		if ( 'off' === $rule ) {
+			return __( 'Reverse charge is off in the settings: tax charged.', self::TD );
+		}
+		if ( $check['country'] === $store ) {
+			return __( 'Customer in the store\'s own country: tax charged.', self::TD );
+		}
+		return __( 'Outside the reverse charge rule (EU only): tax charged.', self::TD );
+	}
+
+	/**
+	 * Exemption history of a customer.
+	 *
+	 * @param int $user User.
+	 */
+	public static function history_table( $user ) {
+		$history = array_reverse( (array) get_user_meta( (int) $user, 'rinnovopro_tax_history', true ) );
+		$history = array_filter( $history, 'is_array' );
+		if ( ! $history ) {
+			return;
+		}
+		echo '<table class="widefat striped" style="max-width:900px"><thead><tr><th>' . esc_html__( 'Date', self::TD ) . '</th><th>' . esc_html__( 'Number', self::TD ) . '</th><th>' . esc_html__( 'Check', self::TD ) . '</th><th>' . esc_html__( 'Treatment', self::TD ) . '</th><th>' . esc_html__( 'Order', self::TD ) . '</th></tr></thead><tbody>';
+		foreach ( $history as $row ) {
+			$order = ! empty( $row['order'] ) ? wc_get_order( (int) $row['order'] ) : null;
+			echo '<tr><td>' . esc_html( wp_date( get_option( 'date_format' ), (int) $row['time'] ) ) . '</td><td>' . esc_html( $row['number'] ) . '</td><td>' . esc_html( $row['check'] . ' — ' . ( $row['valid'] ? __( 'valid', self::TD ) : __( 'not valid', self::TD ) ) ) . '</td><td>' . esc_html( $row['reason'] ) . '</td><td>' . ( $order ? '<a href="' . esc_url( $order->get_edit_order_url() ) . '">#' . esc_html( $order->get_order_number() ) . '</a>' : '' ) . '</td></tr>';
+		}
+		echo '</tbody></table>';
+	}
+
+	/**
+	 * Exemption history on the user profile.
+	 *
+	 * @param WP_User $user User.
+	 */
+	public static function profile( $user ) {
+		if ( ! current_user_can( 'manage_woocommerce' ) || ! get_user_meta( $user->ID, 'rinnovopro_tax_history', true ) ) {
+			return;
+		}
+		echo '<h2>' . esc_html__( 'VAT / GST exemption history', self::TD ) . '</h2>';
+		self::history_table( $user->ID );
 	}
 
 	/**
@@ -625,7 +729,18 @@ class RINNOVOPRO_Tax {
 				echo ' <span style="color:#b32d2e">' . esc_html__( '(they differ: ask the customer for another proof of location)', self::TD ) . '</span>';
 			}
 		}
-		echo '</p></div>';
+		echo '</p>';
+		$d = $order->get_meta( '_rinnovopro_tax_decision' );
+		if ( is_array( $d ) && ! empty( $d['reason'] ) ) {
+			/* translators: 1: decision, 2: store country, 3: buyer country. */
+			echo '<p><strong>' . esc_html__( 'Tax decision', self::TD ) . ':</strong> ' . esc_html( sprintf( __( '%1$s (store %2$s, customer %3$s)', self::TD ), $d['reason'], $d['store'], $d['buyer'] ) ) . '</p>';
+		}
+		if ( $order->get_customer_id() && count( (array) get_user_meta( $order->get_customer_id(), 'rinnovopro_tax_history', true ) ) > 1 ) {
+			echo '<details><summary>' . esc_html__( 'Customer\'s exemption history', self::TD ) . '</summary>';
+			self::history_table( $order->get_customer_id() );
+			echo '</details>';
+		}
+		echo '</div>';
 	}
 
 	/**

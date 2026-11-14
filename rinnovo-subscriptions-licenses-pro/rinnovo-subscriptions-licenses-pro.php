@@ -40,6 +40,9 @@ require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-ask-price.php';
 require_once RINNOVOPRO_DIR . 'shared/invoices/rinnovo-invoices.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-offers.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-tax.php';
+require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-trials.php';
+require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-license-history.php';
+require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-enquiries.php';
 
 add_action(
 	'plugins_loaded',
@@ -72,6 +75,9 @@ add_action(
 		rinnovo_invoices_enable();
 		RINNOVOPRO_Offers::init();
 		RINNOVOPRO_Tax::init();
+		RINNOVOPRO_Trials::init();
+		RINNOVOPRO_License_History::init();
+		RINNOVOPRO_Enquiries::init();
 		add_action( 'wp_enqueue_scripts', 'rinnovopro_assets', 20 );
 	}
 );

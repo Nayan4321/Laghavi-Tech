@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Subscriptions & Licenses
  * Plugin URI:           https://laghavi.site/rinnovo-subscriptions-licenses/
  * Description:          Subscription products for WooCommerce with automatic renewals through Stripe and other payment plugins that save cards (and invoice renewals for any other payment method), reminder emails, a better My Account, checkout without a cart page, buyer-only reviews, download counts, and license keys with downloads and automatic updates for the plugins and software you sell.
- * Version:              1.1.0
+ * Version:              1.1.1
  * Requires at least:    6.2
  * Requires PHP:         7.4
  * Requires Plugins:     woocommerce
@@ -20,7 +20,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVO_VERSION', '1.1.0' );
+define( 'RINNOVO_VERSION', '1.1.1' );
 define( 'RINNOVO_FILE', __FILE__ );
 define( 'RINNOVO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVO_URL', plugin_dir_url( __FILE__ ) );

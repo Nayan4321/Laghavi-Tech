@@ -71,8 +71,15 @@ class RINNOVO_Currency {
 
 		// Product prices.
 		foreach ( array( 'woocommerce_product_get_price', 'woocommerce_product_get_regular_price', 'woocommerce_product_get_sale_price', 'woocommerce_product_variation_get_price', 'woocommerce_product_variation_get_regular_price', 'woocommerce_product_variation_get_sale_price', 'woocommerce_variation_prices_price', 'woocommerce_variation_prices_regular_price', 'woocommerce_variation_prices_sale_price' ) as $hook ) {
-			add_filter( $hook, array( __CLASS__, 'filter_price' ), 999 );
+			add_filter( $hook, array( __CLASS__, 'filter_price' ), 999, 2 );
 		}
+		// A price set by hand for a currency wins over the converted one.
+		add_action( 'woocommerce_product_options_pricing', array( __CLASS__, 'price_fields' ) );
+		add_action( 'woocommerce_variation_options_pricing', array( __CLASS__, 'variation_price_fields' ), 10, 3 );
+		add_action( 'woocommerce_admin_process_product_object', array( __CLASS__, 'save_price_fields' ) );
+		add_action( 'woocommerce_save_product_variation', array( __CLASS__, 'save_variation_price_fields' ), 10, 2 );
+		// Only the payment methods that can take the visitor's currency.
+		add_filter( 'woocommerce_available_payment_gateways', array( __CLASS__, 'gateways_for_currency' ), 50 );
 		add_filter( 'woocommerce_get_variation_prices_hash', array( __CLASS__, 'variation_hash' ), 999 );
 		add_filter( 'woocommerce_cart_hash', array( __CLASS__, 'cart_hash' ), 999 );
 
@@ -126,6 +133,7 @@ class RINNOVO_Currency {
 				'decimals'  => isset( $row['decimals'] ) ? (int) $row['decimals'] : 2,
 				'rounding'  => isset( $row['rounding'] ) ? $row['rounding'] : 'none',
 				'countries' => isset( $row['countries'] ) ? (array) $row['countries'] : array(),
+				'gateways'  => isset( $row['gateways'] ) ? array_values( array_filter( (array) $row['gateways'] ) ) : array(),
 			);
 		}
 		return $out;
@@ -369,8 +377,149 @@ class RINNOVO_Currency {
 	 * @param mixed $price Price in the store currency.
 	 * @return mixed
 	 */
-	public static function filter_price( $price ) {
-		return '' === $price || null === $price ? $price : self::convert( $price, null, true );
+	public static function filter_price( $price, $product = null ) {
+		if ( '' === $price || null === $price ) {
+			return $price;
+		}
+		$fixed = $product instanceof WC_Product ? self::fixed_price( $product, current_filter() ) : null;
+		return null !== $fixed ? $fixed : self::convert( $price, null, true );
+	}
+
+	/**
+	 * The price set by hand for the current currency, or null to convert.
+	 *
+	 * @param WC_Product $product Product or variation.
+	 * @param string     $hook    Price filter running.
+	 * @return float|string|null
+	 */
+	public static function fixed_price( $product, $hook ) {
+		$code = self::current();
+		if ( $code === self::base() ) {
+			return null;
+		}
+		$regular = (string) $product->get_meta( '_rinnovo_price_' . $code, true, 'edit' );
+		if ( '' === $regular ) {
+			return null;
+		}
+		$sale = (string) $product->get_meta( '_rinnovo_sale_' . $code, true, 'edit' );
+		if ( false !== strpos( $hook, 'regular_price' ) ) {
+			return (float) $regular;
+		}
+		if ( false !== strpos( $hook, 'sale_price' ) ) {
+			return '' !== $sale ? (float) $sale : '';
+		}
+		return '' !== $sale ? (float) $sale : (float) $regular;
+	}
+
+	/**
+	 * "Regular price (AED)" fields on simple products.
+	 */
+	public static function price_fields() {
+		global $product_object;
+		foreach ( array_keys( self::currencies() ) as $code ) {
+			woocommerce_wp_text_input(
+				array(
+					'id'          => '_rinnovo_price_' . $code,
+					/* translators: %s: currency code. */
+					'label'       => sprintf( __( 'Regular price (%s)', 'rinnovo-subscriptions-licenses-pro' ), $code ),
+					'data_type'   => 'price',
+					'value'       => $product_object ? $product_object->get_meta( '_rinnovo_price_' . $code ) : '',
+					'placeholder' => __( 'Converted', 'rinnovo-subscriptions-licenses-pro' ),
+					'desc_tip'    => true,
+					'description' => __( 'Your own price in this currency. Empty: converted from the store price at the current rate.', 'rinnovo-subscriptions-licenses-pro' ),
+				)
+			);
+			woocommerce_wp_text_input(
+				array(
+					'id'          => '_rinnovo_sale_' . $code,
+					/* translators: %s: currency code. */
+					'label'       => sprintf( __( 'Sale price (%s)', 'rinnovo-subscriptions-licenses-pro' ), $code ),
+					'data_type'   => 'price',
+					'value'       => $product_object ? $product_object->get_meta( '_rinnovo_sale_' . $code ) : '',
+				)
+			);
+		}
+	}
+
+	/**
+	 * The same fields on each variation.
+	 *
+	 * @param int     $loop      Index.
+	 * @param array   $data      Data.
+	 * @param WP_Post $variation Variation.
+	 */
+	public static function variation_price_fields( $loop, $data, $variation ) {
+		unset( $data );
+		foreach ( array_keys( self::currencies() ) as $code ) {
+			foreach ( array( 'price' => __( 'Regular price (%s)', 'rinnovo-subscriptions-licenses-pro' ), 'sale' => __( 'Sale price (%s)', 'rinnovo-subscriptions-licenses-pro' ) ) as $kind => $label ) {
+				woocommerce_wp_text_input(
+					array(
+						'id'            => '_rinnovo_' . $kind . '_' . $code . '_' . $loop,
+						'name'          => '_rinnovo_' . $kind . '_' . $code . '[' . $loop . ']',
+						'label'         => sprintf( $label, $code ),
+						'data_type'     => 'price',
+						'value'         => (string) get_post_meta( $variation->ID, '_rinnovo_' . $kind . '_' . $code, true ),
+						'placeholder'   => 'price' === $kind ? __( 'Converted', 'rinnovo-subscriptions-licenses-pro' ) : '',
+						'wrapper_class' => 'form-row form-row-' . ( 'price' === $kind ? 'first' : 'last' ),
+					)
+				);
+			}
+		}
+	}
+
+	/**
+	 * Save the fields of a product.
+	 *
+	 * @param WC_Product $product Product.
+	 */
+	public static function save_price_fields( $product ) {
+		foreach ( array_keys( self::currencies() ) as $code ) {
+			foreach ( array( 'price', 'sale' ) as $kind ) {
+				$key = '_rinnovo_' . $kind . '_' . $code;
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce checks the product form nonce.
+				if ( isset( $_POST[ $key ] ) && ! is_array( $_POST[ $key ] ) ) {
+					$product->update_meta_data( $key, wc_format_decimal( sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				}
+			}
+		}
+	}
+
+	/**
+	 * Save the fields of a variation.
+	 *
+	 * @param int $variation_id Variation.
+	 * @param int $i            Index.
+	 */
+	public static function save_variation_price_fields( $variation_id, $i ) {
+		foreach ( array_keys( self::currencies() ) as $code ) {
+			foreach ( array( 'price', 'sale' ) as $kind ) {
+				$key = '_rinnovo_' . $kind . '_' . $code;
+				// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce checks the variations nonce.
+				if ( isset( $_POST[ $key ][ $i ] ) ) {
+					update_post_meta( $variation_id, $key, wc_format_decimal( sanitize_text_field( wp_unslash( $_POST[ $key ][ $i ] ) ) ) ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+				}
+			}
+		}
+	}
+
+	/**
+	 * Hide payment methods that can't take the visitor's currency (as set per currency).
+	 *
+	 * @param array $gateways Gateways.
+	 * @return array
+	 */
+	public static function gateways_for_currency( $gateways ) {
+		$code = self::current();
+		$all  = self::currencies();
+		if ( is_admin() && ! wp_doing_ajax() || ! isset( $all[ $code ] ) || empty( $all[ $code ]['gateways'] ) ) {
+			return $gateways;
+		}
+		foreach ( array_keys( $gateways ) as $id ) {
+			if ( ! in_array( $id, $all[ $code ]['gateways'], true ) ) {
+				unset( $gateways[ $id ] );
+			}
+		}
+		return $gateways;
 	}
 
 	/**
@@ -589,8 +738,14 @@ class RINNOVO_Currency {
 			'rounding'  => 'none',
 			'countries' => array(),
 		);
-		$names  = get_woocommerce_currencies();
-		$base   = self::base();
+		$names    = get_woocommerce_currencies();
+		$base     = self::base();
+		$gateways = function_exists( 'WC' ) && WC()->payment_gateways() ? array_filter(
+			WC()->payment_gateways()->payment_gateways(),
+			static function ( $g ) {
+				return 'yes' === $g->enabled;
+			}
+		) : array();
 		$fetch  = wp_nonce_url( admin_url( 'admin-post.php?action=rinnovo_fetch_rates' ), 'rinnovo_fetch_rates' );
 		$stamp  = (int) get_option( 'rinnovo_rates_updated' );
 		$error  = get_transient( 'rinnovo_rates_error' );
@@ -605,7 +760,7 @@ class RINNOVO_Currency {
 				<p class="description">
 					<?php
 					/* translators: %s: store currency code. */
-					echo esc_html( sprintf( __( 'Prices are entered in %s (your store currency, set in Settings > General) and converted with these rates. Leave the last row empty to add nothing.', 'rinnovo-subscriptions-licenses-pro' ), $base ) );
+					echo esc_html( sprintf( __( 'Prices are entered in %s (your store currency, set in Settings > General) and converted with these rates, unless a product has its own price in a currency (Product data > General). Leave the last row empty to add nothing. Payment methods: tick the ones that can charge this currency for first payments and renewals (none ticked = all); check with your payment provider which currencies it supports.', 'rinnovo-subscriptions-licenses-pro' ), $base ) );
 					?>
 				</p>
 				<table class="widefat rinnovo-currency-table" style="max-width:900px;margin-top:8px">
@@ -621,6 +776,7 @@ class RINNOVO_Currency {
 							<th><?php esc_html_e( 'Decimals', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
 							<th><?php esc_html_e( 'Round prices', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
 							<th><?php esc_html_e( 'Visitor countries (auto-select)', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
+							<th><?php esc_html_e( 'Payment methods', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -647,6 +803,11 @@ class RINNOVO_Currency {
 									</select>
 								</td>
 								<td><input type="text" style="width:100%" placeholder="AE, SA, QA" name="<?php echo esc_attr( self::OPTION . '[' . $i . '][countries]' ); ?>" value="<?php echo esc_attr( implode( ', ', isset( $row['countries'] ) ? (array) $row['countries'] : array() ) ); ?>" /></td>
+								<td>
+									<?php foreach ( $gateways as $gid => $gateway ) : ?>
+										<label style="display:block;white-space:nowrap"><input type="checkbox" name="<?php echo esc_attr( self::OPTION . '[' . $i . '][gateways][]' ); ?>" value="<?php echo esc_attr( $gid ); ?>" <?php checked( in_array( $gid, isset( $row['gateways'] ) ? (array) $row['gateways'] : array(), true ) ); ?> /> <?php echo esc_html( wp_strip_all_tags( $gateway->get_title() ) ); ?></label>
+									<?php endforeach; ?>
+								</td>
 							</tr>
 						<?php endforeach; ?>
 					</tbody>
@@ -702,6 +863,7 @@ class RINNOVO_Currency {
 				'decimals'  => min( 4, max( 0, (int) ( isset( $row['decimals'] ) ? $row['decimals'] : 2 ) ) ),
 				'rounding'  => isset( $row['rounding'] ) && in_array( $row['rounding'], array( 'none', 'whole', '99', '5' ), true ) ? $row['rounding'] : 'none',
 				'countries' => array_values( $countries ),
+				'gateways'  => isset( $row['gateways'] ) ? array_values( array_map( 'sanitize_key', (array) $row['gateways'] ) ) : array(),
 			);
 		}
 		return $rows;

@@ -87,13 +87,20 @@ class RINNOVO_Product {
 			return null;
 		}
 		$period = (string) $product->get_meta( '_rinnovo_period' );
-		return array(
+		$plan   = array(
 			'period'     => isset( self::periods()[ $period ] ) ? $period : 'month',
 			'interval'   => max( 1, (int) $product->get_meta( '_rinnovo_interval' ) ),
 			'signup_fee' => max( 0, (float) $product->get_meta( '_rinnovo_signup_fee' ) ),
 			'trial_days' => max( 0, (int) $product->get_meta( '_rinnovo_trial_days' ) ),
 			'length'     => max( 0, (int) $product->get_meta( '_rinnovo_length' ) ),
 		);
+		/**
+		 * The subscription plan of a product (add-ons can, for example, remove a trial a customer already had).
+		 *
+		 * @param array      $plan    Plan.
+		 * @param WC_Product $product Product.
+		 */
+		return (array) apply_filters( 'rinnovo_plan', $plan, $product );
 	}
 
 	/**

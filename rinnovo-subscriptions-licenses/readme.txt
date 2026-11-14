@@ -4,7 +4,7 @@ Tags: subscriptions, recurring payments, stripe, license manager, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,9 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 6. WooCommerce > Licenses.
 
 == Changelog ==
+
+= 1.1.1 =
+* Developers: rinnovo_plan filter, rinnovo_subscription_updated action and rinnovo_license_admin_row action for add-ons.
 
 = 1.1.0 =
 * Automatic renewals with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless and Paystack: the card or mandate is saved at the first payment and charged on each renewal date, with retries after 1 and 3 days. Every other payment method keeps invoice renewals.

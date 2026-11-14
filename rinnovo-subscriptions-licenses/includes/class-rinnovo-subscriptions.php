@@ -164,6 +164,13 @@ class RINNOVO_Subscriptions {
 		global $wpdb;
 		$fields['updated_at'] = current_time( 'mysql', true );
 		$wpdb->update( self::table(), $fields, array( 'id' => (int) $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+		/**
+		 * A subscription was changed (plan switches change product_id; renewals change next_payment).
+		 *
+		 * @param int   $id     Subscription ID.
+		 * @param array $fields Changed fields.
+		 */
+		do_action( 'rinnovo_subscription_updated', (int) $id, $fields );
 	}
 
 	/**
