@@ -50,6 +50,17 @@ class RINNOVOMEM_Settings {
 			'account_label'   => '',
 			'switch_credit'   => 1,
 			'switch_auto'     => 1,
+			'cancel_mode'     => 'period_end',
+			'refund_mode'     => 'revoke',
+			'downgrade_mode'  => 'period_end',
+			'download_limit'  => 0,
+			'link_minutes'    => 120,
+			'announcement'    => '',
+			'webhook_url'     => '',
+			'webhook_secret'  => '',
+			'credit_mode'     => 'wallet',
+			'redownload_days' => 30,
+			'refund_failed'   => 1,
 		);
 	}
 

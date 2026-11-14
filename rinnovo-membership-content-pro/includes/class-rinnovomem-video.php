@@ -26,6 +26,7 @@ class RINNOVOMEM_Video {
 	public static function init() {
 		add_shortcode( 'member_video', array( __CLASS__, 'shortcode' ) );
 		add_action( 'wp_ajax_rinnovomem_stream', array( __CLASS__, 'heartbeat' ) );
+		add_action( 'wp_ajax_rinnovomem_progress', array( __CLASS__, 'progress' ) );
 	}
 
 	/**
@@ -147,7 +148,59 @@ class RINNOVOMEM_Video {
 			);
 			$attrs = ' data-rinnovomem-stream="' . esc_attr( wp_generate_uuid4() ) . '"';
 		}
-		return '<div class="rinnovomem-video"' . $attrs . '>' . self::player( $atts ) . '</div>';
+		$key   = substr( md5( $atts['provider'] . '|' . $atts['id'] ), 0, 12 );
+		$saved = is_user_logged_in() ? (array) get_user_meta( get_current_user_id(), '_rinnovomem_video_progress', true ) : array();
+		$state = isset( $saved[ $key ] ) && is_array( $saved[ $key ] ) ? $saved[ $key ] : array( 't' => 0, 'done' => 0 );
+		$warn  = '';
+		if ( 'youtube' === $atts['provider'] && current_user_can( 'edit_others_posts' ) ) {
+			$warn = '<p class="rinnovomem-video__warn" style="background:#fcf0f1;border-left:4px solid #d63638;padding:8px 12px">' . esc_html__( 'Only you see this: YouTube "unlisted" videos are NOT protected. Anyone with the link can watch and share them. Use Bunny Stream (signed links), Vimeo or Wistia with domain privacy, or a protected file for paid content.', self::TD ) . '</p>';
+		}
+		if ( is_user_logged_in() ) {
+			wp_enqueue_script( 'rinnovomem-progress', RINNOVOMEM_URL . 'assets/js/progress.js', array(), RINNOVOMEM_VERSION, true );
+			wp_localize_script(
+				'rinnovomem-progress',
+				'rinnovomemProgress',
+				array(
+					'ajax'  => admin_url( 'admin-ajax.php' ),
+					'nonce' => wp_create_nonce( 'rinnovomem_progress' ),
+					'done'  => __( 'Watched', self::TD ),
+					'mark'  => __( 'Mark as watched', self::TD ),
+				)
+			);
+			$attrs .= ' data-rinnovomem-video="' . esc_attr( $key ) . '" data-resume="' . esc_attr( (string) (float) $state['t'] ) . '" data-done="' . ( ! empty( $state['done'] ) ? '1' : '0' ) . '"';
+		}
+		if ( is_user_logged_in() && class_exists( 'RINNOVOMEM_Ledger' ) ) {
+			RINNOVOMEM_Ledger::log( get_current_user_id(), (int) get_the_ID(), 'video', $atts['provider'] . ':' . $atts['id'] );
+		}
+		return $warn . '<div class="rinnovomem-video"' . $attrs . '>' . self::player( $atts ) . '</div>';
+	}
+
+	/**
+	 * Save watch progress (resume point, watched).
+	 */
+	public static function progress() {
+		check_ajax_referer( 'rinnovomem_progress', 'nonce' );
+		$user = get_current_user_id();
+		$key  = isset( $_POST['key'] ) ? substr( sanitize_key( wp_unslash( $_POST['key'] ) ), 0, 12 ) : '';
+		if ( ! $user || '' === $key ) {
+			wp_send_json_error();
+		}
+		$all = (array) get_user_meta( $user, '_rinnovomem_video_progress', true );
+		$t   = isset( $_POST['t'] ) ? max( 0, (float) $_POST['t'] ) : 0;
+		$d   = isset( $_POST['d'] ) ? max( 0, (float) $_POST['d'] ) : 0;
+		$was = isset( $all[ $key ] ) && is_array( $all[ $key ] ) ? $all[ $key ] : array( 'done' => 0 );
+		$all[ $key ] = array(
+			't'    => $t,
+			'd'    => $d,
+			'done' => ! empty( $was['done'] ) || ! empty( $_POST['done'] ) || ( $d > 0 && $t / $d >= 0.9 ) ? 1 : 0,
+			'at'   => time(),
+		);
+		if ( count( $all ) > 500 ) {
+			uasort( $all, static function ( $a, $b ) { return (int) $b['at'] - (int) $a['at']; } ); // phpcs:ignore Generic.Formatting.MultipleStatementAlignment -- Short closure.
+			$all = array_slice( $all, 0, 500, true );
+		}
+		update_user_meta( $user, '_rinnovomem_video_progress', $all );
+		wp_send_json_success( array( 'done' => $all[ $key ]['done'] ) );
 	}
 
 	/**

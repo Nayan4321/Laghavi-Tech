@@ -153,6 +153,16 @@ class RINNOVOMEM_Switch {
 			return;
 		}
 		$credit = self::credit( $old );
+		if ( 'period_end' === RINNOVOMEM_Settings::get( 'downgrade_mode' ) ) {
+			// A downgrade keeps the higher tier until the paid period ends, so there is no credit for it.
+			$from = RINNOVOMEM_Tiers::for_product( $old->product_id );
+			foreach ( $cart->get_cart() as $item ) {
+				$to = RINNOVOMEM_Tiers::for_product( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+				if ( '' !== $to && '' !== $from && RINNOVOMEM_Tiers::group( $to ) === RINNOVOMEM_Tiers::group( $from ) && RINNOVOMEM_Tiers::rank( $to ) < RINNOVOMEM_Tiers::rank( $from ) ) {
+					$credit = 0;
+				}
+			}
+		}
 		$max    = (float) $cart->get_subtotal() + (float) $cart->get_subtotal_tax();
 		$credit = min( $credit, $max );
 		if ( $credit > 0 ) {

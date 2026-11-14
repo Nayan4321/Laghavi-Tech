@@ -61,6 +61,13 @@ class RINNOVOMEM_Members {
 		if ( in_array( $sub->status, array( 'trial', 'active', 'pending-cancel' ), true ) ) {
 			return true;
 		}
+		// Lifecycle: a cancelled membership keeps access until the end of the period already paid for.
+		if ( 'cancelled' === $sub->status && 'period_end' === RINNOVOMEM_Settings::get( 'cancel_mode' ) && ! get_user_meta( (int) $sub->user_id, '_rinnovomem_refunded_' . $sub->id, true ) ) {
+			$paid_to = $sub->next_payment ? strtotime( $sub->next_payment . ' UTC' ) : 0;
+			if ( $paid_to > time() && (int) $sub->payments_made > 0 ) {
+				return true;
+			}
+		}
 		if ( 'on-hold' !== $sub->status ) {
 			return false;
 		}
@@ -175,7 +182,20 @@ class RINNOVOMEM_Members {
 	 */
 	public static function has( $user_id, $tier ) {
 		$need = RINNOVOMEM_Tiers::rank( $tier );
-		return $need >= 0 && self::rank( $user_id ) >= $need;
+		if ( $need < 0 ) {
+			return false;
+		}
+		if ( 0 === $need ) {
+			return (int) $user_id > 0;
+		}
+		// Higher tiers include lower ones only inside the same group (programme).
+		$group = RINNOVOMEM_Tiers::group( $tier );
+		foreach ( array_keys( self::held( $user_id ) ) as $held ) {
+			if ( RINNOVOMEM_Tiers::group( $held ) === $group && RINNOVOMEM_Tiers::rank( $held ) >= $need ) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
@@ -191,9 +211,10 @@ class RINNOVOMEM_Members {
 			return $user ? (int) strtotime( $user->user_registered . ' UTC' ) : 0;
 		}
 		$need  = RINNOVOMEM_Tiers::rank( $tier );
+		$group = RINNOVOMEM_Tiers::group( $tier );
 		$since = 0;
 		foreach ( self::held( $user_id ) as $id => $h ) {
-			if ( RINNOVOMEM_Tiers::rank( $id ) >= $need && ( ! $since || $h['since'] < $since ) ) {
+			if ( RINNOVOMEM_Tiers::group( $id ) === $group && RINNOVOMEM_Tiers::rank( $id ) >= $need && ( ! $since || $h['since'] < $since ) ) {
 				$since = $h['since'];
 			}
 		}
@@ -207,10 +228,9 @@ class RINNOVOMEM_Members {
 	 * @return string[]
 	 */
 	public static function tiers_included( $user_id ) {
-		$rank = self::rank( $user_id );
-		$out  = $rank >= 0 ? array( RINNOVOMEM_Tiers::FREE ) : array();
-		foreach ( RINNOVOMEM_Tiers::all() as $id => $tier ) {
-			if ( $tier['rank'] <= $rank ) {
+		$out = (int) $user_id > 0 ? array( RINNOVOMEM_Tiers::FREE ) : array();
+		foreach ( array_keys( RINNOVOMEM_Tiers::all() ) as $id ) {
+			if ( self::has( $user_id, $id ) ) {
 				$out[] = $id;
 			}
 		}
@@ -238,7 +258,7 @@ class RINNOVOMEM_Members {
 
 		$courses = array();
 		foreach ( RINNOVOMEM_Tiers::all() as $id => $tier ) {
-			$in = $tier['rank'] <= $rank;
+			$in = self::has( $user_id, $id );
 			if ( $tier['role'] ) {
 				$role = RINNOVOMEM_Tiers::role( $id );
 				if ( $in && ! in_array( $role, (array) $user->roles, true ) && get_role( $role ) ) {
@@ -249,6 +269,14 @@ class RINNOVOMEM_Members {
 			}
 			if ( $in ) {
 				$courses = array_merge( $courses, $tier['courses'] );
+			}
+		}
+		// Courses bought on their own (or gifted) stay, whatever happens to the membership.
+		if ( class_exists( 'RINNOVOMEM_Ledger' ) ) {
+			foreach ( RINNOVOMEM_Ledger::active( $user_id, 'course' ) as $row ) {
+				if ( ctype_digit( (string) $row->target ) ) {
+					$courses[] = (int) $row->target;
+				}
 			}
 		}
 		self::sync_courses( $user_id, array_values( array_unique( $courses ) ) );
@@ -397,6 +425,9 @@ class RINNOVOMEM_Members {
 			'until' => (int) $until,
 		);
 		update_user_meta( $user_id, '_rinnovomem_manual', array_filter( $manual ) );
+		if ( class_exists( 'RINNOVOMEM_Ledger' ) ) {
+			RINNOVOMEM_Ledger::add( $user_id, 'tier', $tier, 'manual', 0, time(), (int) $until, __( 'Given by the shop', 'rinnovo-membership-content-pro' ) );
+		}
 		self::sync( $user_id );
 	}
 
@@ -410,6 +441,13 @@ class RINNOVOMEM_Members {
 		$manual = (array) get_user_meta( $user_id, '_rinnovomem_manual', true );
 		unset( $manual[ $tier ] );
 		update_user_meta( $user_id, '_rinnovomem_manual', array_filter( $manual ) );
+		if ( class_exists( 'RINNOVOMEM_Ledger' ) ) {
+			foreach ( RINNOVOMEM_Ledger::active( $user_id, 'tier' ) as $row ) {
+				if ( $row->target === $tier && 'manual' === $row->source ) {
+					RINNOVOMEM_Ledger::revoke( (int) $row->id );
+				}
+			}
+		}
 		self::sync( $user_id );
 	}
 

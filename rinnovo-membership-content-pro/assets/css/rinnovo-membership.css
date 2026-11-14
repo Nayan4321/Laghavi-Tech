@@ -37,3 +37,20 @@
 .rinnovomem-profile__head h2{margin:0 0 6px}
 .rinnovomem-member-price{color:#15803d;font-weight:600;text-decoration:none}
 .rinnovomem-member-save{display:block;color:#7c3aed;font-weight:600}
+/* Resource library */
+.rinnovomem-library__filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 1em; }
+.rinnovomem-library__grid { display: grid; gap: 16px; grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr)); }
+.rinnovomem-res { border: 1px solid rgba(0,0,0,.1); border-radius: 8px; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+.rinnovomem-res__img img { width: 100%; height: auto; border-radius: 6px; display: block; }
+.rinnovomem-res__type { display: flex; align-items: center; justify-content: center; aspect-ratio: 4/3; background: rgba(0,0,0,.05); border-radius: 6px; font-weight: 700; font-size: 1.4em; }
+.rinnovomem-res__title { font-size: 1em; margin: 0; }
+.rinnovomem-res__meta, .rinnovomem-res__why { font-size: .85em; opacity: .8; margin: 0; }
+.rinnovomem-res .button { margin-top: auto; text-align: center; }
+.rinnovomem-credits { font-weight: 600; }
+@media (max-width: 700px) { .rinnovomem-library__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+/* Dashboard */
+.rinnovomem-dash section { margin: 0 0 1.4em; }
+.rinnovomem-dash__plan { border: 1px solid rgba(0,0,0,.1); border-radius: 8px; padding: 10px 14px; margin: 0 0 8px; }
+.rinnovomem-dash__links .button { margin: 0 6px 6px 0; }
+.rinnovomem-gift { margin: 0 0 1em; }
+.rinnovomem-gift input, .rinnovomem-gift textarea { width: 100%; }

@@ -53,14 +53,14 @@ class RINNOVOMEM_Admin {
 	 * @return array<string, string>
 	 */
 	private static function tabs() {
-		return array(
+		return (array) apply_filters( 'rinnovomem_admin_tabs', array(
 			'tiers'   => __( 'Tiers and perks', self::TD ),
 			'content' => __( 'Content rules', self::TD ),
 			'paywall' => __( 'Teasers and paywall', self::TD ),
 			'files'   => __( 'Files and video', self::TD ),
 			'access'  => __( 'Access and sharing', self::TD ),
 			'members' => __( 'Members', self::TD ),
-		);
+		));
 	}
 
 	/**
@@ -90,7 +90,16 @@ class RINNOVOMEM_Admin {
 				<input type="hidden" name="action" value="rinnovomem_save" />
 				<input type="hidden" name="tab" value="<?php echo esc_attr( $tab ); ?>" />
 				<?php wp_nonce_field( 'rinnovomem_save' ); ?>
-				<?php call_user_func( array( __CLASS__, 'tab_' . $tab ) ); ?>
+				<?php
+				if ( method_exists( __CLASS__, 'tab_' . $tab ) ) {
+					call_user_func( array( __CLASS__, 'tab_' . $tab ) );
+				} else {
+					/**
+					 * Content of an added tab.
+					 */
+					do_action( 'rinnovomem_admin_tab_' . $tab );
+				}
+				?>
 			</form>
 		</div>
 		<?php
@@ -170,6 +179,8 @@ class RINNOVOMEM_Admin {
 				<button type="button" class="button-link-delete rinnovomem-remove"><?php esc_html_e( 'Remove', self::TD ); ?></button>
 			</div>
 			<table class="form-table" role="presentation">
+				<tr><th><?php esc_html_e( 'Group (programme)', self::TD ); ?></th><td><input type="text" class="regular-text" name="<?php echo esc_attr( $n( 'group' ) ); ?>" value="<?php echo esc_attr( $tier['group'] ); ?>" placeholder="<?php esc_attr_e( 'Empty = main membership; e.g. photography', self::TD ); ?>" list="rinnovomem-groups" /><p class="description"><?php esc_html_e( 'Independent programmes (e.g. "Business training": Silver, Gold, Platinum; "Photography": Basic, Premium). A tier includes only the lower tiers of its own group, and members can hold tiers of several groups at once.', self::TD ); ?></p></td></tr>
+				<tr><th><?php esc_html_e( 'Invite only', self::TD ); ?></th><td><input type="text" class="regular-text" name="<?php echo esc_attr( $n( 'invite' ) ); ?>" value="<?php echo esc_attr( $tier['invite'] ); ?>" placeholder="<?php esc_attr_e( 'Invite codes, comma separated (empty = open to all)', self::TD ); ?>" /><p class="description"><?php esc_html_e( 'Its products can be bought only with an invite link: product address + ?invite=CODE.', self::TD ); ?></p></td></tr>
 				<tr><th><?php esc_html_e( 'Products that give this tier', self::TD ); ?></th><td><?php self::product_select( $n( 'products' ), $tier['products'] ); ?><p class="description"><?php esc_html_e( 'Subscription products (or variations, e.g. Monthly and Yearly). A one-time purchase gives lifetime access when that is on in "Access and sharing".', self::TD ); ?></p></td></tr>
 				<tr><th><?php esc_html_e( 'Store discount', self::TD ); ?></th><td><input type="number" min="0" max="100" step="0.01" name="<?php echo esc_attr( $n( 'discount' ) ); ?>" value="<?php echo esc_attr( $tier['discount'] ? $tier['discount'] : '' ); ?>" placeholder="0" style="width:80px" /> % <?php esc_html_e( 'on', self::TD ); ?>
 					<select name="<?php echo esc_attr( $n( 'discount_cats' ) ); ?>[]" multiple="multiple" class="wc-enhanced-select" style="width:60%" data-placeholder="<?php esc_attr_e( 'All products (or choose categories)', self::TD ); ?>">
@@ -208,7 +219,11 @@ class RINNOVOMEM_Admin {
 		}
 		$courses = self::courses();
 		echo '<p>' . esc_html__( 'Lowest tier first. Each tier includes everything of the tiers above it in this list (Gold members see Silver content). "Free" (any registered user) is built in.', self::TD ) . '</p>';
-		echo '<div class="rinnovomem-tiers">';
+		echo '<datalist id="rinnovomem-groups">';
+		foreach ( array_keys( RINNOVOMEM_Tiers::groups() ) as $g ) {
+			echo '<option value="' . esc_attr( $g ) . '"></option>';
+		}
+		echo '</datalist><div class="rinnovomem-tiers">';
 		$i = 0;
 		foreach ( RINNOVOMEM_Tiers::all() as $tier ) {
 			self::tier_fields( $tier, $i++, $cats, $courses );
@@ -331,7 +346,20 @@ class RINNOVOMEM_Admin {
 				<option value="xaccel" <?php selected( $s['file_mode'], 'xaccel' ); ?>><?php esc_html_e( 'X-Accel-Redirect (Nginx, with the rule above)', self::TD ); ?></option>
 			</select><p class="description"><?php esc_html_e( 'The server options are faster for large videos and audio.', self::TD ); ?></p></td></tr>
 		</table>
+		<table class="form-table" role="presentation">
+			<tr><th><?php esc_html_e( 'Download links', self::TD ); ?></th><td><?php esc_html_e( 'Expire after', self::TD ); ?> <input type="number" min="5" max="10080" name="link_minutes" value="<?php echo esc_attr( $s['link_minutes'] ); ?>" style="width:90px" /> <?php esc_html_e( 'minutes, and only work for the member they were made for. Access is checked again on every download, files are sent with "no-store" (never kept by a CDN or proxy) and their real path is never shown.', self::TD ); ?></td></tr>
+			<tr><th><?php esc_html_e( 'Download limit', self::TD ); ?></th><td><input type="number" min="0" max="1000" name="download_limit" value="<?php echo esc_attr( $s['download_limit'] ); ?>" style="width:90px" /> <?php esc_html_e( 'downloads of the same file per member per day (0 = no limit). Every download is in the access log.', self::TD ); ?></td></tr>
+		</table>
 		<h2><?php esc_html_e( 'Private video', self::TD ); ?></h2>
+		<p><strong><?php esc_html_e( 'How each provider is protected:', self::TD ); ?></strong></p>
+		<ul style="list-style:disc;margin-left:20px">
+			<li><?php esc_html_e( 'Bunny Stream: private library + token authentication (key below): every play link is signed and expires. Best protection.', self::TD ); ?></li>
+			<li><?php esc_html_e( 'Vimeo: set the video to "Hide from Vimeo" and allow embedding only on your domain.', self::TD ); ?></li>
+			<li><?php esc_html_e( 'Wistia: turn on domain restrictions in the account\'s privacy settings.', self::TD ); ?></li>
+			<li><?php esc_html_e( 'Protected file: served only to members through the plugin, with seeking.', self::TD ); ?></li>
+			<li><strong><?php esc_html_e( 'YouTube unlisted is NOT protected: anyone with the link can watch it. Use it only for free previews.', self::TD ); ?></strong></li>
+		</ul>
+		<p><?php esc_html_e( 'Members resume where they stopped and videos are marked watched (automatic for protected files, a "Mark as watched" button for other players). The number of videos played at the same time per account is set in "Access and sharing".', self::TD ); ?></p>
 		<p><?php esc_html_e( '[member_video provider="bunny" id="VIDEO_ID"] — also vimeo (id="123456/hash" for private links), wistia, youtube (unlisted), presto (Presto Player ID) and file. The player is only put in the page for members.', self::TD ); ?></p>
 		<table class="form-table" role="presentation">
 			<tr><th><?php esc_html_e( 'Bunny Stream library ID', self::TD ); ?></th><td><input type="text" name="bunny_library" value="<?php echo esc_attr( $s['bunny_library'] ); ?>" class="regular-text" /></td></tr>
@@ -467,6 +495,8 @@ class RINNOVOMEM_Admin {
 					'free_products' => isset( $raw['free_products'] ) ? array_map( 'absint', (array) $raw['free_products'] ) : array(),
 					'courses'       => isset( $raw['courses'] ) ? array_map( 'absint', (array) $raw['courses'] ) : array(),
 					'join_url'      => isset( $raw['join_url'] ) ? esc_url_raw( $raw['join_url'] ) : '',
+					'group'         => isset( $raw['group'] ) ? sanitize_key( sanitize_title( $raw['group'] ) ) : '',
+					'invite'        => isset( $raw['invite'] ) ? sanitize_text_field( $raw['invite'] ) : '',
 				);
 			}
 			RINNOVOMEM_Tiers::save( $tiers );
@@ -516,6 +546,8 @@ class RINNOVOMEM_Admin {
 					'file_mode'     => in_array( $mode, array( 'php', 'xsendfile', 'xaccel' ), true ) ? $mode : 'php',
 					'bunny_library' => isset( $_POST['bunny_library'] ) ? sanitize_text_field( wp_unslash( $_POST['bunny_library'] ) ) : '',
 					'bunny_key'     => isset( $_POST['bunny_key'] ) ? sanitize_text_field( wp_unslash( $_POST['bunny_key'] ) ) : '',
+					'link_minutes'  => isset( $_POST['link_minutes'] ) ? max( 5, min( 10080, absint( $_POST['link_minutes'] ) ) ) : 120,
+					'download_limit' => isset( $_POST['download_limit'] ) ? min( 1000, absint( $_POST['download_limit'] ) ) : 0,
 				)
 			);
 			if ( ! empty( $_POST['check_files'] ) ) {
@@ -572,6 +604,17 @@ class RINNOVOMEM_Admin {
 				/* translators: %d: number of customers. */
 				self::note( 'success', esc_html( sprintf( __( 'Access refreshed for %d customers.', self::TD ), count( $ids ) ) ) );
 			}
+		}
+		/**
+		 * Save an added tab (nonce and capability already checked).
+		 *
+		 * @param string $tab Tab.
+		 */
+		do_action( 'rinnovomem_admin_save_' . $tab );
+		$added = get_transient( 'rinnovomem_tab_note_' . get_current_user_id() );
+		if ( $added ) {
+			delete_transient( 'rinnovomem_tab_note_' . get_current_user_id() );
+			self::note( $added[0], $added[1] );
 		}
 		wp_safe_redirect( $back );
 		exit;

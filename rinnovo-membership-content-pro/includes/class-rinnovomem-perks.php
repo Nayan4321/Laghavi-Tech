@@ -40,9 +40,8 @@ class RINNOVOMEM_Perks {
 		if ( ! $user_id ) {
 			return $perks;
 		}
-		$rank = RINNOVOMEM_Members::rank( $user_id );
-		foreach ( RINNOVOMEM_Tiers::all() as $tier ) {
-			if ( $tier['rank'] > $rank ) {
+		foreach ( RINNOVOMEM_Tiers::all() as $id => $tier ) {
+			if ( ! RINNOVOMEM_Members::has( $user_id, $id ) ) {
 				continue;
 			}
 			if ( $tier['discount'] > 0 ) {

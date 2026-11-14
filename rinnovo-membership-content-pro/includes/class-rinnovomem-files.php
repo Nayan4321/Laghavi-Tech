@@ -91,6 +91,10 @@ class RINNOVOMEM_Files {
 		}
 		if ( $download ) {
 			$args['dl'] = 1;
+			// Download links are signed for the member and expire.
+			$minutes     = max( 5, (int) RINNOVOMEM_Settings::get( 'link_minutes' ) );
+			$args['exp'] = time() + $minutes * MINUTE_IN_SECONDS;
+			$args['sig'] = self::sign( (int) $id, $args['exp'] );
 		}
 		return add_query_arg( $args, home_url( '/' ) );
 	}
@@ -242,6 +246,31 @@ class RINNOVOMEM_Files {
 			status_header( 404 );
 			exit;
 		}
+		// Files of the resource library are only sent through the credit check (images may be previews).
+		if ( get_post_meta( $id, '_rinnovomem_resource', true ) && ! wp_attachment_is_image( $id ) ) {
+			status_header( 404 );
+			exit;
+		}
+		// Signed links expire; a member can download a file only so many times a day.
+		if ( isset( $_GET['exp'], $_GET['sig'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Signature checked here.
+			$exp = absint( $_GET['exp'] ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			if ( $exp < time() || ! hash_equals( self::sign( $id, $exp ), sanitize_key( wp_unslash( $_GET['sig'] ) ) ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+				wp_die( esc_html__( 'This link has expired. Please open the page again.', self::TD ), '', array( 'response' => 403 ) );
+			}
+		}
+		$limit = (int) RINNOVOMEM_Settings::get( 'download_limit' );
+		if ( $dl && $limit && is_user_logged_in() && ! current_user_can( 'manage_woocommerce' ) ) {
+			$count = 0;
+			foreach ( RINNOVOMEM_Ledger::log_for( get_current_user_id(), 'file', 200 ) as $row ) {
+				if ( (int) $row->object_id === $id && strtotime( $row->created_at . ' UTC' ) > time() - DAY_IN_SECONDS ) {
+					++$count;
+				}
+			}
+			if ( $count >= $limit ) {
+				/* translators: %d: downloads. */
+				wp_die( esc_html( sprintf( __( 'You can download this file %d times a day. Please try again tomorrow.', self::TD ), $limit ) ), '', array( 'response' => 429 ) );
+			}
+		}
 		$result = RINNOVOMEM_Rules::can_view( $id );
 		if ( ! $result['ok'] ) {
 			wp_safe_redirect( add_query_arg( 'rinnovomem_locked', rawurlencode( $result['tier'] ), RINNOVOMEM_Tiers::join_url( $result['tier'] ) ) );
@@ -258,7 +287,21 @@ class RINNOVOMEM_Files {
 			status_header( 404 );
 			exit;
 		}
+		if ( $dl && is_user_logged_in() ) {
+			RINNOVOMEM_Ledger::log( get_current_user_id(), $id, 'file', basename( $file ) );
+		}
 		self::stream( $file, $dl );
+	}
+
+	/**
+	 * Signature of an expiring file link.
+	 *
+	 * @param int $id  Attachment.
+	 * @param int $exp Expiry.
+	 * @return string
+	 */
+	public static function sign( $id, $exp ) {
+		return substr( hash_hmac( 'sha256', $id . '|' . $exp . '|' . get_current_user_id(), wp_salt( 'auth' ) ), 0, 32 );
 	}
 
 	/**
@@ -272,6 +315,9 @@ class RINNOVOMEM_Files {
 		$mime = $type['type'] ? $type['type'] : 'application/octet-stream';
 		$size = filesize( $file );
 		nocache_headers();
+		// Never kept by a CDN or proxy.
+		header( 'Cache-Control: private, no-store, max-age=0' );
+		header( 'CDN-Cache-Control: no-store' );
 		header( 'X-Robots-Tag: noindex' );
 		header( 'Content-Type: ' . $mime );
 		header( 'Content-Disposition: ' . ( $download ? 'attachment' : 'inline' ) . '; filename="' . rawurlencode( basename( $file ) ) . '"' );

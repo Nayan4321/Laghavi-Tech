@@ -95,6 +95,20 @@ class RINNOVOMEM_Paywall {
 	 * @return string HTML.
 	 */
 	public static function box( $result, $kind = 'post' ) {
+		if ( ! empty( $result['product'] ) && in_array( $result['reason'], array( 'product', 'login' ), true ) ) {
+			$p     = wc_get_product( (int) $result['product'] );
+			$login = add_query_arg( 'redirect_to', rawurlencode( self::here() ), wc_get_page_permalink( 'myaccount' ) );
+			$html  = '<div class="rinnovomem-paywall rinnovomem-paywall--product"><p class="rinnovomem-paywall__title">' . esc_html__( 'Access denied', self::TD ) . '</p><p>';
+			/* translators: %s: product. */
+			$html .= esc_html( $p ? sprintf( __( 'This is for customers of %s with an active subscription or purchase.', self::TD ), $p->get_name() ) : __( 'This is for customers with an active subscription or purchase.', self::TD ) ) . '</p><p>';
+			if ( ! is_user_logged_in() ) {
+				$html .= '<a class="button" href="' . esc_url( $login ) . '">' . esc_html__( 'Log in', self::TD ) . '</a> ';
+			}
+			if ( $p ) {
+				$html .= '<a class="button alt" href="' . esc_url( $p->get_permalink() ) . '">' . esc_html__( 'Get access', self::TD ) . '</a>';
+			}
+			return $html . '</p></div>';
+		}
 		$tier = $result['tier'];
 		$name = RINNOVOMEM_Tiers::FREE === $tier ? __( 'registered', self::TD ) : RINNOVOMEM_Tiers::name( $tier );
 		if ( 'drip' === $result['reason'] ) {

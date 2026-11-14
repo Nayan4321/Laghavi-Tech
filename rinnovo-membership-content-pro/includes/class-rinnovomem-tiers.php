@@ -47,8 +47,12 @@ class RINNOVOMEM_Tiers {
 				'free_products'  => array(),
 				'courses'        => array(),
 				'join_url'       => '',
+				'group'          => '',
+				'invite'         => '',
 			)
 		);
+		$tier['group']  = sanitize_key( (string) $tier['group'] );
+		$tier['invite'] = sanitize_text_field( (string) $tier['invite'] );
 		foreach ( array( 'products', 'discount_cats', 'free_products', 'courses' ) as $key ) {
 			$tier[ $key ] = array_values( array_filter( array_map( 'absint', (array) $tier[ $key ] ) ) );
 		}
@@ -130,6 +134,30 @@ class RINNOVOMEM_Tiers {
 	}
 
 	/**
+	 * Group (programme) of a tier: tiers only include lower tiers of the same group.
+	 *
+	 * @param string $id Tier ID.
+	 * @return string '' = the main programme.
+	 */
+	public static function group( $id ) {
+		$tier = self::get( $id );
+		return $tier ? (string) $tier['group'] : '';
+	}
+
+	/**
+	 * Groups in use, with their label.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function groups() {
+		$out = array();
+		foreach ( self::all() as $tier ) {
+			$out[ $tier['group'] ] = '' === $tier['group'] ? __( 'Main membership', 'rinnovo-membership-content-pro' ) : ucwords( str_replace( array( '-', '_' ), ' ', $tier['group'] ) );
+		}
+		return $out;
+	}
+
+	/**
 	 * Name of a tier ID.
 	 *
 	 * @param string $id Tier ID.
@@ -157,7 +185,7 @@ class RINNOVOMEM_Tiers {
 		$out[ self::FREE ] = self::name( self::FREE );
 		foreach ( self::all() as $id => $tier ) {
 			/* translators: %s: tier name. */
-			$out[ $id ] = sprintf( __( '%s members and higher', 'rinnovo-membership-content-pro' ), $tier['name'] );
+			$out[ $id ] = sprintf( __( '%s members and higher', 'rinnovo-membership-content-pro' ), $tier['name'] ) . ( '' !== $tier['group'] ? ' (' . self::groups()[ $tier['group'] ] . ')' : '' );
 		}
 		return $out;
 	}
