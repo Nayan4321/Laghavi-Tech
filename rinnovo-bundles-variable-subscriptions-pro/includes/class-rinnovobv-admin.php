@@ -20,6 +20,15 @@ class RINNOVOBV_Admin {
 	 * Hook everything up.
 	 */
 	public static function init() {
+		add_action(
+			'admin_enqueue_scripts',
+			static function ( $hook ) {
+				if ( false !== strpos( (string) $hook, self::PAGE ) ) {
+					wp_enqueue_script( 'wc-enhanced-select' );
+					wp_enqueue_style( 'woocommerce_admin_styles' );
+				}
+			}
+		);
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 64 );
 		add_action( 'admin_post_rinnovobv_settings', array( __CLASS__, 'save' ) );
 	}
@@ -118,6 +127,16 @@ class RINNOVOBV_Admin {
 		wp_nonce_field( 'rinnovobv_settings' );
 		echo '<h2>' . esc_html__( 'One invoice, one renewal day', self::TD ) . '</h2><table class="form-table" role="presentation">';
 		$input( 'unify', __( 'One recurring invoice', self::TD ), __( 'Subscriptions bought together (same billing period, no trial) become one subscription with one renewal invoice', self::TD ), 'checkbox' );
+		$input(
+			'consolidate',
+			__( 'Separate subscriptions', self::TD ),
+			__( '"Statement": a customer with several separate subscriptions renewing the same day gets one email listing them all, each with its own order and pay link. Records are never merged, so every subscription keeps its own payment method, taxes, failed-payment handling and can be cancelled on its own.', self::TD ),
+			'select',
+			array(
+				'merge'     => __( 'Invoice each subscription on its own', self::TD ),
+				'statement' => __( 'One renewal statement per customer and day', self::TD ),
+			)
+		);
 		$input( 'align_day', __( 'Renew on day', self::TD ), __( '1–28 of every month (0 = each subscription on its own date). Monthly subscriptions without a trial.', self::TD ), 'number' );
 		$input(
 			'align_scope',
@@ -142,14 +161,49 @@ class RINNOVOBV_Admin {
 				'both'  => __( 'The store admin and the customer', self::TD ),
 			)
 		);
+		$input( 'hold', __( 'Hold renewals', self::TD ), __( 'When a critical component is out of stock at renewal, hold the renewal (not charged) until you replace, skip, ship partly or delay it on the order screen', self::TD ), 'checkbox' );
+		$input( 'weight', __( 'Shipping weight', self::TD ), __( 'A bundle without its own weight weighs as much as its components', self::TD ), 'checkbox' );
+		echo '</table><h2>' . esc_html__( 'Pricing, coupons and reports', self::TD ) . '</h2><table class="form-table" role="presentation">';
+		$input(
+			'flat_split',
+			__( 'Share a flat price', self::TD ),
+			__( 'How a bundle\'s price is shared by its components on each order (shown as the bundle breakdown, for tax reports, refunds and sales per product). Prices are worked out when the item is added to the cart and again on each renewal from the saved bundle.', self::TD ),
+			'select',
+			array(
+				'proportional' => __( 'In proportion to each component\'s own price', self::TD ),
+				'equal'        => __( 'Equally between components', self::TD ),
+				'none'         => __( 'Don\'t share (the bundle line holds the whole price)', self::TD ),
+			)
+		);
+		$input(
+			'coupons',
+			__( 'Coupons on bundles', self::TD ),
+			'',
+			'select',
+			array(
+				'all'  => __( 'Allowed', self::TD ),
+				'none' => __( 'Not allowed on bundle products', self::TD ),
+			)
+		);
 		echo '</table><h2>' . esc_html__( 'Switching and swaps', self::TD ) . '</h2><table class="form-table" role="presentation">';
 		$input( 'switch', __( 'Change plan', self::TD ), __( 'Customers can upgrade or downgrade to another variation (the difference is prorated)', self::TD ), 'checkbox' );
 		$input( 'swap_same', __( 'Swap', self::TD ), __( 'Customers can swap to a variation of the same price (size, flavour…)', self::TD ), 'checkbox' );
 		$input( 'swap_items', __( 'Change items', self::TD ), __( 'Customers can change the items of a pick-your-own box', self::TD ), 'checkbox' );
 		$input( 'swap_cutoff', __( 'Close changes', self::TD ), __( 'Days before a renewal when item changes close.', self::TD ), 'number' );
+		$input( 'next_only', __( 'Next shipment only', self::TD ), __( 'Customers can skip or replace a component for their next shipment without changing their subscription', self::TD ), 'checkbox' );
 		echo '</table>';
 		submit_button();
-		echo '</form><h2>' . esc_html__( 'Box builder', self::TD ) . '</h2><p>' . esc_html__( 'Put [bundle_builder product="123"] on any page to show the step-by-step builder (box size, items, how often) for a bundle product.', self::TD ) . '</p>';
+		echo '</form><h2>' . esc_html__( 'Packing list', self::TD ) . '</h2><p><a class="button" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=rinnovobv_packing' ), 'rinnovobv_packing' ) ) . '">' . esc_html__( 'Download the packing list (orders processing)', self::TD ) . '</a></p>';
+		echo '<h2>' . esc_html__( 'Replace a discontinued product', self::TD ) . '</h2><p>' . esc_html__( 'Puts another product in every bundle subscription (and Box builder box) that has the old one. Orders already made don\'t change.', self::TD ) . '</p>';
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display only.
+		if ( isset( $_GET['replaced'] ) ) {
+			/* translators: %d: subscriptions. */
+			echo '<div class="notice notice-success inline"><p>' . esc_html( sprintf( __( 'Replaced in %d subscriptions.', self::TD ), absint( $_GET['replaced'] ) ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		}
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><input type="hidden" name="action" value="rinnovobv_replace" />';
+		wp_nonce_field( 'rinnovobv_replace' );
+		echo '<select class="wc-product-search" style="min-width:260px" name="from" data-action="woocommerce_json_search_products_and_variations" data-placeholder="' . esc_attr__( 'Old product…', self::TD ) . '"></select> → <select class="wc-product-search" style="min-width:260px" name="to" data-action="woocommerce_json_search_products_and_variations" data-placeholder="' . esc_attr__( 'New product…', self::TD ) . '"></select> <button class="button" onclick="return confirm(this.dataset.c)" data-c="' . esc_attr__( 'Replace it in every subscription?', self::TD ) . '">' . esc_html__( 'Replace', self::TD ) . '</button></form>';
+		echo '<h2>' . esc_html__( 'Box builder', self::TD ) . '</h2><p>' . esc_html__( 'Put [bundle_builder product="123"] on any page to show the step-by-step builder (box size, items, how often) for a bundle product.', self::TD ) . '</p>';
 	}
 
 	/**
@@ -164,7 +218,7 @@ class RINNOVOBV_Admin {
 		$raw  = isset( $_POST['s'] ) ? (array) wp_unslash( $_POST['s'] ) : array();
 		$vals = array();
 		foreach ( RINNOVOBV_Settings::defaults() as $key => $default ) {
-			if ( in_array( $key, array( 'unify', 'prorate', 'switch', 'swap_same', 'swap_items' ), true ) ) {
+			if ( in_array( $key, array( 'unify', 'prorate', 'switch', 'swap_same', 'swap_items', 'hold', 'weight', 'next_only' ), true ) ) {
 				$vals[ $key ] = empty( $raw[ $key ] ) ? 0 : 1;
 			} elseif ( is_int( $default ) ) {
 				$vals[ $key ] = isset( $raw[ $key ] ) ? absint( $raw[ $key ] ) : 0;
@@ -175,6 +229,9 @@ class RINNOVOBV_Admin {
 		$vals['align_day']    = min( 28, $vals['align_day'] );
 		$vals['align_scope']  = 'all' === $vals['align_scope'] ? 'all' : 'bundles';
 		$vals['stock_notify'] = 'both' === $vals['stock_notify'] ? 'both' : 'admin';
+		$vals['coupons']      = 'none' === $vals['coupons'] ? 'none' : 'all';
+		$vals['flat_split']   = in_array( $vals['flat_split'], array( 'proportional', 'equal', 'none' ), true ) ? $vals['flat_split'] : 'proportional';
+		$vals['consolidate']  = 'statement' === $vals['consolidate'] ? 'statement' : 'merge';
 		RINNOVOBV_Settings::save( $vals );
 		wp_safe_redirect( self::url( array( 'saved' => 1 ) ) );
 		exit;

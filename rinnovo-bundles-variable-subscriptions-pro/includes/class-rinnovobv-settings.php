@@ -38,6 +38,12 @@ class RINNOVOBV_Settings {
 			'swap_same'     => 1,
 			'swap_items'    => 1,
 			'swap_cutoff'   => 2,
+			'hold'          => 1,
+			'coupons'       => 'all',
+			'weight'        => 1,
+			'flat_split'    => 'proportional',
+			'consolidate'   => 'merge',
+			'next_only'     => 1,
 		);
 	}
 

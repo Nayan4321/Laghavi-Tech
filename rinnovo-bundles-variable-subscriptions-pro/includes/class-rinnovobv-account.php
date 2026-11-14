@@ -171,12 +171,15 @@ class RINNOVOBV_Account {
 
 		// Contents.
 		if ( $def['enabled'] ) {
-			$items = 'choose' === $def['mode'] ? $data['items'] : $def['components'];
+			$items = $data['items'] ? $data['items'] : $def['components'];
 			if ( $items ) {
 				echo '<p><strong>' . esc_html__( 'In your box:', self::TD ) . '</strong> ' . esc_html( RINNOVOBV_Bundle::contents_text( $items ) ) . '</p>';
 			}
 			if ( 'choose' === $def['mode'] && RINNOVOBV_Settings::get( 'swap_items' ) ) {
 				self::item_editor( $sub, $def, $data );
+			}
+			if ( RINNOVOBV_Settings::get( 'next_only' ) && $data['items'] ) {
+				self::next_editor( $sub, $def, $data );
 			}
 		}
 
@@ -256,6 +259,73 @@ class RINNOVOBV_Account {
 	}
 
 	/**
+	 * Products a component can be replaced with for one shipment: the bundle's choices, or products of the same
+	 * category, in stock.
+	 *
+	 * @param array $def Bundle.
+	 * @param int   $id  Component.
+	 * @return WC_Product[]
+	 */
+	private static function replacements( $def, $id ) {
+		$ids = array_diff( $def['choices'], array( $id ) );
+		if ( ! $ids ) {
+			$cats = wp_get_post_terms( $id, 'product_cat', array( 'fields' => 'slugs' ) );
+			$ids  = is_wp_error( $cats ) || ! $cats ? array() : wc_get_products(
+				array(
+					'status'   => 'publish',
+					'category' => $cats,
+					'limit'    => 16,
+					'return'   => 'ids',
+					'exclude'  => array( $id ),
+				)
+			);
+		}
+		$out = array();
+		foreach ( $ids as $pid ) {
+			$p = wc_get_product( $pid );
+			if ( $p && ! $p->is_type( 'variable' ) && RINNOVOBV_Bundle::in_stock( $p, 1 ) && ! RINNOVOBV_Bundle::def( $p )['enabled'] ) {
+				$out[ (int) $pid ] = $p;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * Skip or replace a component for the next shipment only.
+	 *
+	 * @param object $sub  Subscription.
+	 * @param array  $def  Bundle.
+	 * @param array  $data Saved data.
+	 */
+	private static function next_editor( $sub, $def, $data ) {
+		$cut  = (int) RINNOVOBV_Settings::get( 'swap_cutoff' );
+		$next = isset( $data['next'] ) && is_array( $data['next'] ) ? $data['next'] : array();
+		echo '<details class="rinnovobv-edit"><summary>' . esc_html__( 'Change my next shipment only', self::TD ) . '</summary>';
+		if ( $sub->next_payment && strtotime( $sub->next_payment . ' UTC' ) - $cut * DAY_IN_SECONDS < time() ) {
+			/* translators: %d: days. */
+			echo '<p>' . esc_html( sprintf( __( 'Changes close %d days before the renewal.', self::TD ), $cut ) ) . '</p></details>';
+			return;
+		}
+		echo '<form method="post"><p>' . esc_html__( 'Skip or swap something in your next shipment; your subscription stays the same after it.', self::TD ) . '</p>';
+		self::fields( 'next', (int) $sub->id );
+		foreach ( $data['items'] as $item ) {
+			$id = (int) $item[0];
+			$p  = wc_get_product( $id );
+			if ( ! $p ) {
+				continue;
+			}
+			$now = isset( $next[ $id ] ) ? (string) $next[ $id ] : 'keep';
+			echo '<p><label>' . esc_html( (int) $item[1] . ' × ' . $p->get_name() ) . ' <select name="next[' . $id . ']"><option value="keep">' . esc_html__( 'Keep', self::TD ) . '</option><option value="0"' . selected( '0', $now, false ) . '>' . esc_html__( 'Skip this time', self::TD ) . '</option>';
+			foreach ( self::replacements( $def, $id ) as $rid => $r ) {
+				/* translators: %s: product. */
+				echo '<option value="' . (int) $rid . '"' . selected( (string) $rid, $now, false ) . '>' . esc_html( sprintf( __( 'Swap for %s', self::TD ), $r->get_name() ) ) . '</option>';
+			}
+			echo '</select></label></p>';
+		}
+		echo '<p><button class="button">' . esc_html__( 'Save for my next shipment', self::TD ) . '</button></p></form></details>';
+	}
+
+	/**
 	 * Handle the forms.
 	 */
 	public static function handle() {
@@ -282,6 +352,24 @@ class RINNOVOBV_Account {
 			} else {
 				wc_add_notice( __( 'Your plan has been changed.', self::TD ) );
 			}
+		} elseif ( 'next' === $todo ) {
+			$def  = RINNOVOBV_Bundle::def( (int) $sub->product_id );
+			$data = RINNOVOBV_Settings::sub_data( $sub->id );
+			$next = array();
+			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Ints below.
+			foreach ( isset( $_POST['next'] ) ? (array) wp_unslash( $_POST['next'] ) : array() as $pid => $to ) {
+				$pid = absint( $pid );
+				if ( 'keep' === $to ) {
+					continue;
+				}
+				$to = absint( $to );
+				if ( 0 === $to || isset( self::replacements( $def, $pid )[ $to ] ) ) {
+					$next[ $pid ] = $to;
+				}
+			}
+			$data['next'] = $next;
+			RINNOVOBV_Settings::save_sub_data( $sub->id, $data );
+			wc_add_notice( $next ? __( 'Saved: these changes apply to your next shipment only.', self::TD ) : __( 'Your next shipment is your usual box.', self::TD ) );
 		} elseif ( 'items' === $todo ) {
 			$items = array();
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cast to ints below.

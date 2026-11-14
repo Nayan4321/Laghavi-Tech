@@ -85,7 +85,8 @@ class RINNOVOBV_Bundle {
 		if ( ! $out['enabled'] ) {
 			return $out;
 		}
-		$out['mode']        = 'choose' === $p->get_meta( '_rinnovobv_mode' ) ? 'choose' : 'fixed';
+		$mode               = (string) $p->get_meta( '_rinnovobv_mode' );
+		$out['mode']        = 'choose' === $mode ? 'choose' : ( 'builder' === $mode && self::builder_on( $p ) ? 'builder' : 'fixed' );
 		$out['components']  = array_values(
 			array_filter(
 				(array) $p->get_meta( '_rinnovobv_components' ),
@@ -175,19 +176,19 @@ class RINNOVOBV_Bundle {
 				'options' => array(
 					'fixed'  => __( 'Fixed components (below)', self::TD ),
 					'choose' => __( 'The customer picks items (mix and match)', self::TD ),
-				),
+				) + ( class_exists( 'RINNOVOBB_Config' ) ? array( 'builder' => __( 'Box builder: fixed components below + what customers choose in the Box builder tab (groups, min/max, premium extras, exclusions)', self::TD ) ) : array() ),
 				'value'   => (string) $g( 'mode' ),
 			)
 		);
 		echo '</div><div class="options_group"><p class="form-field"><strong>' . esc_html__( 'Fixed components', self::TD ) . '</strong></p>';
 		$rows = array_values( array_filter( (array) $g( 'components' ), 'is_array' ) );
 		for ( $i = 0; $i < count( $rows ) + 3; $i++ ) {
-			$c = isset( $rows[ $i ] ) ? $rows[ $i ] : array( 0, 1, 0 );
+			$c = isset( $rows[ $i ] ) ? array_pad( $rows[ $i ], 5, 0 ) : array( 0, 1, 0, 0, '' );
 			echo '<p class="form-field"><label>' . esc_html( sprintf( /* translators: %d: row. */ __( 'Component %d', self::TD ), $i + 1 ) ) . '</label>';
 			self::select( '_rinnovobv_components[' . $i . '][0]', $c[0] ? array( (int) $c[0] ) : array(), false );
-			echo ' × <input type="number" min="1" name="_rinnovobv_components[' . (int) $i . '][1]" value="' . (int) max( 1, $c[1] ) . '" style="width:60px" /> <label style="float:none;margin:0"><input type="checkbox" name="_rinnovobv_components[' . (int) $i . '][2]" value="1" ' . checked( ! empty( $c[2] ), true, false ) . ' /> ' . esc_html__( 'critical', self::TD ) . '</label></p>';
+			echo ' × <input type="number" min="1" name="_rinnovobv_components[' . (int) $i . '][1]" value="' . (int) max( 1, $c[1] ) . '" style="width:60px" /> <label style="float:none;margin:0 6px 0 0"><input type="checkbox" name="_rinnovobv_components[' . (int) $i . '][2]" value="1" ' . checked( ! empty( $c[2] ), true, false ) . ' /> ' . esc_html__( 'critical', self::TD ) . '</label><label style="float:none;margin:0 6px 0 0"><input type="checkbox" name="_rinnovobv_components[' . (int) $i . '][3]" value="1" ' . checked( ! empty( $c[3] ), true, false ) . ' /> ' . esc_html__( 'optional', self::TD ) . '</label><label style="float:none;margin:0">' . esc_html__( 'extra price', self::TD ) . ' <input type="text" class="wc_input_price" style="width:70px" name="_rinnovobv_components[' . (int) $i . '][4]" value="' . esc_attr( '' !== (string) $c[4] && $c[4] ? wc_format_localized_price( $c[4] ) : '' ) . '" /></label></p>';
 		}
-		echo '<p class="form-field description" style="padding-left:12px">' . esc_html__( 'Critical: the bundle cannot be bought while it is out of stock. You are warned before renewals about any item that is out of stock. Save to get more rows.', self::TD ) . '</p></div><div class="options_group"><p class="form-field"><strong>' . esc_html__( 'Mix and match', self::TD ) . '</strong></p><p class="form-field"><label>' . esc_html__( 'Items to choose from', self::TD ) . '</label>';
+		echo '<p class="form-field description" style="padding-left:12px">' . esc_html__( 'Critical: the bundle cannot be bought while it is out of stock, and a renewal is held (not charged) until you resolve it. Optional: customers tick it on the product page. Extra price: a fixed charge added to the bundle price for that component (for example a premium pick), with flat or dynamic pricing. Save to get more rows.', self::TD ) . '</p></div><div class="options_group"><p class="form-field"><strong>' . esc_html__( 'Mix and match', self::TD ) . '</strong></p><p class="form-field"><label>' . esc_html__( 'Items to choose from', self::TD ) . '</label>';
 		self::select( '_rinnovobv_choices[]', array_filter( array_map( 'absint', (array) $g( 'choices' ) ) ) );
 		echo '</p>';
 		woocommerce_wp_text_input(
@@ -266,7 +267,8 @@ class RINNOVOBV_Bundle {
 		}
 		$p->update_meta_data( '_rinnovobv_enabled', isset( $_POST['_rinnovobv_enabled'] ) ? 'yes' : 'no' );
 		$p->update_meta_data( '_rinnovobv_choices_critical', isset( $_POST['_rinnovobv_choices_critical'] ) ? 'yes' : 'no' );
-		$p->update_meta_data( '_rinnovobv_mode', isset( $_POST['_rinnovobv_mode'] ) && 'choose' === $_POST['_rinnovobv_mode'] ? 'choose' : 'fixed' );
+		$mode = isset( $_POST['_rinnovobv_mode'] ) ? sanitize_key( wp_unslash( $_POST['_rinnovobv_mode'] ) ) : 'fixed';
+		$p->update_meta_data( '_rinnovobv_mode', in_array( $mode, array( 'choose', 'builder' ), true ) ? $mode : 'fixed' );
 		$p->update_meta_data( '_rinnovobv_pricing', isset( $_POST['_rinnovobv_pricing'] ) && 'dynamic' === $_POST['_rinnovobv_pricing'] ? 'dynamic' : 'flat' );
 		$p->update_meta_data( '_rinnovobv_discount', isset( $_POST['_rinnovobv_discount'] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['_rinnovobv_discount'] ) ) ) : '' );
 		$p->update_meta_data( '_rinnovobv_min', isset( $_POST['_rinnovobv_min'] ) ? absint( $_POST['_rinnovobv_min'] ) : 0 );
@@ -278,7 +280,8 @@ class RINNOVOBV_Bundle {
 		foreach ( isset( $_POST['_rinnovobv_components'] ) ? (array) wp_unslash( $_POST['_rinnovobv_components'] ) : array() as $row ) {
 			$id = isset( $row[0] ) ? absint( $row[0] ) : 0;
 			if ( $id && $id !== (int) $product_id ) {
-				$rows[] = array( $id, max( 1, isset( $row[1] ) ? absint( $row[1] ) : 1 ), ! empty( $row[2] ) ? 1 : 0 );
+				$extra  = isset( $row[4] ) ? wc_format_decimal( sanitize_text_field( $row[4] ) ) : '';
+				$rows[] = array( $id, max( 1, isset( $row[1] ) ? absint( $row[1] ) : 1 ), ! empty( $row[2] ) ? 1 : 0, ! empty( $row[3] ) ? 1 : 0, '' !== $extra && (float) $extra > 0 ? (float) $extra : 0 );
 			}
 		}
 		$p->update_meta_data( '_rinnovobv_components', $rows );
@@ -351,13 +354,17 @@ class RINNOVOBV_Bundle {
 	 * @return array[] [[id, qty]].
 	 */
 	private static function posted_items( $def ) {
-		if ( 'fixed' === $def['mode'] ) {
-			return array_map(
-				static function ( $c ) {
-					return array( (int) $c[0], (int) $c[1] );
-				},
-				$def['components']
-			);
+		if ( 'fixed' === $def['mode'] || 'builder' === $def['mode'] ) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Add to cart has no nonce; ints only.
+			$ticked = isset( $_REQUEST['rinnovobv_opt'] ) ? array_map( 'absint', array_keys( (array) wp_unslash( $_REQUEST['rinnovobv_opt'] ) ) ) : array();
+			$out    = array();
+			foreach ( $def['components'] as $c ) {
+				if ( ! empty( $c[3] ) && ! in_array( (int) $c[0], $ticked, true ) ) {
+					continue;
+				}
+				$out[] = ! empty( $c[4] ) ? array( (int) $c[0], (int) $c[1], (float) $c[4] ) : array( (int) $c[0], (int) $c[1] );
+			}
+			return $out;
 		}
 		$out = array();
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Add to cart has no nonce; cleaned below.
@@ -483,7 +490,88 @@ class RINNOVOBV_Bundle {
 				$sum += (float) $p->get_price( 'edit' ) * (int) $item[1];
 			}
 		}
-		return round( $sum * ( 1 - $disc / 100 ), wc_get_price_decimals() );
+		return round( $sum * ( 1 - $disc / 100 ) + self::extras( $items ), wc_get_price_decimals() );
+	}
+
+	/**
+	 * Fixed extra charges of premium components.
+	 *
+	 * @param array[] $items Items [[id, qty, extra]].
+	 * @return float
+	 */
+	public static function extras( $items ) {
+		$sum = 0.0;
+		foreach ( (array) $items as $item ) {
+			$sum += isset( $item[2] ) ? (float) $item[2] : 0.0;
+		}
+		return $sum;
+	}
+
+	/**
+	 * Whether the shared Box builder is set up on a product.
+	 *
+	 * @param WC_Product $p Product.
+	 * @return bool
+	 */
+	public static function builder_on( $p ) {
+		return class_exists( 'RINNOVOBB_Config' ) && $p && RINNOVOBB_Config::active( $p );
+	}
+
+	/**
+	 * Price of one bundle in the store currency: the product's price (flat) or its components (dynamic), plus
+	 * extra charges and what the customer chose in the Box builder.
+	 *
+	 * @param WC_Product $product Bundle product.
+	 * @param array      $def     Bundle.
+	 * @param array[]    $items   Fixed items.
+	 * @param array|null $sel     Box builder selection.
+	 * @return float
+	 */
+	public static function bundle_price( $product, $def, $items, $sel = null ) {
+		$price = 'dynamic' === $def['pricing'] ? self::items_price( $items, $def['discount'] ) : (float) $product->get_price( 'edit' ) + self::extras( $items );
+		if ( 'builder' === $def['mode'] && is_array( $sel ) ) {
+			$config = RINNOVOBB_Config::get( $product );
+			if ( 'items' === $config['pricing'] ) {
+				$price += RINNOVOBB_Engine::price( $config, $sel, $product ) * ( 'dynamic' === $def['pricing'] ? 1 - $def['discount'] / 100 : 1 );
+			} elseif ( 'extras' === $config['pricing'] ) {
+				$price += RINNOVOBB_Engine::price( $config, $sel, $product ) - (float) $product->get_price( 'edit' );
+			}
+		}
+		return round( $price, wc_get_price_decimals() );
+	}
+
+	/**
+	 * A frozen record of a bundle: ids, quantities, names, prices, tax class, discount and date.
+	 *
+	 * @param WC_Product $product Bundle product.
+	 * @param array      $def     Bundle.
+	 * @param array[]    $items   Items.
+	 * @return array
+	 */
+	public static function snapshot( $product, $def, $items ) {
+		$rows = array();
+		foreach ( (array) $items as $item ) {
+			$p      = wc_get_product( $item[0] );
+			$rows[] = array(
+				'product_id'   => $p && $p->is_type( 'variation' ) ? $p->get_parent_id() : (int) $item[0],
+				'variation_id' => $p && $p->is_type( 'variation' ) ? (int) $item[0] : 0,
+				'qty'          => (int) $item[1],
+				'name'         => $p ? wp_strip_all_tags( $p->get_name() ) : '#' . (int) $item[0],
+				'price'        => $p ? (float) $p->get_price( 'edit' ) : 0.0,
+				'extra'        => isset( $item[2] ) ? (float) $item[2] : 0.0,
+				'tax_class'    => $p ? (string) $p->get_tax_class() : '',
+			);
+		}
+		return array(
+			'product'  => $product ? $product->get_id() : 0,
+			'mode'     => $def['mode'],
+			'pricing'  => $def['pricing'],
+			'discount' => (float) $def['discount'],
+			'price'    => $product ? self::bundle_price( $product, $def, $items ) : 0.0,
+			'items'    => $rows,
+			'currency' => get_woocommerce_currency(),
+			'taken'    => time(),
+		);
 	}
 
 	/**
@@ -497,8 +585,9 @@ class RINNOVOBV_Bundle {
 				continue;
 			}
 			$def = self::def( $item['data'] );
-			if ( 'dynamic' === $def['pricing'] ) {
-				$item['data']->set_price( self::items_price( $item['rinnovobv']['items'], $def['discount'] ) );
+			$sel = isset( $item['rinnovobb']['sel'] ) ? $item['rinnovobb']['sel'] : null;
+			if ( 'dynamic' === $def['pricing'] || self::extras( $item['rinnovobv']['items'] ) > 0 || 'builder' === $def['mode'] ) {
+				$item['data']->set_price( self::bundle_price( wc_get_product( $item['data']->get_id() ), $def, $item['rinnovobv']['items'], $sel ) );
 			}
 		}
 	}
@@ -550,14 +639,16 @@ class RINNOVOBV_Bundle {
 		$line->add_meta_data( '_rinnovobv_items', $values['rinnovobv']['items'], true );
 		$line->add_meta_data( __( 'Contents', self::TD ), self::contents_text( $values['rinnovobv']['items'] ), true );
 		$def  = self::def( $values['data'] );
+		$line->add_meta_data( '_rinnovobv_snapshot', self::snapshot( wc_get_product( $values['data']->get_id() ), $def, $values['rinnovobv']['items'] ), true );
 		$plan = RINNOVO_Product::plan( $values['data'] );
-		if ( $plan && 'dynamic' === $def['pricing'] ) {
+		$sel  = isset( $values['rinnovobb']['sel'] ) ? $values['rinnovobb']['sel'] : null;
+		if ( $plan && ( 'dynamic' === $def['pricing'] || self::extras( $values['rinnovobv']['items'] ) > 0 || 'builder' === $def['mode'] ) ) {
 			$amount = round(
 				(float) wc_get_price_including_tax(
 					$values['data'],
 					array(
 						'qty'   => $values['quantity'],
-						'price' => rinnovo_convert_price( self::items_price( $values['rinnovobv']['items'], $def['discount'] ) ),
+						'price' => rinnovo_convert_price( self::bundle_price( wc_get_product( $values['data']->get_id() ), $def, $values['rinnovobv']['items'], $sel ) ),
 					)
 				),
 				wc_get_price_decimals()
@@ -588,6 +679,9 @@ class RINNOVOBV_Bundle {
 			$line->set_total( 0 );
 			$line->add_meta_data( '_rinnovobv_component', 1, true );
 			$line->add_meta_data( __( 'Part of', self::TD ), $of, true );
+			if ( ! empty( $item[2] ) ) {
+				$line->add_meta_data( '_rinnovobv_extra', (float) $item[2], true );
+			}
 			$order->add_item( $line );
 		}
 	}
@@ -632,8 +726,9 @@ class RINNOVOBV_Bundle {
 		$def          = self::def( (int) $sub->product_id );
 		$data         = RINNOVOBV_Settings::sub_data( $sub->id );
 		$data['items'] = $items;
-		$data['price'] = $def['pricing'];
+		$data['price'] = 'builder' === $def['mode'] || self::extras( $items ) > 0 ? 'bundle' : $def['pricing'];
 		$data['disc']  = $def['discount'];
+		$data['snap']  = $line->get_meta( '_rinnovobv_snapshot' );
 		RINNOVOBV_Settings::save_sub_data( $sub->id, $data );
 	}
 
@@ -656,19 +751,35 @@ class RINNOVOBV_Bundle {
 		$automatic = RINNOVO_Manager::is_automatic( $sub );
 		$charged   = (float) $order->get_total();
 		RINNOVOBV_Unify::renewal_lines( $order, $sub, $data, $automatic );
-		if ( $data['items'] ) {
-			if ( ! $automatic && 'dynamic' === $data['price'] ) {
+		$items = $data['items'];
+		if ( ! empty( $data['next'] ) && is_array( $data['next'] ) ) {
+			// Skip or replace a component for this shipment only.
+			$items = self::apply_next( $items, $data['next'] );
+			$order->add_order_note( __( 'Bundle: the customer changed some components for this shipment only.', self::TD ) );
+			$data['next'] = array();
+			RINNOVOBV_Settings::save_sub_data( $sub->id, $data );
+		}
+		if ( $items ) {
+			if ( ! $automatic && in_array( $data['price'], array( 'dynamic', 'bundle' ), true ) ) {
+				$product = wc_get_product( (int) $sub->product_id );
 				foreach ( $order->get_items() as $line ) {
-					if ( ! $line->get_meta( '_rinnovobv_component' ) && ! $line->get_meta( '_rinnovobv_merged' ) ) {
-						$net = rinnovo_convert_price( self::items_price( $data['items'], (float) $data['disc'] ) ) * $line->get_quantity();
+					if ( ! $line->get_meta( '_rinnovobv_component' ) && ! $line->get_meta( '_rinnovobv_merged' ) && ! $line->get_meta( '_rinnovobb_line' ) ) {
+						$unit = 'dynamic' === $data['price'] || ! $product ? self::items_price( $items, (float) $data['disc'] ) : self::bundle_price( $product, self::def( $product ), $items, null );
+						$net  = rinnovo_convert_price( $unit ) * $line->get_quantity();
 						$line->set_subtotal( $net );
 						$line->set_total( $net );
+						$line->update_meta_data( '_rinnovobv_snapshot', $product ? self::snapshot( $product, self::def( $product ), $items ) : array() );
 						$line->save();
 						break;
 					}
 				}
 			}
-			self::component_lines( $order, $data['items'], (int) $sub->quantity, $sub->name );
+			self::component_lines( $order, $items, (int) $sub->quantity, $sub->name );
+			RINNOVOBV_Tools::shares( $order );
+			$missing = RINNOVOBV_Hold::missing( $sub, $items );
+			if ( $missing ) {
+				$order->update_meta_data( '_rinnovobv_missing', $missing );
+			}
 		}
 		if ( ! $automatic && (float) $data['credit'] > 0 ) {
 			$fee = new WC_Order_Item_Fee();
@@ -691,6 +802,28 @@ class RINNOVOBV_Bundle {
 		}
 		$order->save();
 		self::$busy = false;
+	}
+
+	/**
+	 * Components changed for the next shipment only: [id => 0 (skip) or replacement id].
+	 *
+	 * @param array[] $items Items.
+	 * @param array   $next  Changes.
+	 * @return array[]
+	 */
+	public static function apply_next( $items, $next ) {
+		$out = array();
+		foreach ( (array) $items as $item ) {
+			$id = (int) $item[0];
+			if ( isset( $next[ $id ] ) ) {
+				if ( ! (int) $next[ $id ] ) {
+					continue;
+				}
+				$item[0] = (int) $next[ $id ];
+			}
+			$out[] = $item;
+		}
+		return $out;
 	}
 
 	/**

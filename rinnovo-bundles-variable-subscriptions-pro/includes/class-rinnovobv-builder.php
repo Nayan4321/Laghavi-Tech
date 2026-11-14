@@ -115,8 +115,42 @@ class RINNOVOBV_Builder {
 		if ( ! $def['enabled'] ) {
 			return;
 		}
-		if ( 'fixed' === $def['mode'] ) {
-			echo '<p class="rinnovobv-contents"><strong>' . esc_html__( 'In every box:', self::TD ) . '</strong> ' . esc_html( RINNOVOBV_Bundle::contents_text( $def['components'] ) ) . '</p>';
+		if ( 'fixed' === $def['mode'] || 'builder' === $def['mode'] ) {
+			$always   = array();
+			$optional = array();
+			foreach ( $def['components'] as $c ) {
+				if ( empty( $c[3] ) ) {
+					$always[] = $c;
+				} else {
+					$optional[] = $c;
+				}
+			}
+			if ( $always ) {
+				echo '<p class="rinnovobv-contents"><strong>' . esc_html__( 'In every box:', self::TD ) . '</strong> ' . esc_html( RINNOVOBV_Bundle::contents_text( $always ) ) . '</p>';
+			}
+			if ( $optional ) {
+				echo '<fieldset class="rinnovobv-optional"><legend>' . esc_html__( 'Add to your box', self::TD ) . '</legend>';
+				foreach ( $optional as $c ) {
+					$p = wc_get_product( $c[0] );
+					if ( ! $p ) {
+						continue;
+					}
+					$out   = ! RINNOVOBV_Bundle::in_stock( $p, (int) $c[1] );
+					$price = ! empty( $c[4] ) ? (float) $c[4] : ( 'dynamic' === $def['pricing'] ? (float) $p->get_price() * (int) $c[1] * ( 1 - $def['discount'] / 100 ) : 0 );
+					echo '<label style="display:block"><input type="checkbox" name="rinnovobv_opt[' . (int) $c[0] . ']" value="1"' . disabled( $out, true, false ) . ' /> ' . esc_html( (int) $c[1] . ' × ' . $p->get_name() ) . ( $price > 0 ? ' <span class="rinnovobv-extra">+ ' . wp_kses_post( wc_price( rinnovo_convert_price( $price ) ) ) . '</span>' : '' ) . ( $out ? ' <em>' . esc_html__( 'out of stock', self::TD ) . '</em>' : '' ) . '</label>';
+				}
+				echo '</fieldset>';
+			}
+			if ( 'fixed' === $def['mode'] || count( $def['frequencies'] ) < 2 ) {
+				return;
+			}
+		}
+		if ( 'builder' === $def['mode'] ) {
+			echo '<p><label>' . esc_html__( 'How often', self::TD ) . ' <select name="rinnovobv_frequency">';
+			foreach ( $def['frequencies'] as $f ) {
+				echo '<option value="' . esc_attr( $f[0] . ':' . $f[1] ) . '">' . esc_html( self::frequency_label( $f ) ) . '</option>';
+			}
+			echo '</select></label></p>';
 			return;
 		}
 		self::script();

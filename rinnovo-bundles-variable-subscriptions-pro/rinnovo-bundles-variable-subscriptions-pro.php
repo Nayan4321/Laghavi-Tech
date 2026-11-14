@@ -29,7 +29,7 @@ if ( ! defined( 'RINNOVOBV_LICENSE_SERVER' ) ) {
 	define( 'RINNOVOBV_LICENSE_SERVER', 'https://laghavi.site/wp-json/laghavi-licenses/v1/' );
 }
 
-foreach ( array( 'license', 'settings', 'bundle', 'builder', 'unify', 'switch', 'account', 'admin' ) as $rinnovobv_file ) {
+foreach ( array( 'license', 'settings', 'bundle', 'builder', 'unify', 'switch', 'account', 'admin', 'hold', 'tools' ) as $rinnovobv_file ) {
 	require_once RINNOVOBV_DIR . 'includes/class-rinnovobv-' . $rinnovobv_file . '.php';
 }
 unset( $rinnovobv_file );
@@ -62,6 +62,8 @@ add_action(
 		RINNOVOBV_Switch::init();
 		RINNOVOBV_Account::init();
 		RINNOVOBV_Admin::init();
+		RINNOVOBV_Hold::init();
+		RINNOVOBV_Tools::init();
 		add_action(
 			'wp_enqueue_scripts',
 			static function () {
