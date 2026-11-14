@@ -233,6 +233,19 @@ class VACANAMPRO_Strings {
 	}
 
 	/**
+	 * Use the texts of another language for the rest of this request (emails, invoices).
+	 *
+	 * @param string $lang Language.
+	 */
+	public static function use_language( $lang ) {
+		self::$map     = array();
+		self::$domains = array();
+		if ( Vacanam_Languages::default_slug() !== $lang ) {
+			self::front( $lang );
+		}
+	}
+
+	/**
 	 * Translations of a language (cached until a translation changes).
 	 *
 	 * @param string $lang Language.
@@ -624,7 +637,12 @@ class VACANAMPRO_Strings {
 				$out[ $name ] = __( 'Option', 'vacanam-language-switcher-pro' );
 			}
 		}
-		return $out;
+		/**
+		 * Options whose texts are translated (WooCommerce email texts are added here).
+		 *
+		 * @param array $out option => label.
+		 */
+		return (array) apply_filters( 'vacanampro_text_options', $out );
 	}
 
 	/**
