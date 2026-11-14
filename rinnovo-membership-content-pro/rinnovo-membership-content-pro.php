@@ -35,6 +35,10 @@ foreach ( array( 'license', 'settings', 'tiers', 'members', 'rules', 'paywall', 
 }
 unset( $rinnovomem_file );
 
+
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOMEM_DIR . 'shared/invoices/rinnovo-invoices.php';
+
 add_action(
 	'plugins_loaded',
 	static function () {
@@ -53,6 +57,7 @@ add_action(
 		if ( ! RINNOVOMEM_License::is_valid() ) {
 			return;
 		}
+		rinnovo_invoices_enable();
 		if ( get_option( 'rinnovomem_db_version' ) !== RINNOVOMEM_Teams::DB_VERSION ) {
 			RINNOVOMEM_Teams::install();
 		}

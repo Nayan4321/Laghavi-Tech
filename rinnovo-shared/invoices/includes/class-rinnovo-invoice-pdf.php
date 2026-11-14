@@ -2,7 +2,7 @@
 /**
  * The three invoice templates, drawn as PDF.
  *
- * @package RinnovoSubscriptionsLicensesPro
+ * @package RinnovoInvoices
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -10,7 +10,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Invoice PDF layouts.
  */
-class RINNOVOPRO_Invoice_PDF {
+class RINNOVO_Invoice_PDF {
 
 	const M  = 42;
 	const R  = 553.28;
@@ -19,7 +19,7 @@ class RINNOVOPRO_Invoice_PDF {
 	/**
 	 * Document.
 	 *
-	 * @var RINNOVOPRO_PDF
+	 * @var RINNOVO_Inv_PDF
 	 */
 	private $pdf;
 
@@ -47,7 +47,7 @@ class RINNOVOPRO_Invoice_PDF {
 	/**
 	 * Build a PDF.
 	 *
-	 * @param array  $d        View data (see RINNOVOPRO_Invoices::view_data()).
+	 * @param array  $d        View data (see RINNOVO_Invoices::view_data()).
 	 * @param string $template classic, bold or modern.
 	 * @param string $color    Accent colour.
 	 * @return string PDF bytes.
@@ -57,7 +57,7 @@ class RINNOVOPRO_Invoice_PDF {
 		$self->d     = $d;
 		$self->ac    = $color;
 		$self->logo  = self::logo_path( $d['seller']['logo'] );
-		$self->pdf   = new RINNOVOPRO_PDF();
+		$self->pdf   = new RINNOVO_Inv_PDF();
 		$self->pdf->title = $d['invoice']['number'];
 		$self->pdf->add_page();
 		$method = 'draw_' . ( in_array( $template, array( 'classic', 'bold', 'modern' ), true ) ? $template : 'classic' );
@@ -337,17 +337,17 @@ class RINNOVOPRO_Invoice_PDF {
 		$pdf->text( self::R, self::M + 38, $d['title'], 'R' );
 
 		$top = max( $y, self::M + 50 ) + 34;
-		$this->label( self::M, $top, __( 'Billed to', 'rinnovo-subscriptions-licenses-pro' ) );
+		$this->label( self::M, $top, __( 'Billed to', 'rinnovo-invoices' ) );
 		$yl = $this->block( $this->buyer_lines(), self::M, $top + 16, 260 );
 		$pdf->fill( '#1d1f23' );
 		$pdf->font( 'Helvetica', 9.5 );
-		$pdf->text( self::R, $top, __( 'Invoice No.', 'rinnovo-subscriptions-licenses-pro' ) . ' ' . $d['invoice']['number'], 'R' );
+		$pdf->text( self::R, $top, $d['no_label'] . ' ' . $d['invoice']['number'], 'R' );
 		$pdf->text( self::R, $top + 14, $d['date'], 'R' );
 		$pdf->fill( '#6b7280' );
 		/* translators: %s: order number. */
-		$pdf->text( self::R, $top + 28, sprintf( __( 'Order #%s', 'rinnovo-subscriptions-licenses-pro' ), $d['order']->get_order_number() ), 'R' );
+		$pdf->text( self::R, $top + 28, sprintf( __( 'Order #%s', 'rinnovo-invoices' ), $d['order']->get_order_number() ), 'R' );
 
-		$cols = $this->columns( array( __( 'Item', 'rinnovo-subscriptions-licenses-pro' ), __( 'Quantity', 'rinnovo-subscriptions-licenses-pro' ), __( 'Unit price', 'rinnovo-subscriptions-licenses-pro' ), __( 'Tax', 'rinnovo-subscriptions-licenses-pro' ), __( 'Total', 'rinnovo-subscriptions-licenses-pro' ) ) );
+		$cols = $this->columns( array( __( 'Item', 'rinnovo-invoices' ), __( 'Quantity', 'rinnovo-invoices' ), __( 'Unit price', 'rinnovo-invoices' ), __( 'Tax', 'rinnovo-invoices' ), __( 'Total', 'rinnovo-invoices' ) ) );
 		$y    = $this->items(
 			max( $yl, $top + 40 ) + 22,
 			$cols,
@@ -375,10 +375,10 @@ class RINNOVOPRO_Invoice_PDF {
 			$y += 17;
 		}
 		$pdf->fill( $this->ac );
-		$pdf->rect( $x1, $y - 4, RINNOVOPRO_PDF::W - $x1, 32 );
+		$pdf->rect( $x1, $y - 4, RINNOVO_Inv_PDF::W - $x1, 32 );
 		$pdf->fill( '#ffffff' );
 		$pdf->font( 'Helvetica-Bold', 14 );
-		$pdf->text( $x1 + 14, $y + 17, __( 'Total', 'rinnovo-subscriptions-licenses-pro' ) );
+		$pdf->text( $x1 + 14, $y + 17, __( 'Total', 'rinnovo-invoices' ) );
 		$pdf->text( self::R - 6, $y + 17, $d['total'], 'R' );
 		$pdf->fill( '#6b7280' );
 		$pdf->font( 'Helvetica', 8.5 );
@@ -393,7 +393,7 @@ class RINNOVOPRO_Invoice_PDF {
 		}
 
 		$y  = $this->room( $y, 110 ) + 10;
-		$yl = $this->note( self::M, $y, 250, __( 'Payment information', 'rinnovo-subscriptions-licenses-pro' ), $d['seller']['payment'] );
+		$yl = $this->note( self::M, $y, 250, __( 'Payment information', 'rinnovo-invoices' ), $d['seller']['payment'] );
 		$pdf->fill( '#1d1f23' );
 		$pdf->font( 'Times-Roman', 15 );
 		$pdf->text( self::R, $y + 2, $d['seller']['name'], 'R' );
@@ -417,9 +417,9 @@ class RINNOVOPRO_Invoice_PDF {
 		$pdf->font( 'Helvetica-Bold', 26 );
 		$pdf->text( self::R, self::M + 24, function_exists( 'mb_strtoupper' ) ? mb_strtoupper( $d['title'] ) : strtoupper( $d['title'] ), 'R' );
 		$kv = array(
-			array( __( 'Invoice no.:', 'rinnovo-subscriptions-licenses-pro' ), $d['invoice']['number'] ),
-			array( __( 'Billing date:', 'rinnovo-subscriptions-licenses-pro' ), $d['date'] ),
-			array( __( 'Order:', 'rinnovo-subscriptions-licenses-pro' ), '#' . $d['order']->get_order_number() ),
+			array( $d['no_label'] . ':', $d['invoice']['number'] ),
+			array( isset( $d['date_label'] ) ? $d['date_label'] : __( 'Billing date:', 'rinnovo-invoices' ), $d['date'] ),
+			array( __( 'Order:', 'rinnovo-invoices' ), '#' . $d['order']->get_order_number() ),
 		);
 		$ky = self::M + 44;
 		foreach ( $kv as $pair ) {
@@ -432,15 +432,15 @@ class RINNOVOPRO_Invoice_PDF {
 
 		$top  = max( $y, $ky ) + 26;
 		$half = ( self::CW - 30 ) / 2;
-		$this->label( self::M, $top, __( 'Our information', 'rinnovo-subscriptions-licenses-pro' ), $ac );
-		$this->label( self::M + $half + 30, $top, __( 'Billing to', 'rinnovo-subscriptions-licenses-pro' ), $ac );
+		$this->label( self::M, $top, __( 'Our information', 'rinnovo-invoices' ), $ac );
+		$this->label( self::M + $half + 30, $top, __( 'Billing to', 'rinnovo-invoices' ), $ac );
 		$pdf->stroke( $ac );
 		$pdf->line( self::M, $top + 7, self::M + $half, $top + 7, 0.8 );
 		$pdf->line( self::M + $half + 30, $top + 7, self::R, $top + 7, 0.8 );
 		$y1 = $this->block( $this->seller_lines(), self::M, $top + 24, $half );
 		$y2 = $this->block( $this->buyer_lines(), self::M + $half + 30, $top + 24, $half );
 
-		$cols = $this->columns( array( __( 'Product', 'rinnovo-subscriptions-licenses-pro' ), __( 'Qty', 'rinnovo-subscriptions-licenses-pro' ), __( 'Price', 'rinnovo-subscriptions-licenses-pro' ), __( 'VAT', 'rinnovo-subscriptions-licenses-pro' ), __( 'Total', 'rinnovo-subscriptions-licenses-pro' ) ) );
+		$cols = $this->columns( array( __( 'Product', 'rinnovo-invoices' ), __( 'Qty', 'rinnovo-invoices' ), __( 'Price', 'rinnovo-invoices' ), __( 'VAT', 'rinnovo-invoices' ), __( 'Total', 'rinnovo-invoices' ) ) );
 		$y    = $this->items(
 			max( $y1, $y2 ) + 20,
 			$cols,
@@ -461,7 +461,7 @@ class RINNOVOPRO_Invoice_PDF {
 		$tx  = self::R - 230;
 		$ty0 = $y;
 		$rows   = $d['totals'];
-		$rows[] = array( __( 'Payment', 'rinnovo-subscriptions-licenses-pro' ), (string) $d['order']->get_payment_method_title() );
+		$rows[] = array( __( 'Payment', 'rinnovo-invoices' ), (string) $d['order']->get_payment_method_title() );
 		foreach ( $rows as $row ) {
 			$pdf->fill( '#f1f1f1' );
 			$pdf->rect( $tx, $y, 230, 22 );
@@ -476,7 +476,7 @@ class RINNOVOPRO_Invoice_PDF {
 		$pdf->rect( $tx, $y, 230, 26 );
 		$pdf->fill( '#ffffff' );
 		$pdf->font( 'Helvetica-Bold', 10.5 );
-		$pdf->text( $tx + 8, $y + 17, $d['paid'] ? __( 'Total paid', 'rinnovo-subscriptions-licenses-pro' ) : __( 'Total due', 'rinnovo-subscriptions-licenses-pro' ) );
+		$pdf->text( $tx + 8, $y + 17, $d['paid'] ? $d['total_label'] : __( 'Total due', 'rinnovo-invoices' ) );
 		$pdf->text( self::R - 8, $y + 17, $d['total'], 'R' );
 		$y += 50;
 
@@ -485,18 +485,18 @@ class RINNOVOPRO_Invoice_PDF {
 			$cy = $ty0 + 40;
 			$pdf->rotate( 14, $cx, $cy );
 			$pdf->font( 'Helvetica-Bold', 26 );
-			$w = $pdf->width( __( 'PAID', 'rinnovo-subscriptions-licenses-pro' ) ) + 30;
+			$w = $pdf->width( $d['stamp'] ) + 30;
 			$pdf->stroke( $ac );
 			$pdf->out_line_width( 3 );
 			$pdf->rect( $cx - $w / 2, $cy - 20, $w, 40, 'S' );
 			$pdf->fill( $ac );
-			$pdf->text( $cx, $cy + 9, __( 'PAID', 'rinnovo-subscriptions-licenses-pro' ), 'C' );
+			$pdf->text( $cx, $cy + 9, $d['stamp'], 'C' );
 			$pdf->end_rotate();
 		}
 
 		$y = $this->room( $y, 90 );
 		if ( '' !== trim( $d['seller']['payment'] ) ) {
-			$this->label( self::M, $y, __( 'Payment information', 'rinnovo-subscriptions-licenses-pro' ), $ac );
+			$this->label( self::M, $y, __( 'Payment information', 'rinnovo-invoices' ), $ac );
 			$pdf->stroke( $ac );
 			$pdf->line( self::M, $y + 7, self::R, $y + 7, 0.8 );
 			$pdf->fill( '#1d1f23' );
@@ -526,9 +526,9 @@ class RINNOVOPRO_Invoice_PDF {
 		$pdf->font( 'Helvetica-Bold', 22 );
 		$pdf->text( self::R, self::M + 22, $d['title'], 'R' );
 		$kv = array(
-			array( __( 'Invoice no.:', 'rinnovo-subscriptions-licenses-pro' ), $d['invoice']['number'] ),
-			array( __( 'Invoice date:', 'rinnovo-subscriptions-licenses-pro' ), $d['date'] ),
-			array( __( 'Order:', 'rinnovo-subscriptions-licenses-pro' ), '#' . $d['order']->get_order_number() ),
+			array( $d['no_label'] . ':', $d['invoice']['number'] ),
+			array( isset( $d['date_label'] ) ? $d['date_label'] : __( 'Invoice date:', 'rinnovo-invoices' ), $d['date'] ),
+			array( __( 'Order:', 'rinnovo-invoices' ), '#' . $d['order']->get_order_number() ),
 		);
 		$ky = self::M + 42;
 		foreach ( $kv as $pair ) {
@@ -542,15 +542,15 @@ class RINNOVOPRO_Invoice_PDF {
 
 		$top  = max( $y, $ky ) + 30;
 		$half = ( self::CW - 30 ) / 2;
-		$this->label( self::M, $top, __( 'From', 'rinnovo-subscriptions-licenses-pro' ) );
-		$this->label( self::R, $top, __( 'Bill to', 'rinnovo-subscriptions-licenses-pro' ), '#1d1f23', 'R' );
+		$this->label( self::M, $top, __( 'From', 'rinnovo-invoices' ) );
+		$this->label( self::R, $top, __( 'Bill to', 'rinnovo-invoices' ), '#1d1f23', 'R' );
 		$y1 = $this->block( $this->seller_lines(), self::M, $top + 18, $half );
 		$y2 = $this->block( $this->buyer_lines(), self::R, $top + 18, $half, 'R' );
 
 		$cur  = $d['currency'];
 		/* translators: %s: currency code. */
-		$cols = $this->columns( array( __( 'Description', 'rinnovo-subscriptions-licenses-pro' ), __( 'Qty', 'rinnovo-subscriptions-licenses-pro' ), sprintf( __( 'Rate, %s', 'rinnovo-subscriptions-licenses-pro' ), $cur ), __( 'Tax', 'rinnovo-subscriptions-licenses-pro' ), sprintf( /* translators: %s: currency code. */ __( 'Amount, %s', 'rinnovo-subscriptions-licenses-pro' ), $cur ) ) );
-		$tint = RINNOVOPRO_PDF::tint( $ac, 0.07 );
+		$cols = $this->columns( array( __( 'Description', 'rinnovo-invoices' ), __( 'Qty', 'rinnovo-invoices' ), sprintf( __( 'Rate, %s', 'rinnovo-invoices' ), $cur ), __( 'Tax', 'rinnovo-invoices' ), sprintf( /* translators: %s: currency code. */ __( 'Amount, %s', 'rinnovo-invoices' ), $cur ) ) );
+		$tint = RINNOVO_Inv_PDF::tint( $ac, 0.07 );
 		$y    = $this->items(
 			max( $y1, $y2 ) + 22,
 			$cols,
@@ -572,12 +572,12 @@ class RINNOVOPRO_Invoice_PDF {
 		$y   = $this->room( $y, 170 ) + 26;
 		$half = ( self::CW - 30 ) / 2;
 		$tx  = self::M + $half + 30;
-		$yl  = $this->note( self::M, $y, $half, __( 'Payment instructions', 'rinnovo-subscriptions-licenses-pro' ), $d['seller']['payment'] );
-		$this->note( self::M, $yl + 6, $half, __( 'Notes', 'rinnovo-subscriptions-licenses-pro' ), $d['seller']['footer'] );
+		$yl  = $this->note( self::M, $y, $half, __( 'Payment instructions', 'rinnovo-invoices' ), $d['seller']['payment'] );
+		$this->note( self::M, $yl + 6, $half, __( 'Notes', 'rinnovo-invoices' ), $d['seller']['footer'] );
 
 		$rows   = $d['totals'];
-		$rows[] = array( __( 'Total', 'rinnovo-subscriptions-licenses-pro' ), $d['total'], true );
-		$rows[] = array( __( 'Amount paid', 'rinnovo-subscriptions-licenses-pro' ), $d['paid'] ? $d['total'] : $d['due'] );
+		$rows[] = array( __( 'Total', 'rinnovo-invoices' ), $d['total'], true );
+		$rows[] = array( isset( $d['paid_label'] ) ? $d['paid_label'] : __( 'Amount paid', 'rinnovo-invoices' ), $d['paid'] ? $d['total'] : $d['due'] );
 		$ty     = $y;
 		foreach ( $rows as $row ) {
 			$pdf->fill( '#1d1f23' );
@@ -586,13 +586,13 @@ class RINNOVOPRO_Invoice_PDF {
 			$pdf->text( self::R, $ty, $row[1], 'R' );
 			$ty += 17;
 		}
-		$pdf->fill( RINNOVOPRO_PDF::tint( $ac, 0.1 ) );
+		$pdf->fill( RINNOVO_Inv_PDF::tint( $ac, 0.1 ) );
 		$pdf->rect( $tx - 8, $ty - 4, self::R - $tx + 8, 30 );
 		$pdf->stroke( $ac );
 		$pdf->line( $tx - 8, $ty - 4, self::R, $ty - 4, 1.6 );
 		$pdf->fill( '#1d1f23' );
 		$pdf->font( 'Helvetica-Bold', 12 );
-		$pdf->text( $tx, $ty + 15, __( 'Balance due', 'rinnovo-subscriptions-licenses-pro' ) );
+		$pdf->text( $tx, $ty + 15, __( 'Balance due', 'rinnovo-invoices' ) );
 		$pdf->text( self::R - 6, $ty + 15, $d['due'], 'R' );
 	}
 }

@@ -36,9 +36,8 @@ require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-license-variations.php'
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-variation-subscriptions.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-currency.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-ask-price.php';
-require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-pdf.php';
-require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-invoice-pdf.php';
-require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-invoices.php';
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOPRO_DIR . 'shared/invoices/rinnovo-invoices.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-offers.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-tax.php';
 
@@ -70,7 +69,7 @@ add_action(
 		}
 		RINNOVO_Currency::init();
 		RINNOVO_Ask_Price::init();
-		RINNOVOPRO_Invoices::init();
+		rinnovo_invoices_enable();
 		RINNOVOPRO_Offers::init();
 		RINNOVOPRO_Tax::init();
 		add_action( 'wp_enqueue_scripts', 'rinnovopro_assets', 20 );

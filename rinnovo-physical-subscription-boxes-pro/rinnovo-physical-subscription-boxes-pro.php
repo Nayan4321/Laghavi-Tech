@@ -43,6 +43,10 @@ require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-account.php';
 require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-emails.php';
 require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-admin.php';
 
+
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOBOX_DIR . 'shared/invoices/rinnovo-invoices.php';
+
 add_action(
 	'plugins_loaded',
 	static function () {
@@ -61,6 +65,7 @@ add_action(
 		if ( ! RINNOVOBOX_License::is_valid() ) {
 			return;
 		}
+		rinnovo_invoices_enable();
 		if ( get_option( 'rinnovobox_db_version' ) !== RINNOVOBOX_Store::DB_VERSION ) {
 			RINNOVOBOX_Store::install();
 		}

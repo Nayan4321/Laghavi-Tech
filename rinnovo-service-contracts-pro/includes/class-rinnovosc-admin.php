@@ -246,24 +246,10 @@ class RINNOVOSC_Admin {
 		$input( 'client_pause', __( 'Pause', self::TD ), __( 'Clients can pause their retainer themselves (you always can)', self::TD ), 'checkbox' );
 		$input( 'pause_months', __( 'Longest pause (months)', self::TD ), '', 'number' );
 		$input( 'client_bank', __( 'Bank transfer', self::TD ), __( 'Clients paying by card can switch to bank transfer invoices (enable "Direct bank transfer" in WooCommerce > Settings > Payments; its account details are printed on invoices)', self::TD ), 'checkbox' );
-		echo '</table><h2>' . esc_html__( 'Tax invoices', self::TD ) . '</h2><table class="form-table" role="presentation">';
-		$input( 'gst', __( 'Invoices', self::TD ), __( 'Create a GST / VAT tax invoice (PDF) for every paid contract payment and email it', self::TD ), 'checkbox' );
-		$input( 'legal_name', __( 'Legal name', self::TD ) );
-		$input( 'address', __( 'Address', self::TD ), '', 'textarea' );
-		$input( 'gstin', __( 'Your GSTIN / VAT number', self::TD ) );
-		$input( 'pan', __( 'PAN', self::TD ) );
-		echo '<tr><th><label for="sc-state">' . esc_html__( 'Your state (India)', self::TD ) . '</label></th><td><select id="sc-state" name="s[state]"><option value="">—</option>';
-		foreach ( RINNOVOSC_GST::states() as $code => $row ) {
-			echo '<option value="' . esc_attr( $code ) . '" ' . selected( $s['state'], $code, false ) . '>' . esc_html( $row[1] . ' (' . $row[0] . ')' ) . '</option>';
-		}
-		echo '</select><p class="description">' . esc_html__( 'Clients in this state are charged CGST + SGST, others IGST, clients outside India as export.', self::TD ) . '</p></td></tr>';
-		$input( 'email', __( 'Email', self::TD ) );
-		$input( 'phone', __( 'Phone', self::TD ) );
-		$input( 'prefix', __( 'Number prefix', self::TD ), __( '{fy} becomes the financial year, e.g. INV/{fy}/ → INV/26-27/00001.', self::TD ) );
-		$input( 'sac', __( 'Default SAC code', self::TD ) );
-		$input( 'tax_label', __( 'Your tax number label', self::TD ) );
-		$input( 'show_bank', __( 'Bank details', self::TD ), __( 'Print the Direct bank transfer account details on invoices', self::TD ), 'checkbox' );
-		$input( 'footer', __( 'Footer', self::TD ), '', 'textarea' );
+		echo '</table><h2>' . esc_html__( 'Tax invoices', self::TD ) . '</h2>';
+		echo '<p>' . wp_kses_post( sprintf( /* translators: %s: link. */ __( 'Invoices, credit notes and GST / VAT layouts for every Rinnovo plugin are set up in one place: %s. Contract invoices add the client\'s company and GSTIN, the PO number, the service period, the SAC code and your bank details.', self::TD ), '<a href="' . esc_url( admin_url( 'admin.php?page=rinnovopro-invoices' ) ) . '">' . esc_html__( 'WooCommerce > Invoices', self::TD ) . '</a>' ) ) . '</p><table class="form-table" role="presentation">';
+		$input( 'sac', __( 'Default SAC code', self::TD ), __( 'Used for contracts whose product has no SAC code of its own.', self::TD ) );
+		$input( 'show_bank', __( 'Bank details', self::TD ), __( 'Print the Direct bank transfer account details on invoices paid by bank transfer', self::TD ), 'checkbox' );
 		echo '</table><h2>' . esc_html__( 'Client workspace and tasks', self::TD ) . '</h2><table class="form-table" role="presentation">';
 		$input( 'fluent_tag', __( 'FluentCRM tag', self::TD ), __( 'New clients are added to FluentCRM with this tag (when FluentCRM is active).', self::TD ) );
 		$input( 'jetpack_crm', __( 'Jetpack CRM', self::TD ), __( 'Add new clients to Jetpack CRM (when active)', self::TD ), 'checkbox' );
@@ -293,8 +279,14 @@ class RINNOVOSC_Admin {
 		if ( 'settings' === $todo ) {
 			// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cleaned below.
 			$raw  = isset( $_POST['s'] ) ? (array) wp_unslash( $_POST['s'] ) : array();
-			$vals = array();
+			$vals    = array();
+			$current = RINNOVOSC_Settings::all();
 			foreach ( RINNOVOSC_Settings::defaults() as $key => $default ) {
+				// Fields no longer on this screen (company details now live in WooCommerce > Invoices) keep their values.
+				if ( ! array_key_exists( $key, $raw ) && ! in_array( $key, array( 'prorate', 'client_pause', 'client_bank', 'show_bank', 'jetpack_crm' ), true ) ) {
+					$vals[ $key ] = isset( $current[ $key ] ) ? $current[ $key ] : $default;
+					continue;
+				}
 				if ( is_int( $default ) && in_array( $key, array( 'prorate', 'client_pause', 'client_bank', 'gst', 'show_bank', 'jetpack_crm' ), true ) ) {
 					$vals[ $key ] = empty( $raw[ $key ] ) ? 0 : 1;
 				} elseif ( is_int( $default ) ) {

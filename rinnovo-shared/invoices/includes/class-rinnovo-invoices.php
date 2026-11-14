@@ -3,7 +3,7 @@
  * Invoices: an invoice for every paid order (renewals included), three templates, the seller's and the
  * customer's legal details (company name, address, TRN), a My Account "Invoices" tab and links in emails.
  *
- * @package RinnovoSubscriptionsLicensesPro
+ * @package RinnovoInvoices
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,14 +11,14 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Invoices for WooCommerce orders.
  */
-class RINNOVOPRO_Invoices {
+class RINNOVO_Invoices {
 
 	const OPTION   = 'rinnovopro_invoices';
 	const COUNTER  = 'rinnovopro_invoice_next';
 	const META     = '_rinnovopro_invoice';
 	const ENDPOINT = 'invoices';
 	const PAGE     = 'rinnovopro-invoices';
-	const TD       = 'rinnovo-subscriptions-licenses-pro';
+	const TD       = 'rinnovo-invoices';
 	const USERMETA = 'rinnovopro_legal_';
 
 	/**
@@ -36,6 +36,7 @@ class RINNOVOPRO_Invoices {
 		add_action( 'admin_post_' . self::PAGE, array( __CLASS__, 'save_settings' ) );
 		add_action( 'admin_post_' . self::PAGE . '_preview', array( __CLASS__, 'preview' ) );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
+		RINNOVO_Invoice_Docs::init();
 
 		if ( ! self::get( 'enabled' ) ) {
 			return;
@@ -108,6 +109,13 @@ class RINNOVOPRO_Invoices {
 			'free_orders'    => 0,
 			'email_link'     => 1,
 			'email_pdf'      => 1,
+			'fy_reset'       => 0,
+			'fy_start'       => 1,
+			'credit_notes'   => 1,
+			'cn_prefix'      => 'CN-',
+			'tax_mode'       => 'standard',
+			'seller_state'   => '',
+			'default_hsn'    => '',
 		);
 	}
 
@@ -131,9 +139,9 @@ class RINNOVOPRO_Invoices {
 	 */
 	public static function templates() {
 		return array(
-			'classic' => array( __( 'Classic (black and white)', 'rinnovo-subscriptions-licenses-pro' ), '#111111' ),
-			'bold'    => array( __( 'Bold (accent lines and "Paid" stamp)', 'rinnovo-subscriptions-licenses-pro' ), '#e3342f' ),
-			'modern'  => array( __( 'Modern (coloured table and balance box)', 'rinnovo-subscriptions-licenses-pro' ), '#1a6cf0' ),
+			'classic' => array( __( 'Classic (black and white)', 'rinnovo-invoices' ), '#111111' ),
+			'bold'    => array( __( 'Bold (accent lines and "Paid" stamp)', 'rinnovo-invoices' ), '#e3342f' ),
+			'modern'  => array( __( 'Modern (coloured table and balance box)', 'rinnovo-invoices' ), '#1a6cf0' ),
 		);
 	}
 
@@ -141,7 +149,7 @@ class RINNOVOPRO_Invoices {
 	 * "Invoices" under WooCommerce.
 	 */
 	public static function menu() {
-		add_submenu_page( 'woocommerce', __( 'Invoices', 'rinnovo-subscriptions-licenses-pro' ), __( 'Invoices', 'rinnovo-subscriptions-licenses-pro' ), 'manage_woocommerce', self::PAGE, array( __CLASS__, 'settings_page' ) );
+		add_submenu_page( 'woocommerce', __( 'Invoices', 'rinnovo-invoices' ), __( 'Invoices', 'rinnovo-invoices' ), 'manage_woocommerce', self::PAGE, array( __CLASS__, 'settings_page' ) );
 	}
 
 	/**
@@ -181,13 +189,20 @@ class RINNOVOPRO_Invoices {
 			'email'         => sanitize_email( $text( 'email' ) ),
 			'phone'         => $text( 'phone' ),
 			'website'       => $text( 'website' ),
-			'prefix'        => substr( preg_replace( '/[^A-Za-z0-9\-\/_#]/', '', $text( 'prefix' ) ), 0, 20 ),
+			'prefix'        => substr( preg_replace( '/[^A-Za-z0-9\-\/_#{}]/', '', $text( 'prefix' ) ), 0, 20 ),
 			'digits'        => isset( $in['digits'] ) ? min( 10, max( 1, absint( $in['digits'] ) ) ) : 5,
 			'footer'        => $area( 'footer' ),
 			'customer_mode' => isset( $in['customer_mode'] ) && in_array( $in['customer_mode'], array( 'optional', 'required', 'off' ), true ) ? $in['customer_mode'] : 'optional',
 			'free_orders'   => empty( $in['free_orders'] ) ? 0 : 1,
 			'email_link'    => empty( $in['email_link'] ) ? 0 : 1,
 			'email_pdf'     => empty( $in['email_pdf'] ) ? 0 : 1,
+			'fy_reset'      => empty( $in['fy_reset'] ) ? 0 : 1,
+			'fy_start'      => isset( $in['fy_start'] ) ? min( 12, max( 1, absint( $in['fy_start'] ) ) ) : 1,
+			'credit_notes'  => empty( $in['credit_notes'] ) ? 0 : 1,
+			'cn_prefix'     => substr( preg_replace( '/[^A-Za-z0-9\-\/_#{}]/', '', $text( 'cn_prefix' ) ), 0, 20 ),
+			'tax_mode'      => isset( $in['tax_mode'] ) && 'india_gst' === $in['tax_mode'] ? 'india_gst' : 'standard',
+			'seller_state'  => isset( $in['seller_state'] ) && array_key_exists( $in['seller_state'], RINNOVO_Invoice_Docs::states() ) ? $in['seller_state'] : '',
+			'default_hsn'   => substr( preg_replace( '/[^0-9A-Za-z]/', '', $text( 'default_hsn' ) ), 0, 12 ),
 		);
 		return $clean;
 	}
@@ -206,7 +221,7 @@ class RINNOVOPRO_Invoices {
 	 */
 	public static function save_settings() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-subscriptions-licenses-pro' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-invoices' ) );
 		}
 		check_admin_referer( self::PAGE );
 		$in = self::posted();
@@ -215,7 +230,7 @@ class RINNOVOPRO_Invoices {
 		// The next number can be moved up, never down, so numbers are never used twice.
 		$next = isset( $in['next'] ) ? absint( $in['next'] ) : 0;
 		if ( $next > self::peek_next() ) {
-			update_option( self::COUNTER, $next, false );
+			update_option( RINNOVO_Invoice_Docs::counter( 'inv' ), $next, false );
 		}
 		flush_rewrite_rules( false );
 
@@ -251,10 +266,10 @@ class RINNOVOPRO_Invoices {
 		$sample = self::latest_invoice_order();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'Invoices', 'rinnovo-subscriptions-licenses-pro' ); ?></h1>
-			<p class="description"><?php esc_html_e( 'An invoice is created for every paid order, subscription renewals included. Customers find them in My Account > Invoices and can save them as PDF.', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+			<h1><?php esc_html_e( 'Invoices', 'rinnovo-invoices' ); ?></h1>
+			<p class="description"><?php esc_html_e( 'An invoice is created for every paid order, subscription renewals included. Customers find them in My Account > Invoices and can save them as PDF.', 'rinnovo-invoices' ); ?></p>
 			<?php if ( $saved ) : ?>
-				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Saved.', 'rinnovo-subscriptions-licenses-pro' ); ?></p></div>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Saved.', 'rinnovo-invoices' ); ?></p></div>
 			<?php endif; ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="<?php echo esc_attr( self::PAGE ); ?>" />
@@ -263,71 +278,71 @@ class RINNOVOPRO_Invoices {
 				<?php wp_nonce_field( self::PAGE ); ?>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Invoices', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Invoices', 'rinnovo-invoices' ); ?></th>
 						<td>
-							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'enabled' ) ); ?>" value="1" <?php checked( 1, (int) $s['enabled'] ); ?> /> <?php esc_html_e( 'Create an invoice for every paid order', 'rinnovo-subscriptions-licenses-pro' ); ?></label><br />
-							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'free_orders' ) ); ?>" value="1" <?php checked( 1, (int) $s['free_orders'] ); ?> /> <?php esc_html_e( 'Also for free orders (total 0)', 'rinnovo-subscriptions-licenses-pro' ); ?></label><br />
-							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'email_link' ) ); ?>" value="1" <?php checked( 1, (int) $s['email_link'] ); ?> /> <?php esc_html_e( 'Add a link to the invoice in the customer\'s order emails', 'rinnovo-subscriptions-licenses-pro' ); ?></label><br />
-							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'email_pdf' ) ); ?>" value="1" <?php checked( 1, (int) $s['email_pdf'] ); ?> /> <?php esc_html_e( 'Attach the invoice PDF to the customer\'s order emails', 'rinnovo-subscriptions-licenses-pro' ); ?></label>
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'enabled' ) ); ?>" value="1" <?php checked( 1, (int) $s['enabled'] ); ?> /> <?php esc_html_e( 'Create an invoice for every paid order', 'rinnovo-invoices' ); ?></label><br />
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'free_orders' ) ); ?>" value="1" <?php checked( 1, (int) $s['free_orders'] ); ?> /> <?php esc_html_e( 'Also for free orders (total 0)', 'rinnovo-invoices' ); ?></label><br />
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'email_link' ) ); ?>" value="1" <?php checked( 1, (int) $s['email_link'] ); ?> /> <?php esc_html_e( 'Add a link to the invoice in the customer\'s order emails', 'rinnovo-invoices' ); ?></label><br />
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'email_pdf' ) ); ?>" value="1" <?php checked( 1, (int) $s['email_pdf'] ); ?> /> <?php esc_html_e( 'Attach the invoice PDF to the customer\'s order emails', 'rinnovo-invoices' ); ?></label>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Template', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Template', 'rinnovo-invoices' ); ?></th>
 						<td>
 							<?php foreach ( self::templates() as $key => $tpl ) : ?>
 								<p style="margin:0 0 8px">
 									<label><input type="radio" name="<?php echo esc_attr( $n( 'template' ) ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $s['template'], $key ); ?> /> <?php echo esc_html( $tpl[0] ); ?></label>
-									<button type="submit" class="button button-small" name="action" value="<?php echo esc_attr( self::PAGE . '_preview' ); ?>" formaction="<?php echo esc_url( admin_url( 'admin-post.php?preview_template=' . $key ) ); ?>" formtarget="_blank" style="margin-left:8px"><?php esc_html_e( 'Preview', 'rinnovo-subscriptions-licenses-pro' ); ?></button>
+									<button type="submit" class="button button-small" name="action" value="<?php echo esc_attr( self::PAGE . '_preview' ); ?>" formaction="<?php echo esc_url( admin_url( 'admin-post.php?preview_template=' . $key ) ); ?>" formtarget="_blank" style="margin-left:8px"><?php esc_html_e( 'Preview', 'rinnovo-invoices' ); ?></button>
 								</p>
 							<?php endforeach; ?>
-							<p><label><?php esc_html_e( 'Colour', 'rinnovo-subscriptions-licenses-pro' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'color' ) ); ?>" value="<?php echo esc_attr( $s['color'] ); ?>" placeholder="#111111" class="small-text" style="width:90px" /></label> <span class="description"><?php esc_html_e( 'Leave empty for the template\'s own colour.', 'rinnovo-subscriptions-licenses-pro' ); ?></span></p>
-							<p class="description"><?php esc_html_e( 'Preview opens a sample invoice (PDF) with what is filled in on this page, also before you save.', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+							<p><label><?php esc_html_e( 'Colour', 'rinnovo-invoices' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'color' ) ); ?>" value="<?php echo esc_attr( $s['color'] ); ?>" placeholder="#111111" class="small-text" style="width:90px" /></label> <span class="description"><?php esc_html_e( 'Leave empty for the template\'s own colour.', 'rinnovo-invoices' ); ?></span></p>
+							<p class="description"><?php esc_html_e( 'Preview opens a sample invoice (PDF) with what is filled in on this page, also before you save.', 'rinnovo-invoices' ); ?></p>
 							<?php if ( $sample ) : ?>
-								<p><a href="<?php echo esc_url( self::admin_url( $sample, true ) ); ?>"><?php esc_html_e( 'Download your latest real invoice (saved settings)', 'rinnovo-subscriptions-licenses-pro' ); ?></a></p>
+								<p><a href="<?php echo esc_url( self::admin_url( $sample, true ) ); ?>"><?php esc_html_e( 'Download your latest real invoice (saved settings)', 'rinnovo-invoices' ); ?></a></p>
 							<?php endif; ?>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="inv-logo"><?php esc_html_e( 'Logo', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th>
+						<th scope="row"><label for="inv-logo"><?php esc_html_e( 'Logo', 'rinnovo-invoices' ); ?></label></th>
 						<td>
 							<input type="url" id="inv-logo" name="<?php echo esc_attr( $n( 'logo' ) ); ?>" value="<?php echo esc_attr( $s['logo'] ); ?>" class="regular-text" placeholder="https://" />
-							<button type="button" class="button" id="inv-logo-pick"><?php esc_html_e( 'Choose image', 'rinnovo-subscriptions-licenses-pro' ); ?></button>
-							<p class="description"><?php esc_html_e( 'Empty: the site logo from the Customizer is used, if there is one.', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+							<button type="button" class="button" id="inv-logo-pick"><?php esc_html_e( 'Choose image', 'rinnovo-invoices' ); ?></button>
+							<p class="description"><?php esc_html_e( 'Empty: the site logo from the Customizer is used, if there is one.', 'rinnovo-invoices' ); ?></p>
 						</td>
 					</tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Your company on the invoice', 'rinnovo-subscriptions-licenses-pro' ); ?></h2>
+				<h2><?php esc_html_e( 'Your company on the invoice', 'rinnovo-invoices' ); ?></h2>
 				<table class="form-table" role="presentation">
-					<tr><th scope="row"><label for="inv-legal-name"><?php esc_html_e( 'Legal company name', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><input type="text" id="inv-legal-name" name="<?php echo esc_attr( $n( 'legal_name' ) ); ?>" value="<?php echo esc_attr( $s['legal_name'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" /></td></tr>
-					<tr><th scope="row"><label for="inv-legal-address"><?php esc_html_e( 'Legal address', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><textarea id="inv-legal-address" name="<?php echo esc_attr( $n( 'legal_address' ) ); ?>" rows="3" class="regular-text"><?php echo esc_textarea( $s['legal_address'] ); ?></textarea><p class="description"><?php esc_html_e( 'Empty: the store address from WooCommerce > Settings is used.', 'rinnovo-subscriptions-licenses-pro' ); ?></p></td></tr>
+					<tr><th scope="row"><label for="inv-legal-name"><?php esc_html_e( 'Legal company name', 'rinnovo-invoices' ); ?></label></th><td><input type="text" id="inv-legal-name" name="<?php echo esc_attr( $n( 'legal_name' ) ); ?>" value="<?php echo esc_attr( $s['legal_name'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( get_bloginfo( 'name' ) ); ?>" /></td></tr>
+					<tr><th scope="row"><label for="inv-legal-address"><?php esc_html_e( 'Legal address', 'rinnovo-invoices' ); ?></label></th><td><textarea id="inv-legal-address" name="<?php echo esc_attr( $n( 'legal_address' ) ); ?>" rows="3" class="regular-text"><?php echo esc_textarea( $s['legal_address'] ); ?></textarea><p class="description"><?php esc_html_e( 'Empty: the store address from WooCommerce > Settings is used.', 'rinnovo-invoices' ); ?></p></td></tr>
 					<tr>
-						<th scope="row"><label for="inv-trn"><?php esc_html_e( 'Tax registration number', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th>
+						<th scope="row"><label for="inv-trn"><?php esc_html_e( 'Tax registration number', 'rinnovo-invoices' ); ?></label></th>
 						<td>
 							<input type="text" id="inv-trn" name="<?php echo esc_attr( $n( 'trn' ) ); ?>" value="<?php echo esc_attr( $s['trn'] ); ?>" class="regular-text" />
-							<label><?php esc_html_e( 'shown as', 'rinnovo-subscriptions-licenses-pro' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'tax_label' ) ); ?>" value="<?php echo esc_attr( $s['tax_label'] ); ?>" style="width:90px" /></label>
-							<p class="description"><?php esc_html_e( 'With a number here the title reads "Tax Invoice"; without, "Invoice". Use the label your country uses: TRN, VAT No., GSTIN…', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+							<label><?php esc_html_e( 'shown as', 'rinnovo-invoices' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'tax_label' ) ); ?>" value="<?php echo esc_attr( $s['tax_label'] ); ?>" style="width:90px" /></label>
+							<p class="description"><?php esc_html_e( 'With a number here the title reads "Tax Invoice"; without, "Invoice". Use the label your country uses: TRN, VAT No., GSTIN…', 'rinnovo-invoices' ); ?></p>
 						</td>
 					</tr>
-					<tr><th scope="row"><label for="inv-email"><?php esc_html_e( 'Email', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><input type="email" id="inv-email" name="<?php echo esc_attr( $n( 'email' ) ); ?>" value="<?php echo esc_attr( $s['email'] ); ?>" class="regular-text" /></td></tr>
-					<tr><th scope="row"><label for="inv-phone"><?php esc_html_e( 'Phone', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><input type="text" id="inv-phone" name="<?php echo esc_attr( $n( 'phone' ) ); ?>" value="<?php echo esc_attr( $s['phone'] ); ?>" class="regular-text" /></td></tr>
-					<tr><th scope="row"><label for="inv-website"><?php esc_html_e( 'Website', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><input type="text" id="inv-website" name="<?php echo esc_attr( $n( 'website' ) ); ?>" value="<?php echo esc_attr( $s['website'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>" /></td></tr>
-					<tr><th scope="row"><label for="inv-footer"><?php esc_html_e( 'Note at the bottom', 'rinnovo-subscriptions-licenses-pro' ); ?></label></th><td><textarea id="inv-footer" name="<?php echo esc_attr( $n( 'footer' ) ); ?>" rows="2" class="regular-text"><?php echo esc_textarea( $s['footer'] ); ?></textarea></td></tr>
+					<tr><th scope="row"><label for="inv-email"><?php esc_html_e( 'Email', 'rinnovo-invoices' ); ?></label></th><td><input type="email" id="inv-email" name="<?php echo esc_attr( $n( 'email' ) ); ?>" value="<?php echo esc_attr( $s['email'] ); ?>" class="regular-text" /></td></tr>
+					<tr><th scope="row"><label for="inv-phone"><?php esc_html_e( 'Phone', 'rinnovo-invoices' ); ?></label></th><td><input type="text" id="inv-phone" name="<?php echo esc_attr( $n( 'phone' ) ); ?>" value="<?php echo esc_attr( $s['phone'] ); ?>" class="regular-text" /></td></tr>
+					<tr><th scope="row"><label for="inv-website"><?php esc_html_e( 'Website', 'rinnovo-invoices' ); ?></label></th><td><input type="text" id="inv-website" name="<?php echo esc_attr( $n( 'website' ) ); ?>" value="<?php echo esc_attr( $s['website'] ); ?>" class="regular-text" placeholder="<?php echo esc_attr( wp_parse_url( home_url(), PHP_URL_HOST ) ); ?>" /></td></tr>
+					<tr><th scope="row"><label for="inv-footer"><?php esc_html_e( 'Note at the bottom', 'rinnovo-invoices' ); ?></label></th><td><textarea id="inv-footer" name="<?php echo esc_attr( $n( 'footer' ) ); ?>" rows="2" class="regular-text"><?php echo esc_textarea( $s['footer'] ); ?></textarea></td></tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Numbering', 'rinnovo-subscriptions-licenses-pro' ); ?></h2>
+				<h2><?php esc_html_e( 'Numbering', 'rinnovo-invoices' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Invoice number', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Invoice number', 'rinnovo-invoices' ); ?></th>
 						<td>
-							<label><?php esc_html_e( 'Prefix', 'rinnovo-subscriptions-licenses-pro' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'prefix' ) ); ?>" value="<?php echo esc_attr( $s['prefix'] ); ?>" style="width:90px" /></label>
-							<label><?php esc_html_e( 'Digits', 'rinnovo-subscriptions-licenses-pro' ); ?> <input type="number" min="1" max="10" name="<?php echo esc_attr( $n( 'digits' ) ); ?>" value="<?php echo esc_attr( $s['digits'] ); ?>" class="small-text" /></label>
-							<label><?php esc_html_e( 'Next number', 'rinnovo-subscriptions-licenses-pro' ); ?> <input type="number" min="1" name="<?php echo esc_attr( $n( 'next' ) ); ?>" value="<?php echo esc_attr( self::peek_next() ); ?>" class="small-text" style="width:90px" /></label>
+							<label><?php esc_html_e( 'Prefix', 'rinnovo-invoices' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'prefix' ) ); ?>" value="<?php echo esc_attr( $s['prefix'] ); ?>" style="width:90px" /></label>
+							<label><?php esc_html_e( 'Digits', 'rinnovo-invoices' ); ?> <input type="number" min="1" max="10" name="<?php echo esc_attr( $n( 'digits' ) ); ?>" value="<?php echo esc_attr( $s['digits'] ); ?>" class="small-text" /></label>
+							<label><?php esc_html_e( 'Next number', 'rinnovo-invoices' ); ?> <input type="number" min="1" name="<?php echo esc_attr( $n( 'next' ) ); ?>" value="<?php echo esc_attr( self::peek_next() ); ?>" class="small-text" style="width:90px" /></label>
 							<p class="description">
 								<?php
 								printf(
 									/* translators: %s: example invoice number. */
-									esc_html__( 'Next invoice: %s. Numbers follow on without gaps; the next number can be raised (for example to continue from your old system) but not lowered.', 'rinnovo-subscriptions-licenses-pro' ),
+									esc_html__( 'Next invoice: %s. Numbers follow on without gaps; the next number can be raised (for example to continue from your old system) but not lowered.', 'rinnovo-invoices' ),
 									'<code>' . esc_html( self::format_number( self::peek_next() ) ) . '</code>'
 								);
 								?>
@@ -336,19 +351,79 @@ class RINNOVOPRO_Invoices {
 					</tr>
 				</table>
 
-				<h2><?php esc_html_e( 'Your customers\' details', 'rinnovo-subscriptions-licenses-pro' ); ?></h2>
-				<p class="description"><?php esc_html_e( 'Business customers can add their legal company name, legal address and tax registration number (TRN) in My Account > Account details and at checkout. They are printed on their invoices.', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Financial year', 'rinnovo-invoices' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'fy_reset' ) ); ?>" value="1" <?php checked( 1, (int) $s['fy_reset'] ); ?> /> <?php esc_html_e( 'Start numbering again at 1 every financial year', 'rinnovo-invoices' ); ?></label><br />
+							<label><?php esc_html_e( 'The financial year starts in', 'rinnovo-invoices' ); ?> <select name="<?php echo esc_attr( $n( 'fy_start' ) ); ?>">
+								<?php for ( $m = 1; $m <= 12; $m++ ) : ?>
+									<option value="<?php echo esc_attr( (string) $m ); ?>" <?php selected( (int) $s['fy_start'], $m ); ?>><?php echo esc_html( date_i18n( 'F', mktime( 0, 0, 0, $m, 1 ) ) ); ?></option>
+								<?php endfor; ?>
+							</select></label>
+							<p class="description"><?php esc_html_e( 'Put {fy} in the prefix for the financial year (INV/{fy}/ becomes INV/26-27/00001) or {year} for the calendar year. India: April; UAE, EU, UK and most others: January.', 'rinnovo-invoices' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php esc_html_e( 'Credit notes and corrections', 'rinnovo-invoices' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Credit notes', 'rinnovo-invoices' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( $n( 'credit_notes' ) ); ?>" value="1" <?php checked( 1, (int) $s['credit_notes'] ); ?> /> <?php esc_html_e( 'Issue a credit note for every refund (full or partial), linked to its invoice', 'rinnovo-invoices' ); ?></label><br />
+							<label><?php esc_html_e( 'Prefix', 'rinnovo-invoices' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'cn_prefix' ) ); ?>" value="<?php echo esc_attr( $s['cn_prefix'] ); ?>" style="width:110px" /></label>
+							<?php /* translators: %s: next credit note number. */ ?>
+							<p class="description"><?php printf( esc_html__( 'Credit notes have their own number sequence. Next: %s. Issued invoices are never changed: to correct one, use "Cancel invoice" on the order (a credit note is issued) and then "Issue a corrected invoice".', 'rinnovo-invoices' ), '<code>' . esc_html( RINNOVO_Invoice_Docs::format( RINNOVO_Invoice_Docs::peek( 'cn' ), 'cn' ) ) . '</code>' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php esc_html_e( 'Tax layout', 'rinnovo-invoices' ); ?></h2>
+				<table class="form-table" role="presentation">
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Layout', 'rinnovo-invoices' ); ?></th>
+						<td>
+							<label><input type="radio" name="<?php echo esc_attr( $n( 'tax_mode' ) ); ?>" value="standard" <?php checked( $s['tax_mode'], 'standard' ); ?> /> <?php esc_html_e( 'Standard: the store\'s tax lines (VAT, sales tax…) as WooCommerce calculates them — UAE, Saudi Arabia, EU, UK and most countries', 'rinnovo-invoices' ); ?></label><br />
+							<label><input type="radio" name="<?php echo esc_attr( $n( 'tax_mode' ) ); ?>" value="india_gst" <?php checked( $s['tax_mode'], 'india_gst' ); ?> /> <?php esc_html_e( 'India GST: CGST + SGST within your state, IGST to other states, export outside India; HSN / SAC codes, place of supply and the amount in words', 'rinnovo-invoices' ); ?></label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'India GST', 'rinnovo-invoices' ); ?></th>
+						<td>
+							<label><?php esc_html_e( 'Your state', 'rinnovo-invoices' ); ?> <select name="<?php echo esc_attr( $n( 'seller_state' ) ); ?>"><option value=""><?php esc_html_e( '—', 'rinnovo-invoices' ); ?></option>
+								<?php foreach ( RINNOVO_Invoice_Docs::states() as $code => $row ) : ?>
+									<option value="<?php echo esc_attr( $code ); ?>" <?php selected( $s['seller_state'], $code ); ?>><?php echo esc_html( $row[1] . ' (' . $row[0] . ')' ); ?></option>
+								<?php endforeach; ?>
+							</select></label>
+							<label style="margin-left:12px"><?php esc_html_e( 'Default HSN / SAC code', 'rinnovo-invoices' ); ?> <input type="text" name="<?php echo esc_attr( $n( 'default_hsn' ) ); ?>" value="<?php echo esc_attr( $s['default_hsn'] ); ?>" style="width:110px" placeholder="998314" /></label>
+							<p class="description"><?php esc_html_e( 'Each product can have its own code (product > General > Tax). Set "Tax registration number" above to your GSTIN and its label to GSTIN.', 'rinnovo-invoices' ); ?></p>
+						</td>
+					</tr>
+				</table>
+
+				<h2><?php esc_html_e( 'Your customers\' details', 'rinnovo-invoices' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Business customers can add their legal company name, legal address and tax registration number (TRN) in My Account > Account details and at checkout. They are printed on their invoices.', 'rinnovo-invoices' ); ?></p>
 				<?php
 				$modes = array(
-					'optional' => __( 'Optional: customers may add them if they want a tax invoice (recommended)', 'rinnovo-subscriptions-licenses-pro' ),
-					'required' => __( 'Required: every customer must add a legal name and address (TRN stays optional)', 'rinnovo-subscriptions-licenses-pro' ),
-					'off'      => __( 'Off: invoices use the billing name, company and address', 'rinnovo-subscriptions-licenses-pro' ),
+					'optional' => __( 'Optional: customers may add them if they want a tax invoice (recommended)', 'rinnovo-invoices' ),
+					'required' => __( 'Required: every customer must add a legal name and address (TRN stays optional)', 'rinnovo-invoices' ),
+					'off'      => __( 'Off: invoices use the billing name, company and address', 'rinnovo-invoices' ),
 				);
 				foreach ( $modes as $value => $label ) :
 					?>
 					<p><label><input type="radio" name="<?php echo esc_attr( $n( 'customer_mode' ) ); ?>" value="<?php echo esc_attr( $value ); ?>" <?php checked( $s['customer_mode'], $value ); ?> /> <?php echo esc_html( $label ); ?></label></p>
 				<?php endforeach; ?>
 				<?php submit_button(); ?>
+			</form>
+			<h2><?php esc_html_e( 'Export for accounting', 'rinnovo-invoices' ); ?></h2>
+			<form method="get" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="<?php echo esc_attr( self::PAGE . '_export' ); ?>" />
+				<?php wp_nonce_field( self::PAGE . '_export' ); ?>
+				<label><?php esc_html_e( 'From', 'rinnovo-invoices' ); ?> <input type="date" name="from" value="<?php echo esc_attr( wp_date( 'Y-m-01' ) ); ?>" /></label>
+				<label><?php esc_html_e( 'to', 'rinnovo-invoices' ); ?> <input type="date" name="to" value="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" /></label>
+				<?php submit_button( __( 'Download CSV', 'rinnovo-invoices' ), 'secondary', '', false ); ?>
+				<p class="description"><?php esc_html_e( 'Every invoice and credit note in the period with its customer, tax number, net, tax and total (credit notes negative), for your accountant or accounting software.', 'rinnovo-invoices' ); ?></p>
 			</form>
 		</div>
 		<script>
@@ -378,7 +453,7 @@ class RINNOVOPRO_Invoices {
 	 */
 	public static function preview() {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-subscriptions-licenses-pro' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-invoices' ) );
 		}
 		check_admin_referer( self::PAGE );
 		$settings = self::clean( self::posted() );
@@ -390,7 +465,7 @@ class RINNOVOPRO_Invoices {
 
 		$tpls  = self::templates();
 		$color = '' !== $settings['color'] ? $settings['color'] : $tpls[ $settings['template'] ][1];
-		$bytes = RINNOVOPRO_Invoice_PDF::build( self::sample_data(), $settings['template'], $color );
+		$bytes = RINNOVO_Invoice_PDF::build( self::sample_data(), $settings['template'], $color );
 		nocache_headers();
 		header( 'Content-Type: application/pdf' );
 		header( 'Content-Disposition: inline; filename="invoice-preview-' . $settings['template'] . '.pdf"' );
@@ -408,15 +483,15 @@ class RINNOVOPRO_Invoices {
 		$order = new WC_Order();
 		$order->set_id( 1024 );
 		$order->set_currency( get_woocommerce_currency() );
-		$order->set_payment_method_title( __( 'Credit card', 'rinnovo-subscriptions-licenses-pro' ) );
+		$order->set_payment_method_title( __( 'Credit card', 'rinnovo-invoices' ) );
 		$money  = static function ( $amount ) use ( $order ) {
 			return self::money( $amount, $order, true );
 		};
 		$seller = self::seller();
 		$tax    = '' !== $seller['trn'] ? 0.05 : 0;
 		$items  = array(
-			array( __( 'Business plan – yearly subscription', 'rinnovo-subscriptions-licenses-pro' ), __( 'Plan: 5 sites · License key included', 'rinnovo-subscriptions-licenses-pro' ), 1, 199 ),
-			array( __( 'Priority support add-on', 'rinnovo-subscriptions-licenses-pro' ), '', 1, 49 ),
+			array( __( 'Business plan – yearly subscription', 'rinnovo-invoices' ), __( 'Plan: 5 sites · License key included', 'rinnovo-invoices' ), 1, 199 ),
+			array( __( 'Priority support add-on', 'rinnovo-invoices' ), '', 1, 49 ),
 		);
 		$lines  = array();
 		$sub    = 0;
@@ -431,23 +506,23 @@ class RINNOVOPRO_Invoices {
 				'total' => $money( $it[2] * $it[3] ),
 			);
 		}
-		$totals = array( array( __( 'Subtotal', 'rinnovo-subscriptions-licenses-pro' ), $money( $sub ) ) );
+		$totals = array( array( __( 'Subtotal', 'rinnovo-invoices' ), $money( $sub ) ) );
 		if ( $tax ) {
-			$totals[] = array( __( 'VAT 5%', 'rinnovo-subscriptions-licenses-pro' ), $money( $sub * $tax ) );
+			$totals[] = array( __( 'VAT 5%', 'rinnovo-invoices' ), $money( $sub * $tax ) );
 		}
 		$date              = get_option( 'date_format' );
 		$seller['payment'] = implode(
 			"\n",
 			array(
 				/* translators: %s: payment method. */
-				sprintf( __( 'Payment method: %s', 'rinnovo-subscriptions-licenses-pro' ), __( 'Credit card', 'rinnovo-subscriptions-licenses-pro' ) ),
+				sprintf( __( 'Payment method: %s', 'rinnovo-invoices' ), __( 'Credit card', 'rinnovo-invoices' ) ),
 				/* translators: %s: date. */
-				sprintf( __( 'Paid on: %s', 'rinnovo-subscriptions-licenses-pro' ), date_i18n( $date ) ),
-				__( 'Type: new subscription', 'rinnovo-subscriptions-licenses-pro' ),
+				sprintf( __( 'Paid on: %s', 'rinnovo-invoices' ), date_i18n( $date ) ),
+				__( 'Type: new subscription', 'rinnovo-invoices' ),
 				/* translators: 1: e.g. "every month", 2: how it renews. */
-				sprintf( __( 'Billing: recurring, %1$s – %2$s', 'rinnovo-subscriptions-licenses-pro' ), self::every( 'year', 1 ), __( 'renews automatically', 'rinnovo-subscriptions-licenses-pro' ) ),
+				sprintf( __( 'Billing: recurring, %1$s – %2$s', 'rinnovo-invoices' ), self::every( 'year', 1 ), __( 'renews automatically', 'rinnovo-invoices' ) ),
 				/* translators: %s: date. */
-				sprintf( __( 'Next payment: %s', 'rinnovo-subscriptions-licenses-pro' ), date_i18n( $date, strtotime( '+1 year' ) ) ),
+				sprintf( __( 'Next payment: %s', 'rinnovo-invoices' ), date_i18n( $date, strtotime( '+1 year' ) ) ),
 			)
 		);
 		$total = $sub * ( 1 + $tax );
@@ -459,21 +534,24 @@ class RINNOVOPRO_Invoices {
 			),
 			'seller'    => $seller,
 			'buyer'     => array(
-				'name'    => __( 'Sample Customer LLC', 'rinnovo-subscriptions-licenses-pro' ),
-				'contact' => __( 'Alex Morgan', 'rinnovo-subscriptions-licenses-pro' ),
-				'address' => __( "Office 1204, Bay Square 5\nBusiness Bay, Dubai, UAE", 'rinnovo-subscriptions-licenses-pro' ),
+				'name'    => __( 'Sample Customer LLC', 'rinnovo-invoices' ),
+				'contact' => __( 'Alex Morgan', 'rinnovo-invoices' ),
+				'address' => __( "Office 1204, Bay Square 5\nBusiness Bay, Dubai, UAE", 'rinnovo-invoices' ),
 				'trn'     => $tax ? '100000000000003' : '',
 				'email'   => 'billing@example.com',
 				'phone'   => '+971 50 123 4567',
 			),
-			'title'     => '' !== $seller['trn'] ? __( 'Tax Invoice', 'rinnovo-subscriptions-licenses-pro' ) : __( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ),
+			'title'     => '' !== $seller['trn'] ? __( 'Tax Invoice', 'rinnovo-invoices' ) : __( 'Invoice', 'rinnovo-invoices' ),
 			'date'      => date_i18n( $date ),
 			'lines'     => $lines,
 			'totals'    => $totals,
 			'total'     => $money( $total ),
 			'paid'      => true,
 			/* translators: 1: date, 2: payment method. */
-			'paid_text' => sprintf( __( 'Paid on %1$s by %2$s', 'rinnovo-subscriptions-licenses-pro' ), date_i18n( $date ), __( 'Credit card', 'rinnovo-subscriptions-licenses-pro' ) ),
+			'paid_text' => sprintf( __( 'Paid on %1$s by %2$s', 'rinnovo-invoices' ), date_i18n( $date ), __( 'Credit card', 'rinnovo-invoices' ) ),
+			'no_label'    => __( 'Invoice No.', 'rinnovo-invoices' ),
+			'stamp'       => __( 'PAID', 'rinnovo-invoices' ),
+			'total_label' => __( 'Total paid', 'rinnovo-invoices' ),
 			'due'       => $money( 0 ),
 			'has_tax'   => (bool) $tax,
 			'currency'  => get_woocommerce_currency(),
@@ -490,8 +568,7 @@ class RINNOVOPRO_Invoices {
 	 * @return int
 	 */
 	public static function peek_next() {
-		wp_cache_delete( self::COUNTER, 'options' );
-		return max( 1, (int) get_option( self::COUNTER, 1 ) );
+		return RINNOVO_Invoice_Docs::peek( 'inv' );
 	}
 
 	/**
@@ -500,25 +577,17 @@ class RINNOVOPRO_Invoices {
 	 * @return int
 	 */
 	private static function take_number() {
-		global $wpdb;
-		if ( false === get_option( self::COUNTER ) ) {
-			add_option( self::COUNTER, 1, '', false );
-		}
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- One atomic increment; the options API cannot do this.
-		$wpdb->query( $wpdb->prepare( "UPDATE {$wpdb->options} SET option_value = LAST_INSERT_ID( option_value + 1 ) WHERE option_name = %s", self::COUNTER ) );
-		$next = (int) $wpdb->get_var( 'SELECT LAST_INSERT_ID()' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Value from the increment above.
-		wp_cache_delete( self::COUNTER, 'options' );
-		return max( 1, $next - 1 );
+		return RINNOVO_Invoice_Docs::take( 'inv' );
 	}
 
 	/**
-	 * Formatted invoice number.
+	 * Formatted invoice number ({fy} and {year} in the prefix are filled in).
 	 *
 	 * @param int $number Number.
 	 * @return string
 	 */
 	public static function format_number( $number ) {
-		return (string) self::get( 'prefix' ) . str_pad( (string) $number, (int) self::get( 'digits' ), '0', STR_PAD_LEFT );
+		return RINNOVO_Invoice_Docs::format( $number, 'inv' );
 	}
 
 	/**
@@ -545,30 +614,64 @@ class RINNOVOPRO_Invoices {
 		if ( ! self::get( 'free_orders' ) && 0.0 >= (float) $order->get_total() ) {
 			return;
 		}
+		/**
+		 * Skip the invoice for an order (an extension issues its own document).
+		 *
+		 * @param bool     $skip  Skip.
+		 * @param WC_Order $order Order.
+		 */
+		if ( apply_filters( 'rinnovo_invoice_skip', false, $order ) ) {
+			return;
+		}
 		self::create( $order );
 	}
 
 	/**
-	 * Create (or re-create the details of) an invoice.
+	 * Create an invoice. An issued invoice never changes: corrections are a credit note and a new invoice.
 	 *
-	 * @param WC_Order $order Order.
+	 * @param WC_Order $order    Order.
+	 * @param string   $replaces Number of the cancelled invoice this one replaces.
 	 * @return array Invoice data.
 	 */
-	public static function create( $order ) {
+	public static function create( $order, $replaces = '' ) {
 		$existing = self::invoice( $order );
-		$data     = array(
-			'number' => $existing ? $existing['number'] : self::format_number( self::take_number() ),
-			'date'   => $existing ? $existing['date'] : time(),
-			'seller' => self::seller(),
-			'buyer'  => self::buyer( $order ),
+		if ( $existing ) {
+			return $existing;
+		}
+		$data = array(
+			'number'  => self::format_number( self::take_number() ),
+			'date'    => time(),
+			'seller'  => self::seller(),
+			'buyer'   => self::buyer( $order ),
+			'raw'     => RINNOVO_Invoice_Docs::snapshot( $order ),
+			'status'  => 'issued',
+			'history' => array( array( time(), 'issued', '', get_current_user_id() ) ),
 		);
+		if ( '' !== $replaces ) {
+			$data['replaces'] = $replaces;
+		}
 		$order->update_meta_data( self::META, $data );
 		$order->save_meta_data();
-		if ( ! $existing ) {
-			/* translators: %s: invoice number. */
-			$order->add_order_note( sprintf( __( 'Invoice %s created.', 'rinnovo-subscriptions-licenses-pro' ), $data['number'] ) );
-		}
+		/* translators: %s: invoice number. */
+		$order->add_order_note( sprintf( __( 'Invoice %s created.', 'rinnovo-invoices' ), $data['number'] ) . ( '' !== $replaces ? ' ' . sprintf( /* translators: %s: invoice number. */ __( 'It replaces cancelled invoice %s.', 'rinnovo-invoices' ), $replaces ) : '' ) );
+		/**
+		 * An invoice was issued.
+		 *
+		 * @param array    $data  Invoice.
+		 * @param WC_Order $order Order.
+		 */
+		do_action( 'rinnovo_invoice_issued', $data, $order );
 		return $data;
+	}
+
+	/**
+	 * Note printed after the payment line (reverse charge and similar), from extensions.
+	 *
+	 * @param WC_Order $order Order.
+	 * @return string
+	 */
+	public static function note( $order ) {
+		return (string) apply_filters( 'rinnovo_invoice_note', '', $order );
 	}
 
 	/**
@@ -644,14 +747,24 @@ class RINNOVOPRO_Invoices {
 		$person  = trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
 		$company = '' !== ( isset( $legal['name'] ) ? $legal['name'] : '' ) ? $legal['name'] : $order->get_billing_company();
 
-		return array(
+		$buyer = array(
 			'name'    => '' !== $company ? $company : $person,
 			'contact' => '' !== $company ? $person : '',
 			'address' => ! empty( $legal['address'] ) ? $legal['address'] : implode( "\n", $billing ),
 			'trn'     => isset( $legal['trn'] ) ? $legal['trn'] : '',
 			'email'   => $order->get_billing_email(),
 			'phone'   => $order->get_billing_phone(),
+			'company' => $company,
+			'country' => $order->get_billing_country(),
+			'state'   => $order->get_billing_state(),
 		);
+		/**
+		 * The customer on an invoice (extensions add a PO number, GSTIN and so on).
+		 *
+		 * @param array    $buyer Buyer.
+		 * @param WC_Order $order Order.
+		 */
+		return (array) apply_filters( 'rinnovo_invoice_buyer', $buyer, $order );
 	}
 
 	/*
@@ -666,10 +779,22 @@ class RINNOVOPRO_Invoices {
 	 * @param bool     $pdf    For the PDF: currency symbols the PDF fonts can't show become the code (AED).
 	 * @return string
 	 */
+	public static function money_text( $amount, $order, $pdf = false ) {
+		return self::money( $amount, $order, $pdf );
+	}
+
+	/**
+	 * Money (see money_text()).
+	 *
+	 * @param float    $amount Amount.
+	 * @param WC_Order $order  Order.
+	 * @param bool     $pdf    For the PDF.
+	 * @return string
+	 */
 	private static function money( $amount, $order, $pdf = false ) {
 		$args = array( 'currency' => $order->get_currency() );
 		$text = html_entity_decode( wp_strip_all_tags( wc_price( $amount, $args ) ), ENT_QUOTES, 'UTF-8' );
-		if ( $pdf && ! RINNOVOPRO_PDF::can_encode( $text ) ) {
+		if ( $pdf && ! RINNOVO_Inv_PDF::can_encode( $text ) ) {
 			$text   = $order->get_currency() . ' ' . number_format( (float) $amount, wc_get_price_decimals(), wc_get_price_decimal_separator(), wc_get_price_thousand_separator() );
 		}
 		return $text;
@@ -710,13 +835,13 @@ class RINNOVOPRO_Invoices {
 		$interval = max( 1, (int) $interval );
 		$names    = array(
 			/* translators: %d: number of days. */
-			'day'   => _n( 'every day', 'every %d days', $interval, 'rinnovo-subscriptions-licenses-pro' ),
+			'day'   => _n( 'every day', 'every %d days', $interval, 'rinnovo-invoices' ),
 			/* translators: %d: number of weeks. */
-			'week'  => _n( 'every week', 'every %d weeks', $interval, 'rinnovo-subscriptions-licenses-pro' ),
+			'week'  => _n( 'every week', 'every %d weeks', $interval, 'rinnovo-invoices' ),
 			/* translators: %d: number of months. */
-			'month' => _n( 'every month', 'every %d months', $interval, 'rinnovo-subscriptions-licenses-pro' ),
+			'month' => _n( 'every month', 'every %d months', $interval, 'rinnovo-invoices' ),
 			/* translators: %d: number of years. */
-			'year'  => _n( 'every year', 'every %d years', $interval, 'rinnovo-subscriptions-licenses-pro' ),
+			'year'  => _n( 'every year', 'every %d years', $interval, 'rinnovo-invoices' ),
 		);
 		return sprintf( isset( $names[ $period ] ) ? $names[ $period ] : $names['month'], $interval );
 	}
@@ -732,32 +857,32 @@ class RINNOVOPRO_Invoices {
 		$date  = get_option( 'date_format' );
 		$lines = array();
 		/* translators: %s: payment method, e.g. Credit card (Stripe). */
-		$lines[] = sprintf( __( 'Payment method: %s', 'rinnovo-subscriptions-licenses-pro' ), $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Online payment', 'rinnovo-subscriptions-licenses-pro' ) );
+		$lines[] = sprintf( __( 'Payment method: %s', 'rinnovo-invoices' ), $order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'Online payment', 'rinnovo-invoices' ) );
 		if ( $paid ) {
 			$when = $order->get_date_paid() ? $order->get_date_paid() : $order->get_date_created();
 			/* translators: %s: date. */
-			$lines[] = sprintf( __( 'Paid on: %s', 'rinnovo-subscriptions-licenses-pro' ), $when ? date_i18n( $date, $when->getTimestamp() ) : '' );
+			$lines[] = sprintf( __( 'Paid on: %s', 'rinnovo-invoices' ), $when ? date_i18n( $date, $when->getTimestamp() ) : '' );
 		} else {
-			$lines[] = __( 'Status: not paid yet', 'rinnovo-subscriptions-licenses-pro' );
+			$lines[] = __( 'Status: not paid yet', 'rinnovo-invoices' );
 		}
 		if ( '' !== (string) $order->get_transaction_id() ) {
 			/* translators: %s: transaction ID from the payment provider. */
-			$lines[] = sprintf( __( 'Transaction ID: %s', 'rinnovo-subscriptions-licenses-pro' ), $order->get_transaction_id() );
+			$lines[] = sprintf( __( 'Transaction ID: %s', 'rinnovo-invoices' ), $order->get_transaction_id() );
 		}
 		$found = self::subscription( $order );
 		if ( $found ) {
 			list( $sub, $renewal ) = $found;
 			$automatic             = '' !== (string) $sub->gateway_subscription_id || '' !== (string) $sub->gateway_customer_id;
-			$lines[]               = $renewal ? __( 'Type: subscription renewal', 'rinnovo-subscriptions-licenses-pro' ) : __( 'Type: new subscription', 'rinnovo-subscriptions-licenses-pro' );
+			$lines[]               = $renewal ? __( 'Type: subscription renewal', 'rinnovo-invoices' ) : __( 'Type: new subscription', 'rinnovo-invoices' );
 			$lines[]               = sprintf(
 				/* translators: 1: e.g. "every month", 2: how it renews. */
-				__( 'Billing: recurring, %1$s – %2$s', 'rinnovo-subscriptions-licenses-pro' ),
+				__( 'Billing: recurring, %1$s – %2$s', 'rinnovo-invoices' ),
 				self::every( (string) $sub->period, (int) $sub->interval_count ),
-				$automatic ? __( 'renews automatically', 'rinnovo-subscriptions-licenses-pro' ) : __( 'renewal invoice sent by email', 'rinnovo-subscriptions-licenses-pro' )
+				$automatic ? __( 'renews automatically', 'rinnovo-invoices' ) : __( 'renewal invoice sent by email', 'rinnovo-invoices' )
 			);
 			if ( 'active' === $sub->status && ! empty( $sub->next_payment ) ) {
 				/* translators: %s: date. */
-				$lines[] = sprintf( __( 'Next payment: %s', 'rinnovo-subscriptions-licenses-pro' ), date_i18n( $date, strtotime( $sub->next_payment . ' UTC' ) ) );
+				$lines[] = sprintf( __( 'Next payment: %s', 'rinnovo-invoices' ), date_i18n( $date, strtotime( $sub->next_payment . ' UTC' ) ) );
 			}
 		}
 		return implode( "\n", $lines );
@@ -775,61 +900,94 @@ class RINNOVOPRO_Invoices {
 		if ( ! $invoice ) {
 			$invoice = self::create( $order );
 		}
-		$lines = array();
-		foreach ( $order->get_items() as $item ) {
-			$qty   = max( 1, (float) $item->get_quantity() );
-			$meta  = array();
-			foreach ( $item->get_formatted_meta_data( '_', true ) as $m ) {
-				$meta[] = wp_strip_all_tags( $m->display_key . ': ' . $m->display_value );
-			}
-			$lines[] = array(
-				'name'  => $item->get_name(),
-				'meta'  => implode( ' · ', $meta ),
-				'qty'   => wc_stock_amount( $item->get_quantity() ),
-				'unit'  => self::money( (float) $item->get_subtotal() / $qty, $order, $pdf ),
-				'tax'   => self::money( (float) $item->get_total_tax(), $order, $pdf ),
-				'total' => self::money( (float) $item->get_subtotal(), $order, $pdf ),
-			);
-		}
-		$totals = array(
-			array( __( 'Subtotal', 'rinnovo-subscriptions-licenses-pro' ), self::money( (float) $order->get_subtotal(), $order, $pdf ) ),
-		);
-		if ( (float) $order->get_total_discount() > 0 ) {
-			$totals[] = array( __( 'Discount', 'rinnovo-subscriptions-licenses-pro' ), '−' . self::money( (float) $order->get_total_discount(), $order, $pdf ) );
-		}
-		if ( (float) $order->get_shipping_total() > 0 ) {
-			$totals[] = array( __( 'Shipping', 'rinnovo-subscriptions-licenses-pro' ), self::money( (float) $order->get_shipping_total(), $order, $pdf ) );
-		}
-		foreach ( $order->get_fees() as $fee ) {
-			$totals[] = array( $fee->get_name(), self::money( (float) $fee->get_total(), $order, $pdf ) );
-		}
-		foreach ( $order->get_tax_totals() as $tax ) {
-			$totals[] = array( $tax->label, self::money( (float) $tax->amount, $order, $pdf ) );
-		}
-		$paid      = $order->is_paid() || in_array( $order->get_status(), array( 'processing', 'completed' ), true );
+		// Invoices issued before snapshots existed are read from the order.
+		$raw       = ! empty( $invoice['raw'] ) ? $invoice['raw'] : RINNOVO_Invoice_Docs::snapshot( $order );
+		$view      = RINNOVO_Invoice_Docs::format_snapshot( $raw, $order, $pdf, $invoice['buyer'] );
+		$paid      = $order->is_paid() || in_array( $order->get_status(), array( 'processing', 'completed', 'refunded' ), true );
+		$cancelled = isset( $invoice['status'] ) && 'cancelled' === $invoice['status'];
 		// Payment details always come from the order, never from typed-in text.
 		$invoice['seller']['payment'] = self::payment_text( $order, $paid );
 		$paid_date = $order->get_date_paid() ? $order->get_date_paid() : $order->get_date_created();
+		$extra     = array_filter(
+			array(
+				self::note( $order ),
+				RINNOVO_Invoice_Docs::place_of_supply( $order ),
+				$view['words'],
+				! empty( $invoice['replaces'] ) ? sprintf( /* translators: %s: invoice number. */ __( 'Replaces cancelled invoice %s.', 'rinnovo-invoices' ), $invoice['replaces'] ) : '',
+				$cancelled ? sprintf( /* translators: %s: credit note number. */ __( 'Cancelled by credit note %s.', 'rinnovo-invoices' ), $invoice['cancelled_by'] ) : '',
+			)
+		);
+		if ( $extra ) {
+			$invoice['seller']['payment'] = trim( $invoice['seller']['payment'] . "\n" . implode( "\n", $extra ) );
+		}
+		$paid_text = $paid ? sprintf(
+			/* translators: 1: date, 2: payment method. */
+			__( 'Paid on %1$s by %2$s', 'rinnovo-invoices' ),
+			$paid_date ? date_i18n( get_option( 'date_format' ), $paid_date->getTimestamp() ) : '',
+			$order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'online payment', 'rinnovo-invoices' )
+		) : __( 'Not paid yet', 'rinnovo-invoices' );
 		return array(
-			'order'      => $order,
-			'invoice'    => $invoice,
-			'seller'     => $invoice['seller'],
-			'buyer'      => $invoice['buyer'],
-			'title'      => '' !== $invoice['seller']['trn'] ? __( 'Tax Invoice', 'rinnovo-subscriptions-licenses-pro' ) : __( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ),
-			'date'       => date_i18n( get_option( 'date_format' ), (int) $invoice['date'] ),
-			'lines'      => $lines,
-			'totals'     => $totals,
-			'total'      => self::money( (float) $order->get_total(), $order, $pdf ),
-			'paid'       => $paid,
-			'paid_text'  => $paid ? sprintf(
-				/* translators: 1: date, 2: payment method. */
-				__( 'Paid on %1$s by %2$s', 'rinnovo-subscriptions-licenses-pro' ),
-				$paid_date ? date_i18n( get_option( 'date_format' ), $paid_date->getTimestamp() ) : '',
-				$order->get_payment_method_title() ? $order->get_payment_method_title() : __( 'online payment', 'rinnovo-subscriptions-licenses-pro' )
-			) . ( '' !== RINNOVOPRO_Tax::invoice_note( $order ) ? '. ' . RINNOVOPRO_Tax::invoice_note( $order ) : '' ) : __( 'Not paid yet', 'rinnovo-subscriptions-licenses-pro' ),
-			'due'        => self::money( $paid ? 0 : (float) $order->get_total(), $order, $pdf ),
-			'has_tax'    => wc_tax_enabled() || (float) $order->get_total_tax() > 0,
-			'currency'   => $order->get_currency(),
+			'order'       => $order,
+			'invoice'     => $invoice,
+			'seller'      => $invoice['seller'],
+			'buyer'       => $invoice['buyer'],
+			'title'       => '' !== $invoice['seller']['trn'] ? __( 'Tax Invoice', 'rinnovo-invoices' ) : __( 'Invoice', 'rinnovo-invoices' ),
+			'no_label'    => __( 'Invoice No.', 'rinnovo-invoices' ),
+			'stamp'       => $cancelled ? __( 'CANCELLED', 'rinnovo-invoices' ) : __( 'PAID', 'rinnovo-invoices' ),
+			'total_label' => __( 'Total paid', 'rinnovo-invoices' ),
+			'date'        => date_i18n( get_option( 'date_format' ), (int) $invoice['date'] ),
+			'lines'       => $view['lines'],
+			'totals'      => $view['totals'],
+			'total'       => $view['total'],
+			'paid'        => $paid || $cancelled,
+			'paid_text'   => $paid_text,
+			'due'         => self::money( $paid ? 0 : (float) $order->get_total(), $order, $pdf ),
+			'has_tax'     => wc_tax_enabled() || (float) $raw['tax'] > 0,
+			'currency'    => $order->get_currency(),
+		);
+	}
+
+	/**
+	 * Everything a template needs for a credit note.
+	 *
+	 * @param WC_Order $order  Order.
+	 * @param array    $note   Credit note.
+	 * @param bool     $pdf    For the PDF.
+	 * @return array
+	 */
+	public static function credit_view_data( $order, $note, $pdf = false ) {
+		$view   = RINNOVO_Invoice_Docs::format_snapshot( $note['raw'], $order, $pdf, $note['buyer'] );
+		$extra  = array_filter(
+			array(
+				sprintf( /* translators: 1: invoice number. */ __( 'Credit against invoice %1$s', 'rinnovo-invoices' ), $note['invoice'] ),
+				'cancel' === $note['kind'] ? __( 'The invoice is cancelled', 'rinnovo-invoices' ) : __( 'Refund', 'rinnovo-invoices' ),
+				'' !== (string) $note['reason'] ? sprintf( /* translators: %s: reason. */ __( 'Reason: %s', 'rinnovo-invoices' ), $note['reason'] ) : '',
+				RINNOVO_Invoice_Docs::place_of_supply( $order ),
+				$view['words'],
+			)
+		);
+		$seller            = $note['seller'];
+		$seller['payment'] = implode( "\n", $extra );
+		return array(
+			'order'       => $order,
+			'invoice'     => array_merge( $note, array( 'number' => $note['number'] ) ),
+			'seller'      => $seller,
+			'buyer'       => $note['buyer'],
+			'title'       => __( 'Credit Note', 'rinnovo-invoices' ),
+			'no_label'    => __( 'Credit note No.', 'rinnovo-invoices' ),
+			'stamp'       => __( 'CREDIT', 'rinnovo-invoices' ),
+			'total_label' => __( 'Total credited', 'rinnovo-invoices' ),
+			'date_label'  => __( 'Credit note date:', 'rinnovo-invoices' ),
+			'paid_label'  => __( 'Amount credited', 'rinnovo-invoices' ),
+			'date'        => date_i18n( get_option( 'date_format' ), (int) $note['date'] ),
+			'lines'       => $view['lines'],
+			'totals'      => $view['totals'],
+			'total'       => $view['total'],
+			'paid'        => true,
+			'paid_text'   => sprintf( /* translators: %s: invoice number. */ __( 'Credit against invoice %s', 'rinnovo-invoices' ), $note['invoice'] ),
+			'due'         => self::money( 0, $order, $pdf ),
+			'has_tax'     => (float) $note['raw']['tax'] > 0,
+			'currency'    => $order->get_currency(),
 		);
 	}
 
@@ -850,8 +1008,8 @@ class RINNOVOPRO_Invoices {
 	 * @param string   $back    Address of the "Back" link.
 	 * @param string   $pdf_url Address of the PDF.
 	 */
-	public static function render( $order, $back, $pdf_url ) {
-		$d        = self::view_data( $order );
+	public static function render( $order, $back, $pdf_url, $d = null ) {
+		$d        = null !== $d ? $d : self::view_data( $order );
 		$template = (string) self::get( 'template' );
 		$tpls     = self::templates();
 		$template = isset( $tpls[ $template ] ) ? $template : 'classic';
@@ -933,8 +1091,8 @@ td,th{padding:10px 8px;vertical-align:top}
 </head>
 <body>
 <div class="bar">
-	<?php if ( '' !== $back ) : ?><a href="<?php echo esc_url( $back ); ?>">&larr; <?php esc_html_e( 'Back', 'rinnovo-subscriptions-licenses-pro' ); ?></a><?php endif; ?>
-	<a class="pdf" href="<?php echo esc_url( $pdf_url ); ?>"><?php esc_html_e( 'Download PDF', 'rinnovo-subscriptions-licenses-pro' ); ?></a>
+	<?php if ( '' !== $back ) : ?><a href="<?php echo esc_url( $back ); ?>">&larr; <?php esc_html_e( 'Back', 'rinnovo-invoices' ); ?></a><?php endif; ?>
+	<a class="pdf" href="<?php echo esc_url( $pdf_url ); ?>"><?php esc_html_e( 'Download PDF', 'rinnovo-invoices' ); ?></a>
 </div>
 <div class="sheet t-<?php echo esc_attr( $template ); ?>">
 		<?php
@@ -952,13 +1110,13 @@ td,th{padding:10px 8px;vertical-align:top}
 	 * @param WC_Order $order Order.
 	 * @return string
 	 */
-	public static function pdf( $order ) {
-		$d        = self::view_data( $order, true );
+	public static function pdf( $order, $d = null ) {
+		$d        = null !== $d ? $d : self::view_data( $order, true );
 		$tpls     = self::templates();
 		$template = (string) self::get( 'template' );
 		$template = isset( $tpls[ $template ] ) ? $template : 'classic';
 		$color    = '' !== (string) self::get( 'color' ) ? (string) self::get( 'color' ) : $tpls[ $template ][1];
-		return RINNOVOPRO_Invoice_PDF::build( $d, $template, $color );
+		return RINNOVO_Invoice_PDF::build( $d, $template, $color );
 	}
 
 	/**
@@ -977,11 +1135,12 @@ td,th{padding:10px 8px;vertical-align:top}
 	 *
 	 * @param WC_Order $order Order.
 	 */
-	public static function send_pdf( $order ) {
-		$bytes = self::pdf( $order );
+	public static function send_pdf( $order, $note = null ) {
+		$bytes = $note ? self::pdf( $order, self::credit_view_data( $order, $note, true ) ) : self::pdf( $order );
+		$name  = $note ? sanitize_file_name( $note['number'] . '.pdf' ) : self::pdf_name( $order );
 		nocache_headers();
 		header( 'Content-Type: application/pdf' );
-		header( 'Content-Disposition: attachment; filename="' . self::pdf_name( $order ) . '"' );
+		header( 'Content-Disposition: attachment; filename="' . $name . '"' );
 		header( 'Content-Length: ' . strlen( $bytes ) );
 		echo $bytes; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Binary PDF.
 	}
@@ -1078,27 +1237,27 @@ td,th{padding:10px 8px;vertical-align:top}
 			<h1><?php echo esc_html( $d['title'] ); ?></h1>
 		</div>
 		<div class="grid2">
-			<div><div class="label"><?php esc_html_e( 'Billed to', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
+			<div><div class="label"><?php esc_html_e( 'Billed to', 'rinnovo-invoices' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
 			<div class="right">
-				<?php esc_html_e( 'Invoice No.', 'rinnovo-subscriptions-licenses-pro' ); ?> <strong><?php echo esc_html( $d['invoice']['number'] ); ?></strong><br />
+				<?php echo esc_html( $d['no_label'] ); ?> <strong><?php echo esc_html( $d['invoice']['number'] ); ?></strong><br />
 				<?php echo esc_html( $d['date'] ); ?><br />
 				<span class="muted">
 					<?php
 					/* translators: %s: order number. */
-					echo esc_html( sprintf( __( 'Order #%s', 'rinnovo-subscriptions-licenses-pro' ), $d['order']->get_order_number() ) );
+					echo esc_html( sprintf( __( 'Order #%s', 'rinnovo-invoices' ), $d['order']->get_order_number() ) );
 					?>
 				</span>
 			</div>
 		</div>
 		<table class="items">
-			<thead><tr><th><?php esc_html_e( 'Item', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php esc_html_e( 'Quantity', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php esc_html_e( 'Unit price', 'rinnovo-subscriptions-licenses-pro' ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'Tax', 'rinnovo-subscriptions-licenses-pro' ); ?></th><?php endif; ?><th class="num"><?php esc_html_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'Item', 'rinnovo-invoices' ); ?></th><th class="num"><?php esc_html_e( 'Quantity', 'rinnovo-invoices' ); ?></th><th class="num"><?php esc_html_e( 'Unit price', 'rinnovo-invoices' ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'Tax', 'rinnovo-invoices' ); ?></th><?php endif; ?><th class="num"><?php esc_html_e( 'Total', 'rinnovo-invoices' ); ?></th></tr></thead>
 			<tbody><?php self::item_rows( $d, $d['has_tax'] ); ?></tbody>
 		</table>
 		<table class="totals" style="margin-top:14px">
 			<?php foreach ( $d['totals'] as $row ) : ?>
 				<tr><td><strong><?php echo esc_html( $row[0] ); ?></strong></td><td class="num"><?php echo esc_html( $row[1] ); ?></td></tr>
 			<?php endforeach; ?>
-			<tr class="grand"><td><?php esc_html_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?></td><td class="num"><?php echo esc_html( $d['total'] ); ?></td></tr>
+			<tr class="grand"><td><?php esc_html_e( 'Total', 'rinnovo-invoices' ); ?></td><td class="num"><?php echo esc_html( $d['total'] ); ?></td></tr>
 			<tr><td colspan="2" class="right small muted"><?php echo esc_html( $d['paid_text'] ); ?></td></tr>
 		</table>
 		<?php if ( '' !== trim( $s['footer'] ) ) : ?>
@@ -1107,7 +1266,7 @@ td,th{padding:10px 8px;vertical-align:top}
 		<div class="grid2 foot">
 			<div>
 				<?php if ( '' !== trim( $s['payment'] ) ) : ?>
-					<div class="label"><?php esc_html_e( 'Payment information', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?>
+					<div class="label"><?php esc_html_e( 'Payment information', 'rinnovo-invoices' ); ?></div><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?>
 				<?php endif; ?>
 			</div>
 			<div class="right"><?php self::seller_block( $s, false ); ?></div>
@@ -1128,33 +1287,33 @@ td,th{padding:10px 8px;vertical-align:top}
 			<div>
 				<h1><?php echo esc_html( strtoupper( $d['title'] ) ); ?></h1>
 				<div class="kv">
-					<b><?php esc_html_e( 'INVOICE NO.:', 'rinnovo-subscriptions-licenses-pro' ); ?></b><span><?php echo esc_html( $d['invoice']['number'] ); ?></span>
-					<b><?php esc_html_e( 'BILLING DATE:', 'rinnovo-subscriptions-licenses-pro' ); ?></b><span><?php echo esc_html( $d['date'] ); ?></span>
-					<b><?php esc_html_e( 'ORDER:', 'rinnovo-subscriptions-licenses-pro' ); ?></b><span>#<?php echo esc_html( $d['order']->get_order_number() ); ?></span>
+					<b><?php echo esc_html( strtoupper( $d['no_label'] ) . ':' ); ?></b><span><?php echo esc_html( $d['invoice']['number'] ); ?></span>
+					<b><?php esc_html_e( 'BILLING DATE:', 'rinnovo-invoices' ); ?></b><span><?php echo esc_html( $d['date'] ); ?></span>
+					<b><?php esc_html_e( 'ORDER:', 'rinnovo-invoices' ); ?></b><span>#<?php echo esc_html( $d['order']->get_order_number() ); ?></span>
 				</div>
 			</div>
 		</div>
 		<div class="grid2">
-			<div><div class="label sect"><?php esc_html_e( 'Our information', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php self::seller_block( $s ); ?></div>
-			<div><div class="label sect"><?php esc_html_e( 'Billing to', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
+			<div><div class="label sect"><?php esc_html_e( 'Our information', 'rinnovo-invoices' ); ?></div><?php self::seller_block( $s ); ?></div>
+			<div><div class="label sect"><?php esc_html_e( 'Billing to', 'rinnovo-invoices' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
 		</div>
 		<table class="items">
-			<thead><tr><th><?php esc_html_e( 'Product', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php esc_html_e( 'Qty', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php esc_html_e( 'Price', 'rinnovo-subscriptions-licenses-pro' ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'VAT', 'rinnovo-subscriptions-licenses-pro' ); ?></th><?php endif; ?><th class="num"><?php esc_html_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'Product', 'rinnovo-invoices' ); ?></th><th class="num"><?php esc_html_e( 'Qty', 'rinnovo-invoices' ); ?></th><th class="num"><?php esc_html_e( 'Price', 'rinnovo-invoices' ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'VAT', 'rinnovo-invoices' ); ?></th><?php endif; ?><th class="num"><?php esc_html_e( 'Total', 'rinnovo-invoices' ); ?></th></tr></thead>
 			<tbody><?php self::item_rows( $d, $d['has_tax'] ); ?></tbody>
 		</table>
 		<table class="totals" style="margin-top:6px">
 			<?php foreach ( $d['totals'] as $row ) : ?>
 				<tr><td><?php echo esc_html( $row[0] ); ?></td><td class="num"><?php echo esc_html( $row[1] ); ?></td></tr>
 			<?php endforeach; ?>
-			<tr><td><?php esc_html_e( 'Payment', 'rinnovo-subscriptions-licenses-pro' ); ?></td><td class="num"><?php echo esc_html( $d['order']->get_payment_method_title() ); ?></td></tr>
-			<tr class="grand"><td><?php echo esc_html( $d['paid'] ? __( 'Total paid', 'rinnovo-subscriptions-licenses-pro' ) : __( 'Total due', 'rinnovo-subscriptions-licenses-pro' ) ); ?></td><td class="num"><?php echo esc_html( $d['total'] ); ?></td></tr>
+			<tr><td><?php esc_html_e( 'Payment', 'rinnovo-invoices' ); ?></td><td class="num"><?php echo esc_html( $d['order']->get_payment_method_title() ); ?></td></tr>
+			<tr class="grand"><td><?php echo esc_html( $d['paid'] ? $d['total_label'] : __( 'Total due', 'rinnovo-invoices' ) ); ?></td><td class="num"><?php echo esc_html( $d['total'] ); ?></td></tr>
 		</table>
 		<?php if ( $d['paid'] ) : ?>
-			<div class="stamp"><?php esc_html_e( 'PAID', 'rinnovo-subscriptions-licenses-pro' ); ?></div>
+			<div class="stamp"><?php echo esc_html( $d['stamp'] ); ?></div>
 		<?php endif; ?>
 		<div class="foot">
 			<?php if ( '' !== trim( $s['payment'] ) ) : ?>
-				<div class="label sect"><?php esc_html_e( 'Payment information', 'rinnovo-subscriptions-licenses-pro' ); ?></div>
+				<div class="label sect"><?php esc_html_e( 'Payment information', 'rinnovo-invoices' ); ?></div>
 				<p><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?></p>
 			<?php endif; ?>
 			<?php if ( '' !== trim( $s['footer'] ) ) : ?>
@@ -1177,28 +1336,28 @@ td,th{padding:10px 8px;vertical-align:top}
 			<div>
 				<h1><?php echo esc_html( $d['title'] ); ?></h1>
 				<div class="kv">
-					<span><?php esc_html_e( 'Invoice no.:', 'rinnovo-subscriptions-licenses-pro' ); ?></span><span><?php echo esc_html( $d['invoice']['number'] ); ?></span>
-					<span><?php esc_html_e( 'Invoice date:', 'rinnovo-subscriptions-licenses-pro' ); ?></span><span><?php echo esc_html( $d['date'] ); ?></span>
-					<span><?php esc_html_e( 'Order:', 'rinnovo-subscriptions-licenses-pro' ); ?></span><span>#<?php echo esc_html( $d['order']->get_order_number() ); ?></span>
+					<span><?php echo esc_html( $d['no_label'] . ':' ); ?></span><span><?php echo esc_html( $d['invoice']['number'] ); ?></span>
+					<span><?php echo esc_html( isset( $d['date_label'] ) ? $d['date_label'] : __( 'Invoice date:', 'rinnovo-invoices' ) ); ?></span><span><?php echo esc_html( $d['date'] ); ?></span>
+					<span><?php esc_html_e( 'Order:', 'rinnovo-invoices' ); ?></span><span>#<?php echo esc_html( $d['order']->get_order_number() ); ?></span>
 				</div>
 			</div>
 		</div>
 		<div class="grid2">
-			<div><div class="label"><?php esc_html_e( 'From', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php self::seller_block( $s ); ?></div>
-			<div class="right"><div class="label"><?php esc_html_e( 'Bill to', 'rinnovo-subscriptions-licenses-pro' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
+			<div><div class="label"><?php esc_html_e( 'From', 'rinnovo-invoices' ); ?></div><?php self::seller_block( $s ); ?></div>
+			<div class="right"><div class="label"><?php esc_html_e( 'Bill to', 'rinnovo-invoices' ); ?></div><?php self::buyer_block( $d['buyer'], $s ); ?></div>
 		</div>
 		<table class="items">
-			<thead><tr><th><?php esc_html_e( 'Description', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php esc_html_e( 'Qty', 'rinnovo-subscriptions-licenses-pro' ); ?></th><th class="num"><?php echo esc_html( sprintf( /* translators: %s: currency code. */ __( 'Rate, %s', 'rinnovo-subscriptions-licenses-pro' ), $d['currency'] ) ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'Tax', 'rinnovo-subscriptions-licenses-pro' ); ?></th><?php endif; ?><th class="num"><?php echo esc_html( sprintf( /* translators: %s: currency code. */ __( 'Amount, %s', 'rinnovo-subscriptions-licenses-pro' ), $d['currency'] ) ); ?></th></tr></thead>
+			<thead><tr><th><?php esc_html_e( 'Description', 'rinnovo-invoices' ); ?></th><th class="num"><?php esc_html_e( 'Qty', 'rinnovo-invoices' ); ?></th><th class="num"><?php echo esc_html( sprintf( /* translators: %s: currency code. */ __( 'Rate, %s', 'rinnovo-invoices' ), $d['currency'] ) ); ?></th><?php if ( $d['has_tax'] ) : ?><th class="num"><?php esc_html_e( 'Tax', 'rinnovo-invoices' ); ?></th><?php endif; ?><th class="num"><?php echo esc_html( sprintf( /* translators: %s: currency code. */ __( 'Amount, %s', 'rinnovo-invoices' ), $d['currency'] ) ); ?></th></tr></thead>
 			<tbody><?php self::item_rows( $d, $d['has_tax'] ); ?></tbody>
 		</table>
 		<div class="bottom">
 			<div>
 				<?php if ( '' !== trim( $s['payment'] ) ) : ?>
-					<div class="label"><?php esc_html_e( 'Payment instructions', 'rinnovo-subscriptions-licenses-pro' ); ?></div>
+					<div class="label"><?php esc_html_e( 'Payment instructions', 'rinnovo-invoices' ); ?></div>
 					<p><?php echo self::lines( $s['payment'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in lines(). ?></p>
 				<?php endif; ?>
 				<?php if ( '' !== trim( $s['footer'] ) ) : ?>
-					<div class="label"><?php esc_html_e( 'Notes', 'rinnovo-subscriptions-licenses-pro' ); ?></div>
+					<div class="label"><?php esc_html_e( 'Notes', 'rinnovo-invoices' ); ?></div>
 					<p><?php echo esc_html( $s['footer'] ); ?></p>
 				<?php endif; ?>
 			</div>
@@ -1206,9 +1365,9 @@ td,th{padding:10px 8px;vertical-align:top}
 				<?php foreach ( $d['totals'] as $row ) : ?>
 					<tr><td><?php echo esc_html( $row[0] ); ?></td><td class="num"><?php echo esc_html( $row[1] ); ?></td></tr>
 				<?php endforeach; ?>
-				<tr><td><strong><?php esc_html_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?></strong></td><td class="num"><strong><?php echo esc_html( $d['total'] ); ?></strong></td></tr>
-				<tr><td><?php esc_html_e( 'Amount paid', 'rinnovo-subscriptions-licenses-pro' ); ?></td><td class="num"><?php echo esc_html( $d['paid'] ? $d['total'] : self::money( 0, $d['order'] ) ); ?></td></tr>
-				<tr class="balance"><td><?php esc_html_e( 'Balance due', 'rinnovo-subscriptions-licenses-pro' ); ?></td><td class="num"><?php echo esc_html( $d['due'] ); ?></td></tr>
+				<tr><td><strong><?php esc_html_e( 'Total', 'rinnovo-invoices' ); ?></strong></td><td class="num"><strong><?php echo esc_html( $d['total'] ); ?></strong></td></tr>
+				<tr><td><?php echo esc_html( isset( $d['paid_label'] ) ? $d['paid_label'] : __( 'Amount paid', 'rinnovo-invoices' ) ); ?></td><td class="num"><?php echo esc_html( $d['paid'] ? $d['total'] : self::money( 0, $d['order'] ) ); ?></td></tr>
+				<tr class="balance"><td><?php esc_html_e( 'Balance due', 'rinnovo-invoices' ); ?></td><td class="num"><?php echo esc_html( $d['due'] ); ?></td></tr>
 			</table>
 		</div>
 		<?php
@@ -1224,9 +1383,9 @@ td,th{padding:10px 8px;vertical-align:top}
 	public static function add_endpoint() {
 		add_rewrite_endpoint( self::ENDPOINT, EP_ROOT | EP_PAGES );
 		// After an install or update, WordPress must rebuild its address rules once, or the tab is a 404.
-		if ( get_option( self::OPTION . '_rewrite' ) !== RINNOVOPRO_VERSION ) {
+		if ( get_option( self::OPTION . '_rewrite' ) !== RINNOVO_INVOICES_VERSION ) {
 			flush_rewrite_rules( false );
-			update_option( self::OPTION . '_rewrite', RINNOVOPRO_VERSION, true );
+			update_option( self::OPTION . '_rewrite', RINNOVO_INVOICES_VERSION, true );
 		}
 	}
 
@@ -1252,11 +1411,11 @@ td,th{padding:10px 8px;vertical-align:top}
 		foreach ( $items as $key => $label ) {
 			$out[ $key ] = $label;
 			if ( 'orders' === $key ) {
-				$out[ self::ENDPOINT ] = __( 'Invoices', 'rinnovo-subscriptions-licenses-pro' );
+				$out[ self::ENDPOINT ] = __( 'Invoices', 'rinnovo-invoices' );
 			}
 		}
 		if ( ! isset( $out[ self::ENDPOINT ] ) ) {
-			$out[ self::ENDPOINT ] = __( 'Invoices', 'rinnovo-subscriptions-licenses-pro' );
+			$out[ self::ENDPOINT ] = __( 'Invoices', 'rinnovo-invoices' );
 		}
 		return $out;
 	}
@@ -1267,7 +1426,7 @@ td,th{padding:10px 8px;vertical-align:top}
 	 * @return string
 	 */
 	public static function account_title() {
-		return __( 'Invoices', 'rinnovo-subscriptions-licenses-pro' );
+		return __( 'Invoices', 'rinnovo-invoices' );
 	}
 
 	/**
@@ -1277,8 +1436,9 @@ td,th{padding:10px 8px;vertical-align:top}
 	 * @param bool     $pdf   The PDF download instead of the page.
 	 * @return string
 	 */
-	public static function customer_url( $order, $pdf = false ) {
+	public static function customer_url( $order, $pdf = false, $note = '' ) {
 		$url = wc_get_account_endpoint_url( self::ENDPOINT ) . $order->get_id() . '/';
+		$url = '' !== $note ? add_query_arg( 'cn', rawurlencode( $note ), $url ) : $url;
 		return $pdf ? add_query_arg( 'pdf', 1, $url ) : $url;
 	}
 
@@ -1288,8 +1448,8 @@ td,th{padding:10px 8px;vertical-align:top}
 	 * @param WC_Order $order Order.
 	 * @return string
 	 */
-	public static function admin_url( $order, $pdf = false ) {
-		return wp_nonce_url( admin_url( 'admin-post.php?action=' . self::PAGE . '_view&order=' . $order->get_id() . ( $pdf ? '&pdf=1' : '' ) ), self::PAGE . '_view_' . $order->get_id() );
+	public static function admin_url( $order, $pdf = false, $note = '' ) {
+		return wp_nonce_url( admin_url( 'admin-post.php?action=' . self::PAGE . '_view&order=' . $order->get_id() . ( $pdf ? '&pdf=1' : '' ) . ( '' !== $note ? '&cn=' . rawurlencode( $note ) : '' ) ), self::PAGE . '_view_' . $order->get_id() );
 	}
 
 	/**
@@ -1343,31 +1503,43 @@ td,th{padding:10px 8px;vertical-align:top}
 	public static function account_list() {
 		$orders = self::customer_invoice_orders( get_current_user_id() );
 		if ( ! $orders ) {
-			echo '<p>' . esc_html__( 'You have no invoices yet. An invoice appears here after every payment.', 'rinnovo-subscriptions-licenses-pro' ) . '</p>';
+			echo '<p>' . esc_html__( 'You have no invoices yet. An invoice appears here after every payment.', 'rinnovo-invoices' ) . '</p>';
 			return;
 		}
 		?>
 		<table class="woocommerce-orders-table shop_table shop_table_responsive my_account_orders rinnovo-invoices">
 			<thead><tr>
-				<th><?php esc_html_e( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
-				<th><?php esc_html_e( 'Date', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
-				<th><?php esc_html_e( 'Order', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
-				<th><?php esc_html_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?></th>
-				<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'rinnovo-subscriptions-licenses-pro' ); ?></span></th>
+				<th><?php esc_html_e( 'Invoice', 'rinnovo-invoices' ); ?></th>
+				<th><?php esc_html_e( 'Date', 'rinnovo-invoices' ); ?></th>
+				<th><?php esc_html_e( 'Order', 'rinnovo-invoices' ); ?></th>
+				<th><?php esc_html_e( 'Total', 'rinnovo-invoices' ); ?></th>
+				<th><span class="screen-reader-text"><?php esc_html_e( 'Actions', 'rinnovo-invoices' ); ?></span></th>
 			</tr></thead>
 			<tbody>
 				<?php foreach ( $orders as $order ) : ?>
 					<?php $inv = self::invoice( $order ); ?>
 					<tr>
-						<td data-title="<?php esc_attr_e( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ); ?>"><?php echo esc_html( $inv['number'] ); ?></td>
-						<td data-title="<?php esc_attr_e( 'Date', 'rinnovo-subscriptions-licenses-pro' ); ?>"><?php echo esc_html( date_i18n( get_option( 'date_format' ), (int) $inv['date'] ) ); ?></td>
-						<td data-title="<?php esc_attr_e( 'Order', 'rinnovo-subscriptions-licenses-pro' ); ?>"><a href="<?php echo esc_url( $order->get_view_order_url() ); ?>">#<?php echo esc_html( $order->get_order_number() ); ?></a></td>
-						<td data-title="<?php esc_attr_e( 'Total', 'rinnovo-subscriptions-licenses-pro' ); ?>"><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></td>
+						<td data-title="<?php esc_attr_e( 'Invoice', 'rinnovo-invoices' ); ?>"><?php echo esc_html( $inv['number'] ); ?></td>
+						<td data-title="<?php esc_attr_e( 'Date', 'rinnovo-invoices' ); ?>"><?php echo esc_html( date_i18n( get_option( 'date_format' ), (int) $inv['date'] ) ); ?></td>
+						<td data-title="<?php esc_attr_e( 'Order', 'rinnovo-invoices' ); ?>"><a href="<?php echo esc_url( $order->get_view_order_url() ); ?>">#<?php echo esc_html( $order->get_order_number() ); ?></a></td>
+						<td data-title="<?php esc_attr_e( 'Total', 'rinnovo-invoices' ); ?>"><?php echo wp_kses_post( $order->get_formatted_order_total() ); ?></td>
 						<td>
-							<a class="woocommerce-button button view" href="<?php echo esc_url( self::customer_url( $order ) ); ?>"><?php esc_html_e( 'View', 'rinnovo-subscriptions-licenses-pro' ); ?></a>
-							<a class="woocommerce-button button" href="<?php echo esc_url( self::customer_url( $order, true ) ); ?>"><?php esc_html_e( 'Download PDF', 'rinnovo-subscriptions-licenses-pro' ); ?></a>
+							<a class="woocommerce-button button view" href="<?php echo esc_url( self::customer_url( $order ) ); ?>"><?php esc_html_e( 'View', 'rinnovo-invoices' ); ?></a>
+							<a class="woocommerce-button button" href="<?php echo esc_url( self::customer_url( $order, true ) ); ?>"><?php esc_html_e( 'Download PDF', 'rinnovo-invoices' ); ?></a>
 						</td>
 					</tr>
+					<?php foreach ( RINNOVO_Invoice_Docs::notes( $order ) as $cn ) : ?>
+						<tr class="rinnovo-credit-note">
+							<td data-title="<?php esc_attr_e( 'Credit note', 'rinnovo-invoices' ); ?>"><?php echo esc_html( $cn['number'] ); ?> <small>(<?php esc_html_e( 'credit note', 'rinnovo-invoices' ); ?>)</small></td>
+							<td data-title="<?php esc_attr_e( 'Date', 'rinnovo-invoices' ); ?>"><?php echo esc_html( date_i18n( get_option( 'date_format' ), (int) $cn['date'] ) ); ?></td>
+							<td data-title="<?php esc_attr_e( 'Order', 'rinnovo-invoices' ); ?>">#<?php echo esc_html( $order->get_order_number() ); ?></td>
+							<td data-title="<?php esc_attr_e( 'Total', 'rinnovo-invoices' ); ?>">−<?php echo wp_kses_post( wc_price( (float) $cn['raw']['total'], array( 'currency' => $order->get_currency() ) ) ); ?></td>
+							<td>
+								<a class="woocommerce-button button view" href="<?php echo esc_url( self::customer_url( $order, false, $cn['number'] ) ); ?>"><?php esc_html_e( 'View', 'rinnovo-invoices' ); ?></a>
+								<a class="woocommerce-button button" href="<?php echo esc_url( self::customer_url( $order, true, $cn['number'] ) ); ?>"><?php esc_html_e( 'Download PDF', 'rinnovo-invoices' ); ?></a>
+							</td>
+						</tr>
+					<?php endforeach; ?>
 				<?php endforeach; ?>
 			</tbody>
 		</table>
@@ -1376,8 +1548,8 @@ td,th{padding:10px 8px;vertical-align:top}
 			echo '<p class="rinnovo-invoices__hint">' . wp_kses_post(
 				sprintf(
 					/* translators: %s: link to Account details. */
-					__( 'Need a tax invoice in your company\'s name? Add your legal company name, address and TRN in %s; they are used for your next invoices.', 'rinnovo-subscriptions-licenses-pro' ),
-					'<a href="' . esc_url( wc_get_account_endpoint_url( 'edit-account' ) ) . '">' . esc_html__( 'Account details', 'rinnovo-subscriptions-licenses-pro' ) . '</a>'
+					__( 'Need a tax invoice in your company\'s name? Add your legal company name, address and TRN in %s; they are used for your next invoices.', 'rinnovo-invoices' ),
+					'<a href="' . esc_url( wc_get_account_endpoint_url( 'edit-account' ) ) . '">' . esc_html__( 'Account details', 'rinnovo-invoices' ) . '</a>'
 				)
 			) . '</p>';
 		}
@@ -1405,8 +1577,15 @@ td,th{padding:10px 8px;vertical-align:top}
 			wp_safe_redirect( wc_get_account_endpoint_url( self::ENDPOINT ) );
 			exit;
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; access is checked above.
+		$number = isset( $_GET['cn'] ) ? sanitize_text_field( wp_unslash( $_GET['cn'] ) ) : '';
+		$note   = '' !== $number ? RINNOVO_Invoice_Docs::note( $order, $number ) : null;
 		if ( ! empty( $_GET['pdf'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only; access is checked above.
-			self::send_pdf( $order );
+			self::send_pdf( $order, $note );
+			exit;
+		}
+		if ( $note ) {
+			self::render( $order, wc_get_account_endpoint_url( self::ENDPOINT ), self::customer_url( $order, true, $number ), self::credit_view_data( $order, $note ) );
 			exit;
 		}
 		self::render( $order, wc_get_account_endpoint_url( self::ENDPOINT ), self::customer_url( $order, true ) );
@@ -1424,7 +1603,7 @@ td,th{padding:10px 8px;vertical-align:top}
 		if ( self::invoice( $order ) ) {
 			$actions['rinnovo-invoice'] = array(
 				'url'  => self::customer_url( $order ),
-				'name' => __( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ),
+				'name' => __( 'Invoice', 'rinnovo-invoices' ),
 			);
 		}
 		return $actions;
@@ -1441,10 +1620,10 @@ td,th{padding:10px 8px;vertical-align:top}
 	 */
 	private static function field_labels() {
 		return array(
-			'name'    => __( 'Legal company name', 'rinnovo-subscriptions-licenses-pro' ),
-			'address' => __( 'Legal address', 'rinnovo-subscriptions-licenses-pro' ),
+			'name'    => __( 'Legal company name', 'rinnovo-invoices' ),
+			'address' => __( 'Legal address', 'rinnovo-invoices' ),
 			/* translators: %s: tax number label, e.g. TRN. */
-			'trn'     => sprintf( __( 'Tax registration number (%s)', 'rinnovo-subscriptions-licenses-pro' ), self::get( 'tax_label' ) ),
+			'trn'     => sprintf( __( 'Tax registration number (%s)', 'rinnovo-invoices' ), self::get( 'tax_label' ) ),
 		);
 	}
 
@@ -1465,8 +1644,8 @@ td,th{padding:10px 8px;vertical-align:top}
 		$user_id = get_current_user_id();
 		?>
 		<fieldset class="rinnovo-legal">
-			<legend><?php esc_html_e( 'Details for your invoices', 'rinnovo-subscriptions-licenses-pro' ); ?></legend>
-			<p class="description"><?php echo 'required' === self::get( 'customer_mode' ) ? esc_html__( 'Your invoices are issued to this legal name and address.', 'rinnovo-subscriptions-licenses-pro' ) : esc_html__( 'Optional. Fill these in if you need tax invoices in your company\'s name.', 'rinnovo-subscriptions-licenses-pro' ); ?></p>
+			<legend><?php esc_html_e( 'Details for your invoices', 'rinnovo-invoices' ); ?></legend>
+			<p class="description"><?php echo 'required' === self::get( 'customer_mode' ) ? esc_html__( 'Your invoices are issued to this legal name and address.', 'rinnovo-invoices' ) : esc_html__( 'Optional. Fill these in if you need tax invoices in your company\'s name.', 'rinnovo-invoices' ); ?></p>
 			<?php foreach ( self::field_labels() as $key => $label ) : ?>
 				<?php $value = (string) get_user_meta( $user_id, self::USERMETA . $key, true ); ?>
 				<p class="woocommerce-form-row woocommerce-form-row--wide form-row form-row-wide">
@@ -1492,7 +1671,7 @@ td,th{padding:10px 8px;vertical-align:top}
 			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- WooCommerce verified the account form nonce.
 			if ( self::required( $key ) && empty( $_POST[ 'rinnovo_legal_' . $key ] ) ) {
 				/* translators: %s: field name. */
-				$errors->add( 'rinnovo_legal_' . $key, sprintf( __( '%s is a required field.', 'rinnovo-subscriptions-licenses-pro' ), $label ) );
+				$errors->add( 'rinnovo_legal_' . $key, sprintf( __( '%s is a required field.', 'rinnovo-invoices' ), $label ) );
 			}
 		}
 	}
@@ -1546,7 +1725,7 @@ td,th{padding:10px 8px;vertical-align:top}
 		if ( 0 !== strpos( (string) $key, 'rinnovo_legal_' ) || ! empty( $args['required'] ) ) {
 			return $field;
 		}
-		return preg_replace( '#<span class="optional">.*?</span>#', '<span class="optional">' . esc_html__( '(for a tax invoice)', 'rinnovo-subscriptions-licenses-pro' ) . '</span>', $field, 1 );
+		return preg_replace( '#<span class="optional">.*?</span>#', '<span class="optional">' . esc_html__( '(for a tax invoice)', 'rinnovo-invoices' ) . '</span>', $field, 1 );
 	}
 
 	/**
@@ -1584,7 +1763,7 @@ td,th{padding:10px 8px;vertical-align:top}
 					'type'          => 'text',
 					'required'      => self::required( $key ),
 					/* translators: %s: field name. */
-					'optionalLabel' => sprintf( __( '%s (for a tax invoice)', 'rinnovo-subscriptions-licenses-pro' ), $label ),
+					'optionalLabel' => sprintf( __( '%s (for a tax invoice)', 'rinnovo-invoices' ), $label ),
 				)
 			);
 		}
@@ -1600,7 +1779,7 @@ td,th{padding:10px 8px;vertical-align:top}
 			return;
 		}
 		?>
-		<h2><?php esc_html_e( 'Details for invoices', 'rinnovo-subscriptions-licenses-pro' ); ?></h2>
+		<h2><?php esc_html_e( 'Details for invoices', 'rinnovo-invoices' ); ?></h2>
 		<table class="form-table" role="presentation">
 			<?php foreach ( self::field_labels() as $key => $label ) : ?>
 				<tr>
@@ -1650,12 +1829,12 @@ td,th{padding:10px 8px;vertical-align:top}
 			return;
 		}
 		/* translators: %s: invoice number. */
-		$text = sprintf( __( 'Your invoice %s is ready:', 'rinnovo-subscriptions-licenses-pro' ), $invoice['number'] );
+		$text = sprintf( __( 'Your invoice %s is ready:', 'rinnovo-invoices' ), $invoice['number'] );
 		if ( $plain_text ) {
 			echo esc_html( $text ) . ' ' . esc_url_raw( self::customer_url( $order ) ) . "\n\n";
 			return;
 		}
-		echo '<p>' . esc_html( $text ) . ' <a href="' . esc_url( self::customer_url( $order ) ) . '">' . esc_html__( 'View or download it', 'rinnovo-subscriptions-licenses-pro' ) . '</a></p>';
+		echo '<p>' . esc_html( $text ) . ' <a href="' . esc_url( self::customer_url( $order ) ) . '">' . esc_html__( 'View or download it', 'rinnovo-invoices' ) . '</a></p>';
 	}
 
 	/**
@@ -1699,7 +1878,7 @@ td,th{padding:10px 8px;vertical-align:top}
 			$screens[] = wc_get_page_screen_id( 'shop-order' );
 		}
 		foreach ( array_unique( $screens ) as $screen ) {
-			add_meta_box( 'rinnovopro-invoice', __( 'Invoice', 'rinnovo-subscriptions-licenses-pro' ), array( __CLASS__, 'meta_box_content' ), $screen, 'side', 'default' );
+			add_meta_box( 'rinnovopro-invoice', __( 'Invoice', 'rinnovo-invoices' ), array( __CLASS__, 'meta_box_content' ), $screen, 'side', 'default' );
 		}
 	}
 
@@ -1719,12 +1898,26 @@ td,th{padding:10px 8px;vertical-align:top}
 		};
 		if ( $invoice ) {
 			echo '<p><strong>' . esc_html( $invoice['number'] ) . '</strong><br />' . esc_html( date_i18n( get_option( 'date_format' ), (int) $invoice['date'] ) ) . '</p>';
-			echo '<p><a class="button" target="_blank" href="' . esc_url( self::admin_url( $order ) ) . '">' . esc_html__( 'View invoice', 'rinnovo-subscriptions-licenses-pro' ) . '</a> <a class="button" href="' . esc_url( self::admin_url( $order, true ) ) . '">' . esc_html__( 'PDF', 'rinnovo-subscriptions-licenses-pro' ) . '</a></p>';
-			echo '<p><a href="' . esc_url( $action( 'refresh' ) ) . '">' . esc_html__( 'Refresh company and customer details', 'rinnovo-subscriptions-licenses-pro' ) . '</a></p>';
-			echo '<p class="description">' . esc_html__( 'Use this when the customer added their legal details after paying. The number and date stay the same.', 'rinnovo-subscriptions-licenses-pro' ) . '</p>';
+			echo '<p><a class="button" target="_blank" href="' . esc_url( self::admin_url( $order ) ) . '">' . esc_html__( 'View invoice', 'rinnovo-invoices' ) . '</a> <a class="button" href="' . esc_url( self::admin_url( $order, true ) ) . '">' . esc_html__( 'PDF', 'rinnovo-invoices' ) . '</a></p>';
+			if ( isset( $invoice['status'] ) && 'cancelled' === $invoice['status'] ) {
+				/* translators: %s: credit note number. */
+				echo '<p><strong style="color:#b32d2e">' . esc_html( sprintf( __( 'Cancelled by credit note %s', 'rinnovo-invoices' ), $invoice['cancelled_by'] ) ) . '</strong></p>';
+				echo '<p><a class="button" href="' . esc_url( $action( 'reissue' ) ) . '">' . esc_html__( 'Issue a corrected invoice', 'rinnovo-invoices' ) . '</a></p>';
+				echo '<p class="description">' . esc_html__( 'A new number, with today\'s company and customer details, linked to the cancelled invoice.', 'rinnovo-invoices' ) . '</p>';
+			} else {
+				echo '<p><a href="' . esc_url( $action( 'cancel' ) ) . '" onclick="return confirm(\'' . esc_js( __( 'Cancel this invoice? A credit note for its full amount is issued. The invoice itself is kept, marked cancelled.', 'rinnovo-invoices' ) ) . '\')">' . esc_html__( 'Cancel invoice (to correct it)', 'rinnovo-invoices' ) . '</a></p>';
+				echo '<p class="description">' . esc_html__( 'Issued invoices never change. To correct details, cancel it (a credit note is issued) and issue a corrected invoice.', 'rinnovo-invoices' ) . '</p>';
+			}
+			foreach ( RINNOVO_Invoice_Docs::old_invoices( $order ) as $old ) {
+				/* translators: %s: invoice number. */
+				echo '<p class="description">' . esc_html( sprintf( __( 'Earlier invoice %s (cancelled)', 'rinnovo-invoices' ), $old['number'] ) ) . '</p>';
+			}
+			foreach ( RINNOVO_Invoice_Docs::notes( $order ) as $cn ) {
+				echo '<p>' . esc_html( $cn['number'] ) . ' · ' . esc_html( 'cancel' === $cn['kind'] ? __( 'cancellation', 'rinnovo-invoices' ) : __( 'refund', 'rinnovo-invoices' ) ) . ' · −' . wp_kses_post( wc_price( (float) $cn['raw']['total'], array( 'currency' => $order->get_currency() ) ) ) . '<br /><a target="_blank" href="' . esc_url( self::admin_url( $order, false, $cn['number'] ) ) . '">' . esc_html__( 'View', 'rinnovo-invoices' ) . '</a> · <a href="' . esc_url( self::admin_url( $order, true, $cn['number'] ) ) . '">PDF</a></p>';
+			}
 		} else {
-			echo '<p>' . esc_html__( 'No invoice yet. It is created when the order is paid.', 'rinnovo-subscriptions-licenses-pro' ) . '</p>';
-			echo '<p><a class="button" href="' . esc_url( $action( 'create' ) ) . '">' . esc_html__( 'Create invoice now', 'rinnovo-subscriptions-licenses-pro' ) . '</a></p>';
+			echo '<p>' . esc_html__( 'No invoice yet. It is created when the order is paid.', 'rinnovo-invoices' ) . '</p>';
+			echo '<p><a class="button" href="' . esc_url( $action( 'create' ) ) . '">' . esc_html__( 'Create invoice now', 'rinnovo-invoices' ) . '</a></p>';
 		}
 	}
 
@@ -1736,10 +1929,16 @@ td,th{padding:10px 8px;vertical-align:top}
 		check_admin_referer( self::PAGE . '_view_' . $order_id );
 		$order = wc_get_order( $order_id );
 		if ( ! $order || ! current_user_can( 'edit_shop_orders' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-subscriptions-licenses-pro' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-invoices' ) );
 		}
+		$number = isset( $_GET['cn'] ) ? sanitize_text_field( wp_unslash( $_GET['cn'] ) ) : '';
+		$note   = '' !== $number ? RINNOVO_Invoice_Docs::note( $order, $number ) : null;
 		if ( ! empty( $_GET['pdf'] ) ) {
-			self::send_pdf( $order );
+			self::send_pdf( $order, $note );
+			exit;
+		}
+		if ( $note ) {
+			self::render( $order, $order->get_edit_order_url(), self::admin_url( $order, true, $number ), self::credit_view_data( $order, $note ) );
 			exit;
 		}
 		self::render( $order, $order->get_edit_order_url(), self::admin_url( $order, true ) );
@@ -1754,9 +1953,16 @@ td,th{padding:10px 8px;vertical-align:top}
 		check_admin_referer( self::PAGE . '_action_' . $order_id );
 		$order = wc_get_order( $order_id );
 		if ( ! $order || ! current_user_can( 'edit_shop_orders' ) ) {
-			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-subscriptions-licenses-pro' ) );
+			wp_die( esc_html__( 'Sorry, you are not allowed to do that.', 'rinnovo-invoices' ) );
 		}
-		self::create( $order );
+		$todo = isset( $_GET['todo'] ) ? sanitize_key( wp_unslash( $_GET['todo'] ) ) : 'create';
+		if ( 'cancel' === $todo ) {
+			RINNOVO_Invoice_Docs::cancel( $order, __( 'Invoice cancelled for correction', 'rinnovo-invoices' ) );
+		} elseif ( 'reissue' === $todo ) {
+			RINNOVO_Invoice_Docs::reissue( $order );
+		} else {
+			self::create( $order );
+		}
 		wp_safe_redirect( $order->get_edit_order_url() );
 		exit;
 	}

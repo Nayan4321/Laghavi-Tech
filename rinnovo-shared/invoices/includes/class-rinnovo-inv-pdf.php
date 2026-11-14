@@ -3,7 +3,7 @@
  * A small PDF writer for invoices: A4 pages, the standard PDF fonts (Helvetica, Times), text with wrapping
  * and alignment, lines, boxes, colours, rotation and JPEG/PNG images. No external library needed.
  *
- * @package RinnovoSubscriptionsLicensesPro
+ * @package RinnovoInvoices
  */
 
 defined( 'ABSPATH' ) || exit;
@@ -11,7 +11,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Minimal PDF document.
  */
-class RINNOVOPRO_PDF {
+class RINNOVO_Inv_PDF {
 
 	const W = 595.28;
 	const H = 841.89;

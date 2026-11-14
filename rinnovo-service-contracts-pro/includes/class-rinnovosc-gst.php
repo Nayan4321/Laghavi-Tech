@@ -23,15 +23,149 @@ class RINNOVOSC_GST {
 	 * Hook everything up.
 	 */
 	public static function init() {
-		if ( ! RINNOVOSC_Settings::get( 'gst' ) ) {
-			return;
-		}
-		add_action( 'rinnovosc_contract_started', array( __CLASS__, 'on_started' ), 20, 3 );
-		add_action( 'woocommerce_payment_complete', array( __CLASS__, 'maybe_create' ), 40 );
-		add_action( 'woocommerce_order_status_processing', array( __CLASS__, 'maybe_create' ), 40 );
-		add_action( 'woocommerce_order_status_completed', array( __CLASS__, 'maybe_create' ), 40 );
+		// Invoices issued by earlier versions stay downloadable.
 		add_action( 'template_redirect', array( __CLASS__, 'customer_download' ) );
 		add_action( 'admin_post_rinnovosc_invoice', array( __CLASS__, 'admin_download' ) );
+		// New invoices come from the shared Rinnovo invoice engine (WooCommerce > Invoices), with the contract's details.
+		add_action( 'admin_init', array( __CLASS__, 'migrate_to_shared' ) );
+		add_filter( 'rinnovo_invoice_buyer', array( __CLASS__, 'shared_buyer' ), 10, 2 );
+		add_filter( 'rinnovo_invoice_note', array( __CLASS__, 'shared_note' ), 10, 2 );
+		add_filter( 'rinnovo_invoice_lines', array( __CLASS__, 'shared_lines' ), 10, 2 );
+	}
+
+	/**
+	 * Once: carry the company details and numbering of this plugin's invoices over to the shared engine.
+	 */
+	public static function migrate_to_shared() {
+		if ( get_option( 'rinnovosc_invoices_migrated' ) || ! class_exists( 'RINNOVO_Invoices' ) ) {
+			return;
+		}
+		update_option( 'rinnovosc_invoices_migrated', 1, false );
+		$s      = RINNOVOSC_Settings::all();
+		$shared = get_option( RINNOVO_Invoices::OPTION );
+		if ( ! is_array( $shared ) || empty( $shared['legal_name'] ) ) {
+			$shared = wp_parse_args( is_array( $shared ) ? $shared : array(), RINNOVO_Invoices::defaults() );
+			$india  = function_exists( 'WC' ) && WC()->countries && 'IN' === WC()->countries->get_base_country();
+			$shared = array_merge(
+				$shared,
+				array(
+					'legal_name'    => (string) $s['legal_name'],
+					'legal_address' => (string) $s['address'],
+					'trn'           => strtoupper( (string) $s['gstin'] ),
+					'tax_label'     => '' !== (string) $s['tax_label'] ? (string) $s['tax_label'] : 'GSTIN',
+					'email'         => (string) $s['email'],
+					'phone'         => (string) $s['phone'],
+					'prefix'        => (string) $s['prefix'],
+					'footer'        => '' !== (string) $s['footer'] ? (string) $s['footer'] : $shared['footer'],
+					'tax_mode'      => $india ? 'india_gst' : 'standard',
+					'seller_state'  => (string) $s['state'],
+					'default_hsn'   => (string) $s['sac'],
+					'fy_reset'      => false !== strpos( (string) $s['prefix'], '{fy}' ) ? 1 : (int) $shared['fy_reset'],
+					'fy_start'      => $india ? 4 : (int) $shared['fy_start'],
+				)
+			);
+			update_option( RINNOVO_Invoices::OPTION, $shared, false );
+		}
+		// Continue the numbers where this plugin stopped, so none is used twice.
+		$next = (int) get_option( self::COUNTER, 0 );
+		if ( $next > RINNOVO_Invoices::peek_next() ) {
+			update_option( RINNOVO_Invoice_Docs::counter( 'inv' ), $next, false );
+		}
+	}
+
+	/**
+	 * The client's company, GSTIN and state on invoices of contract orders.
+	 *
+	 * @param array    $buyer Buyer.
+	 * @param WC_Order $order Order.
+	 * @return array
+	 */
+	public static function shared_buyer( $buyer, $order ) {
+		$sub      = self::contract_sub( $order );
+		$contract = $sub ? RINNOVOSC_Store::get( $sub->id ) : null;
+		$company  = $contract && ! empty( $contract['company'] ) ? (array) $contract['company'] : array();
+		if ( ! empty( $company['name'] ) ) {
+			$buyer['name']    = $company['name'];
+			$buyer['company'] = $company['name'];
+			$buyer['contact'] = trim( $order->get_billing_first_name() . ' ' . $order->get_billing_last_name() );
+		}
+		if ( ! empty( $company['address'] ) ) {
+			$buyer['address'] = $company['address'];
+		}
+		$gstin = ! empty( $company['gstin'] ) ? $company['gstin'] : (string) $order->get_meta( '_rinnovosc_gstin' );
+		if ( '' !== $gstin && empty( $buyer['trn'] ) ) {
+			$buyer['trn'] = strtoupper( $gstin );
+		}
+		foreach ( array( 'state', 'country' ) as $key ) {
+			if ( ! empty( $company[ $key ] ) ) {
+				$buyer[ $key ] = $company[ $key ];
+			}
+		}
+		$po = $contract ? (string) $contract['po'] : (string) $order->get_meta( '_rinnovosc_po' );
+		if ( '' !== $po ) {
+			$buyer['po'] = $po;
+		}
+		return $buyer;
+	}
+
+	/**
+	 * PO number, service period, due date and bank details on contract invoices.
+	 *
+	 * @param string   $note  Note so far.
+	 * @param WC_Order $order Order.
+	 * @return string
+	 */
+	public static function shared_note( $note, $order ) {
+		$sub = self::contract_sub( $order );
+		if ( ! $sub ) {
+			return $note;
+		}
+		$contract = RINNOVOSC_Store::get( $sub->id );
+		$parts    = array_filter( array( $note ) );
+		$po       = $contract ? (string) $contract['po'] : (string) $order->get_meta( '_rinnovosc_po' );
+		if ( '' !== $po ) {
+			/* translators: %s: purchase order number. */
+			$parts[] = sprintf( __( 'PO number: %s', self::TD ), $po );
+		}
+		if ( $order->get_meta( '_rinnovo_renewal' ) || (int) $sub->parent_order_id === $order->get_id() ) {
+			$start   = $order->get_date_paid() ? $order->get_date_paid()->getTimestamp() : time();
+			/* translators: %s: period. */
+			$parts[] = sprintf( __( 'Service period: %s', self::TD ), wp_date( get_option( 'date_format' ), $start ) . ' – ' . wp_date( get_option( 'date_format' ), RINNOVO_Subscriptions::add_period( $start, $sub->period, $sub->interval_count ) - DAY_IN_SECONDS ) );
+		}
+		$due = (int) $order->get_meta( '_rinnovosc_due' );
+		if ( $due ) {
+			/* translators: %s: date. */
+			$parts[] = sprintf( __( 'Due: %s', self::TD ), wp_date( get_option( 'date_format' ), $due ) );
+		}
+		if ( RINNOVOSC_Settings::get( 'show_bank' ) && 'bacs' === $order->get_payment_method() ) {
+			$accounts = (array) get_option( 'woocommerce_bacs_accounts', array() );
+			foreach ( $accounts as $a ) {
+				$parts[] = trim( implode( ' · ', array_filter( array( $a['bank_name'] ?? '', $a['account_name'] ?? '', isset( $a['account_number'] ) ? 'A/c ' . $a['account_number'] : '', isset( $a['sort_code'] ) ? 'IFSC/Sort ' . $a['sort_code'] : '', isset( $a['iban'] ) ? 'IBAN ' . $a['iban'] : '', isset( $a['bic'] ) ? 'SWIFT ' . $a['bic'] : '' ) ) ) );
+			}
+		}
+		return implode( '. ', array_filter( $parts ) );
+	}
+
+	/**
+	 * SAC code of each contract line.
+	 *
+	 * @param array    $lines Lines.
+	 * @param WC_Order $order Order.
+	 * @return array
+	 */
+	public static function shared_lines( $lines, $order ) {
+		$sub = self::contract_sub( $order );
+		if ( ! $sub ) {
+			return $lines;
+		}
+		$sac = (string) RINNOVOSC_Product::terms( (int) $sub->product_id )['sac'];
+		$sac = '' !== $sac ? $sac : (string) RINNOVOSC_Settings::get( 'sac' );
+		foreach ( $lines as $i => $line ) {
+			if ( empty( $line['hsn'] ) || $line['hsn'] === (string) ( class_exists( 'RINNOVO_Invoices' ) ? RINNOVO_Invoices::get( 'default_hsn' ) : '' ) ) {
+				$lines[ $i ]['hsn'] = $sac;
+			}
+		}
+		return $lines;
 	}
 
 	/**

@@ -34,6 +34,10 @@ foreach ( array( 'license', 'settings', 'store', 'classes', 'credits', 'bookings
 }
 unset( $rinnovose_file );
 
+
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOSE_DIR . 'shared/invoices/rinnovo-invoices.php';
+
 add_action(
 	'plugins_loaded',
 	static function () {
@@ -62,6 +66,7 @@ add_action(
 		if ( ! RINNOVOSE_License::is_valid() ) {
 			return;
 		}
+		rinnovo_invoices_enable();
 		if ( get_option( 'rinnovose_db_version' ) !== RINNOVOSE_Store::DB_VERSION ) {
 			RINNOVOSE_Store::install();
 		}

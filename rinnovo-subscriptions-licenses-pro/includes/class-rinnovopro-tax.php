@@ -39,6 +39,15 @@ class RINNOVOPRO_Tax {
 	public static function init() {
 		add_filter( 'rinnovo_setting_defaults', array( __CLASS__, 'defaults' ) );
 		add_filter( 'rinnovo_settings_fields', array( __CLASS__, 'settings' ), 6 );
+		add_filter(
+			'rinnovo_invoice_note',
+			static function ( $note, $order ) {
+				$own = self::invoice_note( $order );
+				return '' !== $own ? trim( $note . ( '' !== $note ? '. ' : '' ) . $own ) : $note;
+			},
+			10,
+			2
+		);
 
 		if ( 'yes' !== get_option( 'rinnovopro_vat', 'no' ) ) {
 			return;

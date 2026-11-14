@@ -34,6 +34,10 @@ foreach ( array( 'license', 'settings', 'bundle', 'builder', 'unify', 'switch', 
 }
 unset( $rinnovobv_file );
 
+
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOBV_DIR . 'shared/invoices/rinnovo-invoices.php';
+
 add_action(
 	'plugins_loaded',
 	static function () {
@@ -51,6 +55,7 @@ add_action(
 		if ( ! RINNOVOBV_License::is_valid() ) {
 			return;
 		}
+		rinnovo_invoices_enable();
 		RINNOVOBV_Bundle::init();
 		RINNOVOBV_Builder::init();
 		RINNOVOBV_Unify::init();

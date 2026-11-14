@@ -34,6 +34,10 @@ foreach ( array( 'license', 'plans', 'access', 'signer', 'player', 'gallery', 'p
 }
 unset( $rinnovoma_file );
 
+
+// Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
+require_once RINNOVOMA_DIR . 'shared/invoices/rinnovo-invoices.php';
+
 add_action(
 	'plugins_loaded',
 	static function () {
@@ -51,6 +55,7 @@ add_action(
 		if ( ! RINNOVOMA_License::is_valid() ) {
 			return;
 		}
+		rinnovo_invoices_enable();
 		RINNOVOMA_Access::init();
 		RINNOVOMA_Player::init();
 		RINNOVOMA_Gallery::init();
