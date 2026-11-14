@@ -58,11 +58,16 @@ class VACANAMPRO_Settings {
 	 * @return array
 	 */
 	public static function all() {
-		if ( null === self::$cache ) {
-			$saved       = get_option( self::OPTION, array() );
-			self::$cache = array_merge( self::defaults(), is_array( $saved ) ? $saved : array() );
+		if ( null !== self::$cache ) {
+			return self::$cache;
 		}
-		return self::$cache;
+		$saved = get_option( self::OPTION, array() );
+		$all   = array_merge( self::defaults(), is_array( $saved ) ? $saved : array() );
+		// Modules add their defaults as they load: keep the result only once all of them have.
+		if ( did_action( 'vacanampro_loaded' ) ) {
+			self::$cache = $all;
+		}
+		return $all;
 	}
 
 	/**

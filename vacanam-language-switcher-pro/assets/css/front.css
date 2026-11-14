@@ -1,0 +1,66 @@
+/* Vacanam Pro: chooser, bottom sheet, suggestion bar, language + currency. */
+.vacanampro-locked { overflow: hidden; }
+.vacanampro-chooser,
+.vacanampro-sheet { position: fixed; inset: 0; z-index: 100000; background: rgba(15, 18, 30, .55); opacity: 0; transition: opacity .2s ease; }
+.vacanampro-chooser.is-open,
+.vacanampro-sheet.is-open { opacity: 1; }
+.vacanampro-chooser { display: flex; align-items: center; justify-content: center; padding: 24px; }
+.vacanampro-chooser[hidden],
+.vacanampro-sheet[hidden] { display: none; }
+.vacanampro-chooser-inner { position: relative; width: min(760px, 100%); max-height: 90vh; overflow: auto; background: #fff; color: #1d2327; border-radius: 18px; padding: 36px 32px 28px; box-shadow: 0 30px 80px rgba(0, 0, 0, .25); transform: translateY(12px) scale(.98); transition: transform .2s ease; }
+.vacanampro-chooser.is-open .vacanampro-chooser-inner { transform: none; }
+.vacanampro-chooser h2,
+.vacanampro-sheet h2 { margin: 0 0 20px; font-size: 22px; line-height: 1.3; text-align: center; color: inherit; }
+.vacanampro-close { position: absolute; top: 10px; inset-inline-end: 12px; width: 40px; height: 40px; border: 0; background: transparent; color: inherit; font-size: 28px; line-height: 1; cursor: pointer; border-radius: 50%; }
+.vacanampro-close:hover,
+.vacanampro-close:focus-visible { background: #f0f0f1; }
+.vacanampro-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; }
+.vacanampro-grid a,
+.vacanampro-sheet-list a { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border: 1px solid #e2e4e7; border-radius: 12px; color: inherit; text-decoration: none; font-size: 16px; transition: border-color .15s, background .15s; }
+.vacanampro-grid a:hover,
+.vacanampro-grid a:focus-visible,
+.vacanampro-sheet-list a:hover,
+.vacanampro-sheet-list a:focus-visible { border-color: currentColor; background: #f6f7f7; }
+.vacanampro-grid a[aria-current],
+.vacanampro-sheet-list a[aria-current] { border-color: currentColor; font-weight: 600; }
+.vacanampro-grid img,
+.vacanampro-sheet-list img { width: 28px; height: auto; border-radius: 3px; flex: none; }
+.vacanampro-grid a.is-missing,
+.vacanampro-sheet-list a.is-missing { opacity: .55; }
+.vacanampro-currencies { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 20px; }
+.vacanampro-currencies .vacanampro-label { font-size: 13px; opacity: .7; margin-inline-end: 4px; }
+.vacanampro-currencies a { padding: 6px 12px; border: 1px solid #e2e4e7; border-radius: 999px; color: inherit; text-decoration: none; font-size: 14px; }
+.vacanampro-currencies a[aria-current] { border-color: currentColor; font-weight: 600; }
+
+/* Bottom sheet (phones). */
+.vacanampro-fab { position: fixed; bottom: 18px; inset-inline-end: 18px; z-index: 99990; display: none; align-items: center; gap: 6px; padding: 10px 14px; border: 0; border-radius: 999px; background: #1d2327; color: #fff; font-size: 14px; font-weight: 600; box-shadow: 0 8px 24px rgba(0, 0, 0, .25); cursor: pointer; }
+@media (max-width: 782px) { .vacanampro-fab { display: inline-flex; } }
+.vacanampro-sheet { display: flex; align-items: flex-end; }
+.vacanampro-sheet-panel { width: 100%; max-height: 80vh; overflow: auto; background: #fff; color: #1d2327; border-radius: 20px 20px 0 0; padding: 12px 18px calc(22px + env(safe-area-inset-bottom)); transform: translateY(100%); transition: transform .22s ease; }
+.vacanampro-sheet.is-open .vacanampro-sheet-panel { transform: none; }
+.vacanampro-handle { display: block; width: 44px; height: 5px; margin: 0 auto 14px; border-radius: 3px; background: #c3c4c7; }
+.vacanampro-sheet h2 { font-size: 18px; margin-bottom: 14px; }
+.vacanampro-sheet-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+
+/* First-visit suggestion. */
+.vacanampro-suggest { position: fixed; bottom: 18px; left: 50%; z-index: 99995; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; width: min(640px, calc(100% - 24px)); padding: 14px 18px; background: #fff; color: #1d2327; border-radius: 14px; box-shadow: 0 12px 40px rgba(0, 0, 0, .2); transform: translate(-50%, 140%); transition: transform .3s ease; }
+.vacanampro-suggest.is-open { transform: translate(-50%, 0); }
+.vacanampro-suggest p { flex: 1 1 220px; margin: 0; font-size: 15px; }
+.vacanampro-suggest-go { padding: 9px 16px; border-radius: 999px; background: #1d2327; color: #fff !important; text-decoration: none; font-weight: 600; font-size: 14px; }
+.vacanampro-suggest-stay { padding: 9px 12px; border: 0; background: transparent; color: inherit; text-decoration: underline; cursor: pointer; font-size: 14px; }
+
+/* Language + currency. */
+.vacanampro-langcur { display: inline-flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.vacanampro-currency-now { font-size: 14px; opacity: .8; }
+.vacanampro-open-chooser { cursor: pointer; }
+@media (prefers-reduced-motion: reduce) {
+	.vacanampro-chooser, .vacanampro-sheet, .vacanampro-chooser-inner, .vacanampro-sheet-panel, .vacanampro-suggest { transition: none; }
+}
+
+/* Themes style every button: keep ours plain. */
+.vacanampro-chooser .vacanampro-close,
+.vacanampro-suggest .vacanampro-suggest-stay { -webkit-appearance: none; appearance: none; background: transparent !important; color: inherit !important; border: 0 !important; box-shadow: none !important; min-height: 0; text-transform: none; letter-spacing: normal; }
+.vacanampro-chooser .vacanampro-close { padding: 0 !important; display: flex; align-items: center; justify-content: center; }
+.vacanampro-chooser .vacanampro-close:hover,
+.vacanampro-chooser .vacanampro-close:focus-visible { background: #f0f0f1 !important; }
+.vacanampro-suggest .vacanampro-suggest-stay { padding: 9px 12px !important; font-weight: 400; }

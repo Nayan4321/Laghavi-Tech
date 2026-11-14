@@ -10,11 +10,11 @@ defined( 'WP_UNINSTALL_PLUGIN' ) || exit;
 
 global $wpdb;
 
-foreach ( array( 'vacanampro_memory', 'vacanampro_strings', 'vacanampro_string_tr' ) as $vacanampro_table ) {
+foreach ( array( 'vacanampro_memory', 'vacanampro_strings', 'vacanampro_string_tr', 'vacanampro_stats' ) as $vacanampro_table ) {
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . $vacanampro_table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Removing the plugin's own tables.
 }
 
-foreach ( array( 'vacanampro_settings', 'vacanampro_license', 'vacanampro_owner', 'vacanampro_memory_db', 'vacanampro_strings_db', 'vacanampro_scanned' ) as $vacanampro_option ) {
+foreach ( array( 'vacanampro_settings', 'vacanampro_license', 'vacanampro_owner', 'vacanampro_memory_db', 'vacanampro_strings_db', 'vacanampro_stats_db', 'vacanampro_scanned' ) as $vacanampro_option ) {
 	delete_option( $vacanampro_option );
 }
 
@@ -27,3 +27,4 @@ delete_metadata( 'post', 0, '_vacanampro_translated', '', true );
 delete_metadata( 'term', 0, '_vacanampro_translated', '', true );
 
 wp_clear_scheduled_hook( 'vacanampro_ai_auto' );
+wp_clear_scheduled_hook( 'vacanampro_analytics_cleanup' );
