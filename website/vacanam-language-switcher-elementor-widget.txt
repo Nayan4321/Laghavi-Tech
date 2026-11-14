@@ -158,7 +158,8 @@
 #vac-lp .vc-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;background:#f1ecff;color:#6d28d9;white-space:nowrap}
 #vac-lp .vc-tag--ok{background:#e7f8ef;color:#15803d}
 #vac-lp code{font-size:12.5px;background:var(--soft);padding:1px 5px;border-radius:5px}
-@media (max-width:900px){#vac-lp .vc-mock{justify-self:stretch;max-width:none}}
+@media (max-width:900px){#vac-lp .vc-mock{justify-self:stretch;max-width:none}#vac-lp .vc-cards,#vac-lp .vc-prices{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){#vac-lp .vc-cards,#vac-lp .vc-prices{grid-template-columns:1fr}}
 </style>
 
 <div id="vac-lp" class="vc-lp">
@@ -234,31 +235,6 @@
     </div>
   </section>
 
-  <!-- Import -->
-  <section id="import">
-    <h2>Moving from Polylang, WPML or TranslatePress?</h2>
-    <p class="lead">Keep everything you already translated. Vacanam finds your old plugin's data and takes it over, so you don't have to set up or edit your site again.</p>
-    <div class="vc-cols">
-      <div class="vc-box"><h3>Polylang &amp; WPML</h3><p>Languages, flags, addresses, the language of every page, post, product, Elementor template and category, which ones are translations of each other, menus per language and translated texts. Your translated pages are used as they are.</p></div>
-      <div class="vc-box"><h3>TranslatePress</h3><p>Languages and addresses are taken over, then Vacanam copies your pages with the same design and fills each copy with the translations you made in TranslatePress.</p></div>
-      <div class="vc-box"><h3>Safe to try</h3><p>The old plugin's data is never changed or deleted. Deactivate it, import with a progress bar, and switch back any time if you need to.</p></div>
-    </div>
-  </section>
-
-  <!-- Fonts -->
-  <section id="fonts">
-    <h2>A font for each language</h2>
-    <p class="lead">Arabic in Cairo, English in Inter, Hindi in Noto Sans Devanagari: each language gets the font that suits its script.</p>
-    <div class="vc-chips">
-      <span class="vc-chip"><i></i>Text and headings font per language</span><span class="vc-chip"><i></i>Google fonts downloaded into your site</span><span class="vc-chip"><i></i>Theme &amp; Font Library fonts</span><span class="vc-chip"><i></i>Elementor custom fonts</span><span class="vc-chip"><i></i>System fonts</span>
-    </div>
-    <div class="vc-cols">
-      <div class="vc-box"><h3>Works with Elementor's global fonts</h3><p>Elementor's Primary, Secondary, Text and Accent fonts switch with the language. Your Elementor settings stay as they are, so the two never conflict.</p></div>
-      <div class="vc-box"><h3>Private and fast</h3><p>Google fonts are downloaded once into your site: visitors load them from you and never connect to Google. GDPR friendly.</p></div>
-      <div class="vc-box"><h3>Your flags, your way</h3><p>Pick from 270 flags with country names (UAE, Saudi Arabia, Arab League, England, Scotland…) or use your own flag image.</p></div>
-    </div>
-  </section>
-
   <!-- Switchers -->
   <section>
     <h2>A language switcher that matches your theme</h2>
@@ -309,16 +285,18 @@
   <!-- Pro -->
   <section id="pro">
     <div class="vc-pro">
-      <span class="vc-pill">Coming soon</span>
-      <h2 style="margin-top:12px">Vacanam Pro: translate with AI</h2>
-      <p class="lead">A separate add-on that translates your pages for you, then you review them.</p>
-      <ul class="vc-list">
-        <li><b>Claude, ChatGPT or Gemini</b>, with your own key: pages, Elementor designs, SEO titles and descriptions, categories, menus and texts.</li>
-        <li><b>As many languages as you want</b>, a page, a selection or the whole site at once.</li>
-        <li><b>Your glossary</b>: brand names that are never translated, and your own words for key terms.</li>
-        <li><b>Shared and translated slugs</b>, and one domain or sub-domain per language.</li>
-      </ul>
-      <p class="vc-note">Install the free plugin now: Pro adds to it, nothing to redo.</p>
+      <span class="vc-pill">Vacanam Pro</span>
+      <h2 style="margin-top:12px">Your whole website in every language, translated by AI</h2>
+      <p class="lead">A Pro add-on to the free plugin: everything the free version does stays free, Pro adds AI translation, a real multilingual shop and the tools growing sites need.</p>
+      <div class="vc-cards">
+        <div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#7c3aed">AI</span><div><h3>AI translation</h3><small>Claude, ChatGPT, Gemini or DeepL</small></div></div><ul><li>Pages, posts, products, Elementor designs, SEO titles, menus and texts</li><li>One page, a selection or the whole site at once</li><li>Your tone, your glossary, Gulf or Modern Standard Arabic</li><li>Translation memory: the same sentence is never paid for twice</li><li>Text inside banners and images redrawn in the language</li></ul></div><div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#0d9488">/ar</span><div><h3>Addresses &amp; domains</h3><small>Your SEO, in every language</small></div></div><ul><li>Translated slugs: <code>/ar/منتج/حذاء/</code></li><li>Or the same slug in every language</li><li>A sub-domain (ar.site.com) or a domain per language</li><li>hreflang, sitemaps, canonical and Yoast, Rank Math, SEOPress title templates</li></ul></div><div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#db2777">Aa</span><div><h3>String translation</h3><small>Every text your theme and plugins show</small></div></div><ul><li>Found by reading their code: WooCommerce, your theme, any plugin</li><li>Translate here, with AI, or import PO and XLIFF files</li><li>Texts saved in settings, like footer and email texts</li><li>Translation status: complete, partly done, original changed, missing</li></ul></div><div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#ea580c">🛒</span><div><h3>WooCommerce</h3><small>A real shop in every language</small></div></div><ul><li>Variations, attributes, grouped products and upsells copied for you</li><li>One price and one stock for every translation</li><li>The cart follows the language, even across domains</li><li>Customer emails and PDF invoices in the customer's language</li><li>Shop, cart, checkout and account pages per language</li></ul></div><div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#0891b2">$</span><div><h3>Currency &amp; country</h3><small>Arabic in AED, English in USD</small></div></div><ul><li>A currency per language (off until you switch it on)</li><li>Works with Rinnovo's currency switcher, or converts by itself</li><li>First visit opens the visitor's country language; their own choice always wins</li><li>Content shown or hidden by country</li></ul></div><div class="vc-card"><div class="vc-card__head"><span class="vc-icon" style="background:#4f46e5">★</span><div><h3>Switchers, forms, analytics</h3><small>For visitors and for you</small></div></div><ul><li>First-visit suggestion, full-screen chooser, phone bottom sheet</li><li>Language and currency switcher together</li><li>Contact Form 7, WPForms and login pages in every language</li><li>Language analytics: views, changes, redirects, sales per language</li><li>REST API, JavaScript events and hooks for developers</li></ul></div>
+      </div>
+      <div class="vc-prices">
+        <div class="vc-price"><h3>Single site</h3><span class="vc-price__sites">1 website</span><div class="vc-price__amt">$79<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Email support</li></ul><a class="vc-btn vc-btn--line" href="https://laghavi.site/product/vacanam-language-switcher-pro/">Buy for 1 site</a></div>
+        <div class="vc-price vc-price--pop"><span class="vc-price__tag">Most popular</span><h3>5 sites</h3><span class="vc-price__sites">Businesses with a few websites</span><div class="vc-price__amt">$159<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Email support</li></ul><a class="vc-btn vc-btn--brand" href="https://laghavi.site/product/vacanam-language-switcher-pro/">Buy for 5 sites</a></div>
+        <div class="vc-price"><h3>Unlimited sites</h3><span class="vc-price__sites">Agencies and freelancers</span><div class="vc-price__amt">$299<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Priority support</li></ul><a class="vc-btn vc-btn--line" href="https://laghavi.site/product/vacanam-language-switcher-pro/">Buy unlimited</a></div>
+      </div>
+      <p class="vc-price__fine">AI translation uses your own Claude, ChatGPT, Gemini or DeepL key: you pay the service directly at its own prices, with no word limits from us. Pro needs the free plugin.</p>
     </div>
   </section>
 
@@ -333,6 +311,8 @@
       <details><summary>My theme was made for Polylang. Will it work?</summary><p>Yes. Vacanam provides the language functions themes made for Polylang use (pll__, pll_the_languages…). Use only one translation plugin at a time.</p></details>
       <details><summary>Can I translate WooCommerce products?</summary><p>Yes: tick products and product categories in Languages › Settings, then copy them like pages.</p></details>
       <details><summary>Does it slow my site down?</summary><p>No. The language is read from the address; no external service is called while visitors browse. The switcher's style sheet is a few kilobytes.</p></details>
+      <details><summary>Do I need Pro?</summary><p>No. The free plugin makes a complete multilingual website: languages, copies with the same design, switchers, SEO, menus and texts. Pro is for translating with AI, translated addresses or a domain per language, a multilingual shop with one stock and a currency per language, and the extra tools in the Pro section above.</p></details>
+      <details><summary>How much does AI translation cost?</summary><p>Pro uses your own Claude, ChatGPT, Gemini or DeepL key, so you pay the service directly at its own prices, usually a few cents per page. Every sentence is remembered, so it is never paid for twice. DeepL has a free plan for up to 500,000 characters a month.</p></details>
       <details><summary>What if I delete the plugin?</summary><p>Your pages and posts are never deleted. Settings are removed only if you choose so in Languages › Settings.</p></details>
     </div>
   </section>

@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,10 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 == Changelog ==
 
+= 1.1.2 =
+* Lists show how far each translation is when an add-on reports it.
+* Language switchers can show a language a page is not translated into yet as faded.
+
 = 1.1.1 =
 * Fix: category filters built with "OR" (for example portfolio tabs) now keep working: the language is added with "AND", so each tab shows only its own category.
 * Fix: on right-to-left pages, slider arrows (Swiper, Slick, Owl and others) no longer stretch across the slider.
@@ -185,6 +189,9 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 * First release.
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+Small additions for the Pro add-on; nothing changes on your site.
 
 = 1.1.1 =
 Fixes category filters with OR conditions and slider arrows on right-to-left pages.
