@@ -300,7 +300,18 @@ class Vacanam_Admin_Content {
 				echo '<span class="vacanam-cell vacanam-cell-own" title="' . esc_attr( $lang['name'] ) . '"><span class="dashicons dashicons-yes-alt"></span></span>';
 			} elseif ( isset( $group[ $slug ] ) ) {
 				$status = get_post_status( $group[ $slug ] );
-				echo '<a class="vacanam-cell vacanam-cell-' . esc_attr( $status ) . '" href="' . esc_url( self::edit_link( $group[ $slug ] ) ) . '" title="' . esc_attr( sprintf( /* translators: 1: language, 2: title */ __( 'Edit the %1$s translation: %2$s', 'vacanam-language-switcher' ), $lang['name'], get_the_title( $group[ $slug ] ) ) ) . '"><span class="dashicons dashicons-edit"></span></a>';
+				/**
+				 * How far a translation is (add-ons show complete, partial or outdated).
+				 *
+				 * @param array  $info   array( 'class' => '', 'title' => '' ).
+				 * @param int    $tr     Translation.
+				 * @param int    $id     Post in the list.
+				 * @param string $slug   Language.
+				 */
+				$info  = (array) apply_filters( 'vacanam_translation_cell', array(), (int) $group[ $slug ], (int) $id, $slug );
+				$title = sprintf( /* translators: 1: language, 2: title */ __( 'Edit the %1$s translation: %2$s', 'vacanam-language-switcher' ), $lang['name'], get_the_title( $group[ $slug ] ) );
+				$title = ! empty( $info['title'] ) ? $title . ' (' . $info['title'] . ')' : $title;
+				echo '<a class="vacanam-cell vacanam-cell-' . esc_attr( $status ) . ( ! empty( $info['class'] ) ? ' ' . esc_attr( $info['class'] ) : '' ) . '" href="' . esc_url( self::edit_link( $group[ $slug ] ) ) . '" title="' . esc_attr( $title ) . '"><span class="dashicons dashicons-edit"></span></a>';
 			} elseif ( '' !== $own || ! $own ) {
 				echo '<a class="vacanam-cell vacanam-cell-add" href="' . esc_url( self::duplicate_url( $id, $slug ) ) . '" title="' . esc_attr( sprintf( /* translators: %s: language */ __( 'Copy into %s, with the same design, to translate it', 'vacanam-language-switcher' ), $lang['name'] ) ) . '"><span class="dashicons dashicons-plus"></span></a>';
 			}

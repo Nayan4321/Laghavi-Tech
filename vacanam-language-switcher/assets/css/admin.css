@@ -116,3 +116,6 @@ th.column-vacanam .vacanam-col-head,
 .vacanam-import-ok { font-size: 15px; font-weight: 600; color: #007017; }
 .vacanam-import-ok .dashicons { color: #00a32a; }
 .vacanam-import-result ul li { list-style: disc; margin-inline-start: 18px; }
+.vacanam-cell.vacanam-status-complete .dashicons { color: #008a20; }
+.vacanam-cell.vacanam-status-partial .dashicons { color: #dba617; }
+.vacanam-cell.vacanam-status-outdated .dashicons { color: #d63638; }

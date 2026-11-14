@@ -261,7 +261,7 @@ class Vacanam_Switcher {
 
 		$list = '<ul class="vacanam-list">';
 		foreach ( $items as $item ) {
-			$list .= '<li class="vacanam-item vacanam-item-' . esc_attr( $item['slug'] ) . ( $item['current'] ? ' vacanam-current-lang' : '' ) . '">' . self::link( $item, 'flags' === $args['style'] ? array_merge( $args, array( 'names' => 'none' ) ) : $args ) . '</li>';
+			$list .= '<li class="vacanam-item vacanam-item-' . esc_attr( $item['slug'] ) . ( $item['current'] ? ' vacanam-current-lang' : '' ) . ( ! empty( $item['missing'] ) ? ' vacanam-item-missing' : '' ) . '">' . self::link( $item, 'flags' === $args['style'] ? array_merge( $args, array( 'names' => 'none' ) ) : $args ) . '</li>';
 		}
 		$list .= '</ul>';
 
@@ -311,7 +311,7 @@ class Vacanam_Switcher {
 	 * @return string
 	 */
 	private static function link( $item, $args ) {
-		return '<a class="vacanam-link" href="' . esc_url( $item['url'] ) . '" hreflang="' . esc_attr( $item['hreflang'] ) . '"' . ( $item['current'] ? ' aria-current="true"' : '' ) . ( 'none' === $args['names'] ? ' title="' . esc_attr( $item['name'] ) . '"' : '' ) . '>' . self::label( $item, $args ) . '</a>';
+		return '<a class="vacanam-link" href="' . esc_url( $item['url'] ) . '" hreflang="' . esc_attr( $item['hreflang'] ) . '"' . ( $item['current'] ? ' aria-current="true"' : '' ) . ( ! empty( $item['missing'] ) ? ' title="' . esc_attr( is_string( $item['missing'] ) ? $item['missing'] : $item['name'] ) . '"' : ( 'none' === $args['names'] ? ' title="' . esc_attr( $item['name'] ) . '"' : '' ) ) . '>' . self::label( $item, $args ) . '</a>';
 	}
 
 	/**

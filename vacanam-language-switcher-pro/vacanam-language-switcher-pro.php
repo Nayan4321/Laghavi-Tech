@@ -37,12 +37,16 @@ require_once VACANAMPRO_DIR . 'includes/class-vacanampro-slugs.php';
 require_once VACANAMPRO_DIR . 'includes/class-vacanampro-ai.php';
 require_once VACANAMPRO_DIR . 'includes/class-vacanampro-translator.php';
 require_once VACANAMPRO_DIR . 'includes/class-vacanampro-ai-admin.php';
+require_once VACANAMPRO_DIR . 'includes/class-vacanampro-strings.php';
+require_once VACANAMPRO_DIR . 'includes/class-vacanampro-status.php';
+require_once VACANAMPRO_DIR . 'includes/class-vacanampro-api.php';
 
 /*
  * Domain and sub-domain addresses are read as early as the free plugin reads the language (and
  * keep working while the license is checked), so a site set up with them never breaks.
  */
 VACANAMPRO_Domains::init_routing();
+VACANAMPRO_API::init_routing();
 
 add_action(
 	'plugins_loaded',
@@ -61,6 +65,9 @@ add_action(
 		VACANAMPRO_Domains::init();
 		VACANAMPRO_Slugs::init();
 		VACANAMPRO_AI_Admin::init();
+		VACANAMPRO_Strings::init();
+		VACANAMPRO_Status::init();
+		VACANAMPRO_API::init();
 		/**
 		 * Vacanam Pro is loaded with a valid license.
 		 */
