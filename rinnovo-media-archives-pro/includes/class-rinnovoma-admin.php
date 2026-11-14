@@ -52,11 +52,11 @@ class RINNOVOMA_Admin {
 	 */
 	private static function tabs() {
 		return array(
-			'plans'    => __( 'Plans and features', self::TD ),
-			'hosts'    => __( 'Media hosts', self::TD ),
-			'protect'  => __( 'Protection', self::TD ),
-			'app'      => __( 'Web app access', self::TD ),
-			'security' => __( 'Security', self::TD ),
+			'plans'    => __( '1 · Plans & Quotas', self::TD ),
+			'hosts'    => __( '2 · Media Providers', self::TD ),
+			'protect'  => __( '3 · Protection', self::TD ),
+			'app'      => __( '4 · App & Integrations', self::TD ),
+			'security' => __( '5 · Security & Activity', self::TD ),
 		);
 	}
 
@@ -207,7 +207,9 @@ class RINNOVOMA_Admin {
 		self::row( 'referer_lock', __( 'Only on this site', self::TD ), 'checkbox', __( 'Media and art links only work on your own pages (no hotlinking)', self::TD ) );
 		self::row( 'art_width', __( 'Gallery images', self::TD ), 'number', __( 'Widest size shown, in pixels. The full-resolution original is never sent.', self::TD ) );
 		self::row( 'feed_ip_limit', __( 'Shared podcast feeds', self::TD ), 'number', __( 'Flag a private feed used from more than this many IP addresses in a day (0 = off).', self::TD ) );
-		echo '</table><p class="description">' . esc_html__( 'In the Media Library, "Subscribers only" moves a file to a protected folder (Apache / LiteSpeed read its .htaccess; on Nginx deny the /rinnovoma-protected/ folder). No website can fully stop screen recording; the watermark makes leaks traceable to the account.', self::TD ) . '</p>';
+		self::row( 'player_color', __( 'Player colour', self::TD ), 'text', __( 'Hex colour of players and the media library, e.g. #e11d48 (client libraries can have their own).', self::TD ) );
+		self::row( 'portal_css', __( 'Custom CSS', self::TD ), 'textarea', __( 'Extra CSS for the portal, the library and players.', self::TD ) );
+		echo '</table><div class="notice notice-info inline"><p><strong>' . esc_html__( 'Signed URLs are not DRM.', self::TD ) . '</strong> ' . esc_html__( 'Every play and download goes through one pipeline: identity, plan and permissions, quotas and stream limits, then a short-lived signed link or provider token (storage keys never reach the browser), then tracking. That stops sharing links and hotlinking, but it cannot stop screen recording; the watermark makes leaks traceable. DRM-capable streaming (Widevine / FairPlay) is a future integration.', self::TD ) . '</p></div><p class="description">' . esc_html__( 'In the Media Library, "Subscribers only" moves a file to a protected folder (Apache / LiteSpeed read its .htaccess; on Nginx deny the /rinnovoma-protected/ folder). No website can fully stop screen recording; the watermark makes leaks traceable to the account.', self::TD ) . '</p>';
 	}
 
 	/**
@@ -263,6 +265,17 @@ class RINNOVOMA_Admin {
 		self::row( 'anomaly_minutes', __( 'Within', self::TD ), 'number', __( 'Minutes. Needs Cloudflare or MaxMind geolocation (WooCommerce > Settings > Integration).', self::TD ) );
 		self::row( 'max_logins', __( 'Site log-ins at once', self::TD ), 'number', __( 'When a plan sets no device limit (0 = no limit). A new log-in signs out the oldest.', self::TD ) );
 		self::row( 'cutoff_logout', __( 'When access ends', self::TD ), 'checkbox', __( 'Also sign the customer out of this site (app tokens, feeds and players always stop at once)', self::TD ) );
+		self::row( 'api_rate', __( 'API rate limit', self::TD ), 'number', __( 'Requests per minute per IP address on the API (media links are limited per member too).', self::TD ) );
+		echo '</table><p class="description">' . esc_html__( 'Devices are told apart by a device cookie, not only the IP address, and travellers are only flagged, never blocked, unless you choose to sign them out.', self::TD ) . '</p>';
+		echo '<h2>' . esc_html__( 'Refused attempts', self::TD ) . '</h2><table class="widefat striped"><tr><th>' . esc_html__( 'When', self::TD ) . '</th><th>' . esc_html__( 'Customer', self::TD ) . '</th><th>' . esc_html__( 'Item', self::TD ) . '</th><th>' . esc_html__( 'Why', self::TD ) . '</th><th>' . esc_html__( 'Device', self::TD ) . '</th></tr>';
+		$denied = RINNOVOMA_Pipeline::analytics( 30 )['denied'];
+		if ( ! $denied ) {
+			echo '<tr><td colspan="5">' . esc_html__( 'None.', self::TD ) . '</td></tr>';
+		}
+		foreach ( $denied as $d ) {
+			$u = get_userdata( (int) $d->user_id );
+			echo '<tr><td>' . esc_html( wp_date( get_option( 'date_format' ) . ' H:i', strtotime( $d->created_at . ' UTC' ) ) ) . '</td><td>' . esc_html( $u ? $u->user_email : '—' ) . '</td><td>' . esc_html( get_the_title( (int) $d->media_id ) ) . '</td><td>' . esc_html( $d->detail ) . '</td><td><code>' . esc_html( $d->device ) . '</code></td></tr>';
+		}
 		echo '</table><h2>' . esc_html__( 'Recent alerts', self::TD ) . '</h2><table class="widefat striped"><tr><th>' . esc_html__( 'When', self::TD ) . '</th><th>' . esc_html__( 'Customer', self::TD ) . '</th><th>' . esc_html__( 'What', self::TD ) . '</th><th>IP</th></tr>';
 		$log = array_reverse( (array) get_option( RINNOVOMA_Security::LOG, array() ) );
 		if ( ! $log ) {
@@ -289,9 +302,9 @@ class RINNOVOMA_Admin {
 		$fields = array(
 			'plans'    => array( 'grace_days' => 'int', 'switch_credit' => 'bool', 'pause_months' => 'int' ),
 			'hosts'    => array( 'link_minutes' => 'int', 'bunny_library' => 'text', 'bunny_key' => 'text', 'bunny_cdn_host' => 'text', 'bunny_cdn_key' => 'text', 'cf_code' => 'text', 'cf_key_id' => 'text', 'cf_pem' => 'raw', 'cfr_domain' => 'text', 'cfr_key_pair' => 'text', 'cfr_private_key' => 'raw', 's3_bucket' => 'text', 's3_region' => 'text', 's3_key' => 'text', 's3_secret' => 'text' ),
-			'protect'  => array( 'watermark' => 'bool', 'watermark_text' => 'text', 'protect' => 'bool', 'referer_lock' => 'bool', 'art_width' => 'int', 'feed_ip_limit' => 'int' ),
+			'protect'  => array( 'watermark' => 'bool', 'watermark_text' => 'text', 'protect' => 'bool', 'referer_lock' => 'bool', 'art_width' => 'int', 'feed_ip_limit' => 'int', 'player_color' => 'text', 'portal_css' => 'raw' ),
 			'app'      => array( 'app_url' => 'url', 'app_login_url' => 'url', 'frame_origins' => 'text' ),
-			'security' => array( 'anomaly' => 'text', 'anomaly_minutes' => 'int', 'max_logins' => 'int', 'cutoff_logout' => 'bool' ),
+			'security' => array( 'anomaly' => 'text', 'anomaly_minutes' => 'int', 'max_logins' => 'int', 'cutoff_logout' => 'bool', 'api_rate' => 'int' ),
 		);
 		$values = array();
 		foreach ( isset( $fields[ $tab ] ) ? $fields[ $tab ] : array() as $key => $type ) {

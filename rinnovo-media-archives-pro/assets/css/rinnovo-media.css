@@ -18,3 +18,22 @@
 .rinnovoma-bar span{display:block;height:100%;background:#7c3aed}
 .rinnovoma-feed input{width:100%;max-width:520px;font-family:monospace;font-size:12px}
 .rinnovoma-switch{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid #eee;padding:6px 0}
+/* Media library */
+.rinnovoma-filter { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 1em; }
+.rinnovoma-grid { display: grid; gap: 16px; grid-template-columns: repeat(var(--cols, 3), minmax(0, 1fr)); }
+.rinnovoma-library--list .rinnovoma-grid { grid-template-columns: 1fr; }
+.rinnovoma-library--list .rinnovoma-card { display: grid; grid-template-columns: 220px 1fr; gap: 12px; align-items: start; }
+.rinnovoma-library--carousel .rinnovoma-grid, .rinnovoma-grid.rinnovoma-library--carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; }
+.rinnovoma-library--carousel .rinnovoma-card, .rinnovoma-grid.rinnovoma-library--carousel .rinnovoma-card { flex: 0 0 260px; scroll-snap-align: start; }
+.rinnovoma-card__thumb { position: relative; display: block; overflow: hidden; border-radius: 8px; background: rgba(0,0,0,.08); }
+.rinnovoma-card__thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.rinnovoma-card__lock, .rinnovoma-card__time { position: absolute; background: rgba(0,0,0,.7); color: #fff; font-size: 12px; padding: 2px 6px; border-radius: 4px; }
+.rinnovoma-card__lock { top: 8px; left: 8px; }
+.rinnovoma-card__time { bottom: 8px; right: 8px; }
+.rinnovoma-card__bar { position: absolute; left: 0; bottom: 0; height: 4px; background: var(--rinnovoma-accent, #e11d48); }
+.rinnovoma-card__title { font-size: 1em; margin: 8px 0 4px; }
+.rinnovoma-card__desc { font-size: .9em; opacity: .8; margin: 0; }
+.rinnovoma-actions .button { margin: 0 6px 6px 0; }
+.rinnovoma-series li.is-current { font-weight: 700; }
+.rinnovoma-preview-label { font-weight: 600; color: var(--rinnovoma-accent, #e11d48); }
+@media (max-width: 700px) { .rinnovoma-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .rinnovoma-library--list .rinnovoma-card { grid-template-columns: 1fr; } }

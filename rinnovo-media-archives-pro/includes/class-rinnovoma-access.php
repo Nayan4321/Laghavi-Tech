@@ -427,9 +427,12 @@ class RINNOVOMA_Access {
 		$state = self::state( $user_id );
 		$all   = (array) get_user_meta( (int) $user_id, '_rinnovoma_usage', true );
 		$used  = isset( $all[ self::cycle( $user_id ) ] ) ? (array) $all[ self::cycle( $user_id ) ] : array();
+		$extra = (array) get_user_meta( (int) $user_id, '_rinnovoma_extra_quota', true );
 		$out   = array();
 		foreach ( $state['features'] as $key => $limit ) {
 			if ( is_int( $limit ) ) {
+				// Usage add-ons bought on top of the plan.
+				$limit += isset( $extra[ $key ] ) ? (int) $extra[ $key ] : 0;
 				$u           = isset( $used[ $key ] ) ? (int) $used[ $key ] : 0;
 				$out[ $key ] = array(
 					'limit'     => $limit,

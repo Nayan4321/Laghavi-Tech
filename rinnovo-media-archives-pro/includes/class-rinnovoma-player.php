@@ -90,7 +90,8 @@ class RINNOVOMA_Player {
 			exit( esc_html__( 'This link has expired.', 'rinnovo-media-archives-pro' ) );
 		}
 		list( $provider, $id, $user_id, , $via ) = $json;
-		if ( ! RINNOVOMA_Access::has( (int) $user_id ) || ( 'page' === $via && ( ! self::from_own_site() || get_current_user_id() !== (int) $user_id ) ) ) {
+		// Share links (one item, no account) and free previews are signed and short-lived: no subscription check.
+		if ( 'share' !== $via && ( ! RINNOVOMA_Access::has( (int) $user_id ) || ( 'page' === $via && ( ! self::from_own_site() || get_current_user_id() !== (int) $user_id ) ) ) ) {
 			status_header( 403 );
 			exit( esc_html__( 'Your subscription does not include this, or it has ended.', 'rinnovo-media-archives-pro' ) );
 		}

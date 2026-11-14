@@ -75,6 +75,13 @@ class RINNOVOMA_Plans {
 			'switch_credit'   => 1,
 			'pause_months'    => 3,
 			'feed_ip_limit'   => 8,
+			'business_model'  => '',
+			'media_types'     => array( 'video', 'audio', 'image', 'file' ),
+			'api_rate'        => 120,
+			'player_color'    => '',
+			'portal_css'      => '',
+			'portal_layout'   => 'grid',
+			'portal_columns'  => 3,
 		);
 	}
 

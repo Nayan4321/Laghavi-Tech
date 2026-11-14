@@ -29,7 +29,7 @@ if ( ! defined( 'RINNOVOMA_LICENSE_SERVER' ) ) {
 	define( 'RINNOVOMA_LICENSE_SERVER', 'https://laghavi.site/wp-json/laghavi-licenses/v1/' );
 }
 
-foreach ( array( 'license', 'plans', 'access', 'signer', 'player', 'gallery', 'podcast', 'api', 'oauth', 'security', 'portal', 'admin' ) as $rinnovoma_file ) {
+foreach ( array( 'license', 'plans', 'access', 'signer', 'player', 'gallery', 'podcast', 'api', 'oauth', 'security', 'portal', 'admin', 'pipeline', 'library', 'manage' ) as $rinnovoma_file ) {
 	require_once RINNOVOMA_DIR . 'includes/class-rinnovoma-' . $rinnovoma_file . '.php';
 }
 unset( $rinnovoma_file );
@@ -65,6 +65,9 @@ add_action(
 		RINNOVOMA_Security::init();
 		RINNOVOMA_Portal::init();
 		RINNOVOMA_Admin::init();
+		RINNOVOMA_Pipeline::init();
+		RINNOVOMA_Library::init();
+		RINNOVOMA_Manage::init();
 		add_action( 'wp_enqueue_scripts', 'rinnovoma_assets', 20 );
 	}
 );

@@ -176,7 +176,15 @@ class RINNOVOMA_Portal {
 
 		if ( $state['active'] ) {
 			self::usage( $user );
-			self::feeds( $user );
+			$types = (array) RINNOVOMA_Plans::get( 'media_types' );
+			if ( in_array( 'audio', $types, true ) ) {
+				self::feeds( $user );
+			}
+			$my = RINNOVOMA_Library::my_shortcode();
+			if ( '' !== $my && false !== strpos( $my, '<h3>' ) ) {
+				echo '<section class="rinnovoma-section"><h3>' . esc_html__( 'Your media', self::TD ) . '</h3>' . $my . '</section>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped while built.
+			}
+			echo '<section class="rinnovoma-section"><h3>' . esc_html__( 'Billing and renewal', self::TD ) . '</h3><p><a class="button" href="' . esc_url( wc_get_account_endpoint_url( RINNOVO_Account::endpoint() ) ) . '">' . esc_html__( 'Manage my subscription', self::TD ) . '</a></p></section>';
 		}
 		self::devices( $user );
 		if ( $state['active'] && $sub ) {
