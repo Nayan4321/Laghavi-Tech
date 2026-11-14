@@ -1,0 +1,11 @@
+.vacanampro-ai-box{margin-top:10px;padding-top:10px;border-top:1px solid #e2e4e7}
+.vacanampro-ai-status{margin:6px 0;color:#50575e}
+.vacanampro-ai-status.is-error{color:#b32d2e}
+.vacanampro-ai-img{display:flex;gap:10px;align-items:flex-start;margin:10px 0;padding:10px;border:1px solid #e2e4e7;border-radius:8px;background:#fff}
+.vacanampro-ai-img figure{margin:0;flex:1}
+.vacanampro-ai-img img{max-width:100%;height:auto;border-radius:6px;display:block}
+.vacanampro-ai-img figcaption{font-size:11px;color:#646970;margin-top:4px}
+.vacanampro-ai-img-right{flex:1;display:flex;flex-direction:column;gap:6px}
+.vacanampro-ai-bar{height:10px;background:#f0f0f1;border-radius:6px;overflow:hidden;max-width:620px}
+.vacanampro-ai-bar span{display:block;height:100%;width:0;background:#7b61de;transition:width .3s}
+.vacanampro-ai-log{max-height:260px;overflow:auto;font-size:12px}

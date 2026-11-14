@@ -32,6 +32,13 @@ class VACANAMPRO_Slugs {
 	private static $original_path_info = null;
 
 	/**
+	 * Language of the term being saved, while WordPress checks its slug.
+	 *
+	 * @var string
+	 */
+	private static $saving_term_lang = '';
+
+	/**
 	 * Reading addresses keeps working while the license is checked, so links never break.
 	 */
 	public static function init_routing() {
@@ -56,6 +63,9 @@ class VACANAMPRO_Slugs {
 		add_action( 'vacanam_term_duplicated', array( __CLASS__, 'after_term_copy' ), 10, 3 );
 		add_filter( 'wp_unique_post_slug', array( __CLASS__, 'unique_post_slug' ), 20, 6 );
 		add_filter( 'wp_unique_term_slug', array( __CLASS__, 'unique_term_slug' ), 20, 3 );
+		add_filter( 'wp_update_term_parent', array( __CLASS__, 'before_term_slug_check' ), 99, 3 );
+		add_action( 'pre_get_terms', array( __CLASS__, 'same_language_terms' ), 99 );
+		add_action( 'edit_terms', array( __CLASS__, 'after_term_slug_check' ) );
 		add_action( 'vacanampro_settings_sections', array( __CLASS__, 'section' ), 5 );
 		add_filter( 'vacanampro_save_settings', array( __CLASS__, 'save' ) );
 	}
@@ -453,6 +463,45 @@ class VACANAMPRO_Slugs {
 			}
 		}
 		return $original_slug;
+	}
+
+	/**
+	 * Saving a term: WordPress next checks whether another term has its slug. With shared slugs,
+	 * only terms of the same language count.
+	 *
+	 * @param int    $parent   Parent.
+	 * @param int    $term_id  Term.
+	 * @param string $taxonomy Taxonomy.
+	 * @return int
+	 */
+	public static function before_term_slug_check( $parent, $term_id, $taxonomy ) {
+		self::$saving_term_lang = VACANAMPRO_Settings::on( 'share_slugs' ) && Vacanam_Model::is_translated_tax( $taxonomy ) ? Vacanam_Model::term_lang( (int) $term_id ) : '';
+		return $parent;
+	}
+
+	/**
+	 * The slug check is over.
+	 */
+	public static function after_term_slug_check() {
+		self::$saving_term_lang = '';
+	}
+
+	/**
+	 * During that check, terms of other languages are not "taken": the lookup only sees terms of the
+	 * language of the term being saved.
+	 *
+	 * @param WP_Term_Query $query Term query.
+	 */
+	public static function same_language_terms( $query ) {
+		if ( '' === self::$saving_term_lang || empty( $query->query_vars['slug'] ) ) {
+			return;
+		}
+		$meta   = isset( $query->query_vars['meta_query'] ) && is_array( $query->query_vars['meta_query'] ) ? $query->query_vars['meta_query'] : array();
+		$meta[] = array(
+			'key'   => Vacanam_Model::TERM_LANG,
+			'value' => self::$saving_term_lang,
+		);
+		$query->query_vars['meta_query'] = $meta; // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- One lookup while a term is saved.
 	}
 
 	/**
