@@ -144,6 +144,15 @@ class RINNOVOBOX_Admin {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
 			return;
 		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Tab switch only.
+		$tab = isset( $_GET['tab'] ) ? sanitize_key( wp_unslash( $_GET['tab'] ) ) : '';
+		if ( in_array( $tab, array( 'calendar', 'prepaid' ), true ) ) {
+			echo '<div class="wrap"><h1>' . esc_html__( 'Subscription boxes', self::TD ) . '</h1>';
+			RINNOVOBOX_Planner::nav( $tab );
+			'calendar' === $tab ? RINNOVOBOX_Planner::calendar() : RINNOVOBOX_Planner::prepaid();
+			echo '</div>';
+			return;
+		}
 		$ship     = self::to_ship();
 		$forecast = self::forecast();
 		$live     = RINNOVOBOX_Store::live( 500 );
@@ -151,6 +160,7 @@ class RINNOVOBOX_Admin {
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'Subscription boxes', self::TD ); ?></h1>
+			<?php RINNOVOBOX_Planner::nav( '' ); ?>
 
 			<h2><?php esc_html_e( 'To pack and ship', self::TD ); ?></h2>
 			<?php if ( ! $ship ) : ?>
@@ -301,6 +311,31 @@ class RINNOVOBOX_Admin {
 		$ship    = (string) $order->get_meta( '_rinnovobox_ship_date' );
 		$carrier = (string) $order->get_meta( '_rinnovobox_tracking_carrier' );
 		wp_nonce_field( 'rinnovobox_order', 'rinnovobox_order_nonce' );
+		if ( $order->get_meta( '_rinnovo_held' ) && '' !== (string) $order->get_meta( '_rinnovobox_hold' ) ) {
+			echo '<div class="notice notice-warning inline"><p><strong>' . esc_html__( 'Renewal held (not charged)', self::TD ) . ':</strong> ' . esc_html( $order->get_meta( '_rinnovobox_hold' ) ) . '</p><p>' . esc_html__( 'Change or remove the item in the order items, save, then release: the customer is charged or invoiced for the new total.', self::TD ) . '</p><p><a class="button button-primary" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=rinnovobox_release&order=' . $order->get_id() ), 'rinnovobox_release_' . $order->get_id() ) ) . '">' . esc_html__( 'Release the renewal', self::TD ) . '</a></p></div>';
+		}
+		$prepaid_of = (int) $order->get_meta( '_rinnovobox_prepaid_of' );
+		if ( $prepaid_of ) {
+			$src = wc_get_order( $prepaid_of );
+			/* translators: %s: order number. */
+			echo '<p>' . wp_kses_post( sprintf( __( 'Prepaid box, paid with order %s.', self::TD ), $src ? '<a href="' . esc_url( $src->get_edit_order_url() ) . '">#' . esc_html( $src->get_order_number() ) . '</a>' : '#' . $prepaid_of ) ) . '</p>';
+		}
+		foreach ( RINNOVOBOX_Store::prepaid_list( 0, true ) as $row ) {
+			if ( (int) $row->order_id !== (int) $order->get_id() ) {
+				continue;
+			}
+			$t = RINNOVOBOX_Prepaid::tracking( $row );
+			/* translators: 1: delivered, 2: total, 3: amount not delivered yet. */
+			echo '<p><strong>' . esc_html__( 'Prepaid plan', self::TD ) . '</strong><br />' . esc_html( sprintf( __( '%1$d of %2$d boxes delivered; balance %3$s', self::TD ), $t['sent'], $t['total'], wp_strip_all_tags( wc_price( $t['balance'], array( 'currency' => $t['currency'] ) ) ) ) );
+			foreach ( $t['orders'] as $o ) {
+				echo '<br /><a href="' . esc_url( $o->get_edit_order_url() ) . '">#' . esc_html( $o->get_order_number() ) . '</a> ' . esc_html( wc_get_order_status_name( $o->get_status() ) );
+			}
+			if ( $t['next'] ) {
+				/* translators: %s: date. */
+				echo '<br />' . esc_html( sprintf( __( 'Next box: %s', self::TD ), wp_date( get_option( 'date_format' ), $t['next'] ) ) );
+			}
+			echo '</p>';
+		}
 		?>
 		<p>
 			<label for="rinnovobox_ship_date"><strong><?php esc_html_e( 'Ship date', self::TD ); ?></strong></label><br />

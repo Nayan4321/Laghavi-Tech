@@ -210,6 +210,40 @@ class RINNOVO_Manager {
 	}
 
 	/**
+	 * Charge a renewal with the saved card, or email the invoice.
+	 *
+	 * @param object   $sub   Subscription.
+	 * @param WC_Order $order Renewal order (pending).
+	 */
+	public static function bill_renewal( $sub, $order ) {
+		if ( RINNOVO_Saved_Cards::can_charge( $sub ) ) {
+			// Charged through the shop's payment plugin; paying the order moves the schedule on.
+			RINNOVO_Saved_Cards::charge( $sub, $order );
+		} elseif ( apply_filters( 'rinnovo_send_renewal_invoice', true, $order, $sub ) ) {
+			RINNOVO_Emails::invoice( $order );
+		}
+	}
+
+	/**
+	 * Release a held renewal: it is charged or invoiced now.
+	 *
+	 * @param WC_Order $order Renewal order.
+	 * @param string   $note  What was done.
+	 * @return bool
+	 */
+	public static function release_renewal( $order, $note = '' ) {
+		$sub = RINNOVO_Subscriptions::get( (int) $order->get_meta( '_rinnovo_subscription_id' ) );
+		if ( ! $sub || ! $order->get_meta( '_rinnovo_held' ) || $order->is_paid() ) {
+			return false;
+		}
+		$order->delete_meta_data( '_rinnovo_held' );
+		$order->save();
+		$order->update_status( 'pending', $note );
+		self::bill_renewal( $sub, $order );
+		return true;
+	}
+
+	/**
 	 * A renewal order for a non-Stripe subscription was paid: move the schedule forward.
 	 *
 	 * @param WC_Order $order Renewal order.
@@ -422,14 +456,25 @@ class RINNOVO_Manager {
 			if ( is_wp_error( $order ) ) {
 				continue;
 			}
-			$order->update_status( 'pending' );
 			RINNOVO_Subscriptions::update( $sub->id, array( 'pending_order_id' => $order->get_id() ) );
-			if ( RINNOVO_Saved_Cards::can_charge( $sub ) ) {
-				// Charged through the shop's payment plugin; paying the order moves the schedule on.
-				RINNOVO_Saved_Cards::charge( $sub, $order );
-			} else {
-				RINNOVO_Emails::invoice( $order );
+			/**
+			 * Hold a renewal before it is charged or invoiced (for example when an item of the box is out of
+			 * stock). A held order waits on hold until an add-on releases it with release_renewal().
+			 *
+			 * @param string|false $reason Why it is held, or false.
+			 * @param WC_Order     $order  Renewal order.
+			 * @param object       $sub    Subscription.
+			 */
+			$hold = apply_filters( 'rinnovo_renewal_hold', false, $order, $sub );
+			if ( $hold ) {
+				$order->update_meta_data( '_rinnovo_held', 1 );
+				$order->save();
+				/* translators: %s: reason. */
+				$order->update_status( 'on-hold', sprintf( __( 'Renewal held, not charged yet: %s', 'rinnovo-subscriptions-licenses' ), $hold ) );
+				continue;
 			}
+			$order->update_status( 'pending' );
+			self::bill_renewal( $sub, $order );
 		}
 
 		// 2. Unpaid renewal invoices: on hold after the grace period, cancelled later.
@@ -438,7 +483,7 @@ class RINNOVO_Manager {
 		$unpaid = RINNOVO_Subscriptions::query( "pending_order_id > 0 AND status IN ('active','trial','on-hold')", $batch );
 		foreach ( $unpaid as $sub ) {
 			$order = wc_get_order( $sub->pending_order_id );
-			if ( ! $order || $order->is_paid() ) {
+			if ( ! $order || $order->is_paid() || $order->get_meta( '_rinnovo_held' ) ) {
 				continue;
 			}
 			// A failed automatic charge is tried again after 1 and 3 days.

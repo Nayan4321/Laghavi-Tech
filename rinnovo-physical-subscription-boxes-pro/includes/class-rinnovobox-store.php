@@ -191,11 +191,16 @@ class RINNOVOBOX_Store {
 	/**
 	 * Prepaid plans of a customer, or all active ones.
 	 *
-	 * @param int $user_id Customer (0 = all active).
+	 * @param int  $user_id Customer (0 = all active).
+	 * @param bool $all     With user 0: every plan, also finished ones.
 	 * @return object[]
 	 */
-	public static function prepaid_list( $user_id = 0 ) {
+	public static function prepaid_list( $user_id = 0, $all = false ) {
 		global $wpdb;
+		if ( $all && ! $user_id ) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			return (array) $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY id DESC LIMIT 1000', self::prepaid_table() ) );
+		}
 		if ( $user_id ) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery
 			return (array) $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE user_id = %d ORDER BY id DESC', self::prepaid_table(), $user_id ) );

@@ -17,5 +17,14 @@
 		}
 		picker.addEventListener( 'change', update );
 		update();
+		var gift = picker.querySelector( '.rinnovobox-gift-toggle' );
+		if ( gift ) {
+			var wrap = gift.closest( '.rinnovobox-gift' );
+			var sync = function () {
+				wrap.classList.toggle( 'is-gift', gift.checked );
+			};
+			gift.addEventListener( 'change', sync );
+			sync();
+		}
 	} );
 } )();

@@ -22,3 +22,7 @@
 .rinnovobox-inline{display:inline-block;margin:6px 6px 6px 0}
 .rinnovobox-address{margin:10px 0 14px}
 .rinnovobox-address summary{cursor:pointer;font-weight:600}
+.rinnovobox-gift-fields { display: none; }
+.rinnovobox-gift.is-gift .rinnovobox-gift-fields { display: block; }
+.rinnovobox-gift-fields input, .rinnovobox-gift-fields textarea { width: 100%; }
+.rinnovobox-gift-fields label { display: block; font-weight: 600; margin-bottom: 2px; }

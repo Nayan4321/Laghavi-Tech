@@ -19,6 +19,7 @@ class RINNOVOBOX_Product {
 	 * Hook everything up.
 	 */
 	public static function init() {
+		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
 		add_filter( 'woocommerce_product_data_tabs', array( __CLASS__, 'tab' ) );
 		add_action( 'woocommerce_product_data_panels', array( __CLASS__, 'panel' ) );
 		add_action( 'woocommerce_process_product_meta', array( __CLASS__, 'save' ), 30 );
@@ -57,8 +58,12 @@ class RINNOVOBOX_Product {
 		};
 		$swaps   = array_filter( array_map( 'absint', (array) $get( '_rinnovobox_swaps', array() ) ) );
 		?>
-		<div id="rinnovobox_data" class="panel woocommerce_options_panel hidden">
-			<div class="options_group">
+		<div id="rinnovobox_data" class="panel woocommerce_options_panel hidden rinnovobox-admin">
+			<?php self::guide( $get ); ?>
+			<div class="options_group" data-paths="box sns prepaid">
+				<?php self::frequency_picker( $product, (string) $get( '_rinnovobox_frequencies' ) ); ?>
+			</div>
+			<div class="options_group" data-paths="box">
 				<p class="form-field"><strong><?php esc_html_e( 'Subscription box', self::TD ); ?></strong><br /><span class="description"><?php esc_html_e( 'For a product that is a subscription (tick "Subscription" in the General tab, or on each variation).', self::TD ); ?></span></p>
 				<?php
 				woocommerce_wp_checkbox(
@@ -67,16 +72,6 @@ class RINNOVOBOX_Product {
 						'label'       => __( 'Box subscription', self::TD ),
 						'description' => __( 'Subscribers can skip, swap, change quantity and frequency, and set one shipping address for all their boxes', self::TD ),
 						'value'       => $get( '_rinnovobox_enabled', 'no' ),
-					)
-				);
-				woocommerce_wp_text_input(
-					array(
-						'id'          => '_rinnovobox_frequencies',
-						'label'       => __( 'Frequencies to choose from', self::TD ),
-						'placeholder' => __( '2 weeks, 4 weeks, 6 weeks, 1 month', self::TD ),
-						'description' => __( 'Days, weeks, months or years, separated by commas. Customers pick one on the product page and can switch later. Empty = the product\'s own billing period. Also used by Subscribe & save.', self::TD ),
-						'desc_tip'    => true,
-						'value'       => $get( '_rinnovobox_frequencies' ),
 					)
 				);
 				woocommerce_wp_text_input(
@@ -114,7 +109,7 @@ class RINNOVOBOX_Product {
 				);
 				?>
 			</div>
-			<div class="options_group">
+			<div class="options_group" data-paths="box sns">
 				<p class="form-field">
 					<label for="rinnovobox_swaps"><?php esc_html_e( 'Customers can swap for', self::TD ); ?></label>
 					<select class="wc-product-search" multiple="multiple" style="width:50%" id="rinnovobox_swaps" name="_rinnovobox_swaps[]" data-placeholder="<?php esc_attr_e( 'Search for products…', self::TD ); ?>" data-action="woocommerce_json_search_products_and_variations" data-exclude="<?php echo (int) $post->ID; ?>">
@@ -137,9 +132,38 @@ class RINNOVOBOX_Product {
 						'wrapper_class' => 'show_if_variable',
 					)
 				);
+				woocommerce_wp_select(
+					array(
+						'id'          => '_rinnovobox_swap_price',
+						'label'       => __( 'Price after a swap', self::TD ),
+						'options'     => array(
+							'difference' => __( 'New item\'s price (pay more or less)', self::TD ),
+							'up'         => __( 'Pay more for pricier items; cheaper items keep the old price', self::TD ),
+							'same'       => __( 'Same price as before (no difference)', self::TD ),
+						),
+						'value'       => $get( '_rinnovobox_swap_price', 'difference' ),
+						'description' => __( 'What the subscriber pays when they swap an item for one with another price. The difference applies from the next box on.', self::TD ),
+						'desc_tip'    => true,
+					)
+				);
+				woocommerce_wp_select(
+					array(
+						'id'          => '_rinnovobox_oos',
+						'label'       => __( 'Item out of stock at renewal', self::TD ),
+						'options'     => array(
+							'swap' => __( 'Replace it with the first swap option in stock (same price)', self::TD ),
+							'skip' => __( 'Leave it out of this box and charge less', self::TD ),
+							'hold' => __( 'Hold the renewal until I decide', self::TD ),
+							'ship' => __( 'Do nothing (backorder)', self::TD ),
+						),
+						'value'       => $get( '_rinnovobox_oos', 'swap' ),
+						'description' => __( 'Checked when the renewal order is made. Held renewals wait on hold (not charged) in WooCommerce › Orders.', self::TD ),
+						'desc_tip'    => true,
+					)
+				);
 				?>
 			</div>
-			<div class="options_group">
+			<div class="options_group" data-paths="sns">
 				<p class="form-field"><strong><?php esc_html_e( 'Subscribe & save', self::TD ); ?></strong><br /><span class="description"><?php esc_html_e( 'For a normal product (not a subscription): shoppers choose a one-time purchase or a subscription at a discount.', self::TD ); ?></span></p>
 				<?php
 				woocommerce_wp_checkbox(
@@ -172,7 +196,7 @@ class RINNOVOBOX_Product {
 				);
 				?>
 			</div>
-			<div class="options_group">
+			<div class="options_group" data-paths="prepaid box">
 				<p class="form-field"><strong><?php esc_html_e( 'Prepaid and gift plans', self::TD ); ?></strong><br /><span class="description"><?php esc_html_e( 'Pay once for several boxes. Each box becomes its own WooCommerce order on its delivery date, ready to ship.', self::TD ); ?></span></p>
 				<?php
 				woocommerce_wp_text_input(
@@ -192,6 +216,14 @@ class RINNOVOBOX_Product {
 						'data_type'   => 'decimal',
 						'placeholder' => '0',
 						'value'       => $get( '_rinnovobox_prepaid_discount' ),
+					)
+				);
+				woocommerce_wp_checkbox(
+					array(
+						'id'          => '_rinnovobox_giftable',
+						'label'       => __( 'Gift plans', self::TD ),
+						'description' => __( 'Buyers can send prepaid boxes as a gift: recipient, start date and message. The recipient gets an email on the start date and a page with their deliveries.', self::TD ),
+						'value'       => $get( '_rinnovobox_giftable', 'yes' ),
 					)
 				);
 				?>
@@ -223,7 +255,11 @@ class RINNOVOBOX_Product {
 		foreach ( array( '_rinnovobox_enabled', '_rinnovobox_swap_variations', '_rinnovobox_sns' ) as $key ) {
 			$product->update_meta_data( $key, isset( $_POST[ $key ] ) ? 'yes' : 'no' );
 		}
-		$product->update_meta_data( '_rinnovobox_frequencies', RINNOVOBOX_Box::frequencies_text( RINNOVOBOX_Box::parse_frequencies( $text( '_rinnovobox_frequencies' ) ) ) );
+		$product->update_meta_data( '_rinnovobox_frequencies', RINNOVOBOX_Box::frequencies_text( RINNOVOBOX_Box::parse_frequencies( self::posted_frequencies() ) ) );
+		$product->update_meta_data( '_rinnovobox_path', in_array( $text( '_rinnovobox_path' ), array( 'box', 'sns', 'prepaid' ), true ) ? $text( '_rinnovobox_path' ) : 'box' );
+		$product->update_meta_data( '_rinnovobox_swap_price', in_array( $text( '_rinnovobox_swap_price' ), array( 'difference', 'up', 'same' ), true ) ? $text( '_rinnovobox_swap_price' ) : 'difference' );
+		$product->update_meta_data( '_rinnovobox_oos', in_array( $text( '_rinnovobox_oos' ), array( 'swap', 'skip', 'hold', 'ship' ), true ) ? $text( '_rinnovobox_oos' ) : 'swap' );
+		$product->update_meta_data( '_rinnovobox_giftable', isset( $_POST['_rinnovobox_giftable'] ) ? 'yes' : 'no' );
 		$product->update_meta_data( '_rinnovobox_first_discount', $dec( '_rinnovobox_first_discount' ) );
 		$product->update_meta_data( '_rinnovobox_first_type', 'fixed' === $text( '_rinnovobox_first_type' ) ? 'fixed' : 'percent' );
 		$product->update_meta_data( '_rinnovobox_fee_label', $text( '_rinnovobox_fee_label' ) );
@@ -234,6 +270,112 @@ class RINNOVOBOX_Product {
 		$swaps = isset( $_POST['_rinnovobox_swaps'] ) ? array_values( array_filter( array_map( 'absint', (array) wp_unslash( $_POST['_rinnovobox_swaps'] ) ) ) ) : array();
 		$product->update_meta_data( '_rinnovobox_swaps', array_values( array_diff( $swaps, array( (int) $product_id ) ) ) );
 		$product->save();
+	}
+
+	/**
+	 * Script and styles of the product tab.
+	 *
+	 * @param string $hook Screen.
+	 */
+	public static function admin_assets( $hook ) {
+		if ( ! in_array( $hook, array( 'post.php', 'post-new.php' ), true ) || 'product' !== get_post_type() ) {
+			return;
+		}
+		wp_enqueue_style( 'rinnovobox-admin', RINNOVOBOX_URL . 'assets/css/rinnovo-boxes-admin.css', array(), RINNOVOBOX_VERSION );
+		wp_enqueue_script( 'rinnovobox-admin', RINNOVOBOX_URL . 'assets/js/rinnovo-boxes-admin.js', array(), RINNOVOBOX_VERSION, true );
+	}
+
+	/**
+	 * Step 1 of the tab: what is sold. Only the options of that path are shown.
+	 *
+	 * @param callable $get Meta getter.
+	 */
+	private static function guide( $get ) {
+		$path  = (string) $get( '_rinnovobox_path', '' );
+		if ( '' === $path ) {
+			// Products made before the guide: pick the path from what is switched on.
+			$path = 'yes' === $get( '_rinnovobox_sns', 'no' ) ? 'sns' : ( 'yes' !== $get( '_rinnovobox_enabled', 'no' ) && '' !== (string) $get( '_rinnovobox_prepaid', '' ) ? 'prepaid' : 'box' );
+		}
+		$paths = array(
+			'box'     => array( __( 'Recurring subscription box', self::TD ), __( 'A box (coffee, flowers, meals, snacks…) that renews on a schedule. Tick "Subscription" in the General tab for the price and billing period.', self::TD ) ),
+			'sns'     => array( __( 'Subscribe & Save on an existing product', self::TD ), __( 'A normal product shoppers can also get regularly at a discount.', self::TD ) ),
+			'prepaid' => array( __( 'Prepaid or gift plan', self::TD ), __( 'Paid once for several boxes (3, 6, 12…), each shipped as its own order. Perfect for gifts.', self::TD ) ),
+		);
+		echo '<div class="options_group rinnovobox-guide"><p class="form-field"><strong>' . esc_html__( 'What are you selling?', self::TD ) . '</strong></p><div class="rinnovobox-paths">';
+		foreach ( $paths as $key => $label ) {
+			echo '<label class="rinnovobox-path"><input type="radio" name="_rinnovobox_path" value="' . esc_attr( $key ) . '"' . checked( $path, $key, false ) . ' /> <strong>' . esc_html( $label[0] ) . '</strong><span class="description">' . esc_html( $label[1] ) . '</span></label>';
+		}
+		echo '</div></div>';
+	}
+
+	/**
+	 * Frequencies as tick boxes, plus custom ones.
+	 *
+	 * @param WC_Product|false $product Product.
+	 * @param string           $stored  Stored list.
+	 */
+	private static function frequency_picker( $product, $stored ) {
+		$chosen  = RINNOVOBOX_Box::parse_frequencies( $stored );
+		$keys    = array_map(
+			static function ( $f ) {
+				return $f[0] . ':' . $f[1];
+			},
+			$chosen
+		);
+		$presets = array( 'week:1', 'week:2', 'week:3', 'week:4', 'week:6', 'week:8', 'month:1', 'month:2', 'month:3', 'month:6', 'year:1' );
+		$plan    = $product && class_exists( 'RINNOVO_Product' ) ? RINNOVO_Product::plan( $product ) : null;
+		echo '<p class="form-field"><strong>' . esc_html__( 'Delivery frequencies customers can choose', self::TD ) . '</strong><br /><span class="description">';
+		if ( $plan ) {
+			/* translators: %s: billing period, e.g. "Every month". */
+			echo esc_html( sprintf( __( 'The frequency a customer picks replaces the billing period of the General tab (%s): they pay and receive a box at that frequency, and can switch later. Nothing ticked = the billing period of the General tab.', self::TD ), RINNOVOBOX_Box::frequency_label( $plan['period'], $plan['interval'] ) ) );
+		} else {
+			esc_html_e( 'Customers pick one on the product page and can switch later. Nothing ticked = every month. Used by Subscribe & Save and prepaid plans too.', self::TD );
+		}
+		echo '</span></p><div class="rinnovobox-chips">';
+		foreach ( array_unique( array_merge( $presets, $keys ) ) as $key ) {
+			list( $period, $interval ) = explode( ':', $key );
+			echo '<label class="rinnovobox-chip"><input type="checkbox" name="_rinnovobox_freq[]" value="' . esc_attr( $key ) . '"' . checked( in_array( $key, $keys, true ), true, false ) . ' /> ' . esc_html( RINNOVOBOX_Box::frequency_label( $period, (int) $interval ) ) . '</label>';
+		}
+		echo '</div><p class="form-field rinnovobox-custom-freq"><label for="rinnovobox_freq_n">' . esc_html__( 'Add a custom frequency', self::TD ) . '</label><span class="rinnovobox-custom">' . esc_html__( 'Every', self::TD ) . ' <input type="number" min="1" max="365" id="rinnovobox_freq_n" name="_rinnovobox_freq_n" class="small-text" style="width:70px;float:none" /> <select style="width:auto;float:none" name="_rinnovobox_freq_unit"><option value="day">' . esc_html__( 'days', self::TD ) . '</option><option value="week" selected="selected">' . esc_html__( 'weeks', self::TD ) . '</option><option value="month">' . esc_html__( 'months', self::TD ) . '</option></select> <span class="description">' . esc_html__( 'Added when you save.', self::TD ) . '</span></span></p>';
+	}
+
+	/**
+	 * Frequencies posted by the tick boxes (and a custom one) as text.
+	 *
+	 * @return string
+	 */
+	private static function posted_frequencies() {
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in save().
+		$list = array();
+		foreach ( isset( $_POST['_rinnovobox_freq'] ) ? (array) wp_unslash( $_POST['_rinnovobox_freq'] ) : array() as $key ) {
+			$parts = explode( ':', sanitize_text_field( $key ) );
+			if ( 2 === count( $parts ) && in_array( $parts[0], array( 'day', 'week', 'month', 'year' ), true ) ) {
+				$list[] = array( $parts[0], max( 1, (int) $parts[1] ) );
+			}
+		}
+		$n    = isset( $_POST['_rinnovobox_freq_n'] ) ? absint( $_POST['_rinnovobox_freq_n'] ) : 0;
+		$unit = isset( $_POST['_rinnovobox_freq_unit'] ) ? sanitize_key( wp_unslash( $_POST['_rinnovobox_freq_unit'] ) ) : 'week';
+		if ( $n && in_array( $unit, array( 'day', 'week', 'month' ), true ) ) {
+			$list[] = array( $unit, $n );
+		}
+		// Older forms (text field).
+		if ( ! $list && isset( $_POST['_rinnovobox_frequencies'] ) ) {
+			return sanitize_text_field( wp_unslash( $_POST['_rinnovobox_frequencies'] ) );
+		}
+		// phpcs:enable
+		$order = array(
+			'day'   => 1,
+			'week'  => 7,
+			'month' => 30,
+			'year'  => 365,
+		);
+		usort(
+			$list,
+			static function ( $a, $b ) use ( $order ) {
+				return $order[ $a[0] ] * $a[1] - $order[ $b[0] ] * $b[1];
+			}
+		);
+		return RINNOVOBOX_Box::frequencies_text( $list );
 	}
 
 	// ---------------------------------------------------------------- Product page.
@@ -372,10 +514,22 @@ class RINNOVOBOX_Product {
 				</label>
 			<?php endforeach; ?>
 			<?php if ( $c['prepaid'] ) : ?>
-				<p class="rinnovobox-gift" data-for="prepaid">
-					<label for="rinnovobox_gift"><?php esc_html_e( 'Gift message (optional)', self::TD ); ?></label>
-					<textarea id="rinnovobox_gift" name="rinnovobox_gift" rows="2" maxlength="300" placeholder="<?php esc_attr_e( 'Printed on the packing slip. Enter the recipient as the shipping address at checkout.', self::TD ); ?>"></textarea>
-				</p>
+				<?php if ( 'no' !== $product->get_meta( '_rinnovobox_giftable' ) ) : ?>
+					<div class="rinnovobox-gift" data-for="prepaid">
+						<p><label><input type="checkbox" name="rinnovobox_is_gift" value="1" class="rinnovobox-gift-toggle" /> <?php esc_html_e( 'This is a gift', self::TD ); ?></label></p>
+						<div class="rinnovobox-gift-fields">
+							<p><label for="rinnovobox_gift_to"><?php esc_html_e( 'Recipient\'s name', self::TD ); ?></label><input type="text" id="rinnovobox_gift_to" name="rinnovobox_gift_to" maxlength="100" /></p>
+							<p><label for="rinnovobox_gift_email"><?php esc_html_e( 'Recipient\'s email (we tell them when their gift starts)', self::TD ); ?></label><input type="email" id="rinnovobox_gift_email" name="rinnovobox_gift_email" maxlength="100" /></p>
+							<p><label for="rinnovobox_gift_start"><?php esc_html_e( 'First box on', self::TD ); ?></label><input type="date" id="rinnovobox_gift_start" name="rinnovobox_gift_start" min="<?php echo esc_attr( wp_date( 'Y-m-d' ) ); ?>" max="<?php echo esc_attr( wp_date( 'Y-m-d', time() + 365 * DAY_IN_SECONDS ) ); ?>" /></p>
+							<p><label for="rinnovobox_gift"><?php esc_html_e( 'Gift message (optional)', self::TD ); ?></label><textarea id="rinnovobox_gift" name="rinnovobox_gift" rows="2" maxlength="300" placeholder="<?php esc_attr_e( 'Printed on the packing slip. Enter the recipient as the shipping address at checkout.', self::TD ); ?>"></textarea></p>
+						</div>
+					</div>
+				<?php else : ?>
+					<p class="rinnovobox-gift" data-for="prepaid">
+						<label for="rinnovobox_gift"><?php esc_html_e( 'Gift message (optional)', self::TD ); ?></label>
+						<textarea id="rinnovobox_gift" name="rinnovobox_gift" rows="2" maxlength="300"></textarea>
+					</p>
+				<?php endif; ?>
 			<?php endif; ?>
 			<?php wp_nonce_field( 'rinnovobox_pick', 'rinnovobox_nonce' ); ?>
 		</div>

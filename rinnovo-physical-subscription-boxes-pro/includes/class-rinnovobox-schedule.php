@@ -24,6 +24,13 @@ class RINNOVOBOX_Schedule {
 	private static $busy = false;
 
 	/**
+	 * What the last address change did to each box's shipping (shown to the customer).
+	 *
+	 * @var string[]
+	 */
+	public static $shipping_changes = array();
+
+	/**
 	 * Hook everything up.
 	 */
 	public static function init() {
@@ -32,6 +39,8 @@ class RINNOVOBOX_Schedule {
 		add_action( 'woocommerce_after_order_object_save', array( __CLASS__, 'renewal_saved' ), 5 );
 		// Before Rinnovo Subscriptions & Licenses' own hourly run (priority 10), so box reminders replace its reminder.
 		add_action( 'rinnovo_hourly', array( __CLASS__, 'hourly' ), 5 );
+		add_filter( 'rinnovo_renewal_hold', array( __CLASS__, 'hold' ), 10, 2 );
+		add_action( 'admin_post_rinnovobox_release', array( __CLASS__, 'release' ) );
 		add_action( 'rinnovobox_daily', array( __CLASS__, 'daily' ) );
 		add_action(
 			'init',
@@ -153,6 +162,8 @@ class RINNOVOBOX_Schedule {
 	 * @param array    $box   Box.
 	 */
 	private static function build( $order, $sub, $box ) {
+		$saved_box = $box;
+		$box       = self::stock_rules( $order, $sub, $box );
 		$automatic = RINNOVO_Manager::is_automatic( $sub );
 		$due       = $sub->next_payment ? strtotime( $sub->next_payment . ' UTC' ) : time();
 		$charged   = (float) $order->get_total();
@@ -239,12 +250,105 @@ class RINNOVOBOX_Schedule {
 		);
 		$order->save();
 
+		// Stock replacements were for this box only: the subscriber's own box stays as it was.
+		$box                = $saved_box;
 		$box['skips']       = 0;
 		$box['skipped_for'] = '';
 		if ( ! empty( $box['hold_until'] ) && time() >= (int) $box['hold_until'] - DAY_IN_SECONDS ) {
 			unset( $box['hold_until'] );
 		}
 		RINNOVOBOX_Store::save( $sub->id, $sub->user_id, $box );
+	}
+
+	/**
+	 * Items out of stock at renewal: replaced, left out, held or shipped later (backorder), by product rule.
+	 *
+	 * @param WC_Order $order Renewal order.
+	 * @param object   $sub   Subscription.
+	 * @param array    $box   Box.
+	 * @return array Box for this delivery.
+	 */
+	private static function stock_rules( $order, $sub, $box ) {
+		$notes = array();
+		foreach ( $box['items'] as $i => $item ) {
+			if ( RINNOVOBOX_Box::item_available( $item, (int) $sub->quantity ) ) {
+				continue;
+			}
+			$name = RINNOVOBOX_Box::item_name( $item );
+			$rule = RINNOVOBOX_Box::rules( $item )['oos'];
+			if ( 'swap' === $rule ) {
+				$current = (int) ( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+				foreach ( array_keys( RINNOVOBOX_Box::swap_options( $item ) ) as $to ) {
+					if ( (int) $to === $current ) {
+						continue;
+					}
+					$p = wc_get_product( $to );
+					$try = array_merge(
+						$item,
+						array(
+							'product_id'   => $p && $p->is_type( 'variation' ) ? $p->get_parent_id() : (int) $to,
+							'variation_id' => $p && $p->is_type( 'variation' ) ? (int) $to : 0,
+						)
+					);
+					if ( $p && RINNOVOBOX_Box::item_available( $try, (int) $sub->quantity ) ) {
+						$was                         = $item;
+						$try['keep_price']           = isset( $was['keep_price'] ) && null !== $was['keep_price'] ? $was['keep_price'] : ( null !== $was['price'] && empty( $was['main'] ) ? (float) $was['price'] : ( wc_get_product( $current ) ? (float) wc_get_product( $current )->get_price( 'edit' ) : null ) );
+						$try['name']                 = $p->get_name();
+						$box['items'][ $i ]          = $try;
+						/* translators: 1: product, 2: replacement. */
+						$notes[] = sprintf( __( '%1$s was out of stock: replaced by %2$s (same price).', self::TD ), $name, $p->get_name() );
+						continue 2;
+					}
+				}
+				$rule = 'skip';
+			}
+			if ( 'skip' === $rule && empty( $item['main'] ) ) {
+				unset( $box['items'][ $i ] );
+				/* translators: %s: product. */
+				$notes[] = sprintf( __( '%s was out of stock: left out of this box.', self::TD ), $name );
+			} elseif ( 'hold' === $rule || ( 'skip' === $rule && ! empty( $item['main'] ) ) ) {
+				/* translators: %s: product. */
+				$order->update_meta_data( '_rinnovobox_hold', sprintf( __( '%s is out of stock', self::TD ), $name ) );
+			} else {
+				/* translators: %s: product. */
+				$notes[] = sprintf( __( '%s is out of stock: shipped when back in stock (backorder).', self::TD ), $name );
+			}
+		}
+		$box['items'] = array_values( $box['items'] );
+		foreach ( $notes as $note ) {
+			$order->add_order_note( $note );
+		}
+		return $box;
+	}
+
+	/**
+	 * Hold the renewal (not charged) when an item with the "hold" rule is out of stock.
+	 *
+	 * @param string|false $hold  Reason.
+	 * @param WC_Order     $order Renewal order.
+	 * @return string|false
+	 */
+	public static function hold( $hold, $order ) {
+		$reason = (string) $order->get_meta( '_rinnovobox_hold' );
+		return '' !== $reason && ! $hold ? $reason : $hold;
+	}
+
+	/**
+	 * Release a held box renewal from the order screen.
+	 */
+	public static function release() {
+		$order_id = isset( $_GET['order'] ) ? absint( $_GET['order'] ) : 0;
+		if ( ! current_user_can( 'edit_shop_orders' ) || ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_wpnonce'] ) ), 'rinnovobox_release_' . $order_id ) ) {
+			wp_die( esc_html__( 'Not allowed.', self::TD ) );
+		}
+		$order = wc_get_order( $order_id );
+		if ( $order ) {
+			$order->delete_meta_data( '_rinnovobox_hold' );
+			$order->calculate_totals( true );
+			RINNOVO_Manager::release_renewal( $order, __( 'Box renewal released by the shop after changing the items.', self::TD ) );
+		}
+		wp_safe_redirect( $order ? $order->get_edit_order_url() : admin_url() );
+		exit;
 	}
 
 	/**
@@ -469,12 +573,18 @@ class RINNOVOBOX_Schedule {
 				$to      = (int) $c['swap'];
 				$options = RINNOVOBOX_Box::swap_options( $item );
 				if ( isset( $options[ $to ] ) && $to !== (int) ( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] ) ) {
-					$p = wc_get_product( $to );
+					$p     = wc_get_product( $to );
+					$rule  = RINNOVOBOX_Box::rules( $item )['swap_price'];
+					$was_p = wc_get_product( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+					$old   = isset( $item['keep_price'] ) && null !== $item['keep_price'] ? (float) $item['keep_price'] : ( null !== $item['price'] && empty( $item['main'] ) ? (float) $item['price'] : ( $was_p ? (float) $was_p->get_price( 'edit' ) : 0.0 ) );
+					$new   = $p ? (float) $p->get_price( 'edit' ) : $old;
+					$keep  = 'same' === $rule || ( 'up' === $rule && $new < $old );
+					$box['items'][ $i ]['keep_price'] = $keep ? $old : null;
 					$box['items'][ $i ]['product_id']   = $p && $p->is_type( 'variation' ) ? $p->get_parent_id() : $to;
 					$box['items'][ $i ]['variation_id'] = $p && $p->is_type( 'variation' ) ? $to : 0;
 					$box['items'][ $i ]['name']         = $p ? $p->get_name() : '';
 					if ( empty( $item['main'] ) ) {
-						$box['items'][ $i ]['price'] = $p ? (float) $p->get_price( 'edit' ) : $item['price'];
+						$box['items'][ $i ]['price'] = $keep ? $old : $new;
 					}
 				}
 			}
@@ -521,16 +631,32 @@ class RINNOVOBOX_Schedule {
 	 * @return int Number of boxes changed.
 	 */
 	public static function set_address( $user_id, $address ) {
-		$done = 0;
+		$done            = 0;
+		self::$shipping_changes = array();
 		foreach ( RINNOVOBOX_Store::ids_for_user( $user_id ) as $id ) {
 			$sub = RINNOVO_Subscriptions::get( $id );
 			$box = RINNOVOBOX_Store::get( $id );
 			if ( ! $sub || ! $box || ! in_array( $sub->status, RINNOVO_Subscriptions::live_statuses(), true ) ) {
 				continue;
 			}
+			$before         = $box['shipping'];
 			$box['address'] = $address;
 			if ( ! is_wp_error( self::save_and_reprice( $sub, $box, __( 'Shipping address changed', self::TD ) ) ) ) {
 				++$done;
+				$after = RINNOVOBOX_Store::get( $id );
+				$after = $after ? $after['shipping'] : $before;
+				$old   = (float) $before['total'] + (float) $before['tax'];
+				$new   = (float) $after['total'] + (float) $after['tax'];
+				if ( 'recalculate' !== RINNOVOBOX_Settings::get( 'rinnovobox_shipping' ) ) {
+					$text = 'free' === RINNOVOBOX_Settings::get( 'rinnovobox_shipping' ) ? __( 'shipping stays free', self::TD ) : __( 'shipping stays as it was at sign-up', self::TD );
+				} elseif ( abs( $old - $new ) < 0.005 && $before['method_id'] === $after['method_id'] ) {
+					/* translators: %s: amount. */
+					$text = sprintf( __( 'shipping unchanged (%s)', self::TD ), wp_strip_all_tags( wc_price( $new, array( 'currency' => $sub->currency ) ) ) );
+				} else {
+					/* translators: 1: old method and amount, 2: new method and amount. */
+					$text = sprintf( __( 'shipping changes from %1$s to %2$s from your next box', self::TD ), $before['label'] . ' ' . wp_strip_all_tags( wc_price( $old, array( 'currency' => $sub->currency ) ) ), $after['label'] . ' ' . wp_strip_all_tags( wc_price( $new, array( 'currency' => $sub->currency ) ) ) );
+				}
+				self::$shipping_changes[] = $sub->name . ': ' . $text;
 			}
 		}
 		$customer = new WC_Customer( $user_id );

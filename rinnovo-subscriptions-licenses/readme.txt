@@ -161,6 +161,7 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 
 = 1.1.1 =
 * Developers: rinnovo_plan filter, rinnovo_subscription_updated action and rinnovo_license_admin_row action for add-ons.
+* Developers: rinnovo_renewal_hold filter (hold a renewal before it is charged, then RINNOVO_Manager::release_renewal()) and rinnovo_send_renewal_invoice filter.
 
 = 1.1.0 =
 * Automatic renewals with WooCommerce Stripe Gateway, WooPayments, PayPal Payments, Square, Braintree, Authorize.Net, Mollie, Checkout.com, GoCardless and Paystack: the card or mandate is saved at the first payment and charged on each renewal date, with retries after 1 and 3 days. Every other payment method keeps invoice renewals.

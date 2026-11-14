@@ -283,6 +283,10 @@ class RINNOVOBOX_Box {
 		if ( null !== $item['price'] && empty( $item['main'] ) ) {
 			return (float) $item['price'];
 		}
+		if ( isset( $item['keep_price'] ) && null !== $item['keep_price'] ) {
+			// Swapped with "same price" (or for a cheaper item with "pay more only").
+			return round( (float) $item['keep_price'] * ( 1 - max( 0, min( 100, (float) $discount ) ) / 100 ), wc_get_price_decimals() + 2 );
+		}
 		$product = wc_get_product( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
 		return $product ? self::unit_price( $product, $discount ) : (float) $item['price'];
 	}
@@ -604,6 +608,37 @@ class RINNOVOBOX_Box {
 			$out[ $current ] = $p ? ( $p->is_type( 'variation' ) ? wp_strip_all_tags( wc_get_formatted_variation( $p, true, false, false ) ) : $p->get_name() ) : '#' . $current;
 		}
 		return $out;
+	}
+
+	/**
+	 * Swap and stock rules of an item's product.
+	 *
+	 * @param array $item Box item.
+	 * @return array swap_price (difference|up|same), oos (swap|skip|hold|ship).
+	 */
+	public static function rules( $item ) {
+		$p = self::settings_product( (int) $item['product_id'] );
+		$swap = $p ? (string) $p->get_meta( '_rinnovobox_swap_price' ) : '';
+		$oos  = $p ? (string) $p->get_meta( '_rinnovobox_oos' ) : '';
+		return array(
+			'swap_price' => in_array( $swap, array( 'difference', 'up', 'same' ), true ) ? $swap : 'difference',
+			'oos'        => in_array( $oos, array( 'swap', 'skip', 'hold', 'ship' ), true ) ? $oos : 'swap',
+		);
+	}
+
+	/**
+	 * Whether an item can be packed (in stock for its quantity, or backorders allowed).
+	 *
+	 * @param array $item Box item.
+	 * @param int   $times Boxes.
+	 * @return bool
+	 */
+	public static function item_available( $item, $times = 1 ) {
+		$p = wc_get_product( $item['variation_id'] ? $item['variation_id'] : $item['product_id'] );
+		if ( ! $p || ! $p->is_in_stock() ) {
+			return false;
+		}
+		return ! $p->managing_stock() || $p->backorders_allowed() || (int) $p->get_stock_quantity() >= (int) $item['qty'] * max( 1, (int) $times );
 	}
 
 	/**

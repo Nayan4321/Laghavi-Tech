@@ -80,6 +80,18 @@ class RINNOVOBOX_Cart {
 		$mode = $sent ? sanitize_key( wp_unslash( $_REQUEST['rinnovobox_mode'] ) ) : $choices['default'];
 		$freq = isset( $_REQUEST['rinnovobox_frequency'] ) && $sent ? sanitize_text_field( wp_unslash( $_REQUEST['rinnovobox_frequency'] ) ) : '';
 		$gift = isset( $_REQUEST['rinnovobox_gift'] ) && $sent ? sanitize_textarea_field( wp_unslash( $_REQUEST['rinnovobox_gift'] ) ) : '';
+		$for  = array(
+			'to'    => '',
+			'email' => '',
+			'start' => '',
+		);
+		if ( $sent && ! empty( $_REQUEST['rinnovobox_is_gift'] ) ) {
+			$for['to']    = isset( $_REQUEST['rinnovobox_gift_to'] ) ? substr( sanitize_text_field( wp_unslash( $_REQUEST['rinnovobox_gift_to'] ) ), 0, 100 ) : '';
+			$for['email'] = isset( $_REQUEST['rinnovobox_gift_email'] ) ? sanitize_email( wp_unslash( $_REQUEST['rinnovobox_gift_email'] ) ) : '';
+			$start        = isset( $_REQUEST['rinnovobox_gift_start'] ) ? sanitize_text_field( wp_unslash( $_REQUEST['rinnovobox_gift_start'] ) ) : '';
+			$ts           = preg_match( '/^\d{4}-\d{2}-\d{2}$/', $start ) ? strtotime( $start . ' 08:00:00 ' . wp_timezone_string() ) : 0;
+			$for['start'] = $ts && $ts > time() && $ts < time() + 366 * DAY_IN_SECONDS ? $start : '';
+		}
 		// phpcs:enable
 
 		$frequencies = RINNOVOBOX_Box::frequencies_for( $product );
@@ -101,6 +113,9 @@ class RINNOVOBOX_Cart {
 					'interval' => (int) $picked[1],
 					'discount' => (float) $o['prepaid_discount'],
 					'gift'     => substr( $gift, 0, 300 ),
+					'gift_to'  => $for['to'],
+					'email'    => $for['email'],
+					'start'    => $for['start'],
 				);
 			}
 			$mode = $choices['default'];
@@ -359,6 +374,18 @@ class RINNOVOBOX_Cart {
 				/* translators: 1: number of boxes, 2: frequency. */
 				'value' => sprintf( _n( '%1$d box, %2$s', '%1$d boxes, %2$s', $r['count'], self::TD ), $r['count'], strtolower( RINNOVOBOX_Box::frequency_label( $r['period'], $r['interval'] ) ) ),
 			);
+			if ( ! empty( $r['gift_to'] ) ) {
+				$data[] = array(
+					'key'   => __( 'Gift for', self::TD ),
+					'value' => $r['gift_to'] . ( ! empty( $r['email'] ) ? ' (' . $r['email'] . ')' : '' ),
+				);
+			}
+			if ( ! empty( $r['start'] ) ) {
+				$data[] = array(
+					'key'   => __( 'First box on', self::TD ),
+					'value' => wp_date( get_option( 'date_format' ), strtotime( $r['start'] . ' 12:00:00' ) ),
+				);
+			}
 			if ( '' !== $r['gift'] ) {
 				$data[] = array(
 					'key'   => __( 'Gift message', self::TD ),
@@ -469,9 +496,18 @@ class RINNOVOBOX_Cart {
 					'period'   => $r['period'],
 					'interval' => (int) $r['interval'],
 					'gift'     => $r['gift'],
+					'gift_to'  => isset( $r['gift_to'] ) ? $r['gift_to'] : '',
+					'email'    => isset( $r['email'] ) ? $r['email'] : '',
+					'start'    => isset( $r['start'] ) ? $r['start'] : '',
 				),
 				true
 			);
+			if ( ! empty( $r['gift_to'] ) ) {
+				$item->add_meta_data( __( 'Gift for', self::TD ), $r['gift_to'], true );
+			}
+			if ( ! empty( $r['start'] ) ) {
+				$item->add_meta_data( __( 'First box on', self::TD ), wp_date( get_option( 'date_format' ), strtotime( $r['start'] . ' 12:00:00' ) ), true );
+			}
 			/* translators: 1: number of boxes, 2: frequency. */
 			$item->add_meta_data( __( 'Prepaid', self::TD ), sprintf( _n( '%1$d box, %2$s', '%1$d boxes, %2$s', $r['count'], self::TD ), $r['count'], strtolower( RINNOVOBOX_Box::frequency_label( $r['period'], $r['interval'] ) ) ), true );
 			if ( '' !== $r['gift'] ) {

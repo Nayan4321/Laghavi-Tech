@@ -42,6 +42,7 @@ require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-prepaid.php';
 require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-account.php';
 require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-emails.php';
 require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-admin.php';
+require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-planner.php';
 
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).

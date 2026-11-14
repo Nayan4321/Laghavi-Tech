@@ -1,0 +1,9 @@
+.rinnovobox-admin .rinnovobox-paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; padding: 0 12px 12px; }
+.rinnovobox-admin .rinnovobox-path { display: block; border: 1px solid #dcdcde; border-radius: 4px; padding: 10px; margin: 0; float: none; width: auto; cursor: pointer; }
+.rinnovobox-admin .rinnovobox-path:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; }
+.rinnovobox-admin .rinnovobox-path .description { display: block; margin-top: 4px; }
+.rinnovobox-admin .rinnovobox-chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 12px 6px 162px; }
+.rinnovobox-admin .rinnovobox-chip { border: 1px solid #c3c4c7; border-radius: 16px; padding: 3px 10px; margin: 0; float: none; width: auto; background: #fff; cursor: pointer; }
+.rinnovobox-admin .rinnovobox-chip:has(input:checked) { background: #2271b1; border-color: #2271b1; color: #fff; }
+.rinnovobox-admin .rinnovobox-chip input { margin: 0 4px 0 0; }
+@media (max-width: 782px) { .rinnovobox-admin .rinnovobox-chips { padding-left: 12px; } }

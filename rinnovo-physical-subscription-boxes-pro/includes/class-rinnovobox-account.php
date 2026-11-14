@@ -226,24 +226,43 @@ class RINNOVOBOX_Account {
 	 * @param object[] $plans Plans.
 	 */
 	private static function prepaid_list( $plans ) {
+		$fmt = get_option( 'date_format' );
 		?>
 		<h3><?php esc_html_e( 'Prepaid plans', self::TD ); ?></h3>
 		<table class="shop_table rinnovobox-prepaid">
+			<thead><tr><th><?php esc_html_e( 'Plan', self::TD ); ?></th><th><?php esc_html_e( 'Boxes', self::TD ); ?></th><th><?php esc_html_e( 'Prepaid balance', self::TD ); ?></th><th><?php esc_html_e( 'Next box', self::TD ); ?></th></tr></thead>
 			<?php foreach ( $plans as $plan ) : ?>
-				<?php $product = wc_get_product( $plan->product_id ); ?>
+				<?php
+				$product = wc_get_product( $plan->product_id );
+				$t       = RINNOVOBOX_Prepaid::tracking( $plan );
+				?>
 				<tr>
-					<td><?php echo esc_html( $product ? $product->get_name() : '#' . $plan->product_id ); ?></td>
 					<td>
-						<?php
-						/* translators: 1: boxes sent, 2: boxes in the plan. */
-						echo esc_html( sprintf( __( '%1$d of %2$d boxes sent', self::TD ), (int) $plan->boxes_sent, (int) $plan->boxes_total ) );
-						?>
+						<?php echo esc_html( $product ? $product->get_name() : '#' . $plan->product_id ); ?>
+						<?php if ( '' !== $t['gift_to'] ) : ?>
+							<br /><small>
+							<?php
+							/* translators: %s: recipient. */
+							echo esc_html( sprintf( __( 'Gift for %s', self::TD ), $t['gift_to'] ) );
+							?>
+							· <a href="<?php echo esc_url( RINNOVOBOX_Prepaid::gift_url( $plan ) ); ?>"><?php esc_html_e( 'recipient\'s page', self::TD ); ?></a></small>
+						<?php endif; ?>
 					</td>
 					<td>
 						<?php
-						if ( 'active' === $plan->status && $plan->next_date ) {
-							/* translators: %s: date. */
-							echo esc_html( sprintf( __( 'Next box: %s', self::TD ), RINNOVO_Subscriptions::date_label( $plan->next_date ) ) );
+						/* translators: 1: delivered, 2: total, 3: left. */
+						echo esc_html( sprintf( __( '%1$d of %2$d delivered, %3$d left', self::TD ), $t['sent'], $t['total'], $t['left'] ) );
+						?>
+					</td>
+					<td><?php echo wp_kses_post( wc_price( $t['balance'], array( 'currency' => $t['currency'] ) ) ); ?><br /><small><?php echo esc_html( $t['payment'] ); ?></small></td>
+					<td>
+						<?php
+						if ( $t['next'] ) {
+							echo esc_html( wp_date( $fmt, $t['next'] ) );
+							if ( $t['last'] && $t['last'] !== $t['next'] ) {
+								/* translators: %s: date. */
+								echo '<br /><small>' . esc_html( sprintf( __( 'last box %s', self::TD ), wp_date( $fmt, $t['last'] ) ) ) . '</small>';
+							}
 						} else {
 							echo esc_html( 'completed' === $plan->status ? __( 'Completed', self::TD ) : __( 'Cancelled', self::TD ) );
 						}
@@ -387,6 +406,9 @@ class RINNOVOBOX_Account {
 		$done = RINNOVOBOX_Schedule::set_address( $user_id, $address );
 		/* translators: %d: number of boxes. */
 		wc_add_notice( sprintf( _n( 'Your address is saved for %d box.', 'Your address is saved for your %d boxes.', $done, self::TD ), $done ) );
+		foreach ( RINNOVOBOX_Schedule::$shipping_changes as $line ) {
+			wc_add_notice( $line, 'notice' );
+		}
 		return true;
 	}
 }
