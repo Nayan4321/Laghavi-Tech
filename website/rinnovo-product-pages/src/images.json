@@ -1,0 +1,271 @@
+{
+ "rinnovo-bundles-variable-subscriptions-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-bundles-variable-subscriptions-pro.png",
+    "Rinnovo Bundles &amp; Variable Subscriptions Pro for WooCommerce"
+   ],
+   [
+    "02",
+    "02-box-builder.png",
+    "Step-by-step box builder with minimum and maximum items"
+   ],
+   [
+    "03",
+    "03-switch-plans-proration.png",
+    "Upgrade, downgrade and swap plans with prorated prices"
+   ],
+   [
+    "04",
+    "04-one-invoice-stock.png",
+    "One invoice for everything, one renewal day and bundle stock"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Bundles Pro \u2013 WooCommerce Subscription Bundles &amp; Plan Switching",
+   "Slug": "rinnovo-bundles-variable-subscriptions-pro",
+   "Meta description": "Sell WooCommerce subscription bundles with a box builder, min/max items, dynamic prices, bundle stock, plan switching with proration and one renewal invoice.",
+   "Focus keyphrase": "woocommerce subscription bundles"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-media-archives-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-media-archives-pro.png",
+    "Rinnovo Media Archives Pro: protected streaming and app access"
+   ],
+   [
+    "02",
+    "02-private-podcast-feeds.png",
+    "Private podcast feeds for each subscriber"
+   ],
+   [
+    "03",
+    "03-app-api-quotas.png",
+    "Subscription API, plan features, quotas and webhooks for your app"
+   ],
+   [
+    "04",
+    "04-access-portal-devices.png",
+    "Self-service access portal with usage and devices"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Media Archives Pro \u2013 Sell Streaming &amp; SaaS Access with WooCommerce",
+   "Slug": "rinnovo-media-archives-pro",
+   "Meta description": "Sell subscriptions to video, podcasts, music, art and your app: expiring streaming links, watermarked players, private feeds, quotas, API, webhooks and SSO.",
+   "Focus keyphrase": "woocommerce streaming subscription"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-membership-content-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-membership-content-pro.png",
+    "Rinnovo Membership Content Pro: paid memberships for WooCommerce"
+   ],
+   [
+    "02",
+    "02-tiers-drip.png",
+    "Membership tiers that build on each other, with drip content"
+   ],
+   [
+    "03",
+    "03-courses-forums-files-video.png",
+    "Members-only courses, forums, files and private video"
+   ],
+   [
+    "04",
+    "04-my-content-perks-teams.png",
+    "My Content page with perks, plan changes and team seats"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Membership Pro \u2013 WooCommerce Membership &amp; Paywall Plugin",
+   "Slug": "rinnovo-membership-content-pro",
+   "Meta description": "Sell memberships with WooCommerce: tiers, members-only content, drip, paywalls, courses, forums, protected files, private video, team seats and member discounts.",
+   "Focus keyphrase": "woocommerce membership plugin"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-physical-subscription-boxes-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-subscription-boxes-pro.png",
+    "Rinnovo Physical Subscription Boxes &amp; Goods Pro for WooCommerce"
+   ],
+   [
+    "02",
+    "02-skip-swap-switch.png",
+    "Customers skip, swap and change their next box in My Account"
+   ],
+   [
+    "03",
+    "03-packing-ship-day.png",
+    "Orders to pack by ship date with item totals and CSV export"
+   ],
+   [
+    "04",
+    "04-subscribe-save-prepaid.png",
+    "Subscribe and save, prepaid plans and gift boxes"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Boxes Pro \u2013 WooCommerce Subscription Box Plugin",
+   "Slug": "rinnovo-physical-subscription-boxes-pro",
+   "Meta description": "Run a WooCommerce subscription box: skip and swap, one shipping day, renewal shipping rates, prepaid and gift plans, subscribe and save, and packing lists.",
+   "Focus keyphrase": "woocommerce subscription box"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-service-contracts-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-service-contracts-pro.png",
+    "Rinnovo Service Contracts Pro: retainers for agencies and freelancers"
+   ],
+   [
+    "02",
+    "02-packages-quotas.png",
+    "Retainer packages with deliverables and monthly hour quotas"
+   ],
+   [
+    "03",
+    "03-client-area-requests.png",
+    "Client area with requests, add-ons and the project brief"
+   ],
+   [
+    "04",
+    "04-gst-tax-invoice.png",
+    "GST tax invoice with CGST, SGST and SAC codes"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Service Contracts Pro \u2013 WooCommerce Retainers &amp; GST Invoices",
+   "Slug": "rinnovo-service-contracts-pro",
+   "Meta description": "Sell monthly retainers with WooCommerce: onboarding fees, minimum terms, packages, hour quotas, client requests and briefs, add-ons and GST tax invoices.",
+   "Focus keyphrase": "woocommerce retainer billing"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-session-membership-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-session-membership-pro.png",
+    "Rinnovo Session Membership Pro: class memberships for WooCommerce"
+   ],
+   [
+    "02",
+    "02-schedule-booking-waitlist.png",
+    "Class schedule with booking, credits and waitlist"
+   ],
+   [
+    "03",
+    "03-freeze-family-reminders.png",
+    "Freeze, family members, calendar and SMS reminders"
+   ],
+   [
+    "04",
+    "04-roster-attendance.png",
+    "Instructor roster with attendance and online session links"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Session Membership Pro \u2013 WooCommerce Class Booking Memberships",
+   "Slug": "rinnovo-session-membership-pro",
+   "Meta description": "Sell class memberships with WooCommerce: session credits, unlimited passes, recurring slots, waitlists, freeze, family accounts, Zoom, calendars and SMS reminders.",
+   "Focus keyphrase": "woocommerce class membership"
+  },
+  "ver": [
+   "1.0.0"
+  ]
+ },
+ "rinnovo-subscriptions-licenses-pro.html": {
+  "imgs": [
+   [
+    "01",
+    "01-rinnovo-pro-invoices-subscriptions-licenses.png",
+    "Rinnovo Subscriptions &amp; Licenses Pro with PDF tax invoices"
+   ],
+   [
+    "02",
+    "02-pdf-invoice-designs.png",
+    "Three PDF invoice designs: Classic, Bold and Modern"
+   ],
+   [
+    "03",
+    "03-tax-invoice-company-trn.png",
+    "Company name and TRN at checkout and the My Account invoices list"
+   ],
+   [
+    "04",
+    "04-invoice-settings-preview.png",
+    "Invoice settings with company details, TRN and template preview"
+   ],
+   [
+    "05",
+    "05-trials-offers-vat.png",
+    "Free trials, first-payment discounts and VAT numbers with reverse charge"
+   ],
+   [
+    "06",
+    "06-ask-for-price-currencies.png",
+    "Ask for price products and the currency switcher"
+   ],
+   [
+    "07",
+    "07-subscriptions-licenses.png",
+    "WooCommerce subscriptions and license keys"
+   ],
+   [
+    "08",
+    "08-any-payment-method.png",
+    "Renewals with any WooCommerce payment method"
+   ],
+   [
+    "09",
+    "09-my-account.png",
+    "Customers manage subscriptions in My Account"
+   ],
+   [
+    "10",
+    "10-license-keys-downloads.png",
+    "License keys, downloads and automatic updates"
+   ],
+   [
+    "11",
+    "11-license-manager.png",
+    "License manager for store owners"
+   ],
+   [
+    "12",
+    "12-revenue-dashboard.png",
+    "Subscriptions dashboard with recurring revenue"
+   ]
+  ],
+  "seo": {
+   "SEO title": "Rinnovo Pro \u2013 WooCommerce Subscription Invoices, Trials &amp; VAT",
+   "Slug": "rinnovo-subscriptions-licenses-pro",
+   "Meta description": "Sell WooCommerce subscriptions and license keys with PDF tax invoices, free trials, first-payment discounts, VAT numbers with reverse charge and a currency switcher.",
+   "Focus keyphrase": "woocommerce subscriptions invoices"
+  },
+  "ver": []
+ }
+}

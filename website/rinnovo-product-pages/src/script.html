@@ -1,0 +1,20 @@
+<script>
+document.querySelectorAll('[data-copy]').forEach(function (button) {
+	button.addEventListener('click', function () {
+		var el = document.getElementById(button.dataset.copy);
+		var done = function () { button.textContent = 'Copied!'; button.classList.add('done'); setTimeout(function () { button.textContent = 'Copy'; button.classList.remove('done'); }, 2000); };
+		var html = el.innerHTML.trim();
+		if (navigator.clipboard && window.ClipboardItem) {
+			navigator.clipboard.write([new ClipboardItem({ 'text/html': new Blob([html], { type: 'text/html' }), 'text/plain': new Blob([el.innerText], { type: 'text/plain' }) })]).then(done, fallback);
+		} else { fallback(); }
+		function fallback() {
+			var range = document.createRange(); range.selectNodeContents(el);
+			var sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+			try { document.execCommand('copy'); done(); } catch (e) {}
+			sel.removeAllRanges();
+		}
+	});
+});
+</script>
+</body>
+</html>

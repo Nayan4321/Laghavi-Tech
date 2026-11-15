@@ -42,73 +42,89 @@ code{background:var(--soft);border:1px solid var(--line);border-radius:5px;paddi
 			<p>Rinnovo Membership Content Pro</p>
 		</div>
 	</div>
-
 	<div class="box">
 		<div class="box__head"><div><b>Product short description</b><small>The box under the main editor, called "Product short description"</small></div><button data-copy="short">Copy</button></div>
 		<div class="content" id="short">
-			<p>Turn WooCommerce subscriptions into paid memberships: tiers, members-only pages, posts, courses, forums, files and private video.</p>
-			<p>Drip content, teasers with a paywall, team seats, member discounts and a My Content page. Access starts and ends with the payment, automatically.</p>
+			<p>Sell memberships with tiers and groups, drip content on a timeline, sell every course as a WooCommerce product, and run a resource library where members spend download credits.</p>
+			<p>Access is worked out from everything a member owns (memberships, course purchases, manual grants), so cancelling a membership never removes a course they bought separately.</p>
 		</div>
 	</div>
-
 	<div class="box">
 		<div class="box__head"><div><b>Product description</b><small>The main editor at the top of the product</small></div><button data-copy="long">Copy</button></div>
 		<div class="content" id="long">
-			<h2>Paid memberships for any content</h2>
-			<p>Rinnovo Membership Content Pro adds membership tiers and content protection to the free Rinnovo Subscriptions &amp; Licenses plugin. Sell Silver, Gold and All-Access with any WooCommerce payment method, and protect pages, posts, products, courses, forums, files and videos.</p>
+			<h2>Memberships, courses and downloads that keep access right</h2>
+			<p>Rinnovo Membership Content Pro is the <strong>memberships, courses and resource libraries</strong> branch of the Rinnovo family. Three businesses on one engine: paid memberships, courses sold as products and download libraries with credits.</p>
 
-			<h3>Tiers and rules</h3>
+			<h3>Membership groups and tiers</h3>
 			<ul>
-				<li><strong>Tiers that build on each other</strong> (Silver, Gold, All-Access), each given by WooCommerce products: subscriptions, Monthly / Yearly variations or one-time purchases for lifetime access.</li>
-				<li><strong>Protect anything:</strong> pages, posts, products, any custom post type, categories and tags, or a whole content type. Child pages follow their parent.</li>
-				<li><strong>Parts of a page:</strong> the Members only block, a CSS class on any block, or a shortcode. Show something only to non-members too.</li>
+				<li>Independent programmes (Business training: Silver, Gold, Platinum; Photography: Basic, Premium; VIP community), each with its own tiers.</li>
+				<li>Several memberships at once: access comes from all of them together.</li>
+				<li>Trials, invite-only memberships, gift memberships and membership bundles.</li>
 			</ul>
 
-			<h3>Drip, teasers and paywalls</h3>
+			<h3>Lifecycle rules</h3>
 			<ul>
-				<li><strong>Drip:</strong> unlock content N days after joining (module 2 after 7 days) or on a date.</li>
-				<li><strong>Teasers:</strong> an excerpt, the first words or a blurred preview, then a "Subscribe to unlock" box with the price. The rest never reaches the browser, feeds or the REST API.</li>
+				<li>What happens on payment, failed payment, grace period, cancel, refund, upgrade, downgrade and expiry — set once, applied everywhere.</li>
+				<li>Upgrades work at once; downgrades at the end of the paid period.</li>
 			</ul>
 
-			<h3>Forums, communities and courses</h3>
+			<h3>Drip timeline</h3>
 			<ul>
-				<li>bbPress and BuddyBoss forums, BuddyPress / BuddyBoss activity, profiles, groups and messages.</li>
-				<li>LearnDash and LifterLMS: members are enrolled in a tier's courses automatically, and unenrolled when it ends.</li>
+				<li>Day 1 welcome, day 7 module 2, day 30 premium resources: content opens by days of membership or on a date, shown as a timeline.</li>
 			</ul>
 
-			<h3>Protected files and private video</h3>
+			<h3>Course commerce</h3>
 			<ul>
-				<li><strong>Members-only files:</strong> served only to members, so shared links don't work. Audio and video can still seek. A digital library page for each member.</li>
-				<li><strong>Private video:</strong> Bunny Stream (signed links), Vimeo, Wistia, YouTube and Presto Player. The player is only in the page for members.</li>
+				<li>Map any product to LearnDash, LifterLMS or a category of course pages: access length, start, lifetime or limited.</li>
+				<li>Course bundles (one product, several courses) and one course unlocked by several products; a course-vs-tier matrix.</li>
+				<li>Products connected to categories: buying the product opens every page in the category.</li>
 			</ul>
 
-			<h3>Members love it</h3>
+			<h3>Download plans and credits</h3>
 			<ul>
-				<li><strong>My Content:</strong> membership, renewal date, unlocked content and what unlocks next, courses, files, perks and billing in one place.</li>
-				<li><strong>Upgrades and downgrades</strong> between tiers or Monthly / Yearly, with the unused time credited.</li>
-				<li><strong>Member perks:</strong> a discount per tier with "Member price" in the shop, free shipping and bonus products.</li>
-				<li><strong>Member directory and badges.</strong></li>
+				<li>A stock-library style resource library: previews, file type, size and credit cost per item.</li>
+				<li>Per-category quotas or one shared credit wallet, reset periods, carry-over, daily limits, and top-up packs that never expire with the monthly reset.</li>
+				<li>Credits are taken in one safe step with a full history; files never have a public URL.</li>
 			</ul>
 
-			<h3>Teams and safety</h3>
+			<h3>Protected files and video</h3>
 			<ul>
-				<li><strong>Team seats:</strong> a school, company or family buys seats and invites people by email.</li>
-				<li><strong>Access ends at once</strong> when a membership is cancelled or refunded, with a grace period for failed payments.</li>
-				<li><strong>No account sharing:</strong> a limit on devices logged in and videos playing at the same time.</li>
+				<li>Expiring, checked downloads (X-Sendfile / X-Accel), no-store headers and download limits.</li>
+				<li>Bunny, Vimeo and Wistia privacy per video, resume playback, progress and stream limits (with an honest warning about YouTube unlisted).</li>
 			</ul>
 
-			<h3>Everything in the free plugin</h3>
+			<h3>My Membership and page builders</h3>
 			<ul>
-				<li>Subscriptions on simple and variable products, with free trials, sign-up fees and a set number of payments, on any WooCommerce payment method.</li>
-				<li>Automatic Stripe renewals, and "Pay now" renewal emails for every other payment method.</li>
-				<li>A better My Account: next payment, payment history, update card, cancel and resume.</li>
+				<li>A My Membership dashboard: plan, renewal, credits left, courses, downloads, quick links.</li>
+				<li><strong>Hide or show any section, column, widget, tab or block</strong> by membership in Elementor, the block editor and Bricks, removed on the server; dynamic tags for name, tier, renewal date and credits.</li>
+				<li>REST API, webhooks, member notes, announcements and access logs.</li>
 			</ul>
+
+			<h3>Included in every Rinnovo Pro</h3>
+			<ul>
+				<li><strong>Invoices</strong> on every order and renewal (India GST, UAE VAT, EU/UK VAT with reverse charge, credit notes for refunds) — set up once under WooCommerce › Invoices for all your Rinnovo plugins.</li>
+				<li><strong>Page builder widgets</strong> for Elementor and the block editor, plus shortcodes for Divi, Beaver Builder, Bricks and others.</li>
+				<li><strong>Insights data</strong> for the WooCommerce performance insights dashboard: MRR, churn, renewals and this plugin's own numbers.</li>
+				<li><strong>Customer guide:</strong> step-by-step guides in your account while your license is active.</li>
+				<li><strong>The free Rinnovo Subscriptions &amp; Licenses plugin</strong> underneath: subscriptions on any product, Stripe and saved-card renewals, "Pay now" emails for every other payment method, and a better My Account.</li>
+			</ul>
+
+			<h3>Works great with</h3>
+			<ul>
+				<li><strong>Sarala Login Page</strong>: designed log-in, sign-up and account pages with Google, Apple and other social log-ins.</li>
+				<li><strong>Vacanam Language Switcher</strong>: a multilingual store, with emails and invoices in the customer's language.</li>
+				<li><strong>WooCommerce performance insights</strong>: one dashboard for the store and every Rinnovo plugin, with what to follow up.</li>
+			</ul>
+
+			<h3>The Rinnovo family</h3>
+			<p>Seven Pro plugins, each a full product on its own and each working with the others: <a href="https://laghavi.site/product/rinnovo-subscriptions-licenses-pro/">Rinnovo Pro</a> (billing, licenses and tax), <a href="https://laghavi.site/product/rinnovo-physical-subscription-boxes-pro/">Boxes Pro</a> (subscription boxes and recurring goods), <a href="https://laghavi.site/product/rinnovo-media-archives-pro/">Media Archives Pro</a> (media hosting, streaming and distribution), <a href="https://laghavi.site/product/rinnovo-service-contracts-pro/">Service Contracts Pro</a> (retainers and service agreements), <a href="https://laghavi.site/product/rinnovo-session-membership-pro/">Session Pro</a> (classes, sessions and studio memberships), <a href="https://laghavi.site/product/rinnovo-bundles-variable-subscriptions-pro/">Bundles Pro</a> (bundles and plan switching).</p>
 
 			<h3>Your license</h3>
 			<ul>
 				<li>Choose 1 site, 5 sites or unlimited sites, billed yearly.</li>
 				<li>Automatic updates from your WordPress dashboard and email support.</li>
-				<li>Your license key and download in My Account right after paying.</li>
+				<li>Your license key and download in My Account right after paying. The download holds two plugins: this Pro and the Rinnovo Box Builder, shared by all Rinnovo Pros.</li>
+				<li>The customer guide in your account while your license is active.</li>
 				<li>Cancel any time: your license keeps working until the end of the year you paid for.</li>
 			</ul>
 
@@ -116,21 +132,20 @@ code{background:var(--soft);border:1px solid var(--line);border-radius:5px;paddi
 			<p>WordPress 6.0 or later, WooCommerce 8.0 or later, PHP 7.4 or later, and the free Rinnovo Subscriptions &amp; Licenses plugin. Works on its own or next to the other Rinnovo Pro plugins.</p>
 		</div>
 	</div>
-
 	<div class="box">
 		<div class="box__head"><div><b>Prices</b><small>Product data: Variable product, attribute "Sites" (used for variations), one variation per row. In each variation tick Subscription, every 1 year, Number of payments 0, and License with the sites per key.</small></div></div>
 		<div class="content">
 			<table>
-				<tr><td>1 site</td><td><b>$79</b> / year · License: 1 site per key</td></tr>
-				<tr><td>5 sites</td><td><b>$159</b> / year · License: 5 sites per key</td></tr>
-				<tr><td>Unlimited sites</td><td><b>$319</b> / year · License: 0 (unlimited)</td></tr>
-				<tr><td>License tab</td><td>Slug <code>rinnovo-membership-content-pro</code>, upload <code>rinnovo-membership-content-pro.zip</code>, version 1.0.0</td></tr>
+				<tr><td>1 site</td><td><b>$149</b> / year · License: 1 site per key</td></tr>
+				<tr><td>5 sites</td><td><b>$299</b> / year · License: 5 sites per key</td></tr>
+				<tr><td>Unlimited sites</td><td><b>$599</b> / year · License: 0 (unlimited)</td></tr>
+				<tr><td>License tab</td><td>Slug <code>rinnovo-membership-content-pro</code>, version 1.1.0. <b>Plugin zip</b> (used for automatic updates): <code>rinnovo-membership-content-pro.zip</code>. <b>Download package</b> (what customers download): <code>rinnovo-membership-content-pro-package.zip</code> (the Pro zip + <code>rinnovo-box-builder.zip</code>).</td></tr>
+				<tr><td>Guide</td><td>Guides › Guide categories: create "Rinnovo Membership Content Pro guide" and pick this product under "Only for customers with a license for". Add the guide as a Guide in that category.</td></tr>
 			</table>
 		</div>
 	</div>
-
 	<div class="box">
-		<div class="box__head"><div><b>Images</b><small>Product image = 01. Product gallery = 02 to 04, in this order. Alt text: Media Library › image › Alternative Text.</small></div></div>
+		<div class="box__head"><div><b>Images</b><small>Product image = 01. Product gallery = the rest, in this order. Alt text: Media Library › image › Alternative Text.</small></div></div>
 		<div class="content">
 			<table>
 				<tr><td>01</td><td><code>01-membership-content-pro.png</code><br />Alt: Rinnovo Membership Content Pro: paid memberships for WooCommerce</td></tr>
@@ -140,14 +155,13 @@ code{background:var(--soft);border:1px solid var(--line);border-radius:5px;paddi
 			</table>
 		</div>
 	</div>
-
 	<div class="box">
 		<div class="box__head"><div><b>SEO (Yoast)</b><small>The Yoast box at the bottom of the product</small></div></div>
 		<div class="content">
 			<table>
-				<tr><td>SEO title</td><td>Rinnovo Membership Pro – WooCommerce Membership &amp; Paywall Plugin</td></tr>
+				<tr><td>SEO title</td><td>Rinnovo Membership Pro – WooCommerce Memberships, Courses &amp; Download Credits</td></tr>
 				<tr><td>Slug</td><td>rinnovo-membership-content-pro</td></tr>
-				<tr><td>Meta description</td><td>Sell memberships with WooCommerce: tiers, members-only content, drip, paywalls, courses, forums, protected files, private video, team seats and member discounts.</td></tr>
+				<tr><td>Meta description</td><td>WooCommerce memberships with groups and tiers, drip timelines, courses sold as products, download credits and a resource library, and members-only sections in Elementor and the block editor.</td></tr>
 				<tr><td>Focus keyphrase</td><td>woocommerce membership plugin</td></tr>
 			</table>
 		</div>
