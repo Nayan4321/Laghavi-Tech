@@ -477,6 +477,14 @@ class LLM_Guides {
 		if ( ! is_singular( self::TYPE ) && ! is_post_type_archive( self::TYPE ) && ! is_tax( self::TAX ) ) {
 			return;
 		}
+		if ( is_singular( self::TYPE ) && 'builder' === get_post_meta( get_queried_object_id(), '_elementor_edit_mode', true ) ) {
+			// Guides designed in Elementor: themes that print their own title banner and a boxed content area
+			// around every post (Nioland and similar) are made full width, without the banner.
+			wp_register_style( 'llm-guides-full', false, array(), LLM_VERSION );
+			wp_enqueue_style( 'llm-guides-full' );
+			wp_add_inline_style( 'llm-guides-full', self::full_width_css() );
+			return;
+		}
 		wp_register_style( 'llm-guides', false, array(), LLM_VERSION );
 		wp_enqueue_style( 'llm-guides' );
 		wp_add_inline_style( 'llm-guides', self::css() );
@@ -583,6 +591,19 @@ class LLM_Guides {
 			$out .= '</optgroup>';
 		}
 		return $out . '</select></label><a href="' . esc_url( get_post_type_archive_link( self::TYPE ) ) . '">' . esc_html__( 'All guides', self::TD ) . '</a></div>';
+	}
+
+	/**
+	 * Full width for Elementor guides inside themes that box every post.
+	 *
+	 * @return string
+	 */
+	public static function full_width_css() {
+		return 'body.single-guide.elementor-page .page_header_default,body.single-guide.elementor-page .page-header,body.single-guide.elementor-page .entry-header{display:none!important}
+body.single-guide.elementor-page #content>.container,body.single-guide.elementor-page .site-content>.container{max-width:none!important;width:100%!important;padding-left:0!important;padding-right:0!important}
+body.single-guide.elementor-page #content .row.default_row,body.single-guide.elementor-page .site-content>.container>.row{margin-left:0!important;margin-right:0!important;display:block}
+body.single-guide.elementor-page #content .row.default_row>*{max-width:100%;padding-left:0;padding-right:0}
+body.single-guide.elementor-page .site-content{padding-top:0!important}';
 	}
 
 	/**
