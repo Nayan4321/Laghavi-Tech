@@ -24,7 +24,8 @@ CSS = '''<style>
 #lg-guide .lg-switch{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}
 #lg-guide .lg-switch label{font-size:14px;font-weight:600;color:#fff}
 #lg-guide .lg-switch select{flex:1 1 260px;min-width:0;max-width:460px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.6);font:600 15px/1.3 inherit;color:#fff!important;background-color:transparent;cursor:pointer}
-#lg-guide .lg-switch select option,#lg-guide .lg-switch select optgroup{color:#0f172a;background:#fff}
+#lg-guide #lg-guide-select,#lg-guide-select.lg-guide-select{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#lg-guide #lg-guide-select option,#lg-guide #lg-guide-select optgroup{color:#0f172a!important;-webkit-text-fill-color:#0f172a!important;background:#fff!important}
 #lg-guide .lg-switch a{color:#fdba74;font-weight:700;font-size:14px}
 #lg-guide .lg-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start;margin-top:26px}
 #lg-guide .lg-toc{position:sticky;top:100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 10px 12px;max-height:calc(100vh - 120px);overflow:auto}
@@ -84,9 +85,9 @@ def switcher(cur):
     groups = {}
     for g in G:
         groups.setdefault(g.get('family', 'Rinnovo'), []).append(g)
-    s = '<select aria-label="Open another guide">'
+    s = '<select id="lg-guide-select" class="lg-guide-select" aria-label="Open another guide" style="color:#ffffff !important;-webkit-text-fill-color:#ffffff !important;background-color:transparent !important;opacity:1 !important">'
     for fam, items in groups.items():
-        s += f'<optgroup label="{e(fam)}">' + ''.join(f'<option value="{URL}{MAP[g["slug"]][0]}/"{" selected" if g["slug"] == cur else ""}>{e(g["title"])}</option>' for g in items) + '</optgroup>'
+        s += f'<optgroup label="{e(fam)}">' + ''.join(f'<option style="color:#0f172a;-webkit-text-fill-color:#0f172a;background-color:#ffffff" value="{URL}{MAP[g["slug"]][0]}/"{" selected" if g["slug"] == cur else ""}>{e(g["title"])}</option>' for g in items) + '</optgroup>'
     return s + '</select>'
 
 for g in G:
