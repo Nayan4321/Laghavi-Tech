@@ -37,6 +37,7 @@ unset( $rinnovobv_file );
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOBV_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOBV_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -56,6 +57,17 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-bundles-variable-subscriptions-pro',
+				'name'    => 'Rinnovo Bundles & Variable Subscriptions Pro',
+				'pages'   => array( 'rinnovo-bundles', 'rinnovo-bundles-variable-subscriptions-pro-license' ),
+				'widgets' => array(
+				'bundle_builder' => array( 'title' => 'Bundle builder', 'description' => 'Build-your-own bundle for a bundle product.', 'icon' => 'eicon-products', 'attrs' => array( 'product' => 'Product ID' ) ),
+				'bundle_plans'   => array( 'title' => 'Plan table', 'description' => 'Compare the plans of a variable subscription product.', 'icon' => 'eicon-price-table', 'attrs' => array( 'product' => 'Product ID' ) ),
+			),
+			)
+		);
 		RINNOVOBV_Bundle::init();
 		RINNOVOBV_Builder::init();
 		RINNOVOBV_Unify::init();

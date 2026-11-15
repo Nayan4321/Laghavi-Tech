@@ -38,6 +38,7 @@ unset( $rinnovomem_file );
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOMEM_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOMEM_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -58,6 +59,14 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-membership-content-pro',
+				'name'    => 'Rinnovo Membership Content Pro',
+				'pages'   => array( 'rinnovo-membership', 'rinnovo-membership-content-pro-license' ),
+				'widgets' => array(),
+			)
+		);
 		if ( get_option( 'rinnovomem_db_version' ) !== RINNOVOMEM_Teams::DB_VERSION ) {
 			RINNOVOMEM_Teams::install();
 		}

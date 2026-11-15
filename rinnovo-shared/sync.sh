@@ -7,5 +7,6 @@ for pro in "$root"/rinnovo-*-pro; do
 	[ -d "$pro" ] || continue
 	mkdir -p "$pro/shared"
 	rsync -a --delete "$here/invoices/" "$pro/shared/invoices/"
+	rsync -a --delete "$here/kit/" "$pro/shared/kit/"
 	echo "synced $(basename "$pro")"
 done

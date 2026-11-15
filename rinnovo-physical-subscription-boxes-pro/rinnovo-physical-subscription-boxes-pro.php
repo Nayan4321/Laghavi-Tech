@@ -47,6 +47,7 @@ require_once RINNOVOBOX_DIR . 'includes/class-rinnovobox-planner.php';
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOBOX_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOBOX_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -67,6 +68,14 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-physical-subscription-boxes-pro',
+				'name'    => 'Rinnovo Physical Subscription Boxes & Goods Pro',
+				'pages'   => array( 'rinnovo-boxes', 'rinnovo-physical-subscription-boxes-pro-license' ),
+				'widgets' => array(),
+			)
+		);
 		if ( get_option( 'rinnovobox_db_version' ) !== RINNOVOBOX_Store::DB_VERSION ) {
 			RINNOVOBOX_Store::install();
 		}

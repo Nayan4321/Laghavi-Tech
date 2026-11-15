@@ -37,6 +37,7 @@ unset( $rinnovose_file );
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOSE_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOSE_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -67,6 +68,17 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-session-membership-pro',
+				'name'    => 'Rinnovo Session Membership Pro',
+				'pages'   => array( 'rinnovo-sessions', 'rinnovo-session-membership-pro-license' ),
+				'widgets' => array(
+				'session_schedule' => array( 'title' => 'Class schedule', 'description' => 'Upcoming classes with booking buttons and filters.', 'icon' => 'eicon-calendar', 'attrs' => array( 'days' => 'Days ahead', 'class' => 'Class ID', 'category' => 'Category slug', 'location' => 'Location slug' ) ),
+				'session_credits'  => array( 'title' => 'Class credits', 'description' => 'Credits left for the signed-in member.', 'icon' => 'eicon-counter' ),
+			),
+			)
+		);
 		if ( get_option( 'rinnovose_db_version' ) !== RINNOVOSE_Store::DB_VERSION ) {
 			RINNOVOSE_Store::install();
 		}

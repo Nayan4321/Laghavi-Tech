@@ -28,6 +28,35 @@ class RINNOVOSC_Account {
 		add_filter( 'woocommerce_endpoint_' . self::ENDPOINT . '_title', array( __CLASS__, 'title' ) );
 		add_action( 'woocommerce_account_' . self::ENDPOINT . '_endpoint', array( __CLASS__, 'content' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'handle' ), 7 );
+		add_shortcode( 'contract_quota', array( __CLASS__, 'quota_shortcode' ) );
+	}
+
+	/**
+	 * [contract_quota]: the signed-in client's allowances left this period (page builders, dashboards).
+	 *
+	 * @return string
+	 */
+	public static function quota_shortcode() {
+		if ( ! is_user_logged_in() ) {
+			return '';
+		}
+		$out = '';
+		foreach ( RINNOVOSC_Store::ids_for_user( get_current_user_id() ) as $id ) {
+			$sub = RINNOVO_Subscriptions::get( (int) $id );
+			$c   = RINNOVOSC_Store::get( (int) $id );
+			if ( ! $sub || ! $c || ! in_array( $sub->status, RINNOVO_Subscriptions::live_statuses(), true ) ) {
+				continue;
+			}
+			$rows = '';
+			foreach ( RINNOVOSC_Work::status( $c ) as $a ) {
+				$pct   = $a['alloc'] > 0 ? max( 0, min( 100, round( 100 * $a['available'] / $a['alloc'] ) ) ) : 100;
+				$rows .= '<li><strong>' . esc_html( $a['name'] ) . '</strong>: ' . esc_html( wc_format_localized_decimal( $a['available'] ) . ' ' . $a['unit'] ) . ' ' . esc_html__( 'left', self::TD ) . ( $a['reserved'] > 0 ? ' (' . esc_html( wc_format_localized_decimal( $a['reserved'] ) ) . ' ' . esc_html__( 'reserved', self::TD ) . ')' : '' ) . '<span style="display:block;height:6px;background:#eee;border-radius:3px;margin-top:4px"><span style="display:block;height:6px;border-radius:3px;background:#2271b1;width:' . (int) $pct . '%"></span></span></li>';
+			}
+			if ( '' !== $rows ) {
+				$out .= '<div class="rinnovosc-quota"><h4>' . esc_html( $sub->name ) . '</h4><ul style="list-style:none;margin:0;padding:0">' . $rows . '</ul></div>';
+			}
+		}
+		return $out;
 	}
 
 	/**

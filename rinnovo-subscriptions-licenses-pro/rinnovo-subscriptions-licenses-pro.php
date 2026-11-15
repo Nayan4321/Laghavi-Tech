@@ -38,6 +38,7 @@ require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-currency.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovo-ask-price.php';
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOPRO_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOPRO_DIR . 'shared/kit/rinnovo-kit.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-offers.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-tax.php';
 require_once RINNOVOPRO_DIR . 'includes/class-rinnovopro-trials.php';
@@ -73,6 +74,14 @@ add_action(
 		RINNOVO_Currency::init();
 		RINNOVO_Ask_Price::init();
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-subscriptions-licenses-pro',
+				'name'    => 'Rinnovo Subscriptions & Licenses Pro',
+				'pages'   => array( 'wc-settings:rinnovo', 'rinnovo-subscriptions', 'rinnovo-subscriptions-licenses-pro-license' ),
+				'widgets' => array( 'rinnovo_currency_switcher' => array( 'title' => 'Currency switcher', 'description' => 'Lets shoppers pick their currency.', 'icon' => 'eicon-exchange' ) ),
+			)
+		);
 		RINNOVOPRO_Offers::init();
 		RINNOVOPRO_Tax::init();
 		RINNOVOPRO_Trials::init();

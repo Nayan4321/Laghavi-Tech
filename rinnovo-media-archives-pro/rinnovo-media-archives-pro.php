@@ -37,6 +37,7 @@ unset( $rinnovoma_file );
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOMA_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOMA_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -56,6 +57,19 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-media-archives-pro',
+				'name'    => 'Rinnovo Media Archives Pro',
+				'pages'   => array( 'rinnovo-media-archives', 'rinnovoma-overview', 'rinnovo-media-archives-pro-license' ),
+				'widgets' => array(
+				'media_library' => array( 'title' => 'Media library', 'description' => 'Your media library with search and filters.', 'icon' => 'eicon-video-playlist', 'attrs' => array( 'type' => 'Type (video, audio, file)', 'collection' => 'Collection', 'library' => 'Library', 'layout' => 'Layout (grid, list)', 'columns' => 'Columns' ) ),
+				'media_my'      => array( 'title' => 'My media', 'description' => 'Continue watching and recent downloads of the signed-in member.', 'icon' => 'eicon-play' ),
+				'media_gallery' => array( 'title' => 'Media gallery', 'description' => 'A gallery of chosen media items.', 'icon' => 'eicon-gallery-grid', 'attrs' => array( 'ids' => 'Media IDs (comma separated)', 'plan' => 'Plan', 'columns' => 'Columns' ) ),
+				'media_account' => array( 'title' => 'Media account', 'description' => 'Plan, quota and devices of the signed-in member.', 'icon' => 'eicon-person' ),
+			),
+			)
+		);
 		RINNOVOMA_Access::init();
 		RINNOVOMA_Player::init();
 		RINNOVOMA_Gallery::init();

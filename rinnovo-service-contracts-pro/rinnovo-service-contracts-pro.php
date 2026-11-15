@@ -37,6 +37,7 @@ unset( $rinnovosc_file );
 
 // Invoices: the engine shared by every Rinnovo Pro plugin (the newest copy loads).
 require_once RINNOVOSC_DIR . 'shared/invoices/rinnovo-invoices.php';
+require_once RINNOVOSC_DIR . 'shared/kit/rinnovo-kit.php';
 
 add_action(
 	'plugins_loaded',
@@ -56,6 +57,14 @@ add_action(
 			return;
 		}
 		rinnovo_invoices_enable();
+		rinnovo_kit_pro(
+			array(
+				'slug'    => 'rinnovo-service-contracts-pro',
+				'name'    => 'Rinnovo Service Contracts Pro',
+				'pages'   => array( 'rinnovo-service-contracts', 'rinnovo-service-contracts-pro-license' ),
+				'widgets' => array( 'contract_quota' => array( 'title' => 'Contract quota', 'description' => 'The signed-in client\'s hours and deliverables left this period.', 'icon' => 'eicon-skill-bar' ) ),
+			)
+		);
 		if ( get_option( 'rinnovosc_db_version' ) !== RINNOVOSC_Store::DB_VERSION ) {
 			RINNOVOSC_Store::install();
 		}

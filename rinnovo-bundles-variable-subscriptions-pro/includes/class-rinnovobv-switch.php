@@ -28,6 +28,28 @@ class RINNOVOBV_Switch {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'matrix_box' ) );
 		add_action( 'wp_ajax_rinnovobv_matrix', array( __CLASS__, 'matrix_save' ) );
 		add_action( 'woocommerce_single_product_summary', array( __CLASS__, 'compare' ), 26 );
+		add_shortcode( 'bundle_plans', array( __CLASS__, 'plans_shortcode' ) );
+	}
+
+	/**
+	 * [bundle_plans product="123"]: the plan comparison table anywhere (page builders).
+	 *
+	 * @param array $atts Attributes.
+	 * @return string
+	 */
+	public static function plans_shortcode( $atts ) {
+		global $product;
+		$atts = shortcode_atts( array( 'product' => 0 ), $atts, 'bundle_plans' );
+		$keep = $product;
+		$p    = absint( $atts['product'] ) ? wc_get_product( absint( $atts['product'] ) ) : $product;
+		if ( ! $p instanceof WC_Product ) {
+			return current_user_can( 'edit_posts' ) ? '<p>' . esc_html__( 'Set the product ID of a variable subscription product.', self::TD ) . '</p>' : '';
+		}
+		$product = $p; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Restored below.
+		ob_start();
+		self::compare();
+		$product = $keep; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited
+		return (string) ob_get_clean();
 	}
 
 	/**
