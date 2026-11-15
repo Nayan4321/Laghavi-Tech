@@ -6,6 +6,7 @@ sys.path.insert(0, here)
 from guides import G
 from build import block, WORKS, slugify
 from wxr import MAP
+from setup import START, REF
 
 out_dir = os.path.join(os.path.dirname(here), 'elementor')
 os.makedirs(out_dir, exist_ok=True)
@@ -104,6 +105,7 @@ def switcher(cur):
     return s + '</select>'
 
 for g in G:
+    g = dict(g, sections=START.get(g['slug'], []) + g['sections'] + REF.get(g['slug'], []))
     fam = g.get('family', 'Rinnovo')
     post_slug, cat = MAP[g['slug']][0], MAP[g['slug']][1]
     ids = [slugify(h) for h, _ in g['sections']]

@@ -6,10 +6,6 @@ G = []
 G.append(dict(slug='rinnovo-guide-shared', title='Every Rinnovo Pro: invoices, page builders and insights', product='All Rinnovo Pro plugins',
 intro='These parts are the same in all seven Rinnovo Pro plugins. Set them up once; they keep working when you add another Pro.',
 sections=[
-('What you install', [
- 'Every Pro download is a package with two zips. Unzip the package on your computer, then upload both zips in Plugins › Add New › Upload: the Pro plugin and the Rinnovo Box Builder. The free Rinnovo Subscriptions & Licenses plugin from WordPress.org must be active too.',
- ('ol', ['Install and activate the free Rinnovo Subscriptions & Licenses plugin.', 'Upload and activate the Pro zip, then the Rinnovo Box Builder zip.', 'Open the Pro\'s license screen under WooCommerce, paste your license key and click Activate.', 'Automatic updates now arrive in Dashboard › Updates.']),
- 'The Box Builder has no license of its own and keeps working if a license expires. It only runs while at least one Rinnovo Pro is active.']),
 ('Invoices, set up once for all Pros', [
  'Go to WooCommerce › Invoices. Whichever Pros you use, there is one invoice engine: one invoice per order, one number sequence, one settings screen.',
  ('ol', ['Company: legal name, address, logo, tax number (TRN, GSTIN or VAT number) and the label printed before it.', 'Numbering: prefix, digits and next number. Add {fy} to restart numbering each financial year, for example INV-{fy}-0001.', 'Template: pick one of three designs and a colour, then preview.', 'Customer details: whether business customers can, must or cannot add a company name and tax number at checkout.', 'Emails: attach the PDF to order emails, or add a download link.']),
