@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+<channel>
+	<title>Laghavi guides</title>
+	<link>https://laghavi.site</link>
+	<description>Rinnovo and Sarala customer guides</description>
+	<language>en-US</language>
+	<wp:wxr_version>1.2</wp:wxr_version>
+	<wp:base_site_url>https://laghavi.site</wp:base_site_url>
+	<wp:base_blog_url>https://laghavi.site</wp:base_blog_url>
+	<wp:term><wp:term_id>901</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-pro-guides]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Pro guides]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-subscriptions-licenses-pro,rinnovo-physical-subscription-boxes-pro,rinnovo-membership-content-pro,rinnovo-media-archives-pro,rinnovo-service-contracts-pro,rinnovo-session-membership-pro,rinnovo-bundles-variable-subscriptions-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>902</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-subscriptions-licenses-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Subscriptions & Licenses Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-subscriptions-licenses-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>903</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-boxes-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Boxes Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-physical-subscription-boxes-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>904</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-membership-content-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Membership Content Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-membership-content-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>905</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-media-archives-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Media Archives Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-media-archives-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>906</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-service-contracts-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Service Contracts Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-service-contracts-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>907</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-session-membership-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Session Membership Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-session-membership-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>908</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[rinnovo-bundles-variable-subscriptions-pro-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Rinnovo Bundles & Variable Subscriptions Pro guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[rinnovo-bundles-variable-subscriptions-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<wp:term><wp:term_id>909</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug><![CDATA[sarala-login-page-guide]]></wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name><![CDATA[Sarala Login Page guide]]></wp:term_name><wp:termmeta><wp:meta_key><![CDATA[_llm_guide_product_slugs]]></wp:meta_key><wp:meta_value><![CDATA[sarala-login-page-pro]]></wp:meta_value></wp:termmeta></wp:term>
+	<item>
+		<title><![CDATA[Every Rinnovo Pro: invoices, page builders and insights]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>All Rinnovo Pro plugins</strong>. These parts are the same in all seven Rinnovo Pro plugins. Set them up once; they keep working when you add another Pro.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="what-you-install">What you install</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Every Pro download is a package with two zips. Unzip the package on your computer, then upload both zips in Plugins › Add New › Upload: the Pro plugin and the Rinnovo Box Builder. The free Rinnovo Subscriptions &amp; Licenses plugin from WordPress.org must be active too.</p><ol class="steps"><li>Install and activate the free Rinnovo Subscriptions &amp; Licenses plugin.</li><li>Upload and activate the Pro zip, then the Rinnovo Box Builder zip.</li><li>Open the Pro's license screen under WooCommerce, paste your license key and click Activate.</li><li>Automatic updates now arrive in Dashboard › Updates.</li></ol><p>The Box Builder has no license of its own and keeps working if a license expires. It only runs while at least one Rinnovo Pro is active.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="invoices-set-up-once-for-all-pros">Invoices, set up once for all Pros</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Go to WooCommerce › Invoices. Whichever Pros you use, there is one invoice engine: one invoice per order, one number sequence, one settings screen.</p><ol class="steps"><li>Company: legal name, address, logo, tax number (TRN, GSTIN or VAT number) and the label printed before it.</li><li>Numbering: prefix, digits and next number. Add {fy} to restart numbering each financial year, for example INV-{fy}-0001.</li><li>Template: pick one of three designs and a colour, then preview.</li><li>Customer details: whether business customers can, must or cannot add a company name and tax number at checkout.</li><li>Emails: attach the PDF to order emails, or add a download link.</li></ol><table><tr><th>Where you sell</th><th>What the invoice shows</th></tr><tr><td>India (GST)</td><td>GSTIN, SAC/HSN codes per product, CGST + SGST inside your state, IGST between states, export without GST</td></tr><tr><td>UAE (VAT)</td><td>TRN, "Tax Invoice" title, VAT per line and total in AED</td></tr><tr><td>EU / UK (VAT)</td><td>VAT number, reverse charge note when it applies, VAT per rate</td></tr><tr><td>Anywhere else</td><td>A plain invoice with your company details</td></tr></table><p>Refunds create a credit note linked to the original invoice, for the full or the refunded amount. An issued invoice never changes: a correction is always a credit note or a corrected document that points to the original.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="page-builders-widgets-and-members-only-sections">Page builders: widgets and members-only sections</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Every Pro adds its widgets to the "Rinnovo" category in Elementor and in the block editor (for example Class schedule, Contract quota, Media library, Bundle builder, Plan table). In Divi, Beaver Builder, Bricks, WPBakery, Oxygen or Breakdance, paste the shortcode into a shortcode or text module.</p><p>With Membership Content Pro you can also hide or show any part of a page by membership:</p><ol class="steps"><li>Elementor: select the section, container, column or widget (a tab or heading too) › Advanced › Members only (Rinnovo). Choose Show to (logged in, any member, a group, a tier or higher, non-members, expired members, course owners, a download plan) and an optional "Show instead" teaser.</li><li>Block editor: select any block › the Members only panel in the sidebar › the same choices.</li><li>Click Update. Hidden parts are removed on the server, so they never reach the visitor's browser, and members-only pages are not served from the page cache.</li></ol><p>Screenshots of both screens are on the guide page in your account.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="insights-for-your-dashboard">Insights for your dashboard</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Each Pro shares read-only numbers with the Performance Insight for WooCommerce dashboard: MRR and ARR, churn, renewals, trials and the Pro's own figures (boxes, members, plays, contract quotas, class utilisation, bundles), plus a list of things to follow up. Only shop managers can see them. Developers can read the same data with rinnovo_insights( $section ) or GET /wp-json/rinnovo/v1/insights?section=sections.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[These parts are the same in all seven Rinnovo Pro plugins. Set them up once; they keep working when you add another Pro.]]></excerpt:encoded>
+		<wp:post_id>9001</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[every-rinnovo-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>0</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-pro-guides"><![CDATA[Rinnovo Pro guides]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Subscriptions & Licenses Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Subscriptions &amp; Licenses Pro</strong>. Trials, first-payment offers, VAT/GST, currencies, license keys and &quot;Ask for price&quot;. Settings are in WooCommerce › Settings › Rinnovo; each product has its own fields in the Subscription box.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="free-trials-that-convert">Free trials that convert</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>On the product: set Free trial (days) and, if you like, a First payment discount (percent or fixed).</li><li>Settings › Trials and first-payment offers: choose whether a trial needs a card (Card for free trials), Trials per customer (one per customer, one per product) and what happens when the First payment after a trial fails (cancel, or give some Days to pay after a trial).</li><li>Customers see the trial end date and the first renewal amount on the product page, at checkout, in emails and in My Account. A reminder email goes out before the trial ends.</li></ol><p>One trial per customer is checked by account, email address and, when the payment method shares it, the card's fingerprint.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="vat-and-gst">VAT and GST</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Turn on Business tax numbers to add a VAT / GST number field at checkout. EU numbers can be checked with VIES (choose what happens When VIES is down).</p><p>Reverse charge is a separate decision from a valid number: the rules look at the customer's country, whether they are a business, where you are and what you sell. Every order stores the decision and the evidence used (billing address, IP address and more) under Location evidence, and each customer has a tax-exemption history.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="currencies">Currencies</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Mode</th><th>How prices are made</th><th>Good for</th></tr><tr><td>Converted</td><td>Base price × rate, with rounding; rates can update daily</td><td>Many currencies with little work</td></tr><tr><td>Fixed</td><td>You type a price per currency on the product</td><td>Round local prices, price points per market</td></tr></table><p>A subscription keeps its currency and the amount paid at sign-up: later rate changes never change an existing renewal. The settings screen warns you when a payment method can't charge a currency for renewals. Show the switcher with the floating switcher, on checkout, or the [rinnovo_currency_switcher] shortcode / Currency switcher widget.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="licenses-that-follow-the-plan">Licenses that follow the plan</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Set License: sites per key on each variation (1, 5, 0 = unlimited). When a customer upgrades, downgrades or renews, the key's sites and expiry are updated and the change is written to the license history on the subscription.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="ask-for-price-and-quote-enquiries">&quot;Ask for price&quot; and quote enquiries</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>On the product tick Ask for price and write the Text shown instead of the price.</li><li>Pick the buttons to show: your Contact page or URL, and WhatsApp (number and message).</li><li>Every click is saved as an Enquiry with the product, variation, quantity and customer. Move it through new › contacted › quoted › won or lost, and turn a won enquiry into an order with one click.</li></ol><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="invoices-and-credit-notes">Invoices and credit notes</h2><!-- /wp:heading -->
+<!-- wp:html --><p>See the shared guide "Every Rinnovo Pro" for setting up invoices. This Pro adds the CSV export of invoices and tax for your accountant.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Trials, first-payment offers, VAT/GST, currencies, license keys and "Ask for price". Settings are in WooCommerce › Settings › Rinnovo; each product has its own fields in the Subscription box.]]></excerpt:encoded>
+		<wp:post_id>9002</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-subscriptions-licenses-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>1</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-subscriptions-licenses-pro-guide"><![CDATA[Rinnovo Subscriptions & Licenses Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Boxes Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Physical Subscription Boxes &amp; Goods Pro</strong>. Subscription boxes, subscribe &amp; save and build-your-own boxes. Day-to-day work is in WooCommerce › Boxes (calendar, prepaid plans, packing).</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pick-your-path">Pick your path</h2><!-- /wp:heading -->
+<!-- wp:html --><p>New product › Subscription box opens a Step-by-step wizard with three paths:</p><table><tr><th>Path</th><th>Choose it when</th><th>Example</th></tr><tr><td>Recurring subscription box</td><td>You sell one box that ships on a schedule</td><td>Monthly coffee box, snack box</td></tr><tr><td>Subscribe &amp; save</td><td>You already sell the products and want a subscription option with a discount</td><td>Pet food, shampoo, filters</td></tr><tr><td>Build-your-own box</td><td>Customers choose what goes in the box</td><td>Meal kits, lunch boxes, flower or fruit boxes</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="frequencies">Frequencies</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Tick the frequencies customers may choose (every week, 2, 4 or 6 weeks, every month, 3 months…). They appear as chips on the product. The frequency chosen replaces the product's default billing interval for that subscription; customers can switch later in My Account.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="box-builder">Box builder</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Mode</th><th>How it works</th><th>Example</th></tr><tr><td>Fixed box</td><td>The same items every time, customers can swap within rules</td><td>A curated monthly snack box</td></tr><tr><td>Pick your items</td><td>Customers choose items with Items per box: min / max</td><td>Choose 6 of 20 coffees</td></tr><tr><td>Box sizes</td><td>Sizes of 6, 12 or 24 items as variations</td><td>Fruit box S / M / L</td></tr><tr><td>Rotating menu</td><td>A new menu per delivery with a selection deadline; customers who don't choose get your default picks</td><td>Weekly meal kit, school lunches</td></tr></table><p>Prices: the box price, or the sum of the item prices plus extra charges. Each subscription keeps a snapshot of the items, variations, quantities and prices it was sold with.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="swaps-and-out-of-stock-items">Swaps and out-of-stock items</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Setting</th><th>Options</th></tr><tr><td>Price after a swap</td><td>Charge the difference, refund it, credit it to the next box, or keep the price</td></tr><tr><td>Item out of stock at renewal</td><td>Use a substitute, skip the item (and adjust the price) or hold the box until it's back</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="prepaid-and-gift-plans">Prepaid and gift plans</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Prepaid boxes: the customer pays once for 3, 6 or 12 boxes (with a Prepaid discount). Each box becomes its own order on its delivery date; WooCommerce › Boxes › Prepaid shows boxes sent and left, and the next date.</p><p>Gift plans: at checkout the buyer adds the recipient's name and email, a start date and a gift message. The recipient gets an email and their own page with the deliveries; the plan ends after the last prepaid box.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="shipping">Shipping</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Shipping on renewals uses your shipping zones. When a customer changes their address, the next renewal's shipping is recalculated for the new zone, and card subscriptions are updated with the new amount. With One billing day for everyone every box is billed on the same Day of the month (or Weekday) so you pack in one batch.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="calendar-and-packing">Calendar and packing</h2><!-- /wp:heading -->
+<!-- wp:html --><p>WooCommerce › Boxes › Calendar shows every delivery per day; Prepaid shows prepaid and gift plans; the Packing list gives item totals (40 × Dark roast) and a CSV for your label printer.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Subscription boxes, subscribe & save and build-your-own boxes. Day-to-day work is in WooCommerce › Boxes (calendar, prepaid plans, packing).]]></excerpt:encoded>
+		<wp:post_id>9003</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-boxes-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>2</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-boxes-pro-guide"><![CDATA[Rinnovo Boxes Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Membership Content Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Membership Content Pro</strong>. Memberships, courses and resource libraries on one engine. Settings are in WooCommerce › Membership; members see My Membership in their account.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="groups-and-tiers">Groups and tiers</h2><!-- /wp:heading -->
+<!-- wp:html --><p>A group is an independent programme (Business training, Photography, VIP community). Inside a group, tiers inherit from lower tiers (Gold includes Silver). A member can belong to several groups at once; access is worked out from all their active memberships, course purchases and manual grants together.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="what-happens-when">What happens when</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Event</th><th>Access</th></tr><tr><td>Payment succeeds</td><td>Membership starts or is renewed</td></tr><tr><td>Payment fails</td><td>Grace period (days you set), then suspended</td></tr><tr><td>Cancelled</td><td>Kept until the end of the paid period</td></tr><tr><td>Refunded</td><td>Removed or shortened, by your refund setting</td></tr><tr><td>Upgrade</td><td>Higher tier at once</td></tr><tr><td>Downgrade</td><td>Lower tier from the next renewal</td></tr><tr><td>Expired</td><td>Benefits removed</td></tr><tr><td>Manual grant</td><td>Your own start and end dates</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="drip-timeline">Drip timeline</h2><!-- /wp:heading -->
+<!-- wp:html --><p>In the Members only box of a page or post, open it after a number of days of membership (Day 1 welcome, Day 7 module 2, Day 30 premium resources) or on a date. The drip timeline in My Membership shows members what opens next.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="protected-files-and-video">Protected files and video</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Files are never reachable by a public URL: downloads are checked on every request and served through the server (X-Sendfile or X-Accel when available), with no-store headers and limits per member or file.</p><table><tr><th>Provider</th><th>How it is protected</th></tr><tr><td>Bunny Stream</td><td>Private library with token playback</td></tr><tr><td>Vimeo</td><td>Privacy set to "hide from Vimeo" plus domain restriction to your site</td></tr><tr><td>Wistia</td><td>Wistia privacy controls</td></tr><tr><td>YouTube unlisted</td><td>Not protected: anyone with the link can watch. Use it only for previews.</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="selling-courses">Selling courses</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>WooCommerce › Membership › Course &amp; product mapping.</li><li>Pick a product, then one or more courses (LearnDash, LifterLMS, or a category of course pages).</li><li>Choose the access length (lifetime or months) and when it starts. Save.</li></ol><p>Several courses on one product make a bundle; one course can be unlocked by several products (a standalone purchase or a Gold membership). The Courses and tiers matrix shows each course's price and which tiers include it. A course bought on its own stays when a membership ends.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="download-plans-and-credits">Download plans and credits</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>WooCommerce › Membership › Download plans: credits per period, reset, carry-over, maximum per day and at the same time.</li><li>Choose per-category quotas (photos 30, PSD 10, videos 5) or one shared wallet.</li><li>Add resources (Resources menu) with a file, preview and credit cost.</li><li>Sell top-ups as products with Download credits. Purchased credits are kept apart and never vanish with the monthly reset.</li></ol><p>Members see their balance (32 of 50), reset date and download history in My Membership.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="hiding-parts-of-a-page">Hiding parts of a page</h2><!-- /wp:heading -->
+<!-- wp:html --><p>See "Page builders" in the shared guide: Elementor Advanced › Members only (Rinnovo), or the Members only panel on any block.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Memberships, courses and resource libraries on one engine. Settings are in WooCommerce › Membership; members see My Membership in their account.]]></excerpt:encoded>
+		<wp:post_id>9004</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-membership-content-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>3</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-membership-content-pro-guide"><![CDATA[Rinnovo Membership Content Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Media Archives Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Media Archives Pro</strong>. Subscription-based media hosting, streaming and digital distribution. Settings: WooCommerce › Media Archives (Plans &amp; Quotas, Media Providers, Protection, App &amp; Integrations, Security &amp; Activity). Content: the Media library menu and Overview &amp; analytics.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pick-your-business-model">Pick your business model</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Model</th><th>For</th><th>You get</th></tr><tr><td>A. Video streaming library</td><td>Fitness trainers, educators, film libraries</td><td>Browse, search, filter, resume, playlists, favourites, history</td></tr><tr><td>B. Premium podcast network</td><td>Podcasters with paid shows</td><td>Free and premium episodes, seasons, a private feed per subscriber</td></tr><tr><td>C. Stock media library</td><td>Photos, footage, sound effects, music, templates</td><td>Watermarked previews, collections, download quotas</td></tr><tr><td>D. Private media portals</td><td>Agencies, production houses, internal training</td><td>Client collections, permissions, your branding</td></tr></table><p>The setup wizard asks which model you run and only shows the settings it needs. You can run several.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="media-providers">Media providers</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>Bunny Stream: library ID, API key and token key; turn on token authentication in Bunny.</li><li>Cloudflare Stream: account ID, API token and signing key; require signed URLs on each video.</li><li>S3 + CloudFront: bucket private, a CloudFront key pair; the plugin signs short-lived links.</li></ol><p>Keys stay on your server and are never sent to the browser.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="private-podcast-feeds">Private podcast feeds</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Every subscriber gets their own feed address in their media account, which works in any podcast app. If a feed is shared, it is flagged (many devices or places); rotate it with one click and the old address stops working. Storage addresses are never in the feed.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="how-each-play-is-protected">How each play is protected</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>Who is asking: logged in and subscription valid.</li><li>What their plan allows: the item, the quota, device and stream limits.</li><li>A short-lived signed link or provider token is created.</li><li>The play or download is recorded; unusual activity raises an alert (geo alerts are warnings, they never block travellers automatically).</li></ol><p>Signed links stop sharing of links and downloads of your storage, but they are not DRM: a determined viewer can record the screen. DRM streaming is a future integration.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="the-member-s-media-account">The member&#x27;s media account</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Sections follow the media you enabled: Continue watching, Video, Podcasts, Media library, plan and benefits, devices, active streams, downloads, private feeds, billing and security alerts. Choose grid, list or carousel, columns, thumbnail ratio, descriptions, download buttons and player colours.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="media-archives-or-membership-content">Media Archives or Membership Content?</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>You need</th><th>Use</th></tr><tr><td>Tiers, courses, members-only articles, member files</td><td>Membership Content Pro</td></tr><tr><td>Video/audio hosting and streaming, stream limits, private podcast feeds, watermarks, media quotas, API and external portals</td><td>Media Archives Pro</td></tr><tr><td>Both</td><td>Both: they share the customer and subscription data and neither needs the other</td></tr></table><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Subscription-based media hosting, streaming and digital distribution. Settings: WooCommerce › Media Archives (Plans & Quotas, Media Providers, Protection, App & Integrations, Security & Activity). Content: the Media library menu and Overview & analyt]]></excerpt:encoded>
+		<wp:post_id>9005</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-media-archives-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>4</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-media-archives-pro-guide"><![CDATA[Rinnovo Media Archives Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Service Contracts Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Service Contracts Pro</strong>. Retainers with allowances, requests, work logs and reports. Product setup: the Service retainer tab; contracts: WooCommerce › Service Contracts; clients: My Service Contracts in My Account.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="set-up-a-retainer">Set up a retainer</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>Create a subscription product and open the Service retainer tab.</li><li>Onboarding / setup fee (and when it is charged), Minimum term (payments) and Notice period (days).</li><li>Monthly allowances, one per line: name | amount | unit | rollover | max | expiry.</li><li>Monthly deliverables, Monthly tasks (Trello, ClickUp or webhook), SAC / HSN code and Invoice approval.</li><li>Publish.</li></ol><p>Example: "Consulting | 10 | hours | cap 5 | max 15 | expiry 2" keeps up to 5 unused hours, never more than 15 in total, and rolled-over hours last 2 months. "Articles | 8 | posts | expire" resets to 8 each month.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="from-request-to-completed">From request to completed</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Status</th><th>Allowance</th></tr><tr><td>Submitted</td><td>Nothing used: unapproved work never uses the allowance</td></tr><tr><td>Approved (with an estimate)</td><td>The estimate is reserved, so two requests can't spend the same hours</td></tr><tr><td>In progress / review / revision</td><td>Still reserved; revisions are counted</td></tr><tr><td>Completed (with the actual amount)</td><td>Reservation released, actual amount used</td></tr><tr><td>Rejected</td><td>Nothing used</td></tr></table><p>Work you log yourself (date, description, quantity, request) also uses the allowance. Assign staff and keep internal notes and attachments on each contract.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="ending-a-contract">Ending a contract</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>State</th><th>Meaning</th></tr><tr><td>Cancellation requested</td><td>The client asked; you review it (or it is scheduled automatically)</td></tr><tr><td>Cancellation scheduled</td><td>The end date respects the notice period and the minimum term</td></tr><tr><td>Terminated</td><td>The contract has ended</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="onboarding-fee-and-first-month">Onboarding fee and first month</h2><!-- /wp:heading -->
+<!-- wp:html --><p>The onboarding fee is charged at once, on the first invoice or invoiced separately, and is never prorated. With a billing day (say the 1st), a client who starts on the 21st of a 30-day month pays 10/30 of the monthly fee for the first month, then the full fee on the 1st. Time zone, month length and tax are taken into account.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="invoice-approval">Invoice approval</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Workflow</th><th>How it works</th></tr><tr><td>Approve before issue</td><td>The renewal waits until the client approves; then the invoice is issued and charged</td></tr><tr><td>Approve for payment</td><td>The invoice is issued; the client approves it for payment</td></tr></table><p>Each approval is recorded; an approved invoice never changes. Tax invoices per country are covered in the shared guide.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="monthly-service-report">Monthly service report</h2><!-- /wp:heading -->
+<!-- wp:html --><p>At the end of each period the client receives a report (also in their account): for example 8/10 hours used, 6/8 articles delivered, 12 requests completed, 2 pending, and the list of work done.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="connections">Connections</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Add Trello or ClickUp tokens, CRM and webhook details in Settings. They are stored encrypted. Webhooks are signed and retried, and a retried renewal never creates the monthly tasks twice.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Retainers with allowances, requests, work logs and reports. Product setup: the Service retainer tab; contracts: WooCommerce › Service Contracts; clients: My Service Contracts in My Account.]]></excerpt:encoded>
+		<wp:post_id>9006</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-service-contracts-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>5</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-service-contracts-pro-guide"><![CDATA[Rinnovo Service Contracts Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Session Membership Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Session Membership Pro</strong>. Class memberships, packs and passes. Classes: the Classes menu; members, reports and settings: WooCommerce › Sessions; members book with [session_schedule] (or the Class schedule widget).</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="create-each-pricing-model">Create each pricing model</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Model</th><th>Product settings</th></tr><tr><td>Monthly membership (12 classes)</td><td>Session membership, Sessions per billing period 12, rollover rule</td></tr><tr><td>Unlimited pass</td><td>Session membership, Unlimited</td></tr><tr><td>10-class pack valid 90 days</td><td>Simple product, Class pack credits 10, Pack valid for (days) 90</td></tr><tr><td>Family pass (30 shared)</td><td>Session membership 30, Family members, shared pool</td></tr><tr><td>Private sessions (5 PT)</td><td>Class pack credits 5, Pack is for class type "private"</td></tr><tr><td>Trial (3 intro classes)</td><td>Class pack credits 3, Trial (once per customer)</td></tr><tr><td>Hybrid (8 group + 2 private)</td><td>Credits per class type: group 8, private 2</td></tr><tr><td>Top-up (5 extra)</td><td>Extra sessions (top-up) 5</td></tr></table><p>Packs have their own expiry, independent of subscription billing.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="families">Families</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Choose One shared pool for the family, A separate allowance per person, or both. Each person has their own bookings, attendance and waiver; you choose whether the account holder books for others and whether each person signs their own waiver.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="schedules">Schedules</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Each class has weekly times, extra dates, a time zone, and blackout dates (holidays). Every date becomes its own session you can cancel or give a substitute instructor (booked members get their credits back and are told). Changing the times after people booked cancels the dates that disappear, returns the credits and tells them.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="credits">Credits</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>What happens</th><th>Credit</th></tr><tr><td>Book</td><td>Reserved</td></tr><tr><td>Attend</td><td>Used</td></tr><tr><td>Cancel before the cut-off</td><td>Given back</td></tr><tr><td>Late cancel / no-show</td><td>Used (if you choose so)</td></tr><tr><td>Studio cancels the date</td><td>Given back</td></tr></table><p>Every movement is a line in the ledger with a reason; two bookings can never take the same last credit.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="recurring-bookings-check-in-and-reports">Recurring bookings, check-in and reports</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Members book a series (every Monday and Wednesday 6 PM for 4 weeks); it stops when credits run out, the membership ends or they stop it. Each booking has a QR code; staff scan it or type the short code on the session screen. Reports show utilisation, attendance, no-shows and late cancels per class, and the instructor roster with days instructors marked as away.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="booking-tools">Booking tools</h2><!-- /wp:heading -->
+<!-- wp:html --><p>WooCommerce Bookings works on its own hooks. For Amelia or Bookly, set the Adapter secret in settings and point their webhook to /wp-json/rinnovose/v1/booking with the header X-Rinnovose-Secret. Bookings take a credit, cancellations give it back, and duplicate deliveries are ignored.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="session-pro-or-membership-pro">Session Pro or Membership Pro?</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Membership Content decides "is this person a Gold member"; Session Pro decides "can they book this class and do they have credits". A Gold member may have no class credits, and someone can buy a 10-class pack without a membership.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Class memberships, packs and passes. Classes: the Classes menu; members, reports and settings: WooCommerce › Sessions; members book with [session_schedule] (or the Class schedule widget).]]></excerpt:encoded>
+		<wp:post_id>9007</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-session-membership-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>6</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-session-membership-pro-guide"><![CDATA[Rinnovo Session Membership Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Rinnovo Bundles & Variable Subscriptions Pro guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Rinnovo Bundles &amp; Variable Subscriptions Pro</strong>. Subscription bundles and variable plans. Products: the Bundle tab; operations: WooCommerce › Bundles &amp; Plans.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="kinds-of-bundles">Kinds of bundles</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Kind</th><th>Example</th></tr><tr><td>Fixed</td><td>Starter kit: 2 × shampoo, 1 × conditioner</td></tr><tr><td>Mix and match</td><td>Choose 6 of 15 snacks (Minimum items / Maximum items)</td></tr><tr><td>Mixed</td><td>A fixed mug plus 3 coffees of your choice, plus an optional grinder</td></tr></table><p>Flat price: one price for the bundle, split across components for tax and refunds as you choose (for example Equally between components). Dynamic price: the components' prices × quantities minus the Bundle discount (%).</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="component-rules">Component rules</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Per component: minimum and maximum, Critical or Optional, an Extra price (premium picks), and exclusions for combinations that don't go together.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="out-of-stock-at-renewal">Out of stock at renewal</h2><!-- /wp:heading -->
+<!-- wp:html --><p>When a critical component is out of stock, the renewal is held and not charged. Open Held bundle renewal and choose: replace the item, skip it, partial ship, delay (it retries), or refund the difference, then release the renewal. Optional components out of stock are skipped and the price adjusted.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="what-customers-can-do">What customers can do</h2><!-- /wp:heading -->
+<!-- wp:html --><p>In My Account: change the next box only (Next shipment only), copy the previous box, save a favourite box, skip or replace one component for the next shipment.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="variable-plans-and-switching">Variable plans and switching</h2><!-- /wp:heading -->
+<!-- wp:html --><p>The plan table on the product sets each variation's price, period, sign-up fee and trial; shoppers see a Compare plans table (also the Plan table widget / [bundle_plans]).</p><p>Example: Monthly $20 → Yearly $200 halfway through the month: the unused $10 is credited, the customer pays $190 now and the next renewal is in a year. Card subscriptions pay the difference at once; others get a credit on the next renewal.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="one-renewal-statement">One renewal statement</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Under Settings you can send one statement for several independent subscriptions renewing the same day. Each subscription keeps its own record, payment and cancellation.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="which-plugin-does-what">Which plugin does what</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Plugin</th><th>Does</th></tr><tr><td>Rinnovo Box Builder</td><td>The builder customers use and the saved selection (no billing, stock or shipping)</td></tr><tr><td>Bundles Pro</td><td>Bundle prices, component stock, renewals, plans and switching</td></tr><tr><td>Boxes Pro</td><td>Delivery schedules, shipping, prepaid, gifts, swaps and packing</td></tr></table><p>Bundles Pro never needs Boxes Pro (digital bundles, simple combinations), and Boxes Pro handles its own fixed boxes without Bundles Pro.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer&#x27;s language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin&#x27;s numbers.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[Subscription bundles and variable plans. Products: the Bundle tab; operations: WooCommerce › Bundles & Plans.]]></excerpt:encoded>
+		<wp:post_id>9008</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[rinnovo-bundles-variable-subscriptions-pro]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>7</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="rinnovo-bundles-variable-subscriptions-pro-guide"><![CDATA[Rinnovo Bundles & Variable Subscriptions Pro guide]]></category>
+	</item>
+	<item>
+		<title><![CDATA[Sarala Login Page guide]]></title>
+		<dc:creator><![CDATA[admin]]></dc:creator>
+		<content:encoded><![CDATA[<!-- wp:paragraph --><p><strong>Sarala Login Page and Sarala Login Page Pro</strong>. One-click social login and a safer login page for WordPress and WooCommerce. Everything is set up in Sarala Login Page › Settings. The free plugin is on WordPress.org; Pro adds providers, button styles, CAPTCHA, redirects, the login widget and super admin protection.</p><!-- /wp:paragraph -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="install-and-first-steps">Install and first steps</h2><!-- /wp:heading -->
+<!-- wp:html --><ol class="steps"><li>Install Sarala Login Page from Plugins › Add New (search "Sarala Login Page") and activate it.</li><li>For Pro: upload sarala-login-page-pro.zip in Plugins › Add New › Upload, activate it and enter your license key on its license screen.</li><li>Open Sarala Login Page › Settings and turn on the providers you want.</li></ol><p>New social sign-ups become Customers when WooCommerce is active, otherwise they get the default role from Settings › General.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="connect-a-login-provider">Connect a login provider</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Each provider needs an app in its developer console. In Sarala Login Page › Settings, open the provider: it shows the exact Redirect URL to paste into that app.</p><table><tr><th>Provider</th><th>Where to create the app</th><th>You paste into Sarala</th></tr><tr><td>Google</td><td>Google Cloud Console › APIs &amp; Services › Credentials › OAuth client ID (Web)</td><td>Client ID, Client secret</td></tr><tr><td>Facebook</td><td>Meta for Developers › My Apps › Facebook Login</td><td>App ID, App secret</td></tr><tr><td>Apple</td><td>Apple Developer › Identifiers (Services ID) and Keys (Sign in with Apple)</td><td>Services ID, Team ID, Key ID, private key</td></tr><tr><td>Microsoft</td><td>Azure portal › App registrations</td><td>Application (client) ID, Client secret</td></tr><tr><td>LinkedIn, X, GitHub, Discord, Yahoo, Reddit</td><td>The provider's developer portal</td><td>Client ID, Client secret</td></tr></table><p>Reddit shares no email address, so people first connect Reddit to their account from their profile and then log in with it.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="where-the-buttons-appear">Where the buttons appear</h2><!-- /wp:heading -->
+<!-- wp:html --><ul><li>WordPress login and registration pages.</li><li>WooCommerce My Account login and registration forms.</li><li>Top of the WooCommerce checkout: guests sign up or log in and return to checkout with their cart.</li><li>Anywhere with the [sarala_login_page] shortcode (any theme or page builder).</li><li>Pro: the login widget (Appearance › Widgets or [sarala_login_widget]) with AJAX login.</li></ul><p>Existing users with the same verified email are logged straight into their account, which is connected automatically. Users connect and disconnect accounts in their profile or My Account › Account details.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="protect-the-login-page">Protect the login page</h2><!-- /wp:heading -->
+<!-- wp:html --><table><tr><th>Setting</th><th>What it does</th></tr><tr><td>Limit login attempts</td><td>After 5 failed logins in 15 minutes (your numbers) the IP is locked out for 30 minutes; add your own IPs to "never lock out".</td></tr><tr><td>Custom login URL</td><td>Hides wp-login.php and wp-admin from bots.</td></tr><tr><td>Security question</td><td>A math question on login and registration forms, checked on the server.</td></tr><tr><td>Force password reset</td><td>Passwords expire after the days you choose, for all or chosen roles.</td></tr><tr><td>Failed logins</td><td>Every failed attempt with IP, device and location; unlock addresses here.</td></tr></table><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pro-button-styles-and-providers">Pro: button styles and providers</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Pick icon tiles, outline boxes or brand pills, the corner shape, and each provider's colours or your brand colours, with a live preview. Pro adds Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pro-captcha-with-a-backup">Pro: CAPTCHA with a backup</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Choose Cloudflare Turnstile, reCAPTCHA v2 or hCaptcha. If the CAPTCHA can't load, the security question appears instead, so nobody is locked out. Secrets are stored encrypted.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pro-redirects-and-the-login-widget">Pro: redirects and the login widget</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Set where each role goes after logging in and out (admins to the dashboard, customers to My Account), with {user_login} and {user_id} placeholders, and block addresses nobody should ever be sent to. The login widget logs in without a page reload and shows your own HTML for logged-in users.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="pro-super-admin">Pro: super admin</h2><!-- /wp:heading -->
+<!-- wp:html --><p>The admin who activates Pro becomes the super admin. Only they can add administrators, and other administrators can't edit or demote them or deactivate Sarala. Optionally only the super admin installs plugins and themes. Recovery: define( 'SLPP_OWNER', 1 ); in wp-config.php.</p><!-- /wp:html -->
+<!-- wp:heading --><h2 class="wp-block-heading" id="recommended-plugins">Recommended plugins</h2><!-- /wp:heading -->
+<!-- wp:html --><p>Sarala Login Page › Settings shows a "Works great with" box: Rinnovo Subscriptions &amp; Licenses (sell subscriptions and licenses with WooCommerce) and Performance Insight for WooCommerce (cookieless analytics and SEO). Click Install to add them from WordPress.org, or Not now to hide the suggestion.</p><!-- /wp:html -->
+<!-- wp:html --><div class="llm-works"><strong>Works great with</strong><ul><li><a href="https://wordpress.org/plugins/rinnovo-subscriptions-licenses/">Rinnovo Subscriptions &amp; Licenses</a>: sell subscriptions, memberships and license keys with WooCommerce.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO for your store.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: login and account pages in the visitor&#x27;s language.</li></ul></div><!-- /wp:html -->
+]]></content:encoded>
+		<excerpt:encoded><![CDATA[One-click social login and a safer login page for WordPress and WooCommerce. Everything is set up in Sarala Login Page › Settings. The free plugin is on WordPress.org; Pro adds providers, button styles, CAPTCHA, redirects, the login widget and super ]]></excerpt:encoded>
+		<wp:post_id>9009</wp:post_id>
+		<wp:post_date><![CDATA[2026-11-15 09:38:13]]></wp:post_date>
+		<wp:post_date_gmt><![CDATA[2026-11-15 09:38:13]]></wp:post_date_gmt>
+		<wp:comment_status><![CDATA[closed]]></wp:comment_status>
+		<wp:ping_status><![CDATA[closed]]></wp:ping_status>
+		<wp:post_name><![CDATA[sarala-login-page]]></wp:post_name>
+		<wp:status><![CDATA[publish]]></wp:status>
+		<wp:post_parent>0</wp:post_parent>
+		<wp:menu_order>8</wp:menu_order>
+		<wp:post_type><![CDATA[guide]]></wp:post_type>
+		<wp:post_password><![CDATA[]]></wp:post_password>
+		<wp:is_sticky>0</wp:is_sticky>
+		<category domain="guide_category" nicename="sarala-login-page-guide"><![CDATA[Sarala Login Page guide]]></category>
+	</item>
+</channel>
+</rss>

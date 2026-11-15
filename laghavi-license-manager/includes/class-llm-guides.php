@@ -40,6 +40,10 @@ class LLM_Guides {
 		}
 		add_action( 'pre_get_posts', array( __CLASS__, 'filter_query' ) );
 		add_filter( 'the_content', array( __CLASS__, 'content' ), 1 );
+		add_filter( 'the_content', array( __CLASS__, 'layout' ), 50 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
+		add_action( 'admin_init', array( __CLASS__, 'resolve_product_slugs' ) );
+		add_action( 'import_end', array( __CLASS__, 'resolve_product_slugs' ) );
 		// Page builders (Elementor and others) put their own layout in later: lock again at the very end.
 		add_filter( 'the_content', array( __CLASS__, 'content' ), PHP_INT_MAX );
 		add_filter( 'get_the_excerpt', array( __CLASS__, 'excerpt' ), 1, 2 );
@@ -423,6 +427,202 @@ class LLM_Guides {
 			return $content;
 		}
 		return self::denied( $id );
+	}
+
+	// ---- Guide page layout: guide switcher, topic list and styles, added to every Guide post. ----
+
+	/**
+	 * Guide categories can name their products by slug (for example in an import file):
+	 * term meta _llm_guide_product_slugs = "slug-a,slug-b". They are turned into the product connection.
+	 */
+	public static function resolve_product_slugs() {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => self::TAX,
+				'hide_empty' => false,
+				'meta_key'   => '_llm_guide_product_slugs', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			)
+		);
+		if ( ! is_array( $terms ) || ! $terms ) {
+			return;
+		}
+		foreach ( $terms as $t ) {
+			$slugs = array_filter( array_map( 'trim', explode( ',', (string) get_term_meta( $t->term_id, '_llm_guide_product_slugs', true ) ) ) );
+			$ids   = self::products_of( $t->term_id );
+			$left  = array();
+			foreach ( $slugs as $slug ) {
+				$p = get_page_by_path( sanitize_title( $slug ), OBJECT, 'product' );
+				if ( $p ) {
+					$ids[] = (int) $p->ID;
+				} else {
+					$left[] = $slug;
+				}
+			}
+			update_term_meta( $t->term_id, self::META, array_values( array_unique( $ids ) ) );
+			if ( $left ) {
+				update_term_meta( $t->term_id, '_llm_guide_product_slugs', implode( ',', $left ) );
+			} else {
+				delete_term_meta( $t->term_id, '_llm_guide_product_slugs' );
+			}
+		}
+		delete_transient( 'llm_guide_terms' );
+	}
+
+	/**
+	 * Styles and script for guide pages.
+	 */
+	public static function assets() {
+		if ( ! is_singular( self::TYPE ) && ! is_post_type_archive( self::TYPE ) && ! is_tax( self::TAX ) ) {
+			return;
+		}
+		wp_register_style( 'llm-guides', false, array(), LLM_VERSION );
+		wp_enqueue_style( 'llm-guides' );
+		wp_add_inline_style( 'llm-guides', self::css() );
+		wp_register_script( 'llm-guides', false, array(), LLM_VERSION, true );
+		wp_enqueue_script( 'llm-guides' );
+		wp_add_inline_script( 'llm-guides', self::js() );
+	}
+
+	/**
+	 * Add the guide switcher and the topic list around a readable guide.
+	 *
+	 * @param string $content Content.
+	 * @return string
+	 */
+	public static function layout( $content ) {
+		$id = get_the_ID();
+		if ( ! $id || ! is_singular( self::TYPE ) || ! in_the_loop() || ! is_main_query() || get_queried_object_id() !== $id || ! self::can_read( $id ) ) {
+			return $content;
+		}
+		$toc  = array();
+		$used = array();
+		$content = preg_replace_callback(
+			'#<h2([^>]*)>(.*?)</h2>#is',
+			static function ( $m ) use ( &$toc, &$used ) {
+				$text = trim( wp_strip_all_tags( $m[2] ) );
+				if ( preg_match( '/\sid=["\']([^"\']+)["\']/', $m[1], $idm ) ) {
+					$hid = $idm[1];
+					$attrs = $m[1];
+				} else {
+					$hid = sanitize_title( $text );
+					$hid = '' !== $hid ? $hid : 'section';
+					$base = $hid;
+					$n    = 2;
+					while ( isset( $used[ $hid ] ) ) {
+						$hid = $base . '-' . $n++;
+					}
+					$attrs = $m[1] . ' id="' . esc_attr( $hid ) . '"';
+				}
+				$used[ $hid ] = true;
+				$toc[]        = array( $hid, $text );
+				return '<h2' . $attrs . '>' . $m[2] . '</h2>';
+			},
+			$content
+		);
+		$nav = '';
+		if ( $toc ) {
+			$nav = '<nav class="llm-guide__toc" aria-label="' . esc_attr__( 'In this guide', self::TD ) . '"><p>' . esc_html__( 'In this guide', self::TD ) . '</p><ol>';
+			foreach ( $toc as $t ) {
+				$nav .= '<li><a href="#' . esc_attr( $t[0] ) . '">' . esc_html( $t[1] ) . '</a></li>';
+			}
+			$nav .= '</ol></nav>';
+		}
+		return '<div class="llm-guide">' . self::switcher( $id ) . '<div class="llm-guide__layout' . ( $toc ? '' : ' llm-guide__layout--single' ) . '">' . $nav . '<div class="llm-guide__body">' . $content . '</div></div></div>';
+	}
+
+	/**
+	 * Dropdown to open another guide (grouped by guide category; locked ones marked).
+	 *
+	 * @param int $current Current guide.
+	 * @return string
+	 */
+	private static function switcher( $current ) {
+		$guides = get_posts(
+			array(
+				'post_type'        => self::TYPE,
+				'numberposts'      => 300,
+				'orderby'          => array(
+					'menu_order' => 'ASC',
+					'title'      => 'ASC',
+				),
+				'suppress_filters' => true,
+			)
+		);
+		if ( count( $guides ) < 2 ) {
+			return '';
+		}
+		$groups = array();
+		foreach ( $guides as $g ) {
+			$terms = get_the_terms( $g, self::TAX );
+			$top   = __( 'Guides', self::TD );
+			if ( is_array( $terms ) && $terms ) {
+				$t = $terms[0];
+				while ( $t->parent ) {
+					$parent = get_term( $t->parent, self::TAX );
+					if ( ! $parent instanceof WP_Term ) {
+						break;
+					}
+					$t = $parent;
+				}
+				$top = $t->name;
+			}
+			$groups[ $top ][] = $g;
+		}
+		$out = '<div class="llm-guide__bar"><label>' . esc_html__( 'Guide for', self::TD ) . ' <select onchange="if(this.value){location.href=this.value}">';
+		foreach ( $groups as $name => $items ) {
+			$out .= '<optgroup label="' . esc_attr( $name ) . '">';
+			foreach ( $items as $g ) {
+				$out .= '<option value="' . esc_url( get_permalink( $g ) ) . '"' . selected( $g->ID, $current, false ) . '>' . esc_html( $g->post_title . ( self::can_read( $g->ID ) ? '' : ' 🔒' ) ) . '</option>';
+			}
+			$out .= '</optgroup>';
+		}
+		return $out . '</select></label><a href="' . esc_url( get_post_type_archive_link( self::TYPE ) ) . '">' . esc_html__( 'All guides', self::TD ) . '</a></div>';
+	}
+
+	/**
+	 * Guide page styles.
+	 *
+	 * @return string
+	 */
+	private static function css() {
+		return '.llm-guide{--llm-ac:#ea580c;margin:0 0 24px;box-sizing:border-box;width:min(1180px,calc(100vw - 40px));max-width:none!important;margin-left:calc(50% - min(590px,calc(50vw - 20px)))!important}
+.llm-guide *{box-sizing:border-box}
+.llm-guide__bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;background:#120d33;color:#fff;border-radius:12px;padding:10px 14px;margin:0 0 20px}
+.llm-guide__bar label{display:flex;flex-wrap:wrap;gap:10px;min-width:0;align-items:center;font-weight:600;font-size:14px;color:#fff;margin:0;flex:1 1 320px}
+.llm-guide__bar select{flex:1 1 200px;min-width:0;width:100%;max-width:460px;padding:8px 10px;border-radius:8px;border:0;font-size:15px;font-weight:600;color:#111;background:#fff}
+.llm-guide__bar a{color:#fdba74!important;font-weight:600;font-size:14px;text-decoration:none}
+.llm-guide__layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:28px;align-items:start}
+.llm-guide__layout--single{grid-template-columns:minmax(0,1fr)}
+.llm-guide__toc{position:sticky;top:90px;border:1px solid #e5e7eb;border-radius:12px;padding:14px 8px 10px;background:#fff;max-height:calc(100vh - 120px);overflow:auto}
+.admin-bar .llm-guide__toc{top:122px}
+.llm-guide__toc p{margin:0 8px 8px;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280}
+.llm-guide__toc ol{list-style:none;margin:0;padding:0;counter-reset:llm}
+.llm-guide__toc li{margin:0}
+.llm-guide__toc a{display:flex;gap:9px;padding:7px 8px;border-radius:8px;color:#374151!important;text-decoration:none!important;font-size:14.5px;line-height:1.35}
+.llm-guide__toc a::before{counter-increment:llm;content:counter(llm);flex:none;width:21px;height:21px;border-radius:50%;background:#f3f4f6;color:#6b7280;font-size:11.5px;font-weight:700;line-height:21px;text-align:center}
+.llm-guide__toc a:hover,.llm-guide__toc a.is-on{background:#fff7ed;color:#c2410c!important}
+.llm-guide__toc a.is-on{font-weight:600}.llm-guide__toc a.is-on::before{background:var(--llm-ac);color:#fff}
+.llm-guide__body{min-width:0}
+.llm-guide__body h2{scroll-margin-top:100px;padding-top:14px;border-top:1px solid #eef0f3}
+.llm-guide__body table{width:100%;border-collapse:collapse;margin:8px 0 18px;font-size:15px}
+.llm-guide__body th,.llm-guide__body td{border:1px solid #e1e4ea;padding:8px 11px;text-align:left;vertical-align:top}
+.llm-guide__body th{background:#f6f7f9}
+.llm-guide__body .llm-works{margin-top:28px;padding:16px 18px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px}
+.llm-guide-list{display:grid;gap:10px}
+@media (max-width:860px){.llm-guide__layout{grid-template-columns:1fr}.llm-guide__toc{position:static;max-height:none}.llm-guide__body table{display:block;overflow-x:auto;white-space:normal}.llm-guide__bar label{flex-basis:100%}}';
+	}
+
+	/**
+	 * Guide page script: smooth jump and the current topic highlighted.
+	 *
+	 * @return string
+	 */
+	private static function js() {
+		return '(function(){var links=[].slice.call(document.querySelectorAll(".llm-guide__toc a"));if(!links.length)return;
+var secs=links.map(function(a){return document.getElementById(decodeURIComponent(a.hash.slice(1)));});
+function mark(){var y=window.scrollY+140,cur=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top+window.scrollY<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle("is-on",i===cur);});}
+links.forEach(function(a,i){a.addEventListener("click",function(e){if(!secs[i])return;e.preventDefault();secs[i].scrollIntoView({behavior:"smooth",block:"start"});history.replaceState(null,"",a.hash);});});
+window.addEventListener("scroll",mark,{passive:true});mark();})();';
 	}
 
 	/**

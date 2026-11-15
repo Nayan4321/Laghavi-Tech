@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -40,6 +40,11 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `GET /download` – the zip, for sites allowed to update
 
 == Changelog ==
+
+= 1.2.1 =
+* Guide pages get their own layout on the site: a guide switcher (grouped by guide category, locked guides marked), a sticky list of the guide's sections built from its headings (click to jump, current section highlighted) and styles for tables. Write guides in the normal editor; the plugin adds the rest.
+* Guide categories can name their products by slug (_llm_guide_product_slugs, e.g. in an import file); they are connected to the products automatically.
+* Guides made as llm_guide in the first 1.2.0 build are moved to the guide post type.
 
 = 1.2.0 =
 * Guides: a Guides post type where a guide category is connected to licensed products. Its posts are shown only to logged-in customers with an active license; others see an access-denied box with log-in and buy links. Protected posts are left out of archives, search, feeds, the REST API and sitemaps, marked noindex and not cached.
