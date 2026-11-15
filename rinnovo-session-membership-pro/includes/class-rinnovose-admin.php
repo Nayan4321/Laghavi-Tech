@@ -46,18 +46,21 @@ class RINNOVOSE_Admin {
 		// phpcs:enable
 		$base = admin_url( 'admin.php?page=' . self::PAGE );
 		echo '<div class="wrap"><h1>' . esc_html__( 'Sessions', self::TD ) . '</h1><nav class="nav-tab-wrapper">';
-		foreach ( array( 'sessions' => __( 'Sessions', self::TD ), 'members' => __( 'Members', self::TD ), 'settings' => __( 'Settings', self::TD ) ) as $k => $l ) {
+		foreach ( array( 'sessions' => __( 'Sessions', self::TD ), 'members' => __( 'Members', self::TD ), 'reports' => __( 'Reports', self::TD ), 'settings' => __( 'Settings', self::TD ) ) as $k => $l ) {
 			echo '<a class="nav-tab ' . ( $k === $tab ? 'nav-tab-active' : '' ) . '" href="' . esc_url( add_query_arg( 'tab', $k, $base ) ) . '">' . esc_html( $l ) . '</a>';
 		}
 		echo '</nav>';
 		if ( 'settings' === $tab ) {
 			self::settings();
+		} elseif ( 'reports' === $tab ) {
+			RINNOVOSE_Reports::render();
 		} elseif ( 'members' === $tab ) {
 			$member ? self::member( $member ) : self::members();
 		} elseif ( $session ) {
 			$s = RINNOVOSE_Store::session( $session );
 			echo '<p><a href="' . esc_url( $base ) . '">&larr; ' . esc_html__( 'All sessions', self::TD ) . '</a></p>';
 			if ( $s ) {
+				RINNOVOSE_Reports::session_tools( $s );
 				RINNOVOSE_Account::roster( $s, true );
 			}
 		} else {
@@ -171,6 +174,18 @@ class RINNOVOSE_Admin {
 		$row( 'freeze_max', __( 'Longest freeze', self::TD ), __( 'Months (0 = members cannot freeze).', self::TD ) );
 		$row( 'topup_product', __( 'Extra sessions product', self::TD ), __( 'ID of the one-time product with "Extra sessions (top-up)"; shows a "Buy extra sessions" button.', self::TD ) );
 		$row( 'waiver_text', __( 'Waiver text', self::TD ), '', 'textarea' );
+		$row( 'blackouts', __( 'Studio closed on', self::TD ), __( 'Holiday and blackout dates for every class (YYYY-MM-DD, comma separated). No sessions are made on them; booked members are told and get their credits back.', self::TD ), 'text' );
+		echo '</table><h2>' . esc_html__( 'Families', self::TD ) . '</h2><table class="form-table" role="presentation">';
+		echo '<tr><th>' . esc_html__( 'Family credits', self::TD ) . '</th><td><select name="s[family_credits]">';
+		foreach ( array( 'shared' => __( 'One shared pool for the family', self::TD ), 'separate' => __( 'A separate allowance per person', self::TD ), 'both' => __( 'Both: own allowance first, then the shared pool', self::TD ) ) as $k => $l ) {
+			echo '<option value="' . esc_attr( $k ) . '"' . selected( (string) $s['family_credits'], $k, false ) . '>' . esc_html( $l ) . '</option>';
+		}
+		echo '</select><p class="description">' . esc_html__( 'Per-person allowances are set on the product ("Credits per family member"). Every booking records who actually attends.', self::TD ) . '</p></td></tr>';
+		$row( 'holder_books', __( 'Booking for others', self::TD ), __( 'The account holder can book for family members', self::TD ), 'checkbox' );
+		$row( 'waiver_each', __( 'Waivers', self::TD ), __( 'Each family member needs their own signed waiver before their first booking', self::TD ), 'checkbox' );
+		echo '</table><h2>' . esc_html__( 'Privacy and connections', self::TD ) . '</h2><table class="form-table" role="presentation">';
+		$row( 'notes_months', __( 'Keep progress notes', self::TD ), __( 'Months (0 = keep). Older notes are deleted automatically. Only shop managers and the member\'s instructors see notes.', self::TD ) );
+		$row( 'adapter_secret', __( 'Booking platform secret', self::TD ), __( 'For Amelia, Bookly or another platform posting to /wp-json/rinnovose/v1/booking (see the guide). WooCommerce Bookings needs no setup.', self::TD ), 'password' );
 		echo '</table><h2>' . esc_html__( 'Reminders', self::TD ) . '</h2><table class="form-table" role="presentation">';
 		$row( 'remind_24', __( '24 hours before', self::TD ), __( 'Email and SMS reminder', self::TD ), 'checkbox' );
 		$row( 'remind_1', __( '1 hour before', self::TD ), __( 'Email and SMS reminder', self::TD ), 'checkbox' );
@@ -219,8 +234,9 @@ class RINNOVOSE_Admin {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cleaned below.
 		$raw  = isset( $_POST['s'] ) ? (array) wp_unslash( $_POST['s'] ) : array();
 		$vals = array();
+		$raw['family_credits'] = isset( $raw['family_credits'] ) && in_array( $raw['family_credits'], array( 'shared', 'separate', 'both' ), true ) ? $raw['family_credits'] : 'shared';
 		foreach ( RINNOVOSE_Settings::defaults() as $key => $default ) {
-			if ( in_array( $key, array( 'late_forfeit', 'noshow_forfeit', 'waitlist_auto', 'remind_24', 'remind_1' ), true ) ) {
+			if ( in_array( $key, array( 'late_forfeit', 'noshow_forfeit', 'waitlist_auto', 'remind_24', 'remind_1', 'holder_books', 'waiver_each' ), true ) ) {
 				$vals[ $key ] = empty( $raw[ $key ] ) ? 0 : 1;
 			} elseif ( is_int( $default ) ) {
 				$vals[ $key ] = isset( $raw[ $key ] ) ? absint( $raw[ $key ] ) : 0;

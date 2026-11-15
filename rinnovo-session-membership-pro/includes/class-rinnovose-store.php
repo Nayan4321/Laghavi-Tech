@@ -12,7 +12,7 @@ defined( 'ABSPATH' ) || exit;
  */
 class RINNOVOSE_Store {
 
-	const DB_VERSION = '1';
+	const DB_VERSION = '2';
 
 	/**
 	 * Table name.
@@ -44,6 +44,8 @@ class RINNOVOSE_Store {
 				capacity int(11) NOT NULL DEFAULT 0,
 				meeting_url varchar(500) NOT NULL DEFAULT '',
 				status varchar(20) NOT NULL DEFAULT 'scheduled',
+				instructor bigint(20) unsigned NOT NULL DEFAULT 0,
+				note varchar(190) NOT NULL DEFAULT '',
 				PRIMARY KEY  (id),
 				UNIQUE KEY class_start (class_id, starts_at),
 				KEY starts_at (starts_at)
@@ -58,6 +60,8 @@ class RINNOVOSE_Store {
 				credit decimal(6,2) NOT NULL DEFAULT 0,
 				recurring_id bigint(20) unsigned NOT NULL DEFAULT 0,
 				reminded int(11) NOT NULL DEFAULT 0,
+				wallet varchar(80) NOT NULL DEFAULT '',
+				checkin varchar(16) NOT NULL DEFAULT '',
 				created_at datetime NOT NULL,
 				updated_at datetime NOT NULL,
 				PRIMARY KEY  (id),
@@ -71,6 +75,7 @@ class RINNOVOSE_Store {
 				class_id bigint(20) unsigned NOT NULL DEFAULT 0,
 				slot varchar(20) NOT NULL DEFAULT '',
 				active tinyint(1) NOT NULL DEFAULT 1,
+				until_at datetime DEFAULT NULL,
 				created_at datetime NOT NULL,
 				PRIMARY KEY  (id),
 				KEY user_id (user_id)

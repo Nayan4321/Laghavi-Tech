@@ -81,8 +81,15 @@ class RINNOVOSE_Bookings {
 			/* translators: %d: days. */
 			return new WP_Error( 'rinnovose_book', sprintf( __( 'Sessions open for booking %d days ahead.', self::TD ), (int) RINNOVOSE_Settings::get( 'book_ahead' ) ) );
 		}
-		if ( '' !== $member && ! in_array( $member, wp_list_pluck( RINNOVOSE_Checkout::family( $user_id ), 'name' ), true ) ) {
+		if ( '' !== $member && 0 !== strpos( $member, 'guest:' ) && ! in_array( $member, wp_list_pluck( RINNOVOSE_Checkout::family( $user_id ), 'name' ), true ) ) {
 			return new WP_Error( 'rinnovose_book', __( 'Unknown family member.', self::TD ) );
+		}
+		if ( '' !== $member && 0 !== strpos( $member, 'guest:' ) && ! RINNOVOSE_Settings::get( 'holder_books' ) && ! $recurring_id ) {
+			return new WP_Error( 'rinnovose_book', __( 'Family members book from their own account.', self::TD ) );
+		}
+		if ( RINNOVOSE_Studio::member_needs_waiver( $user_id, $member ) ) {
+			/* translators: %s: name. */
+			return new WP_Error( 'rinnovose_book', sprintf( __( '%s needs to sign the waiver first (in your account).', self::TD ), $member ) );
 		}
 		if ( self::existing( $user_id, $session_id, $member ) ) {
 			return new WP_Error( 'rinnovose_book', __( 'Already booked.', self::TD ) );
@@ -92,27 +99,39 @@ class RINNOVOSE_Bookings {
 			return new WP_Error( 'rinnovose_book', $block );
 		}
 		$class = RINNOVOSE_Classes::get( (int) $s->class_id );
-		$payer = RINNOVOSE_Credits::payer( $user_id, $class );
-		if ( is_wp_error( $payer ) ) {
-			return $payer;
+		$check = RINNOVOSE_Credits::payer( $user_id, $class );
+		if ( is_wp_error( $check ) && 'rinnovose_member' === $check->get_error_code() ) {
+			return $check;
 		}
-		$full   = (int) $s->capacity > 0 && RINNOVOSE_Store::booked_count( $s->id ) >= (int) $s->capacity;
-		$id     = RINNOVOSE_Store::insert(
+		$restricted = RINNOVOSE_Classes::restriction( $class, $user_id, $member );
+		if ( '' !== $restricted ) {
+			return new WP_Error( 'rinnovose_book', $restricted );
+		}
+		$full = (int) $s->capacity > 0 && RINNOVOSE_Store::booked_count( $s->id ) >= (int) $s->capacity;
+		$id   = RINNOVOSE_Store::insert(
 			'bookings',
 			array(
 				'session_id'      => (int) $s->id,
 				'user_id'         => (int) $user_id,
 				'member'          => $member,
-				'subscription_id' => (int) $payer->id,
+				'subscription_id' => 0,
 				'status'          => $full ? 'waitlist' : 'booked',
 				'credit'          => $full ? 0 : $class['credits'],
 				'recurring_id'    => (int) $recurring_id,
+				'checkin'         => strtolower( wp_generate_password( 12, false ) ),
 				'created_at'      => self::now(),
 				'updated_at'      => self::now(),
 			)
 		);
 		if ( ! $full ) {
-			RINNOVOSE_Credits::adjust( $payer, -1 * $class['credits'] );
+			// Reserve the credits under the member's lock: two bookings can't take the same last credit.
+			$r = RINNOVOSE_Ledger::reserve( $user_id, $class, $member, $id );
+			if ( is_wp_error( $r ) ) {
+				global $wpdb;
+				$wpdb->delete( RINNOVOSE_Store::t( 'bookings' ), array( 'id' => $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+				return $r;
+			}
+			RINNOVOSE_Store::update( 'bookings', $id, array( 'subscription_id' => $r['sub_id'], 'wallet' => $r['wallet'] ) );
 		}
 		$booking = RINNOVOSE_Store::booking( $id );
 		RINNOVOSE_Notify::booked( $booking );
@@ -152,11 +171,10 @@ class RINNOVOSE_Bookings {
 				'updated_at' => self::now(),
 			)
 		);
-		if ( 'booked' === $was && 'cancelled' === $status && (float) $booking->credit > 0 ) {
-			$sub = RINNOVO_Subscriptions::get( (int) $booking->subscription_id );
-			if ( $sub ) {
-				RINNOVOSE_Credits::adjust( $sub, (float) $booking->credit );
-			}
+		if ( 'booked' === $was && 'cancelled' === $status ) {
+			RINNOVOSE_Ledger::restore( (int) $booking->id, 'staff' === $by ? __( 'Cancelled by the studio', self::TD ) : __( 'Cancelled in time', self::TD ) );
+		} elseif ( 'late_cancel' === $status ) {
+			RINNOVOSE_Ledger::settle( (int) $booking->id, 'deduct', __( 'Late cancellation', self::TD ) );
 		}
 		if ( 'booked' === $was ) {
 			self::promote( (int) $booking->session_id );
@@ -200,19 +218,19 @@ class RINNOVOSE_Bookings {
 			return;
 		}
 		$class = RINNOVOSE_Classes::get( (int) $s->class_id );
-		$payer = RINNOVOSE_Credits::payer( (int) $next->user_id, $class );
-		if ( RINNOVOSE_Settings::get( 'waitlist_auto' ) && ! is_wp_error( $payer ) ) {
+		$r     = RINNOVOSE_Settings::get( 'waitlist_auto' ) ? RINNOVOSE_Ledger::reserve( (int) $next->user_id, $class, $next->member, (int) $next->id ) : new WP_Error( 'off', '' );
+		if ( ! is_wp_error( $r ) ) {
 			RINNOVOSE_Store::update(
 				'bookings',
 				$next->id,
 				array(
 					'status'          => 'booked',
 					'credit'          => $class['credits'],
-					'subscription_id' => (int) $payer->id,
+					'subscription_id' => $r['sub_id'],
+					'wallet'          => $r['wallet'],
 					'updated_at'      => self::now(),
 				)
 			);
-			RINNOVOSE_Credits::adjust( $payer, -1 * $class['credits'] );
 			RINNOVOSE_Notify::waitlist( RINNOVOSE_Store::booking( $next->id ), true );
 		} else {
 			RINNOVOSE_Notify::waitlist( $next, false );
@@ -237,12 +255,17 @@ class RINNOVOSE_Bookings {
 				'updated_at' => self::now(),
 			)
 		);
-		// Without "no-shows lose the credit", a no-show gets it back.
-		if ( 'no_show' === $status && ! RINNOVOSE_Settings::get( 'noshow_forfeit' ) && 'no_show' !== $booking->status ) {
-			$sub = RINNOVO_Subscriptions::get( (int) $booking->subscription_id );
-			if ( $sub ) {
-				RINNOVOSE_Credits::adjust( $sub, (float) $booking->credit );
+		if ( 'attended' === $status && 'attended' !== $booking->status ) {
+			RINNOVOSE_Ledger::settle( (int) $booking->id, 'confirm', __( 'Attended', self::TD ) );
+		}
+		if ( 'no_show' === $status && 'no_show' !== $booking->status ) {
+			// Without "no-shows lose the credit", a no-show gets it back.
+			if ( RINNOVOSE_Settings::get( 'noshow_forfeit' ) ) {
+				RINNOVOSE_Ledger::settle( (int) $booking->id, 'deduct', __( 'No-show', self::TD ) );
+			} else {
+				RINNOVOSE_Ledger::restore( (int) $booking->id, __( 'No-show, credit given back', self::TD ) );
 			}
+			RINNOVOSE_Notify::missed( $booking );
 		}
 	}
 
@@ -303,7 +326,7 @@ class RINNOVOSE_Bookings {
 	 * @param string $member   Family member.
 	 * @return int|WP_Error
 	 */
-	public static function add_recurring( $user_id, $class_id, $slot, $member = '' ) {
+	public static function add_recurring( $user_id, $class_id, $slot, $member = '', $weeks = 0 ) {
 		$class = RINNOVOSE_Classes::get( $class_id );
 		$valid = array();
 		foreach ( RINNOVOSE_Classes::slots( $class['times'] ) as $s ) {
@@ -320,6 +343,7 @@ class RINNOVOSE_Bookings {
 				'class_id'   => (int) $class_id,
 				'slot'       => $slot,
 				'active'     => 1,
+				'until_at'   => $weeks ? gmdate( 'Y-m-d H:i:s', time() + (int) $weeks * WEEK_IN_SECONDS ) : null,
 				'created_at' => self::now(),
 			)
 		);
@@ -337,12 +361,16 @@ class RINNOVOSE_Bookings {
 		if ( ! $rec || ! (int) $rec->active ) {
 			return 0;
 		}
+		if ( ! empty( $rec->until_at ) && strtotime( $rec->until_at . ' UTC' ) < time() ) {
+			RINNOVOSE_Store::update( 'recurring', (int) $rec->id, array( 'active' => 0 ) );
+			return 0;
+		}
 		list( $day, $time ) = explode( '|', $rec->slot );
-		$tz    = wp_timezone();
+		$tz    = RINNOVOSE_Classes::tz( RINNOVOSE_Classes::get( (int) $rec->class_id ) );
 		$count = 0;
 		foreach ( RINNOVOSE_Classes::upcoming( max( 1, (int) RINNOVOSE_Settings::get( 'recurring_days' ) ), (int) $rec->class_id ) as $s ) {
 			$local = ( new DateTimeImmutable( '@' . strtotime( $s->starts_at . ' UTC' ) ) )->setTimezone( $tz );
-			if ( (int) $local->format( 'N' ) !== (int) $day || $local->format( 'H:i' ) !== $time || self::existing( (int) $rec->user_id, (int) $s->id, $rec->member ) ) {
+			if ( ( ! empty( $rec->until_at ) && strtotime( $s->starts_at . ' UTC' ) > strtotime( $rec->until_at . ' UTC' ) ) || (int) $local->format( 'N' ) !== (int) $day || $local->format( 'H:i' ) !== $time || self::existing( (int) $rec->user_id, (int) $s->id, $rec->member ) ) {
 				continue;
 			}
 			$r = self::book( (int) $rec->user_id, (int) $s->id, $rec->member, (int) $rec->id );

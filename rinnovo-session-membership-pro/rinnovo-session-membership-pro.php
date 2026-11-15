@@ -29,7 +29,7 @@ if ( ! defined( 'RINNOVOSE_LICENSE_SERVER' ) ) {
 	define( 'RINNOVOSE_LICENSE_SERVER', 'https://laghavi.site/wp-json/laghavi-licenses/v1/' );
 }
 
-foreach ( array( 'license', 'settings', 'store', 'classes', 'credits', 'bookings', 'notify', 'checkout', 'account', 'admin' ) as $rinnovose_file ) {
+foreach ( array( 'license', 'settings', 'store', 'classes', 'credits', 'bookings', 'notify', 'checkout', 'account', 'admin', 'ledger', 'studio', 'reports', 'adapters' ) as $rinnovose_file ) {
 	require_once RINNOVOSE_DIR . 'includes/class-rinnovose-' . $rinnovose_file . '.php';
 }
 unset( $rinnovose_file );
@@ -70,6 +70,7 @@ add_action(
 		if ( get_option( 'rinnovose_db_version' ) !== RINNOVOSE_Store::DB_VERSION ) {
 			RINNOVOSE_Store::install();
 		}
+		RINNOVOSE_Ledger::init();
 		RINNOVOSE_Classes::init();
 		RINNOVOSE_Credits::init();
 		RINNOVOSE_Bookings::init();
@@ -77,6 +78,9 @@ add_action(
 		RINNOVOSE_Checkout::init();
 		RINNOVOSE_Account::init();
 		RINNOVOSE_Admin::init();
+		RINNOVOSE_Studio::init();
+		RINNOVOSE_Reports::init();
+		RINNOVOSE_Adapters::init();
 		add_action(
 			'wp_enqueue_scripts',
 			static function () {

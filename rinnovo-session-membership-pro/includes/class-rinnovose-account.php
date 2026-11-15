@@ -183,7 +183,8 @@ class RINNOVOSE_Account {
 		$block = RINNOVOSE_Bookings::blocker( $user );
 
 		echo '<div class="rinnovose-account">';
-		if ( ! $subs ) {
+		RINNOVOSE_Studio::dashboard( $user );
+		if ( ! $subs && ! RINNOVOSE_Ledger::packs( $user ) ) {
 			echo '<p>' . esc_html__( 'You have no class membership yet.', self::TD ) . ' <a href="' . esc_url( wc_get_page_permalink( 'shop' ) ) . '">' . esc_html__( 'See memberships', self::TD ) . '</a></p>';
 		}
 		foreach ( $subs as $sub ) {
@@ -240,7 +241,14 @@ class RINNOVOSE_Account {
 			if ( 'booked' === $b->status && $d['where'] ) {
 				echo '<br />' . ( 0 === strpos( $d['where'], 'http' ) ? '<a href="' . esc_url( $d['where'] ) . '" target="_blank" rel="noopener">' . esc_html__( 'Join online', self::TD ) . '</a>' : esc_html( $d['where'] ) );
 			}
-			echo ' · <a href="' . esc_url( RINNOVOSE_Notify::google_link( $d ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Add to calendar', self::TD ) . '</a></div><div>';
+			echo ' · <a href="' . esc_url( RINNOVOSE_Notify::google_link( $d ) ) . '" target="_blank" rel="noopener">' . esc_html__( 'Add to calendar', self::TD ) . '</a>';
+			if ( 'waitlist' === $b->status ) {
+				/* translators: %d: position. */
+				echo ' · ' . esc_html( sprintf( __( 'waitlist position %d', self::TD ), RINNOVOSE_Studio::waitlist_position( $b ) ) );
+			} else {
+				echo RINNOVOSE_Studio::qr( RINNOVOSE_Store::booking( (int) $b->id ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in qr().
+			}
+			echo '</div><div>';
 			$others = RINNOVOSE_Classes::upcoming( (int) RINNOVOSE_Settings::get( 'book_ahead' ), (int) $b->class_id );
 			if ( 'booked' === $b->status && count( $others ) > 1 && RINNOVOSE_Bookings::hours_left( $b ) >= (float) RINNOVOSE_Settings::get( 'cutoff_hours' ) ) {
 				echo '<form method="post" class="rinnovose-inline">';
@@ -383,7 +391,7 @@ class RINNOVOSE_Account {
 		if ( '' !== $options ) {
 			echo '<form method="post" class="rinnovose-inline">';
 			self::fields( 'recur' );
-			echo '<select name="slot">' . $options . '</select> ' . self::member_select( $user ) . '<button class="button">' . esc_html__( 'Reserve every week', self::TD ) . '</button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
+			echo '<select name="slot">' . $options . '</select> ' . self::member_select( $user ) . '<select name="weeks"><option value="0">' . esc_html__( 'until I stop it', self::TD ) . '</option><option value="4">' . esc_html__( 'for 4 weeks', self::TD ) . '</option><option value="8">' . esc_html__( 'for 8 weeks', self::TD ) . '</option><option value="12">' . esc_html__( 'for 12 weeks', self::TD ) . '</option></select> <button class="button">' . esc_html__( 'Reserve every week', self::TD ) . '</button></form>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped above.
 		}
 		echo '</section>';
 	}
@@ -426,8 +434,8 @@ class RINNOVOSE_Account {
 		ob_start();
 		$me = get_current_user_id();
 		foreach ( RINNOVOSE_Store::rows( "SELECT * FROM %i WHERE status = 'scheduled' AND starts_at >= %s AND starts_at <= %s ORDER BY starts_at", RINNOVOSE_Store::t( 'sessions' ), gmdate( 'Y-m-d H:i:s', time() - 12 * HOUR_IN_SECONDS ), gmdate( 'Y-m-d H:i:s', time() + DAY_IN_SECONDS ) ) as $s ) {
-			$c = RINNOVOSE_Classes::get( (int) $s->class_id );
-			if ( $c['instructor'] && $c['instructor'] !== $me && ! current_user_can( 'manage_woocommerce' ) ) {
+			// Instructors see only their own classes (a substitute sees the dates they teach).
+			if ( RINNOVOSE_Classes::instructor_of( $s ) !== $me && ! current_user_can( 'manage_woocommerce' ) ) {
 				continue;
 			}
 			self::roster( $s, false );
@@ -528,7 +536,7 @@ class RINNOVOSE_Account {
 				break;
 			case 'recur':
 				$parts = explode( ':', isset( $_POST['slot'] ) ? sanitize_text_field( wp_unslash( $_POST['slot'] ) ) : '', 2 );
-				$r     = 2 === count( $parts ) ? RINNOVOSE_Bookings::add_recurring( $user, absint( $parts[0] ), $parts[1], isset( $_POST['member'] ) ? sanitize_text_field( wp_unslash( $_POST['member'] ) ) : '' ) : new WP_Error( 'x', __( 'Choose a slot.', self::TD ) );
+				$r     = 2 === count( $parts ) ? RINNOVOSE_Bookings::add_recurring( $user, absint( $parts[0] ), $parts[1], isset( $_POST['member'] ) ? sanitize_text_field( wp_unslash( $_POST['member'] ) ) : '', isset( $_POST['weeks'] ) ? absint( $_POST['weeks'] ) : 0 ) : new WP_Error( 'x', __( 'Choose a slot.', self::TD ) );
 				if ( ! is_wp_error( $r ) ) {
 					wc_add_notice( __( 'Reserved every week. We booked the coming ones for you.', self::TD ) );
 				}

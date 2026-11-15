@@ -46,6 +46,12 @@ class RINNOVOSE_Settings {
 			'twilio_token'   => '',
 			'twilio_from'    => '',
 			'topup_product'  => 0,
+			'family_credits' => 'shared',
+			'holder_books'   => 1,
+			'waiver_each'    => 0,
+			'blackouts'      => '',
+			'notes_months'   => 0,
+			'adapter_secret' => '',
 		);
 	}
 

@@ -38,13 +38,13 @@ class RINNOVOSE_Notify {
 		}
 		$c     = RINNOVOSE_Classes::get( (int) $s->class_id );
 		$start = strtotime( $s->starts_at . ' UTC' );
-		$who   = get_userdata( (int) $c['instructor'] );
+		$who   = get_userdata( RINNOVOSE_Classes::instructor_of( $s ) );
 		return array(
 			'session'    => $s,
 			'class'      => $c,
 			'start'      => $start,
 			'end'        => strtotime( $s->ends_at . ' UTC' ),
-			'when'       => wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $start ),
+			'when'       => wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ) . ( '' !== $c['tz'] ? ' T' : '' ), $start, RINNOVOSE_Classes::tz( $c ) ),
 			'where'      => 'none' === $c['online'] ? $c['location'] : RINNOVOSE_Classes::join_url( $s ),
 			'instructor' => $who ? $who->display_name : '',
 			'for'        => '' !== $booking->member ? $booking->member : '',
@@ -243,6 +243,40 @@ class RINNOVOSE_Notify {
 		$html .= '<p><a href="' . esc_url( self::google_link( $d ) ) . '">' . esc_html__( 'Add to Google Calendar', self::TD ) . '</a> · ' . esc_html( sprintf( __( 'Cancel or move it up to %d hours before.', self::TD ), (int) RINNOVOSE_Settings::get( 'cutoff_hours' ) ) ) . '</p>';
 		/* translators: 1: class, 2: date. */
 		self::mail( (int) $booking->user_id, sprintf( __( 'Booked: %1$s, %2$s', self::TD ), $d['class']['title'], $d['when'] ), $html, self::calendar( self::vevent( $booking, $d ) ) );
+	}
+
+	/**
+	 * A booked date changed: cancelled (credits back) or another instructor.
+	 *
+	 * @param object $booking   Booking.
+	 * @param object $session   Session.
+	 * @param string $reason    What happened.
+	 * @param bool   $cancelled The date is cancelled.
+	 */
+	public static function changed( $booking, $session, $reason, $cancelled = true ) {
+		$c    = RINNOVOSE_Classes::get( (int) $session->class_id );
+		$when = wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), strtotime( $session->starts_at . ' UTC' ), RINNOVOSE_Classes::tz( $c ) );
+		/* translators: 1: class, 2: date. */
+		$subject = $cancelled ? sprintf( __( 'Cancelled: %1$s, %2$s', self::TD ), $c['title'], $when ) : sprintf( __( 'Change: %1$s, %2$s', self::TD ), $c['title'], $when );
+		$html    = '<p>' . esc_html( $reason ) . '</p>' . ( $cancelled ? '<p>' . esc_html__( 'Your credit is back in your account. Book another date any time.', self::TD ) . '</p>' : '' ) . '<p><a href="' . esc_url( wc_get_account_endpoint_url( RINNOVOSE_Account::ENDPOINT ) ) . '">' . esc_html__( 'My classes', self::TD ) . '</a></p>';
+		self::mail( (int) $booking->user_id, $subject, $html );
+		self::sms( (int) $booking->user_id, $subject );
+	}
+
+	/**
+	 * A missed class.
+	 *
+	 * @param object $booking Booking.
+	 */
+	public static function missed( $booking ) {
+		$d = self::details( $booking );
+		if ( ! $d ) {
+			return;
+		}
+		/* translators: 1: class, 2: date. */
+		$subject = sprintf( __( 'We missed you: %1$s, %2$s', self::TD ), $d['class']['title'], $d['when'] );
+		$html    = '<p>' . esc_html( RINNOVOSE_Settings::get( 'noshow_forfeit' ) ? __( 'You were booked but did not come, so the credit was used. Cancel in time next time to keep it.', self::TD ) : __( 'You were booked but did not come. Your credit is back in your account.', self::TD ) ) . '</p><p><a href="' . esc_url( wc_get_account_endpoint_url( RINNOVOSE_Account::ENDPOINT ) ) . '">' . esc_html__( 'Book your next class', self::TD ) . '</a></p>';
+		self::mail( (int) $booking->user_id, $subject, $html );
 	}
 
 	/**

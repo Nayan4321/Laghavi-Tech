@@ -60,6 +60,79 @@ class RINNOVOSE_Classes {
 				'supports'     => array( 'title', 'editor', 'thumbnail', 'excerpt' ),
 			)
 		);
+		foreach ( array(
+			'rinnovose_category' => array( __( 'Class categories', self::TD ), __( 'Category', self::TD ) ),
+			'rinnovose_location' => array( __( 'Locations', self::TD ), __( 'Location', self::TD ) ),
+		) as $tax => $labels ) {
+			register_taxonomy(
+				$tax,
+				self::TYPE,
+				array(
+					'labels'            => array(
+						'name'          => $labels[0],
+						'singular_name' => $labels[1],
+					),
+					'hierarchical'      => true,
+					'show_admin_column' => true,
+					'show_in_rest'      => true,
+					'rewrite'           => array( 'slug' => 'rinnovose_category' === $tax ? 'class-category' : 'studio' ),
+				)
+			);
+		}
+	}
+
+	/**
+	 * Time zone of a class (its venue), else the site's.
+	 *
+	 * @param array $c Class.
+	 * @return DateTimeZone
+	 */
+	public static function tz( $c ) {
+		try {
+			return '' !== $c['tz'] ? new DateTimeZone( $c['tz'] ) : wp_timezone();
+		} catch ( Exception $e ) {
+			return wp_timezone();
+		}
+	}
+
+	/**
+	 * Holidays and blackout dates (the studio's and the class's own).
+	 *
+	 * @param array $c Class.
+	 * @return string[] Y-m-d.
+	 */
+	public static function blackouts( $c ) {
+		$all = preg_split( '/[\s,]+/', (string) RINNOVOSE_Settings::get( 'blackouts' ) . ' ' . $c['blackouts'] );
+		return array_values( array_filter( $all, static function ( $d ) { return (bool) preg_match( '/^\d{4}-\d{2}-\d{2}$/', $d ); } ) ); // phpcs:ignore Generic.Formatting.MultipleStatementAlignment -- Short closure.
+	}
+
+	/**
+	 * Class-specific booking rules: guests, weekly limit per person.
+	 *
+	 * @param array  $c       Class.
+	 * @param int    $user_id User.
+	 * @param string $member  Member ('guest: Name' for a guest).
+	 * @return string Why not, or ''.
+	 */
+	public static function restriction( $c, $user_id, $member ) {
+		if ( 0 === strpos( $member, 'guest:' ) && ! $c['guests'] ) {
+			return __( 'Guests can\'t be brought to this class.', self::TD );
+		}
+		if ( $c['weekly'] > 0 ) {
+			$monday = ( new DateTimeImmutable( 'monday this week', self::tz( $c ) ) )->getTimestamp();
+			$count  = 0;
+			foreach ( RINNOVOSE_Bookings::for_user( $user_id, false, 200 ) as $b ) {
+				$t = strtotime( $b->starts_at . ' UTC' );
+				if ( (int) $b->class_id === (int) $c['id'] && $b->member === $member && $t >= $monday && $t < $monday + WEEK_IN_SECONDS && in_array( $b->status, array( 'booked', 'attended' ), true ) ) {
+					++$count;
+				}
+			}
+			if ( $count >= $c['weekly'] ) {
+				/* translators: %d: bookings. */
+				return sprintf( _n( 'This class can be booked %d time a week per person.', 'This class can be booked %d times a week per person.', $c['weekly'], self::TD ), $c['weekly'] );
+			}
+		}
+		return '';
 	}
 
 	/**
@@ -88,6 +161,11 @@ class RINNOVOSE_Classes {
 			'until'      => (string) $g( 'until' ),
 			'products'   => array_values( array_filter( array_map( 'absint', (array) $g( 'products', array() ) ) ) ),
 			'credits'    => max( 0, (float) $g( 'credits', 1 ) ),
+			'type'       => sanitize_key( (string) $g( 'type' ) ),
+			'tz'         => (string) $g( 'tz' ),
+			'blackouts'  => (string) $g( 'blackouts' ),
+			'guests'     => 'yes' === $g( 'guests', 'no' ),
+			'weekly'     => (int) $g( 'weekly', 0 ),
 		);
 	}
 
@@ -148,6 +226,11 @@ class RINNOVOSE_Classes {
 					<?php endif; ?>
 				<?php endforeach; ?>
 			</select><p class="description"><?php esc_html_e( 'Empty = every session membership.', self::TD ); ?></p></td></tr>
+			<?php $c = self::get( $post->ID ); ?>
+			<tr><th><?php esc_html_e( 'Class type', self::TD ); ?></th><td><input type="text" name="rinnovose_type" value="<?php echo esc_attr( $c['type'] ); ?>" placeholder="group" class="regular-text" /><p class="description"><?php esc_html_e( 'For hybrid plans and packs ("group=8, private=2"): which credits this class uses. Empty = any.', self::TD ); ?></p></td></tr>
+			<tr><th><?php esc_html_e( 'Time zone', self::TD ); ?></th><td><select name="rinnovose_tz"><option value=""><?php esc_html_e( 'The site\'s time zone', self::TD ); ?></option><?php echo wp_timezone_choice( $c['tz'], get_user_locale() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Core HTML. ?></select><p class="description"><?php esc_html_e( 'Of the venue. Times above are in this zone; daylight saving is handled.', self::TD ); ?></p></td></tr>
+			<tr><th><?php esc_html_e( 'No class on', self::TD ); ?></th><td><textarea name="rinnovose_blackouts" rows="2" class="large-text" placeholder="2026-12-25, 2027-01-01"><?php echo esc_textarea( $c['blackouts'] ); ?></textarea><p class="description"><?php esc_html_e( 'Dates (YYYY-MM-DD). Studio-wide holidays are in the settings. Booked members are told and get their credits back.', self::TD ); ?></p></td></tr>
+			<tr><th><?php esc_html_e( 'Booking rules', self::TD ); ?></th><td><label><input type="checkbox" name="rinnovose_guests" value="yes" <?php checked( $c['guests'] ); ?> /> <?php esc_html_e( 'Members can bring a guest (uses their credit)', self::TD ); ?></label><br /><?php esc_html_e( 'At most', self::TD ); ?> <input type="number" min="0" name="rinnovose_weekly" value="<?php echo (int) $c['weekly']; ?>" style="width:70px" /> <?php esc_html_e( 'bookings of this class per person per week (0 = no limit)', self::TD ); ?></td></tr>
 		</table>
 		<?php
 		wp_enqueue_script( 'wc-enhanced-select' );
@@ -175,6 +258,12 @@ class RINNOVOSE_Classes {
 		}
 		update_post_meta( $post_id, '_rinnovose_credits', isset( $_POST['rinnovose_credits'] ) ? (float) wc_format_decimal( sanitize_text_field( wp_unslash( $_POST['rinnovose_credits'] ) ) ) : 1 );
 		update_post_meta( $post_id, '_rinnovose_products', isset( $_POST['rinnovose_products'] ) ? array_values( array_filter( array_map( 'absint', (array) wp_unslash( $_POST['rinnovose_products'] ) ) ) ) : array() );
+		update_post_meta( $post_id, '_rinnovose_type', isset( $_POST['rinnovose_type'] ) ? sanitize_key( wp_unslash( $_POST['rinnovose_type'] ) ) : '' );
+		$tz = isset( $_POST['rinnovose_tz'] ) ? sanitize_text_field( wp_unslash( $_POST['rinnovose_tz'] ) ) : '';
+		update_post_meta( $post_id, '_rinnovose_tz', in_array( $tz, timezone_identifiers_list(), true ) ? $tz : '' );
+		update_post_meta( $post_id, '_rinnovose_blackouts', isset( $_POST['rinnovose_blackouts'] ) ? sanitize_textarea_field( wp_unslash( $_POST['rinnovose_blackouts'] ) ) : '' );
+		update_post_meta( $post_id, '_rinnovose_guests', ! empty( $_POST['rinnovose_guests'] ) ? 'yes' : 'no' );
+		update_post_meta( $post_id, '_rinnovose_weekly', isset( $_POST['rinnovose_weekly'] ) ? absint( $_POST['rinnovose_weekly'] ) : 0 );
 		if ( 'publish' === get_post_status( $post_id ) ) {
 			self::generate( $post_id );
 		}
@@ -215,7 +304,8 @@ class RINNOVOSE_Classes {
 	 */
 	public static function generate( $class_id ) {
 		$c       = self::get( $class_id );
-		$tz      = wp_timezone();
+		$tz      = self::tz( $c );
+		$off     = self::blackouts( $c );
 		$horizon = max( 7, (int) RINNOVOSE_Settings::get( 'horizon_days' ) );
 		$today   = new DateTimeImmutable( 'today', $tz );
 		$first   = '' !== $c['from'] ? max( $today, new DateTimeImmutable( $c['from'], $tz ) ) : $today;
@@ -226,6 +316,9 @@ class RINNOVOSE_Classes {
 		$starts = array();
 		$slots  = self::slots( $c['times'] );
 		for ( $d = $first; $d <= $last; $d = $d->modify( '+1 day' ) ) {
+			if ( in_array( $d->format( 'Y-m-d' ), $off, true ) ) {
+				continue;
+			}
 			foreach ( $slots as $slot ) {
 				if ( (int) $d->format( 'N' ) === $slot[0] ) {
 					list( $h, $m ) = array_map( 'intval', explode( ':', $slot[1] ) );
@@ -257,10 +350,56 @@ class RINNOVOSE_Classes {
 			if ( ! isset( $want[ $s->starts_at ] ) && ! RINNOVOSE_Store::booked_count( $s->id ) ) {
 				global $wpdb;
 				$wpdb->delete( RINNOVOSE_Store::t( 'sessions' ), array( 'id' => (int) $s->id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+			} elseif ( ! isset( $want[ $s->starts_at ] ) ) {
+				// The schedule changed after people booked this date: cancel it, give the credits back, tell them.
+				self::cancel_session( $s, __( 'The class schedule changed.', self::TD ) );
 			} elseif ( (int) $s->capacity !== $c['capacity'] ) {
 				RINNOVOSE_Store::update( 'sessions', $s->id, array( 'capacity' => $c['capacity'] ) );
 			}
 		}
+	}
+
+	/**
+	 * Cancel one date of a class (holiday, schedule change, instructor away): bookings get their credits back.
+	 *
+	 * @param object $s      Session.
+	 * @param string $reason Reason.
+	 */
+	public static function cancel_session( $s, $reason ) {
+		RINNOVOSE_Store::update( 'sessions', $s->id, array( 'status' => 'cancelled', 'note' => substr( $reason, 0, 190 ) ) );
+		foreach ( RINNOVOSE_Bookings::for_session( (int) $s->id ) as $b ) {
+			if ( in_array( $b->status, array( 'booked', 'waitlist' ), true ) ) {
+				RINNOVOSE_Bookings::cancel( RINNOVOSE_Store::booking( $b->id ), 'staff' );
+				RINNOVOSE_Notify::changed( $b, $s, $reason );
+			}
+		}
+	}
+
+	/**
+	 * Another instructor takes one date; booked members are told.
+	 *
+	 * @param object $s          Session.
+	 * @param int    $instructor User.
+	 */
+	public static function substitute( $s, $instructor ) {
+		RINNOVOSE_Store::update( 'sessions', $s->id, array( 'instructor' => (int) $instructor ) );
+		$u = get_userdata( (int) $instructor );
+		foreach ( RINNOVOSE_Bookings::for_session( (int) $s->id ) as $b ) {
+			if ( 'booked' === $b->status ) {
+				/* translators: %s: instructor. */
+				RINNOVOSE_Notify::changed( $b, $s, sprintf( __( 'Your class will be taught by %s.', self::TD ), $u ? $u->display_name : '' ), false );
+			}
+		}
+	}
+
+	/**
+	 * Instructor of a date (a substitute, or the class's).
+	 *
+	 * @param object $s Session.
+	 * @return int
+	 */
+	public static function instructor_of( $s ) {
+		return isset( $s->instructor ) && (int) $s->instructor ? (int) $s->instructor : (int) self::get( (int) $s->class_id )['instructor'];
 	}
 
 	/**

@@ -32,6 +32,26 @@ class RINNOVOSE_Credits {
 		add_action( 'woocommerce_order_status_completed', array( __CLASS__, 'on_paid' ), 30 );
 		add_action( 'woocommerce_before_calculate_totals', array( __CLASS__, 'free_bookings' ), 45 );
 		add_filter( 'woocommerce_get_item_data', array( __CLASS__, 'item_data' ), 40, 2 );
+		add_filter( 'woocommerce_add_to_cart_validation', array( __CLASS__, 'trial_once' ), 20, 2 );
+	}
+
+	/**
+	 * A trial pack can be bought once per customer (account or email).
+	 *
+	 * @param bool $valid      Valid.
+	 * @param int  $product_id Product.
+	 * @return bool
+	 */
+	public static function trial_once( $valid, $product_id ) {
+		if ( ! $valid || 'yes' !== get_post_meta( $product_id, '_rinnovose_trial', true ) || ! is_user_logged_in() ) {
+			return $valid;
+		}
+		$user = wp_get_current_user();
+		if ( wc_customer_bought_product( $user->user_email, $user->ID, $product_id ) ) {
+			wc_add_notice( __( 'The trial is for new members only, and you have had it already.', 'rinnovo-session-membership-pro' ), 'error' );
+			return false;
+		}
+		return $valid;
 	}
 
 	/**
@@ -166,6 +186,64 @@ class RINNOVOSE_Credits {
 				'desc_tip'    => true,
 			)
 		);
+		echo '<p class="form-field"><strong>' . esc_html__( 'Pricing models', 'rinnovo-session-membership-pro' ) . '</strong><br /><span class="description">' . esc_html__( 'Monthly class membership: sessions per period above. Unlimited pass: tick Unlimited. Family pass: family members + one shared pool. Hybrid: credits per class type below. Prepaid package, private sessions, trial and top-up: a one-time product with "Class pack" credits.', 'rinnovo-session-membership-pro' ) . '</span></p>';
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_rinnovose_type_credits',
+				'label'       => __( 'Credits per class type', 'rinnovo-session-membership-pro' ),
+				'placeholder' => 'group=8, private=2',
+				'value'       => $g( 'type_credits' ),
+				'description' => __( 'Hybrid plans: credits for each class type every period (the class type is set on each class). Empty = "Sessions per billing period" for any class.', 'rinnovo-session-membership-pro' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_rinnovose_member_credits',
+				'label'       => __( 'Credits per family member', 'rinnovo-session-membership-pro' ),
+				'data_type'   => 'decimal',
+				'value'       => $g( 'member_credits' ),
+				'description' => __( 'Each family member\'s own allowance every period (when "Family credits" is separate or both in the settings).', 'rinnovo-session-membership-pro' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_rinnovose_pack',
+				'label'       => __( 'Class pack credits', 'rinnovo-session-membership-pro' ),
+				'data_type'   => 'decimal',
+				'value'       => $g( 'pack' ),
+				'description' => __( 'One-time product: 10-class pack, 5 private sessions, 3 intro classes… Works without a membership.', 'rinnovo-session-membership-pro' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_rinnovose_pack_days',
+				'label'       => __( 'Pack valid for (days)', 'rinnovo-session-membership-pro' ),
+				'type'        => 'number',
+				'value'       => $g( 'pack_days' ),
+				'placeholder' => '90',
+				'description' => __( 'From purchase, independent of any subscription. Empty = no expiry.', 'rinnovo-session-membership-pro' ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'          => '_rinnovose_pack_type',
+				'label'       => __( 'Pack is for class type', 'rinnovo-session-membership-pro' ),
+				'placeholder' => 'private',
+				'value'       => $g( 'pack_type' ),
+			)
+		);
+		woocommerce_wp_checkbox(
+			array(
+				'id'          => '_rinnovose_trial',
+				'label'       => __( 'Trial', 'rinnovo-session-membership-pro' ),
+				'description' => __( 'Once per customer (account and email)', 'rinnovo-session-membership-pro' ),
+				'value'       => '' !== $g( 'trial' ) ? $g( 'trial' ) : 'no',
+			)
+		);
 		woocommerce_wp_checkbox(
 			array(
 				'id'          => '_rinnovose_free_for_members',
@@ -190,10 +268,13 @@ class RINNOVOSE_Credits {
 		if ( ! $p ) {
 			return;
 		}
-		foreach ( array( 'plan', 'unlimited', 'waiver', 'free_for_members' ) as $k ) {
+		foreach ( array( 'plan', 'unlimited', 'waiver', 'free_for_members', 'trial' ) as $k ) {
 			$p->update_meta_data( '_rinnovose_' . $k, isset( $_POST[ '_rinnovose_' . $k ] ) ? 'yes' : 'no' );
 		}
-		foreach ( array( 'credits', 'cap', 'topup' ) as $k ) {
+		$p->update_meta_data( '_rinnovose_type_credits', isset( $_POST['_rinnovose_type_credits'] ) ? sanitize_text_field( wp_unslash( $_POST['_rinnovose_type_credits'] ) ) : '' );
+		$p->update_meta_data( '_rinnovose_pack_type', isset( $_POST['_rinnovose_pack_type'] ) ? sanitize_key( wp_unslash( $_POST['_rinnovose_pack_type'] ) ) : '' );
+		$p->update_meta_data( '_rinnovose_pack_days', isset( $_POST['_rinnovose_pack_days'] ) && '' !== $_POST['_rinnovose_pack_days'] ? absint( $_POST['_rinnovose_pack_days'] ) : '' );
+		foreach ( array( 'credits', 'cap', 'topup', 'pack', 'member_credits' ) as $k ) {
 			$p->update_meta_data( '_rinnovose_' . $k, isset( $_POST[ '_rinnovose_' . $k ] ) ? wc_format_decimal( sanitize_text_field( wp_unslash( $_POST[ '_rinnovose_' . $k ] ) ) ) : '' );
 		}
 		$p->update_meta_data( '_rinnovose_rollover', isset( $_POST['_rinnovose_rollover'] ) ? sanitize_key( wp_unslash( $_POST['_rinnovose_rollover'] ) ) : 'expire' );
@@ -284,47 +365,35 @@ class RINNOVOSE_Credits {
 	 * @return array cycle, balance, allowance, unlimited, extra.
 	 */
 	public static function wallet( $sub ) {
-		$all   = (array) get_user_meta( (int) $sub->user_id, self::WALLET, true );
-		$t     = self::terms( (int) $sub->product_id );
-		$cycle = (string) $sub->next_payment;
-		$w     = isset( $all[ $sub->id ] ) && is_array( $all[ $sub->id ] ) ? $all[ $sub->id ] : null;
-		if ( ! $w ) {
-			$w = array(
-				'cycle'     => $cycle,
-				'balance'   => $t['credits'],
-				'allowance' => $t['credits'],
-				'unlimited' => $t['unlimited'],
-			);
-		} elseif ( $w['cycle'] !== $cycle && ! self::freeze_of( $sub ) ) {
-			$left = max( 0, (float) $w['balance'] );
-			$keep = 'all' === $t['rollover'] ? $left : ( 'cap' === $t['rollover'] ? min( $left, $t['cap'] ) : 0 );
-			$w    = array(
-				'cycle'     => $cycle,
-				'balance'   => $t['credits'] + $keep,
-				'allowance' => $t['credits'],
-				'unlimited' => $t['unlimited'],
-			);
+		$t = self::terms( (int) $sub->product_id );
+		if ( ! $t['unlimited'] ) {
+			RINNOVOSE_Ledger::refresh( $sub );
 		}
-		$w['unlimited'] = $t['unlimited'];
-		$all[ $sub->id ] = $w;
-		update_user_meta( (int) $sub->user_id, self::WALLET, $all );
-		return $w;
+		$balance = 0.0;
+		foreach ( array_keys( RINNOVOSE_Ledger::allowances( (int) $sub->product_id ) ) as $type ) {
+			$balance += RINNOVOSE_Ledger::balance( (int) $sub->user_id, 'sub:' . $sub->id . ':' . $type );
+		}
+		return array(
+			'cycle'     => (string) $sub->next_payment,
+			'balance'   => round( $balance, 2 ),
+			'allowance' => $t['credits'],
+			'unlimited' => $t['unlimited'],
+		);
 	}
 
 	/**
-	 * Change a subscription's balance.
+	 * Change a subscription's balance (a ledger row with its reason).
 	 *
 	 * @param object $sub    Subscription.
 	 * @param float  $amount Plus or minus.
+	 * @param string $reason Why.
 	 */
-	public static function adjust( $sub, $amount ) {
-		$w   = self::wallet( $sub );
-		$all = (array) get_user_meta( (int) $sub->user_id, self::WALLET, true );
-		if ( ! $w['unlimited'] ) {
-			$w['balance'] = round( (float) $w['balance'] + (float) $amount, 2 );
+	public static function adjust( $sub, $amount, $reason = '' ) {
+		if ( self::terms( (int) $sub->product_id )['unlimited'] ) {
+			return;
 		}
-		$all[ $sub->id ] = $w;
-		update_user_meta( (int) $sub->user_id, self::WALLET, $all );
+		RINNOVOSE_Ledger::refresh( $sub );
+		RINNOVOSE_Ledger::add( (int) $sub->user_id, 'sub:' . $sub->id . ':', (float) $amount, 'adjust', array( 'reason' => '' !== $reason ? $reason : __( 'Adjusted by the shop', self::TD ) ) );
 	}
 
 	/**
@@ -334,15 +403,8 @@ class RINNOVOSE_Credits {
 	 * @return float
 	 */
 	public static function available( $user_id ) {
-		$sum = 0.0;
-		foreach ( self::memberships( $user_id ) as $sub ) {
-			if ( self::freeze_of( $sub ) ) {
-				continue;
-			}
-			$w    = self::wallet( $sub );
-			$sum += $w['unlimited'] ? 9999 : max( 0, (float) $w['balance'] );
-		}
-		return $sum;
+		$s = RINNOVOSE_Ledger::summary( $user_id );
+		return $s['unlimited'] ? 9999 : $s['total'];
 	}
 
 	/**
@@ -354,8 +416,8 @@ class RINNOVOSE_Credits {
 	 */
 	public static function payer( $user_id, $class ) {
 		$subs = self::memberships( $user_id );
-		if ( ! $subs ) {
-			return new WP_Error( 'rinnovose_member', __( 'Booking is for members. Choose a membership to start.', self::TD ) );
+		if ( ! $subs && ! RINNOVOSE_Ledger::packs( $user_id ) ) {
+			return new WP_Error( 'rinnovose_member', __( 'Booking is for members. Choose a membership or a class pack to start.', self::TD ) );
 		}
 		$allowed = false;
 		$frozen  = false;
@@ -450,10 +512,26 @@ class RINNOVOSE_Credits {
 			}
 			$parent = $product->get_parent_id() ? wc_get_product( $product->get_parent_id() ) : $product;
 			$topup  = (float) $parent->get_meta( '_rinnovose_topup' );
-			if ( $topup > 0 && $subs ) {
-				self::adjust( $subs[0], $topup * $item->get_quantity() );
+			$pack   = (float) $parent->get_meta( '_rinnovose_pack' );
+			if ( ( $topup > 0 || $pack > 0 ) && ! $item->get_meta( '_rinnovose_credited' ) ) {
+				// Packages and top-ups have their own wallet and expiry, independent of subscription billing.
+				$days = (int) $parent->get_meta( '_rinnovose_pack_days' );
+				$n    = ( $pack > 0 ? $pack : $topup ) * $item->get_quantity();
+				RINNOVOSE_Ledger::add(
+					$user,
+					'pack:' . $item->get_id(),
+					$n,
+					$pack > 0 ? 'pack' : 'topup',
+					array(
+						'class_type' => (string) $parent->get_meta( '_rinnovose_pack_type' ),
+						'expires_at' => $days ? time() + $days * DAY_IN_SECONDS : 0,
+						'reason'     => $item->get_name(),
+					)
+				);
+				$item->update_meta_data( '_rinnovose_credited', $n );
+				$item->save();
 				/* translators: %s: sessions. */
-				$order->add_order_note( sprintf( __( '%s extra sessions added to the membership.', self::TD ), wc_format_localized_decimal( $topup * $item->get_quantity() ) ) );
+				$order->add_order_note( sprintf( __( '%s class credits added.', self::TD ), wc_format_localized_decimal( $n ) ) );
 				$done = true;
 			}
 			if ( $item->get_meta( '_rinnovose_credit_used' ) ) {
