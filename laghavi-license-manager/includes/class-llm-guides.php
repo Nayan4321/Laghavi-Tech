@@ -455,6 +455,19 @@ class LLM_Guides {
 	 * New permalinks (/guides/…) after an update.
 	 */
 	public static function maybe_flush() {
+		// Guides made with 1.2.0's first build were stored as llm_guide / llm_guide_cat: move them to guide / guide_category.
+		if ( get_option( 'llm_guides_migrated' ) !== '1' ) {
+			global $wpdb;
+			// phpcs:disable WordPress.DB.DirectDatabaseQuery -- One-time rename.
+			$wpdb->update( $wpdb->posts, array( 'post_type' => self::TYPE ), array( 'post_type' => 'llm_guide' ) );
+			$wpdb->update( $wpdb->term_taxonomy, array( 'taxonomy' => self::TAX ), array( 'taxonomy' => 'llm_guide_cat' ) );
+			// phpcs:enable
+			clean_taxonomy_cache( self::TAX );
+			wp_cache_flush();
+			delete_transient( 'llm_guide_terms' );
+			update_option( 'llm_guides_migrated', '1' );
+			delete_option( 'llm_guides_rewrite' );
+		}
 		if ( get_option( 'llm_guides_rewrite' ) !== '2' ) {
 			flush_rewrite_rules( false );
 			update_option( 'llm_guides_rewrite', '2' );
