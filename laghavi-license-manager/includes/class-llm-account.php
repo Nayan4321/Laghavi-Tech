@@ -117,7 +117,7 @@ class LLM_Account {
 			wp_safe_redirect( $back );
 			exit;
 		}
-		$path = LLM_Licenses::file_path( $license );
+		$path = LLM_Licenses::package_path( $license );
 		if ( '' === $path ) {
 			wc_add_notice( __( 'The download is being prepared. Please try again a little later or contact us.', 'laghavi-license-manager' ), 'error' );
 			wp_safe_redirect( $back );
@@ -125,7 +125,7 @@ class LLM_Account {
 		}
 
 		$settings = LLM_Product::settings( $license->product_id );
-		$name     = ( '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( get_the_title( $license->product_id ) ) ) . '.zip';
+		$name     = ( '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( get_the_title( $license->product_id ) ) ) . ( $path !== LLM_Licenses::file_path( $license ) ? '-package' : '' ) . '.zip';
 		nocache_headers();
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . $name . '"' );
@@ -222,7 +222,7 @@ class LLM_Account {
 			$sites    = LLM_Licenses::activations( $license->id );
 			$status   = LLM_Licenses::status( $license );
 			$settings = LLM_Product::settings( $license->product_id );
-			$has_file = '' !== LLM_Licenses::file_path( $license );
+			$has_file = '' !== LLM_Licenses::package_path( $license );
 			?>
 			<article class="llm-license llm-license--<?php echo esc_attr( $status ); ?>">
 				<header class="llm-license__head">

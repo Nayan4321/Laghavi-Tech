@@ -409,6 +409,24 @@ class LLM_Licenses {
 	}
 
 	/**
+	 * Path of what the customer downloads in My Account: the download package when one is uploaded, else the
+	 * plugin zip. Automatic updates always use file_path().
+	 *
+	 * @param object $license License.
+	 * @return string
+	 */
+	public static function package_path( $license ) {
+		$settings = LLM_Product::settings( $license->product_id );
+		if ( '' !== $settings['package'] ) {
+			$path = self::private_dir() . basename( $settings['package'] );
+			if ( is_readable( $path ) ) {
+				return $path;
+			}
+		}
+		return self::file_path( $license );
+	}
+
+	/**
 	 * Download link for the customer (only works for the logged-in owner).
 	 *
 	 * @param object $license License.

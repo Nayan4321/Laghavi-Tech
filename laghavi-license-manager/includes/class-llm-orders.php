@@ -108,7 +108,7 @@ class LLM_Orders {
 						<td><code><?php echo esc_html( $license->license_key ); ?></code></td>
 						<td><?php echo esc_html( LLM_Licenses::expiry_label( $license ) ); ?></td>
 						<td>
-							<?php if ( LLM_Licenses::owned_by( $license, wp_get_current_user() ) && 'active' === LLM_Licenses::status( $license ) && '' !== LLM_Licenses::file_path( $license ) ) : ?>
+							<?php if ( LLM_Licenses::owned_by( $license, wp_get_current_user() ) && 'active' === LLM_Licenses::status( $license ) && '' !== LLM_Licenses::package_path( $license ) ) : ?>
 								<a class="button" href="<?php echo esc_url( LLM_Licenses::download_url( $license ) ); ?>"><?php esc_html_e( 'Download', 'laghavi-license-manager' ); ?></a>
 							<?php endif; ?>
 						</td>

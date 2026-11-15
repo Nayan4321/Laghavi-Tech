@@ -64,6 +64,7 @@ class LLM_Product {
 			'requires_php' => (string) get_post_meta( $id, '_llm_requires_php', true ),
 			'changelog'    => (string) get_post_meta( $id, '_llm_changelog', true ),
 			'file'         => (string) get_post_meta( $id, '_llm_file', true ),
+			'package'      => (string) get_post_meta( $id, '_llm_package', true ),
 		);
 		if ( $is_child && '' !== (string) get_post_meta( $product_id, '_llm_sites', true ) ) {
 			$settings['sites'] = (int) get_post_meta( $product_id, '_llm_sites', true );
@@ -270,6 +271,20 @@ class LLM_Product {
 						?>
 					</span>
 				</p>
+				<p class="form-field">
+					<label for="llm_package"><?php esc_html_e( 'Download package (optional)', 'laghavi-license-manager' ); ?></label>
+					<input type="file" name="llm_package" id="llm_package" accept=".zip" />
+					<span class="description">
+						<?php
+						if ( '' !== $s['package'] ) {
+							/* translators: %s: file name. */
+							echo esc_html( sprintf( __( 'Current package: %s.', 'laghavi-license-manager' ), $s['package'] ) );
+						} else {
+							esc_html_e( 'A zip customers download in My Account instead of the plugin zip, for example the plugin zip plus a companion plugin zip. Automatic updates always use the plugin zip above.', 'laghavi-license-manager' );
+						}
+						?>
+					</span>
+				</p>
 			</div>
 		</div>
 		<?php
@@ -302,6 +317,16 @@ class LLM_Product {
 				$target = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-' . gmdate( 'YmdHis' ) . '.zip';
 				if ( move_uploaded_file( $_FILES['llm_zip']['tmp_name'], LLM_Licenses::private_dir() . $target ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 					update_post_meta( $product_id, '_llm_file', $target );
+				}
+			}
+		}
+		if ( ! empty( $_FILES['llm_package']['tmp_name'] ) && isset( $_FILES['llm_package']['error'] ) && UPLOAD_ERR_OK === $_FILES['llm_package']['error'] ) {
+			$name = isset( $_FILES['llm_package']['name'] ) ? sanitize_file_name( wp_unslash( $_FILES['llm_package']['name'] ) ) : '';
+			if ( '.zip' === strtolower( substr( $name, -4 ) ) && is_uploaded_file( $_FILES['llm_package']['tmp_name'] ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- PHP's temporary path.
+				$slug   = (string) get_post_meta( $product_id, '_llm_slug', true );
+				$target = ( '' !== $slug ? $slug : 'product-' . $product_id ) . '-package-' . gmdate( 'YmdHis' ) . '.zip';
+				if ( move_uploaded_file( $_FILES['llm_package']['tmp_name'], LLM_Licenses::private_dir() . $target ) ) { // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+					update_post_meta( $product_id, '_llm_package', $target );
 				}
 			}
 		}
