@@ -43,6 +43,11 @@ class LLM_Guides {
 		add_filter( 'the_content', array( __CLASS__, 'layout' ), 50 );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'admin_init', array( __CLASS__, 'resolve_product_slugs' ) );
+		add_action( 'admin_menu', array( __CLASS__, 'settings_menu' ) );
+		add_action( 'admin_post_llm_guides_settings', array( __CLASS__, 'settings_save' ) );
+		add_action( 'admin_notices', array( __CLASS__, 'unconnected_notice' ) );
+		add_action( 'save_post_' . self::TYPE, array( __CLASS__, 'purge_caches' ) );
+		add_filter( 'wp_sitemaps_post_types', array( __CLASS__, 'sitemap_types' ) );
 		add_action( 'import_end', array( __CLASS__, 'resolve_product_slugs' ) );
 		// Page builders (Elementor and others) put their own layout in later: lock again at the very end.
 		add_filter( 'the_content', array( __CLASS__, 'content' ), PHP_INT_MAX );
@@ -172,6 +177,7 @@ class LLM_Guides {
 			return;
 		}
 		$ids = isset( $_POST['llm_guide_products'] ) ? array_values( array_filter( array_map( 'absint', (array) wp_unslash( $_POST['llm_guide_products'] ) ) ) ) : array();
+		add_action( 'shutdown', array( __CLASS__, 'purge_caches' ) );
 		if ( $ids ) {
 			update_term_meta( $term_id, self::META, $ids );
 		} else {
@@ -320,12 +326,19 @@ class LLM_Guides {
 	 */
 	public static function can_read( $post_id, $user_id = null ) {
 		$user_id = null === $user_id ? get_current_user_id() : (int) $user_id;
-		$need    = self::needs( $post_id );
-		if ( ! $need ) {
+		if ( self::TYPE !== get_post_type( $post_id ) && ! self::needs( $post_id ) ) {
 			return true;
 		}
 		if ( $user_id && user_can( $user_id, 'edit_post', $post_id ) ) {
 			return true;
+		}
+		$need = self::needs( $post_id );
+		if ( ! $need ) {
+			// Guides without a connected product: a log-in is enough (when "Guides need a log-in" is on).
+			return ! self::login_required() || (bool) $user_id;
+		}
+		if ( ! $user_id ) {
+			return false;
 		}
 		return (bool) array_intersect( $need, self::licensed_for( $user_id ) );
 	}
@@ -410,7 +423,7 @@ class LLM_Guides {
 		}
 		$html = '<div class="llm-guide-locked" style="border:1px solid #dcdcde;border-radius:10px;padding:20px;margin:16px 0;background:#f6f7f7">';
 		if ( ! is_user_logged_in() ) {
-			$html .= '<p><strong>' . esc_html__( 'This guide is for customers with an active license.', self::TD ) . '</strong></p><p><a class="button button-primary" href="' . esc_url( wp_login_url( get_permalink( $post_id ) ) ) . '">' . esc_html__( 'Log in to read it', self::TD ) . '</a> ' . implode( ' ', $links ) . '</p>';
+			$html .= '<p><strong>' . esc_html( $need ? __( 'This guide is for customers with an active license.', self::TD ) : __( 'Please log in to read this guide.', self::TD ) ) . '</strong></p><p><a class="button button-primary" href="' . esc_url( wp_login_url( get_permalink( $post_id ) ) ) . '">' . esc_html__( 'Log in to read it', self::TD ) . '</a> ' . implode( ' ', $links ) . '</p>';
 		} else {
 			$html .= '<p><strong>' . esc_html__( 'Access denied: this guide needs an active license.', self::TD ) . '</strong></p><p>' . esc_html__( 'Your account has no active license for this product. If your license expired, renew it to read the guide again.', self::TD ) . '</p><p>' . implode( ' ', $links ) . ( function_exists( 'wc_get_account_endpoint_url' ) ? ' <a href="' . esc_url( wc_get_account_endpoint_url( 'dashboard' ) ) . '">' . esc_html__( 'My account', self::TD ) . '</a>' : '' ) . '</p>';
 		}
@@ -675,13 +688,18 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		if ( is_admin() || ! $id || is_singular() || self::TYPE !== get_post_type( $id ) || ! in_the_loop() || self::can_read( (int) $id ) ) {
 			return $title;
 		}
-		return $title . ' <span class="llm-guide-lock" style="font-size:.7em;font-weight:600;padding:2px 8px;border-radius:999px;background:#fff7ed;color:#c2410c;white-space:nowrap">&#128274; ' . esc_html__( 'License needed', self::TD ) . '</span>';
+		return $title . ' <span class="llm-guide-lock" style="font-size:.7em;font-weight:600;padding:2px 8px;border-radius:999px;background:#fff7ed;color:#c2410c;white-space:nowrap">&#128274; ' . esc_html( self::needs( (int) $id ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
 	}
 
 	/**
 	 * New permalinks (/guides/…) after an update.
 	 */
 	public static function maybe_flush() {
+		if ( get_option( 'llm_guides_cache_v' ) !== '3' ) {
+			self::resolve_product_slugs();
+			self::purge_caches();
+			update_option( 'llm_guides_cache_v', '3' );
+		}
 		// Guides made with 1.2.0's first build were stored as llm_guide / llm_guide_cat: move them to guide / guide_category.
 		if ( get_option( 'llm_guides_migrated' ) !== '1' ) {
 			global $wpdb;
@@ -727,18 +745,132 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 	 * Not cached; 403 status for people without access.
 	 */
 	public static function headers() {
-		if ( is_singular() && self::needs( get_queried_object_id() ) ) {
-			nocache_headers();
-			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
-				define( 'DONOTCACHEPAGE', true );
-			}
+		if ( is_singular( self::TYPE ) || is_post_type_archive( self::TYPE ) || is_tax( self::TAX ) ) {
+			// What a guide shows depends on who is looking: never keep a page-cache copy.
+			self::no_cache();
+		}
+		if ( is_singular() && ( self::needs( get_queried_object_id() ) || is_singular( self::TYPE ) ) ) {
+			self::no_cache();
 			if ( ! self::can_read( get_queried_object_id() ) ) {
 				status_header( 403 );
 				add_filter( 'pre_option_default_comment_status', '__return_zero' );
 			}
-		} elseif ( is_tax( self::TAX ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
-			nocache_headers();
 		}
+	}
+
+	/**
+	 * Tell WordPress, LiteSpeed Cache, WP Rocket, W3TC and others not to cache this page.
+	 */
+	private static function no_cache() {
+		nocache_headers();
+		if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+			define( 'DONOTCACHEPAGE', true );
+		}
+		do_action( 'litespeed_control_set_nocache', 'Laghavi License Manager guide' );
+		if ( ! headers_sent() ) {
+			header( 'X-LiteSpeed-Cache-Control: no-cache' );
+		}
+	}
+
+	/**
+	 * Empty page caches (after the guide rules change).
+	 */
+	public static function purge_caches() {
+		do_action( 'litespeed_purge_all' );
+		if ( function_exists( 'rocket_clean_domain' ) ) {
+			rocket_clean_domain();
+		}
+		if ( function_exists( 'w3tc_flush_all' ) ) {
+			w3tc_flush_all();
+		}
+		if ( function_exists( 'wp_cache_clear_cache' ) ) {
+			wp_cache_clear_cache();
+		}
+		delete_transient( 'llm_guide_terms' );
+	}
+
+	/**
+	 * Guides › Settings.
+	 */
+	public static function settings_menu() {
+		add_submenu_page( 'edit.php?post_type=' . self::TYPE, __( 'Guide settings', self::TD ), __( 'Settings', self::TD ), 'manage_options', 'llm-guides-settings', array( __CLASS__, 'settings_page' ) );
+	}
+
+	/**
+	 * Settings screen.
+	 */
+	public static function settings_page() {
+		echo '<div class="wrap"><h1>' . esc_html__( 'Guide settings', self::TD ) . '</h1>';
+		if ( isset( $_GET['saved'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			echo '<div class="notice notice-success"><p>' . esc_html__( 'Saved. Page caches were emptied.', self::TD ) . '</p></div>';
+		}
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="llm_guides_settings" />';
+		wp_nonce_field( 'llm_guides_settings' );
+		echo '<table class="form-table"><tr><th>' . esc_html__( 'Who can read guides', self::TD ) . '</th><td><label><input type="checkbox" name="login" value="yes"' . checked( self::login_required(), true, false ) . ' /> ' . esc_html__( 'Visitors must log in to read any guide', self::TD ) . '</label><p class="description">' . esc_html__( 'Guides in a guide category connected to products also need an active license for one of those products. Connect a category to products in Guides › Guide categories › edit the category › "Only for customers with a license for".', self::TD ) . '</p></td></tr></table>';
+		submit_button();
+		echo '</form><h2>' . esc_html__( 'Your guide categories', self::TD ) . '</h2><table class="widefat striped" style="max-width:900px"><thead><tr><th>' . esc_html__( 'Category', self::TD ) . '</th><th>' . esc_html__( 'Guides', self::TD ) . '</th><th>' . esc_html__( 'Who can read them', self::TD ) . '</th></tr></thead><tbody>';
+		$terms = get_terms( array( 'taxonomy' => self::TAX, 'hide_empty' => false ) );
+		foreach ( is_array( $terms ) ? $terms : array() as $t ) {
+			$names = array_map( 'get_the_title', self::products_of( $t->term_id ) );
+			$who   = $names ? sprintf( /* translators: %s: products. */ __( 'Logged in, with an active license for: %s', self::TD ), implode( ', ', $names ) ) : ( self::login_required() ? __( 'Anyone logged in (no product connected)', self::TD ) : __( 'Everyone (no product connected)', self::TD ) );
+			echo '<tr><td><a href="' . esc_url( get_edit_term_link( $t->term_id, self::TAX ) ) . '">' . esc_html( $t->name ) . '</a></td><td>' . (int) $t->count . '</td><td' . ( $names ? '' : ' style="color:#b32d2e"' ) . '>' . esc_html( $who ) . '</td></tr>';
+		}
+		echo '</tbody></table></div>';
+	}
+
+	/**
+	 * Save settings.
+	 */
+	public static function settings_save() {
+		if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'llm_guides_settings' ) ) {
+			wp_die( esc_html__( 'Not allowed.', self::TD ) );
+		}
+		update_option( 'llm_guides_login', isset( $_POST['login'] ) ? 'yes' : 'no' );
+		self::purge_caches();
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . self::TYPE . '&page=llm-guides-settings&saved=1' ) );
+		exit;
+	}
+
+	/**
+	 * Warn on guide screens about guide categories with guides but no product.
+	 */
+	public static function unconnected_notice() {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen || ( self::TYPE !== $screen->post_type && self::TAX !== $screen->taxonomy ) || ! current_user_can( 'manage_categories' ) ) {
+			return;
+		}
+		$open  = array();
+		$terms = get_terms( array( 'taxonomy' => self::TAX, 'hide_empty' => true ) );
+		foreach ( is_array( $terms ) ? $terms : array() as $t ) {
+			if ( ! self::products_of( $t->term_id ) ) {
+				$open[] = '<a href="' . esc_url( get_edit_term_link( $t->term_id, self::TAX ) ) . '">' . esc_html( $t->name ) . '</a>';
+			}
+		}
+		if ( $open ) {
+			echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'These guide categories are not connected to a product:', self::TD ) . '</strong> ' . implode( ', ', $open ) . '. ' . esc_html( self::login_required() ? __( 'Their guides only need a log-in, not a license. Open each one and choose the product under "Only for customers with a license for".', self::TD ) : __( 'Their guides are public. Open each one and choose the product under "Only for customers with a license for".', self::TD ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Links escaped above.
+		}
+	}
+
+	/**
+	 * No guides in the sitemap while they need a log-in.
+	 *
+	 * @param array $types Post types.
+	 * @return array
+	 */
+	public static function sitemap_types( $types ) {
+		if ( self::login_required() ) {
+			unset( $types[ self::TYPE ] );
+		}
+		return $types;
+	}
+
+	/**
+	 * Every guide needs a log-in (setting, on by default).
+	 *
+	 * @return bool
+	 */
+	public static function login_required() {
+		return 'no' !== get_option( 'llm_guides_login', 'yes' );
 	}
 
 	/**
@@ -748,7 +880,7 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 	 * @return array
 	 */
 	public static function robots( $robots ) {
-		if ( is_singular() && self::needs( get_queried_object_id() ) || is_tax( self::TAX ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
+		if ( is_singular() && self::needs( get_queried_object_id() ) || is_singular( self::TYPE ) && self::login_required() || is_tax( self::TAX ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
 			$robots['noindex']  = true;
 			$robots['nofollow'] = true;
 		}
@@ -846,7 +978,7 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		$args['suppress_filters'] = true;
 		$out = '';
 		foreach ( get_posts( $args ) as $p ) {
-			$lock = self::can_read( $p->ID ) ? '' : ' <span class="llm-guide-lock">&#128274; ' . esc_html__( 'License needed', self::TD ) . '</span>';
+			$lock = self::can_read( $p->ID ) ? '' : ' <span class="llm-guide-lock">&#128274; ' . esc_html( self::needs( $p->ID ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
 			$out .= '<li><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( $p->post_title ) . '</a>' . $lock . '</li>';
 		}
 		return '' !== $out ? '<ul class="llm-guides">' . $out . '</ul>' : '<p>' . esc_html__( 'No guides for your account yet.', self::TD ) . '</p>';

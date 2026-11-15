@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -40,6 +40,12 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `GET /download` – the zip, for sites allowed to update
 
 == Changelog ==
+
+= 1.2.2 =
+* Every guide needs a log-in (Guides › Settings, on by default). Guides in a category connected to products also need an active license for one of them.
+* Guide pages are never page-cached (LiteSpeed Cache, WP Rocket, W3TC and others are told, and their caches are emptied after the update and when guide rules change).
+* Guides › Settings lists every guide category and who can read it; guide screens warn about categories with no product connected.
+* Product slugs on guide categories (from an import file) are connected on every admin page load.
 
 = 1.2.1 =
 * Guide pages get their own layout on the site: a guide switcher (grouped by guide category, locked guides marked), a sticky list of the guide's sections built from its headings (click to jump, current section highlighted) and styles for tables. Write guides in the normal editor; the plugin adds the rest. Guides designed with Elementor keep their own layout, are shown full width without the theme title banner (Nioland and similar themes), and "Edit with Elementor" is available on guides.
