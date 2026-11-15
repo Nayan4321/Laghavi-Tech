@@ -15,7 +15,11 @@
 #lg-guide .lg-switch{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}
 #lg-guide .lg-switch label{font-size:14px;font-weight:600;color:#fff}
 #lg-guide .lg-switch select{flex:1 1 260px;min-width:0;max-width:460px;padding:10px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.6);font:600 15px/1.3 inherit;color:#fff!important;background-color:transparent;cursor:pointer}
-#lg-guide #lg-guide-select,#lg-guide-select.lg-guide-select{color:#fff!important;-webkit-text-fill-color:#fff!important}
+#lg-guide #lg-guide-select,#lg-guide-select.lg-guide-select{display:block!important;color:#fff!important;-webkit-text-fill-color:#fff!important;position:static!important;width:auto!important;height:auto!important;clip:auto!important;clip-path:none!important;opacity:1!important;visibility:visible!important}
+#lg-guide .lg-switch .select2-container{flex:1 1 260px;max-width:460px}
+#lg-guide .lg-switch .select2-selection,#lg-guide .lg-switch .select2-selection--single{background:transparent!important;border:1px solid rgba(255,255,255,.6)!important;border-radius:10px!important;height:auto!important;min-height:44px}
+#lg-guide .lg-switch .select2-selection__rendered,#lg-guide .lg-switch .select2-selection__placeholder{color:#fff!important;-webkit-text-fill-color:#fff!important;line-height:42px!important;padding-left:12px!important;font-weight:600}
+#lg-guide .lg-switch .select2-selection__arrow b{border-color:#fff transparent transparent transparent!important}
 #lg-guide #lg-guide-select option,#lg-guide #lg-guide-select optgroup{color:#0f172a!important;-webkit-text-fill-color:#0f172a!important;background:#fff!important}
 #lg-guide .lg-switch a{color:#fdba74;font-weight:700;font-size:14px}
 #lg-guide .lg-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start;margin-top:26px}
@@ -69,7 +73,16 @@
 </div>
 <script>
 (function(){var root=document.getElementById('lg-guide');if(!root)return;
-var sel=root.querySelector('.lg-switch select');if(sel)sel.addEventListener('change',function(){if(this.value)location.href=this.value;});
+var sel=document.getElementById('lg-guide-select');
+if(sel)sel.addEventListener('change',function(){if(this.value&&this.value!==location.href)location.href=this.value;});
+/* Themes that turn every select into Select2 (Nioland): give this one back its own dropdown. */
+function unSelect2(){var $=window.jQuery;if(!sel||!$)return;var $s=$(sel);
+ if($s.data('select2')||$s.hasClass('select2-hidden-accessible')){try{$s.select2('destroy');}catch(e){}}
+ $s.removeClass('select2-hidden-accessible').removeAttr('aria-hidden').removeAttr('tabindex').removeAttr('data-select2-id');
+ [].forEach.call(root.querySelectorAll('.lg-switch .select2-container'),function(c){c.parentNode.removeChild(c);});
+ $s.off('change.lg').on('change.lg',function(){if(this.value&&this.value!==location.href)location.href=this.value;});}
+if(document.readyState!=='complete'){window.addEventListener('load',function(){unSelect2();setTimeout(unSelect2,300);setTimeout(unSelect2,1200);});}else{unSelect2();}
+if(window.jQuery)window.jQuery(function(){setTimeout(unSelect2,0);});
 var links=[].slice.call(root.querySelectorAll('.lg-toc a'));var secs=links.map(function(a){return document.getElementById(a.hash.slice(1));});
 var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function mark(){var y=window.scrollY+140,cur=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top+window.scrollY<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);});}
