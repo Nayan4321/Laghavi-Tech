@@ -2,9 +2,8 @@
 /**
  * License-protected guides.
  *
- * Guides are normal posts in the "Guides" area (post type llm_guide) or normal blog posts. A guide category
- * (or a blog category) is connected to one or more licensed products on the category screen; no field on each
- * post. A post in a connected category is shown only to a logged-in customer with an ACTIVE license for one of
+ * Guides are their own post type (Guides, post type "guide"). A guide category is connected to one or more
+ * licensed products on the category screen; no field on each post. Blog posts and categories are not touched. A post in a connected category is shown only to a logged-in customer with an ACTIVE license for one of
  * the products; everyone else sees an "access denied" box with log-in and buy links.
  *
  * The protected content is never sent to people without access: the content and excerpt are replaced on the
@@ -21,8 +20,8 @@ defined( 'ABSPATH' ) || exit;
  */
 class LLM_Guides {
 
-	const TYPE = 'llm_guide';
-	const TAX  = 'llm_guide_cat';
+	const TYPE = 'guide';
+	const TAX  = 'guide_category';
 	const META = '_llm_guide_products';
 	const TD   = 'laghavi-license-manager';
 
@@ -31,7 +30,7 @@ class LLM_Guides {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
-		foreach ( array( self::TAX, 'category' ) as $tax ) {
+		foreach ( array( self::TAX ) as $tax ) {
 			add_action( $tax . '_add_form_fields', array( __CLASS__, 'add_field' ) );
 			add_action( $tax . '_edit_form_fields', array( __CLASS__, 'edit_field' ) );
 			add_action( 'created_' . $tax, array( __CLASS__, 'save_field' ) );
@@ -50,11 +49,13 @@ class LLM_Guides {
 		add_filter( 'wp_robots', array( __CLASS__, 'robots' ) );
 		add_filter( 'wp_sitemaps_posts_query_args', array( __CLASS__, 'sitemap_posts' ), 10, 2 );
 		add_filter( 'wp_sitemaps_taxonomies_query_args', array( __CLASS__, 'sitemap_terms' ), 10, 2 );
-		foreach ( array( 'post', self::TYPE ) as $type ) {
+		foreach ( array( self::TYPE ) as $type ) {
 			add_filter( 'rest_' . $type . '_query', array( __CLASS__, 'rest_query' ) );
 			add_filter( 'rest_prepare_' . $type, array( __CLASS__, 'rest_prepare' ), 10, 2 );
 		}
 		add_shortcode( 'llm_guides', array( __CLASS__, 'list_shortcode' ) );
+		add_filter( 'the_title', array( __CLASS__, 'title_mark' ), 10, 2 );
+		add_action( 'init', array( __CLASS__, 'maybe_flush' ), 99 );
 	}
 
 	/**
@@ -73,7 +74,7 @@ class LLM_Guides {
 				),
 				'public'       => true,
 				'has_archive'  => 'guides',
-				'rewrite'      => array( 'slug' => 'guide' ),
+				'rewrite'      => array( 'slug' => 'guides', 'with_front' => false ),
 				'menu_icon'    => 'dashicons-book-alt',
 				'show_in_rest' => true,
 				'supports'     => array( 'title', 'editor', 'excerpt', 'thumbnail', 'revisions', 'page-attributes', 'comments' ),
@@ -94,7 +95,7 @@ class LLM_Guides {
 				'public'            => true,
 				'show_admin_column' => true,
 				'show_in_rest'      => true,
-				'rewrite'           => array( 'slug' => 'guides/topic' ),
+				'rewrite'           => array( 'slug' => 'guides/topic', 'with_front' => false ),
 			)
 		);
 	}
@@ -221,7 +222,7 @@ class LLM_Guides {
 			return $cached;
 		}
 		$out = array();
-		foreach ( array( self::TAX, 'category' ) as $tax ) {
+		foreach ( array( self::TAX ) as $tax ) {
 			if ( ! taxonomy_exists( $tax ) ) {
 				continue;
 			}
@@ -293,7 +294,7 @@ class LLM_Guides {
 			return array();
 		}
 		$need = array();
-		foreach ( array( self::TAX, 'category' ) as $tax ) {
+		foreach ( array( self::TAX ) as $tax ) {
 			$terms = get_the_terms( $post_id, $tax );
 			foreach ( is_array( $terms ) ? $terms : array() as $t ) {
 				if ( isset( $prot[ $t->term_id ] ) ) {
@@ -350,7 +351,7 @@ class LLM_Guides {
 	 */
 	private static function exclude( $terms ) {
 		$q = array( 'relation' => 'AND' );
-		foreach ( array( self::TAX, 'category' ) as $tax ) {
+		foreach ( array( self::TAX ) as $tax ) {
 			$q[] = array(
 				'taxonomy'         => $tax,
 				'field'            => 'term_id',
@@ -369,6 +370,12 @@ class LLM_Guides {
 	 */
 	public static function filter_query( $q ) {
 		if ( is_admin() || ( defined( 'REST_REQUEST' ) && REST_REQUEST ) || $q->is_singular() && $q->is_main_query() ) {
+			return;
+		}
+		// domain.com/guides/ (and its topics) lists every guide: locked ones show only their title with a "License needed" mark.
+		if ( $q->is_main_query() && ( $q->is_post_type_archive( self::TYPE ) || $q->is_tax( self::TAX ) ) ) {
+			$q->set( 'posts_per_page', -1 );
+			$q->set( 'orderby', array( 'menu_order' => 'ASC', 'title' => 'ASC' ) );
 			return;
 		}
 		$terms = ( $q->is_search() || $q->is_feed() ) ? array_map( 'intval', array_keys( self::protected_terms() ) ) : self::denied_terms();
@@ -431,6 +438,30 @@ class LLM_Guides {
 	}
 
 	/**
+	 * "License needed" after a locked guide's title in lists.
+	 *
+	 * @param string $title Title.
+	 * @param int    $id    Post.
+	 * @return string
+	 */
+	public static function title_mark( $title, $id = 0 ) {
+		if ( is_admin() || ! $id || is_singular() || self::TYPE !== get_post_type( $id ) || ! in_the_loop() || self::can_read( (int) $id ) ) {
+			return $title;
+		}
+		return $title . ' <span class="llm-guide-lock" style="font-size:.7em;font-weight:600;padding:2px 8px;border-radius:999px;background:#fff7ed;color:#c2410c;white-space:nowrap">&#128274; ' . esc_html__( 'License needed', self::TD ) . '</span>';
+	}
+
+	/**
+	 * New permalinks (/guides/…) after an update.
+	 */
+	public static function maybe_flush() {
+		if ( get_option( 'llm_guides_rewrite' ) !== '2' ) {
+			flush_rewrite_rules( false );
+			update_option( 'llm_guides_rewrite', '2' );
+		}
+	}
+
+	/**
 	 * Comments closed when locked.
 	 *
 	 * @param bool $open Open.
@@ -465,7 +496,7 @@ class LLM_Guides {
 				status_header( 403 );
 				add_filter( 'pre_option_default_comment_status', '__return_zero' );
 			}
-		} elseif ( ( is_tax( self::TAX ) || is_category() ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
+		} elseif ( is_tax( self::TAX ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
 			nocache_headers();
 		}
 	}
@@ -477,7 +508,7 @@ class LLM_Guides {
 	 * @return array
 	 */
 	public static function robots( $robots ) {
-		if ( is_singular() && self::needs( get_queried_object_id() ) || ( is_tax( self::TAX ) || is_category() ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
+		if ( is_singular() && self::needs( get_queried_object_id() ) || is_tax( self::TAX ) && isset( self::protected_terms()[ get_queried_object_id() ] ) ) {
 			$robots['noindex']  = true;
 			$robots['nofollow'] = true;
 		}
@@ -493,7 +524,7 @@ class LLM_Guides {
 	 */
 	public static function sitemap_posts( $args, $type ) {
 		$terms = array_map( 'intval', array_keys( self::protected_terms() ) );
-		if ( $terms && in_array( $type, array( 'post', self::TYPE ), true ) ) {
+		if ( $terms && self::TYPE === $type ) {
 			$args['tax_query'] = array_merge( isset( $args['tax_query'] ) ? (array) $args['tax_query'] : array(), array( self::exclude( $terms ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		}
 		return $args;
@@ -507,7 +538,7 @@ class LLM_Guides {
 	 * @return array
 	 */
 	public static function sitemap_terms( $args, $tax ) {
-		if ( in_array( $tax, array( self::TAX, 'category' ), true ) ) {
+		if ( self::TAX === $tax ) {
 			$args['exclude'] = array_merge( isset( $args['exclude'] ) ? (array) $args['exclude'] : array(), array_map( 'intval', array_keys( self::protected_terms() ) ) );
 		}
 		return $args;
@@ -554,7 +585,7 @@ class LLM_Guides {
 	}
 
 	/**
-	 * [llm_guides category="slug"]: the guides the visitor may read, with a locked badge for the rest (titles only).
+	 * [llm_guides category="slug"]: every guide, with a "License needed" mark on the ones the visitor can't open (titles only).
 	 *
 	 * @param array $atts Attributes.
 	 * @return string
@@ -572,10 +603,11 @@ class LLM_Guides {
 		if ( '' !== $atts['category'] ) {
 			$args['tax_query'] = array( array( 'taxonomy' => self::TAX, 'field' => 'slug', 'terms' => sanitize_title( $atts['category'] ) ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		}
-		$args['suppress_filters'] = false;
+		$args['suppress_filters'] = true;
 		$out = '';
 		foreach ( get_posts( $args ) as $p ) {
-			$out .= '<li><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( get_the_title( $p ) ) . '</a></li>';
+			$lock = self::can_read( $p->ID ) ? '' : ' <span class="llm-guide-lock">&#128274; ' . esc_html__( 'License needed', self::TD ) . '</span>';
+			$out .= '<li><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( $p->post_title ) . '</a>' . $lock . '</li>';
 		}
 		return '' !== $out ? '<ul class="llm-guides">' . $out . '</ul>' : '<p>' . esc_html__( 'No guides for your account yet.', self::TD ) . '</p>';
 	}

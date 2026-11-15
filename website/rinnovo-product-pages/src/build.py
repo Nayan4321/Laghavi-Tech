@@ -46,7 +46,7 @@ for slug, p in PROS.items():
     long += '\n\t\t\t<h3>Requirements</h3>\n\t\t\t<p>WordPress 6.0 or later, WooCommerce 8.0 or later, PHP 7.4 or later, and the free Rinnovo Subscriptions &amp; Licenses plugin. Works on its own or next to the other Rinnovo Pro plugins.</p>'
     short = ''.join(f'\t\t\t<p>{e(t)}</p>\n' for t in p['short_desc']).rstrip('\n')
     img = images.get(slug + '.html', {}).get('imgs', [])
-    img_rows = ''.join(f'\t\t\t\t<tr><td>{n}</td><td><code>{f}</code><br />Alt: {a}</td></tr>\n' for n, f, a in img)
+    img_rows = ''.join(f'\t\t\t\t<tr><td>{n}</td><td><img src="previews/{slug}/{f[:-4]}.jpg" alt="" width="120" height="120" style="float:right;border-radius:8px;margin-left:12px" /><code>{f}</code><br />Alt: {a}</td></tr>\n' for n, f, a in img)
     seo_title, focus, meta = p['seo']
     page = head.replace('{title}', e(p['short']) + ' product page') + '<body>\n<div class="wrap">\n'
     page += f'\t<h1>{e(name)} – product page</h1>\n\t<p class="lead">For <code>laghavi.site/product/{slug}/</code>. Click <b>Copy</b>, then paste into the WooCommerce editor\'s <b>Visual</b> tab (not the Text/Code tab). Headings and lists keep their formatting.</p>\n\n'
@@ -75,7 +75,7 @@ rows = ''.join(f'<tr><td><a href="{s}.html">{e(p["name"])}</a></td><td>{e(p["bra
 index = f'''<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>Rinnovo product pages</title>
 <style>body{{margin:0;background:#eef0f4;color:#1d1f23;font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}}.wrap{{max-width:980px;margin:0 auto;padding:28px 16px 60px}}table{{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}}th,td{{padding:10px 14px;border-top:1px solid #dfe2e8;text-align:left}}th{{background:#f6f7f9;font-size:13px;text-transform:uppercase;letter-spacing:.05em}}a{{color:#ea580c}}</style></head>
-<body><div class="wrap"><h1>Rinnovo product pages</h1><p>Seven Pro plugins, each an equal branch of the Rinnovo family and each sold on its own. One WooCommerce product per plugin: open a page, copy each part into the product, and add the images from the matching folder of <code>rinnovo-product-images.zip</code>. Each product is a variable product with the attribute "Sites": 1 site, 5 sites, Unlimited sites, billed yearly.</p>
+<body><div class="wrap"><h1>Rinnovo product pages</h1><p>Seven Pro plugins, each an equal branch of the Rinnovo family and each sold on its own. One WooCommerce product per plugin: open a page, copy each part into the product, and add the images from the matching folder of <code>rinnovo-product-images-2026.zip</code>. Each product is a variable product with the attribute "Sites": 1 site, 5 sites, Unlimited sites, billed yearly.</p>
 <table><tr><th>Plugin</th><th>Branch</th><th>1 site</th><th>5 sites</th><th>Unlimited</th></tr>
 {rows}</table><p>Every Pro download is a package with two zips: the Pro plugin and the Rinnovo Box Builder. Upload the plugin zip as "Plugin zip" (automatic updates) and the package as "Download package" on the product's License tab.</p><p>The landing page (<code>website/rinnovo-subscriptions-licenses.html</code>) links to each product at <code>laghavi.site/product/&lt;slug&gt;/</code>.</p></div></body></html>
 '''

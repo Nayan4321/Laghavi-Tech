@@ -42,8 +42,9 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 == Changelog ==
 
 = 1.2.0 =
-* Guides: a Guides area (and blog categories) where a category is connected to licensed products. Its posts are shown only to logged-in customers with an active license; others see an access-denied box with log-in and buy links. Protected posts are left out of archives, search, feeds, the REST API and sitemaps, marked noindex and not cached.
-* [llm_guides] shortcode: the guides the visitor may read.
+* Guides: a Guides post type where a guide category is connected to licensed products. Its posts are shown only to logged-in customers with an active license; others see an access-denied box with log-in and buy links. Protected posts are left out of archives, search, feeds, the REST API and sitemaps, marked noindex and not cached.
+* Guides are their own post type at domain.com/guides/page-name/; domain.com/guides/ lists every guide (locked ones by title only, marked "License needed"). Blog posts and categories are not touched.
+* [llm_guides] shortcode: the list of guides anywhere.
 * Optional download package per product (for example a plugin zip plus a companion plugin zip) for My Account downloads; automatic updates keep using the plugin zip.
 
 = 1.1.2 =

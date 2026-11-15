@@ -235,3 +235,40 @@ sections=[
    ['Boxes Pro', 'Delivery schedules, shipping, prepaid, gifts, swaps and packing']]),
  'Bundles Pro never needs Boxes Pro (digital bundles, simple combinations), and Boxes Pro handles its own fixed boxes without Bundles Pro.']),
 ]))
+
+G.append(dict(slug='sarala-guide', title='Sarala Login Page guide', product='Sarala Login Page and Sarala Login Page Pro', family='Sarala',
+intro='One-click social login and a safer login page for WordPress and WooCommerce. Everything is set up in Sarala Login Page › Settings. The free plugin is on WordPress.org; Pro adds providers, button styles, CAPTCHA, redirects, the login widget and super admin protection.',
+sections=[
+('Install and first steps', [
+ ('ol', ['Install Sarala Login Page from Plugins › Add New (search "Sarala Login Page") and activate it.', 'For Pro: upload sarala-login-page-pro.zip in Plugins › Add New › Upload, activate it and enter your license key on its license screen.', 'Open Sarala Login Page › Settings and turn on the providers you want.']),
+ 'New social sign-ups become Customers when WooCommerce is active, otherwise they get the default role from Settings › General.']),
+('Connect a login provider', [
+ 'Each provider needs an app in its developer console. In Sarala Login Page › Settings, open the provider: it shows the exact Redirect URL to paste into that app.',
+ ('table', ['Provider', 'Where to create the app', 'You paste into Sarala'], [
+   ['Google', 'Google Cloud Console › APIs & Services › Credentials › OAuth client ID (Web)', 'Client ID, Client secret'],
+   ['Facebook', 'Meta for Developers › My Apps › Facebook Login', 'App ID, App secret'],
+   ['Apple', 'Apple Developer › Identifiers (Services ID) and Keys (Sign in with Apple)', 'Services ID, Team ID, Key ID, private key'],
+   ['Microsoft', 'Azure portal › App registrations', 'Application (client) ID, Client secret'],
+   ['LinkedIn, X, GitHub, Discord, Yahoo, Reddit', 'The provider\'s developer portal', 'Client ID, Client secret']]),
+ 'Reddit shares no email address, so people first connect Reddit to their account from their profile and then log in with it.']),
+('Where the buttons appear', [
+ ('ul', ['WordPress login and registration pages.', 'WooCommerce My Account login and registration forms.', 'Top of the WooCommerce checkout: guests sign up or log in and return to checkout with their cart.', 'Anywhere with the [sarala_login_page] shortcode (any theme or page builder).', 'Pro: the login widget (Appearance › Widgets or [sarala_login_widget]) with AJAX login.']),
+ 'Existing users with the same verified email are logged straight into their account, which is connected automatically. Users connect and disconnect accounts in their profile or My Account › Account details.']),
+('Protect the login page', [
+ ('table', ['Setting', 'What it does'], [
+   ['Limit login attempts', 'After 5 failed logins in 15 minutes (your numbers) the IP is locked out for 30 minutes; add your own IPs to "never lock out".'],
+   ['Custom login URL', 'Hides wp-login.php and wp-admin from bots.'],
+   ['Security question', 'A math question on login and registration forms, checked on the server.'],
+   ['Force password reset', 'Passwords expire after the days you choose, for all or chosen roles.'],
+   ['Failed logins', 'Every failed attempt with IP, device and location; unlock addresses here.']])]),
+('Pro: button styles and providers', [
+ 'Pick icon tiles, outline boxes or brand pills, the corner shape, and each provider\'s colours or your brand colours, with a live preview. Pro adds Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus.']),
+('Pro: CAPTCHA with a backup', [
+ 'Choose Cloudflare Turnstile, reCAPTCHA v2 or hCaptcha. If the CAPTCHA can\'t load, the security question appears instead, so nobody is locked out. Secrets are stored encrypted.']),
+('Pro: redirects and the login widget', [
+ 'Set where each role goes after logging in and out (admins to the dashboard, customers to My Account), with {user_login} and {user_id} placeholders, and block addresses nobody should ever be sent to. The login widget logs in without a page reload and shows your own HTML for logged-in users.']),
+('Pro: super admin', [
+ 'The admin who activates Pro becomes the super admin. Only they can add administrators, and other administrators can\'t edit or demote them or deactivate Sarala. Optionally only the super admin installs plugins and themes. Recovery: define( \'SLPP_OWNER\', 1 ); in wp-config.php.']),
+('Recommended plugins', [
+ 'Sarala Login Page › Settings shows a "Works great with" box: Rinnovo Subscriptions & Licenses (sell subscriptions and licenses with WooCommerce) and Performance Insight for WooCommerce (cookieless analytics and SEO). Click Install to add them from WordPress.org, or Not now to hide the suggestion.']),
+]))
