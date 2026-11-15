@@ -323,7 +323,7 @@ PROS['rinnovo-bundles-variable-subscriptions-pro'] = dict(
 SHARED = [
     '<strong>Invoices</strong> on every order and renewal (India GST, UAE VAT, EU/UK VAT with reverse charge, credit notes for refunds) — set up once under WooCommerce › Invoices for all your Rinnovo plugins.',
     '<strong>Page builder widgets</strong> for Elementor and the block editor, plus shortcodes for Divi, Beaver Builder, Bricks and others.',
-    '<strong>Insights data</strong> for the WooCommerce performance insights dashboard: MRR, churn, renewals and this plugin\'s own numbers.',
+    '<strong>Insights data</strong> for the Performance Insight for WooCommerce dashboard: MRR, churn, renewals and this plugin\'s own numbers.',
     '<strong>Customer guide:</strong> step-by-step guides in your account while your license is active.',
     '<strong>The free Rinnovo Subscriptions & Licenses plugin</strong> underneath: subscriptions on any product, Stripe and saved-card renewals, "Pay now" emails for every other payment method, and a better My Account.',
 ]
@@ -331,5 +331,5 @@ SHARED = [
 WORKS_WITH = [
     ('Sarala Login Page', 'designed log-in, sign-up and account pages with Google, Apple and other social log-ins.'),
     ('Vacanam Language Switcher', 'a multilingual store, with emails and invoices in the customer\'s language.'),
-    ('WooCommerce performance insights', 'one dashboard for the store and every Rinnovo plugin, with what to follow up.'),
+    ('Performance Insight for WooCommerce', 'cookieless analytics and SEO, with every Rinnovo plugin\'s numbers and what to follow up.'),
 ]

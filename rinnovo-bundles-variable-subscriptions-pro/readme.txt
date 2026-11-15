@@ -66,7 +66,7 @@ For subscription boxes, "build your own" bundles and plans sold as variations (B
 
 * Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
 * Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
-* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+* Performance Insight for WooCommerce: reads this plugin's numbers through rinnovo_insights().
 
 == Changelog ==
 

@@ -12,6 +12,7 @@ delete_option( 'saralopa_credit_asked' );
 delete_option( 'saralopa_log_db_version' );
 delete_option( 'saralopa_migrated' );
 delete_option( 'saralopa_lockouts' );
+delete_metadata( 'user', 0, 'saralopa_dismissed_recommendations', '', true );
 wp_clear_scheduled_hook( 'saralopa_prune_log' );
 
 global $wpdb;

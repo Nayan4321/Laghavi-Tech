@@ -4,7 +4,7 @@ Tags: social login, google login, limit login attempts, hide login, woocommerce 
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,9 @@ The plugin stores the visitor's provider account ID and email on their WordPress
 5. Connected accounts on the user's profile.
 
 == Changelog ==
+
+= 1.2.1 =
+* A "Works great with" box on Sarala's screens suggests Rinnovo Subscriptions & Licenses and Performance Insight for WooCommerce, with Install / Activate buttons that use WordPress's own installer. Only for admins who can install plugins, only for plugins not active yet, and each suggestion can be dismissed.
 
 = 1.2.0 =
 * New: log in and sign up with GitHub, Discord and Yahoo, and log in with Reddit.

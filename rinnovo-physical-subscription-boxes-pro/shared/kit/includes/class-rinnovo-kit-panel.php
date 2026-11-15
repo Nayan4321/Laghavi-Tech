@@ -1,7 +1,7 @@
 <?php
 /**
  * "Works great with" panel on every Rinnovo Pro settings screen: recommends Sarala Login Page, Vacanam Language
- * Switcher and the WooCommerce performance insights dashboard, only when they are not installed. Dismissible per
+ * Switcher and Performance Insight for WooCommerce, only when they are not installed. Dismissible per
  * user (per plugin).
  *
  * @package RinnovoKit
@@ -36,7 +36,7 @@ class RINNOVO_Kit_Panel {
 		$installed = array_keys( (array) get_plugins() );
 		$has       = static function ( $slugs ) use ( $installed ) {
 			foreach ( $installed as $file ) {
-				if ( in_array( dirname( $file ), $slugs, true ) ) {
+				if ( in_array( dirname( $file ), $slugs, true ) && is_plugin_active( $file ) ) {
 					return true;
 				}
 			}
@@ -47,6 +47,7 @@ class RINNOVO_Kit_Panel {
 				'name'      => 'Sarala Login Page',
 				'text'      => __( 'Designed log-in, sign-up and account pages with Google, Apple and other social log-ins: members, students and clients sign in in one click.', 'rinnovo-kit' ),
 				'url'       => 'https://laghavi.site/product/sarala-login-page-pro/',
+				'wporg'     => 'sarala-login-page',
 				'installed' => defined( 'SARALOPA_VERSION' ) || $has( array( 'sarala-login-page', 'sarala-login-page-pro' ) ),
 			),
 			'vacanam'  => array(
@@ -56,15 +57,16 @@ class RINNOVO_Kit_Panel {
 				'installed' => defined( 'VACANAM_VERSION' ) || $has( array( 'vacanam-language-switcher', 'vacanam-language-switcher-pro' ) ),
 			),
 			'insights' => array(
-				'name'      => __( 'WooCommerce performance insights', 'rinnovo-kit' ),
-				'text'      => __( 'One dashboard for your store and every Rinnovo plugin: MRR, churn, renewals, trials, box items, classes, contracts and what to follow up.', 'rinnovo-kit' ),
-				'url'       => 'https://laghavi.site/shop/',
+				'name'      => 'Performance Insight for WooCommerce',
+				'text'      => __( 'Cookieless analytics and SEO for your store, with every Rinnovo plugin\'s numbers: MRR, churn, renewals and what to follow up.', 'rinnovo-kit' ),
+				'url'       => 'https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/',
+				'wporg'     => 'laghavi-performance-insight-for-woocommerce',
 				/**
-				 * Whether the insights dashboard plugin is installed (that plugin returns true).
+				 * Whether the insights dashboard plugin is installed.
 				 *
 				 * @param bool $installed Installed.
 				 */
-				'installed' => (bool) apply_filters( 'rinnovo_insights_dashboard_installed', false ),
+				'installed' => (bool) apply_filters( 'rinnovo_insights_dashboard_installed', $has( array( 'laghavi-performance-insight-for-woocommerce' ) ) ),
 			),
 		);
 		/**
@@ -118,7 +120,19 @@ class RINNOVO_Kit_Panel {
 				continue;
 			}
 			$dismiss = $admin ? ' <a style="color:#646970;text-decoration:none" href="' . esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=rinnovo_kit_dismiss&plugin=' . rawurlencode( $key ) ), 'rinnovo_kit_dismiss' ) ) . '">' . esc_html__( 'Not now', 'rinnovo-kit' ) . '</a>' : '';
-			$cards  .= '<div style="flex:1 1 220px;border:1px solid #dcdcde;border-radius:8px;padding:12px 14px;background:#fff"><strong>' . esc_html( $p['name'] ) . '</strong><p style="margin:6px 0 10px">' . esc_html( $p['text'] ) . '</p><a class="button" href="' . esc_url( $p['url'] ) . '" target="_blank" rel="noopener">' . esc_html__( 'Learn more', 'rinnovo-kit' ) . '</a>' . $dismiss . '</div>';
+			$button  = '<a class="button" href="' . esc_url( $p['url'] ) . '" target="_blank" rel="noopener">' . esc_html__( 'Learn more', 'rinnovo-kit' ) . '</a>';
+			if ( $admin && ! empty( $p['wporg'] ) && current_user_can( 'install_plugins' ) ) {
+				$file = '';
+				foreach ( array_keys( (array) get_plugins() ) as $f ) {
+					if ( dirname( $f ) === $p['wporg'] ) {
+						$file = $f;
+					}
+				}
+				$button = '' !== $file
+					? '<a class="button button-primary" href="' . esc_url( wp_nonce_url( self_admin_url( 'plugins.php?action=activate&plugin=' . rawurlencode( $file ) ), 'activate-plugin_' . $file ) ) . '">' . esc_html__( 'Activate', 'rinnovo-kit' ) . '</a>'
+					: '<a class="button button-primary" href="' . esc_url( wp_nonce_url( self_admin_url( 'update.php?action=install-plugin&plugin=' . rawurlencode( $p['wporg'] ) ), 'install-plugin_' . $p['wporg'] ) ) . '">' . esc_html__( 'Install now', 'rinnovo-kit' ) . '</a>';
+			}
+			$cards  .= '<div style="flex:1 1 220px;border:1px solid #dcdcde;border-radius:8px;padding:12px 14px;background:#fff"><strong>' . esc_html( $p['name'] ) . '</strong><p style="margin:6px 0 10px">' . esc_html( $p['text'] ) . '</p>' . $button . $dismiss . '</div>';
 		}
 		if ( '' === $cards ) {
 			return '';

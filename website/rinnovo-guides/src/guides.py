@@ -25,7 +25,7 @@ sections=[
  ('ol', ['Elementor: select the section, container, column or widget (a tab or heading too) › Advanced › Members only (Rinnovo). Choose Show to (logged in, any member, a group, a tier or higher, non-members, expired members, course owners, a download plan) and an optional "Show instead" teaser.', 'Block editor: select any block › the Members only panel in the sidebar › the same choices.', 'Click Update. Hidden parts are removed on the server, so they never reach the visitor\'s browser, and members-only pages are not served from the page cache.']),
  'Screenshots of both screens are on the guide page in your account.']),
 ('Insights for your dashboard', [
- 'Each Pro shares read-only numbers with the WooCommerce performance insights dashboard: MRR and ARR, churn, renewals, trials and the Pro\'s own figures (boxes, members, plays, contract quotas, class utilisation, bundles), plus a list of things to follow up. Only shop managers can see them. Developers can read the same data with rinnovo_insights( $section ) or GET /wp-json/rinnovo/v1/insights?section=sections.']),
+ 'Each Pro shares read-only numbers with the Performance Insight for WooCommerce dashboard: MRR and ARR, churn, renewals, trials and the Pro\'s own figures (boxes, members, plays, contract quotas, class utilisation, bundles), plus a list of things to follow up. Only shop managers can see them. Developers can read the same data with rinnovo_insights( $section ) or GET /wp-json/rinnovo/v1/insights?section=sections.']),
 ]))
 
 G.append(dict(slug='rinnovo-guide-subscriptions-licenses-pro', title='Rinnovo Subscriptions & Licenses Pro guide', product='Rinnovo Subscriptions & Licenses Pro',

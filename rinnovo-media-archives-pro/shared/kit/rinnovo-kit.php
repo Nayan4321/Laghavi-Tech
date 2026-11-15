@@ -15,7 +15,7 @@
 defined( 'ABSPATH' ) || exit;
 
 // This copy's version: raise it whenever anything in this folder changes.
-$rinnovo_kit_copy = '1.0.0';
+$rinnovo_kit_copy = '1.0.1';
 
 if ( ! isset( $GLOBALS['rinnovo_kit_copies'] ) || ! is_array( $GLOBALS['rinnovo_kit_copies'] ) ) {
 	$GLOBALS['rinnovo_kit_copies'] = array();
