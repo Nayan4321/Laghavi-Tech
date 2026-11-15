@@ -72,25 +72,26 @@ def switcher(cur):
         s += f'<optgroup label="{e(fam)}">' + ''.join(f'<option value="{g["slug"]}.html"{" selected" if g["slug"] == cur else ""}>{e(g["title"])}</option>' for g in items) + '</optgroup>'
     return s + '</select>'
 
-for g in G:
-    fam = g.get('family', 'Rinnovo')
-    ids = [slugify(h) for h, _ in g['sections']]
-    toc = '<nav class="toc" aria-label="In this guide"><p>In this guide</p><ol>' + ''.join(f'<li><a href="#{i}">{e(h)}</a></li>' for i, (h, _) in zip(ids, g['sections'])) + '</ol></nav>'
-    body = f'<p class="kicker">{e(g["product"])}</p><h1>{e(g["title"])}</h1><p class="intro">{e(g["intro"])}</p>'
-    for n, (i, (h, blocks)) in enumerate(zip(ids, g['sections']), 1):
-        body += f'<section id="{i}"><h2><small>{n}</small>{e(h)}</h2>' + ''.join(block(b) for b in blocks) + '<a class="top" href="#top">↑ Back to top</a></section>'
-    body += '<div class="works"><b>Works great with</b><ul>' + ''.join(f'<li><a href="{u}">{e(n)}</a>: {e(t)}</li>' for n, u, t in WORKS[fam]) + '</ul></div>'
-    page = f'''<!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{e(g["title"])}</title><style>{CSS}</style></head>
-<body id="top"><header class="bar"><div class="bar__in"><b>Laghavi <span>guides</span></b><label for="guide-switch">Guide for {switcher(g["slug"])}</label></div></header>
-<div class="layout">{toc}<main>{body}</main></div>
-{JS}
-</body></html>
-'''
-    open(os.path.join(out, g['slug'] + '.html'), 'w').write(page)
-# Start page = first guide.
-idx = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta http-equiv="refresh" content="0; url=rinnovo-guide-shared.html" /><title>Guides</title></head><body><a href="rinnovo-guide-shared.html">Open the guides</a></body></html>\n'
-open(os.path.join(out, 'index.html'), 'w').write(idx)
-if os.path.exists(os.path.join(out, 'all-guides.html')):
-    os.remove(os.path.join(out, 'all-guides.html'))
-print('built', len(G))
+if __name__ == '__main__':
+    for g in G:
+        fam = g.get('family', 'Rinnovo')
+        ids = [slugify(h) for h, _ in g['sections']]
+        toc = '<nav class="toc" aria-label="In this guide"><p>In this guide</p><ol>' + ''.join(f'<li><a href="#{i}">{e(h)}</a></li>' for i, (h, _) in zip(ids, g['sections'])) + '</ol></nav>'
+        body = f'<p class="kicker">{e(g["product"])}</p><h1>{e(g["title"])}</h1><p class="intro">{e(g["intro"])}</p>'
+        for n, (i, (h, blocks)) in enumerate(zip(ids, g['sections']), 1):
+            body += f'<section id="{i}"><h2><small>{n}</small>{e(h)}</h2>' + ''.join(block(b) for b in blocks) + '<a class="top" href="#top">↑ Back to top</a></section>'
+        body += '<div class="works"><b>Works great with</b><ul>' + ''.join(f'<li><a href="{u}">{e(n)}</a>: {e(t)}</li>' for n, u, t in WORKS[fam]) + '</ul></div>'
+        page = f'''<!DOCTYPE html>
+    <html lang="en"><head><meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><title>{e(g["title"])}</title><style>{CSS}</style></head>
+    <body id="top"><header class="bar"><div class="bar__in"><b>Laghavi <span>guides</span></b><label for="guide-switch">Guide for {switcher(g["slug"])}</label></div></header>
+    <div class="layout">{toc}<main>{body}</main></div>
+    {JS}
+    </body></html>
+    '''
+        open(os.path.join(out, g['slug'] + '.html'), 'w').write(page)
+    # Start page = first guide.
+    idx = '<!DOCTYPE html><html lang="en"><head><meta charset="utf-8" /><meta http-equiv="refresh" content="0; url=rinnovo-guide-shared.html" /><title>Guides</title></head><body><a href="rinnovo-guide-shared.html">Open the guides</a></body></html>\n'
+    open(os.path.join(out, 'index.html'), 'w').write(idx)
+    if os.path.exists(os.path.join(out, 'all-guides.html')):
+        os.remove(os.path.join(out, 'all-guides.html'))
+    print('built', len(G))

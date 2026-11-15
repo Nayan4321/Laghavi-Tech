@@ -1,0 +1,79 @@
+<!--
+  Rinnovo Boxes Pro guide – Elementor HTML widget for laghavi.site/guides/rinnovo-boxes-pro/
+  Guides › Add guide (title "Rinnovo Boxes Pro guide", slug "rinnovo-boxes-pro", guide category "Rinnovo Boxes Pro guide") › Edit with Elementor.
+  Add a full-width container with no padding, drop in an "HTML" widget and paste everything in this file.
+-->
+<style>
+#lg-guide{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#ea580c;--brand2:#db2777;--navy:#140f3a;color:var(--ink);font-family:inherit;line-height:1.65;max-width:1180px;margin:0 auto;padding:24px 16px 56px;box-sizing:border-box}
+#lg-guide *,#lg-guide *::before,#lg-guide *::after{box-sizing:border-box}
+#lg-guide h1,#lg-guide h2,#lg-guide h3,#lg-guide p{margin:0}
+#lg-guide a{text-decoration:none;box-shadow:none;border-bottom:0}
+#lg-guide .lg-hero{border-radius:22px;padding:clamp(24px,4vw,40px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(219,39,119,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(234,88,12,.4),transparent 60%),linear-gradient(135deg,#140f3a,#24185a)}
+#lg-guide .lg-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fed7aa}
+#lg-guide .lg-hero h1{font-size:clamp(28px,4.4vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin-top:14px;color:#fff}
+#lg-guide .lg-hero p{color:#d6d9f5;margin-top:12px;font-size:16.5px;max-width:760px}
+#lg-guide .lg-switch{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}
+#lg-guide .lg-switch label{font-size:14px;font-weight:600;color:#fff}
+#lg-guide .lg-switch select{flex:1 1 260px;min-width:0;max-width:460px;padding:10px 12px;border-radius:10px;border:0;font:600 15px/1.2 inherit;color:#0f172a;background:#fff;cursor:pointer}
+#lg-guide .lg-switch a{color:#fdba74;font-weight:700;font-size:14px}
+#lg-guide .lg-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start;margin-top:26px}
+#lg-guide .lg-toc{position:sticky;top:100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 10px 12px;max-height:calc(100vh - 120px);overflow:auto}
+#lg-guide .lg-toc p{margin:0 10px 8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+#lg-guide .lg-toc ol{list-style:none;margin:0;padding:0;counter-reset:lg}
+#lg-guide .lg-toc li{margin:0;padding:0}
+#lg-guide .lg-toc li::marker{content:none}
+#lg-guide .lg-toc a{display:flex;gap:10px;padding:8px 10px;border-radius:10px;color:#374151;font-size:14.5px;line-height:1.35;transition:background .15s,color .15s}
+#lg-guide .lg-toc a::before{counter-increment:lg;content:counter(lg);flex:none;width:22px;height:22px;border-radius:50%;background:#f3f4f6;color:var(--muted);font-size:12px;font-weight:700;line-height:22px;text-align:center}
+#lg-guide .lg-toc a:hover,#lg-guide .lg-toc a.is-on{background:#fff7ed;color:#c2410c}
+#lg-guide .lg-toc a.is-on{font-weight:700}
+#lg-guide .lg-toc a.is-on::before{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+#lg-guide .lg-body{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,34px);min-width:0}
+#lg-guide .lg-sec{scroll-margin-top:100px}
+#lg-guide .lg-sec+.lg-sec{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+#lg-guide .lg-sec h2{display:flex;gap:12px;align-items:center;font-size:clamp(20px,2.4vw,24px);font-weight:800;letter-spacing:-.01em;color:var(--ink);font-family:inherit;text-transform:none;line-height:1.25;padding:0;border:0;background:none}
+#lg-guide .lg-sec h2 span{flex:none;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;display:grid;place-items:center}
+#lg-guide .lg-sec p{margin:12px 0 0;color:#374151;font-size:16px}
+#lg-guide .lg-sec ul,#lg-guide .lg-sec ol{margin:12px 0 0;padding-left:22px;color:#374151;font-size:16px}
+#lg-guide .lg-sec li{margin:6px 0}
+#lg-guide .lg-sec ol.steps{list-style:none;padding:0;counter-reset:st}
+#lg-guide .lg-sec ol.steps li{position:relative;padding:10px 12px 10px 48px;background:var(--soft);border-radius:12px;margin:8px 0}
+#lg-guide .lg-sec ol.steps li::before{counter-increment:st;content:counter(st);position:absolute;left:12px;top:10px;width:24px;height:24px;border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+#lg-guide .lg-table{margin-top:14px;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+#lg-guide table{width:100%;border-collapse:collapse;font-size:15px;margin:0;border:0;background:#fff}
+#lg-guide th,#lg-guide td{padding:10px 12px;text-align:left;vertical-align:top;border:0;border-top:1px solid var(--line);color:#374151;background:transparent}
+#lg-guide tr:first-child th{border-top:0;background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#lg-guide td:first-child{font-weight:600;color:var(--ink)}
+#lg-guide .lg-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--muted)}
+#lg-guide .lg-works{margin-top:30px;padding:18px 20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px}
+#lg-guide .lg-works b{font-size:15px;color:var(--ink)}
+#lg-guide .lg-works ul{margin:8px 0 0;padding-left:20px;color:#374151}
+#lg-guide .lg-works a{color:#c2410c;font-weight:600}
+#lg-guide.lg-anim .lg-sec{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+#lg-guide.lg-anim .lg-sec.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){#lg-guide *{transition:none!important}#lg-guide.lg-anim .lg-sec{opacity:1;transform:none}}
+@media (max-width:900px){#lg-guide .lg-layout{grid-template-columns:1fr}#lg-guide .lg-toc{position:static;max-height:none}}
+</style>
+<div id="lg-guide">
+  <header class="lg-hero">
+    <span class="lg-badge">Rinnovo Physical Subscription Boxes &amp; Goods Pro</span>
+    <h1>Rinnovo Boxes Pro guide</h1>
+    <p>Subscription boxes, subscribe &amp; save and build-your-own boxes. Day-to-day work is in WooCommerce › Boxes (calendar, prepaid plans, packing).</p>
+    <div class="lg-switch"><label>Guide for</label><select aria-label="Open another guide"><optgroup label="Rinnovo"><option value="https://laghavi.site/guides/every-rinnovo-pro/">Every Rinnovo Pro: invoices, page builders and insights</option><option value="https://laghavi.site/guides/rinnovo-subscriptions-licenses-pro/">Rinnovo Subscriptions &amp; Licenses Pro guide</option><option value="https://laghavi.site/guides/rinnovo-boxes-pro/" selected>Rinnovo Boxes Pro guide</option><option value="https://laghavi.site/guides/rinnovo-membership-content-pro/">Rinnovo Membership Content Pro guide</option><option value="https://laghavi.site/guides/rinnovo-media-archives-pro/">Rinnovo Media Archives Pro guide</option><option value="https://laghavi.site/guides/rinnovo-service-contracts-pro/">Rinnovo Service Contracts Pro guide</option><option value="https://laghavi.site/guides/rinnovo-session-membership-pro/">Rinnovo Session Membership Pro guide</option><option value="https://laghavi.site/guides/rinnovo-bundles-variable-subscriptions-pro/">Rinnovo Bundles &amp; Variable Subscriptions Pro guide</option></optgroup><optgroup label="Sarala"><option value="https://laghavi.site/guides/sarala-login-page/">Sarala Login Page guide</option></optgroup></select><a href="https://laghavi.site/guides/">All guides →</a></div>
+  </header>
+  <div class="lg-layout">
+    <nav class="lg-toc" aria-label="In this guide"><p>In this guide</p><ol><li><a href="#pick-your-path">Pick your path</a></li><li><a href="#frequencies">Frequencies</a></li><li><a href="#box-builder">Box builder</a></li><li><a href="#swaps-and-out-of-stock-items">Swaps and out-of-stock items</a></li><li><a href="#prepaid-and-gift-plans">Prepaid and gift plans</a></li><li><a href="#shipping">Shipping</a></li><li><a href="#calendar-and-packing">Calendar and packing</a></li></ol></nav>
+    <main class="lg-body"><section class="lg-sec" id="pick-your-path"><h2><span>1</span>Pick your path</h2><p>New product › Subscription box opens a Step-by-step wizard with three paths:</p><div class="lg-table"><table><tr><th>Path</th><th>Choose it when</th><th>Example</th></tr><tr><td>Recurring subscription box</td><td>You sell one box that ships on a schedule</td><td>Monthly coffee box, snack box</td></tr><tr><td>Subscribe &amp; save</td><td>You already sell the products and want a subscription option with a discount</td><td>Pet food, shampoo, filters</td></tr><tr><td>Build-your-own box</td><td>Customers choose what goes in the box</td><td>Meal kits, lunch boxes, flower or fruit boxes</td></tr></table></div><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="frequencies"><h2><span>2</span>Frequencies</h2><p>Tick the frequencies customers may choose (every week, 2, 4 or 6 weeks, every month, 3 months…). They appear as chips on the product. The frequency chosen replaces the product's default billing interval for that subscription; customers can switch later in My Account.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="box-builder"><h2><span>3</span>Box builder</h2><div class="lg-table"><table><tr><th>Mode</th><th>How it works</th><th>Example</th></tr><tr><td>Fixed box</td><td>The same items every time, customers can swap within rules</td><td>A curated monthly snack box</td></tr><tr><td>Pick your items</td><td>Customers choose items with Items per box: min / max</td><td>Choose 6 of 20 coffees</td></tr><tr><td>Box sizes</td><td>Sizes of 6, 12 or 24 items as variations</td><td>Fruit box S / M / L</td></tr><tr><td>Rotating menu</td><td>A new menu per delivery with a selection deadline; customers who don't choose get your default picks</td><td>Weekly meal kit, school lunches</td></tr></table></div><p>Prices: the box price, or the sum of the item prices plus extra charges. Each subscription keeps a snapshot of the items, variations, quantities and prices it was sold with.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="swaps-and-out-of-stock-items"><h2><span>4</span>Swaps and out-of-stock items</h2><div class="lg-table"><table><tr><th>Setting</th><th>Options</th></tr><tr><td>Price after a swap</td><td>Charge the difference, refund it, credit it to the next box, or keep the price</td></tr><tr><td>Item out of stock at renewal</td><td>Use a substitute, skip the item (and adjust the price) or hold the box until it's back</td></tr></table></div><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="prepaid-and-gift-plans"><h2><span>5</span>Prepaid and gift plans</h2><p>Prepaid boxes: the customer pays once for 3, 6 or 12 boxes (with a Prepaid discount). Each box becomes its own order on its delivery date; WooCommerce › Boxes › Prepaid shows boxes sent and left, and the next date.</p><p>Gift plans: at checkout the buyer adds the recipient's name and email, a start date and a gift message. The recipient gets an email and their own page with the deliveries; the plan ends after the last prepaid box.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="shipping"><h2><span>6</span>Shipping</h2><p>Shipping on renewals uses your shipping zones. When a customer changes their address, the next renewal's shipping is recalculated for the new zone, and card subscriptions are updated with the new amount. With One billing day for everyone every box is billed on the same Day of the month (or Weekday) so you pack in one batch.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="calendar-and-packing"><h2><span>7</span>Calendar and packing</h2><p>WooCommerce › Boxes › Calendar shows every delivery per day; Prepaid shows prepaid and gift plans; the Packing list gives item totals (40 × Dark roast) and a CSV for your label printer.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><div class="lg-works"><b>Works great with</b><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer's language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin's numbers.</li></ul></div></main>
+  </div>
+</div>
+<script>
+(function(){var root=document.getElementById('lg-guide');if(!root)return;
+var sel=root.querySelector('.lg-switch select');if(sel)sel.addEventListener('change',function(){if(this.value)location.href=this.value;});
+var links=[].slice.call(root.querySelectorAll('.lg-toc a'));var secs=links.map(function(a){return document.getElementById(a.hash.slice(1));});
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mark(){var y=window.scrollY+140,cur=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top+window.scrollY<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);});}
+links.forEach(function(a,i){a.addEventListener('click',function(ev){if(!secs[i])return;ev.preventDefault();secs[i].scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',a.hash);});});
+root.querySelectorAll('.lg-top').forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault();root.scrollIntoView({behavior:reduce?'auto':'smooth'});});});
+window.addEventListener('scroll',mark,{passive:true});mark();
+if('IntersectionObserver' in window&&!reduce){root.classList.add('lg-anim');var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('is-in');io.unobserve(x.target);}});},{threshold:.08});secs.forEach(function(s){if(s)io.observe(s);});}
+})();
+</script>

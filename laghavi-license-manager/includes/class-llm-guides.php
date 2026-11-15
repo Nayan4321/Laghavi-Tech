@@ -86,6 +86,8 @@ class LLM_Guides {
 				'taxonomies'   => array( self::TAX ),
 			)
 		);
+		// "Edit with Elementor" on guides.
+		add_post_type_support( self::TYPE, 'elementor' );
 		register_taxonomy(
 			self::TAX,
 			array( self::TYPE ),
@@ -492,6 +494,10 @@ class LLM_Guides {
 	public static function layout( $content ) {
 		$id = get_the_ID();
 		if ( ! $id || ! is_singular( self::TYPE ) || ! in_the_loop() || ! is_main_query() || get_queried_object_id() !== $id || ! self::can_read( $id ) ) {
+			return $content;
+		}
+		// Guides designed in Elementor (or pasted guide widgets) bring their own layout.
+		if ( 'builder' === get_post_meta( $id, '_elementor_edit_mode', true ) || false !== strpos( $content, 'id="lg-guide"' ) ) {
 			return $content;
 		}
 		$toc  = array();

@@ -34,45 +34,46 @@ def body(g):
     works = '<div class="llm-works"><strong>Works great with</strong><ul>' + ''.join(f'<li><a href="{u}">{x(n)}</a>: {x(t)}</li>' for n, u, t in WORKS[fam]) + '</ul></div>'
     return out + '<!-- wp:html -->' + works + '<!-- /wp:html -->\n'
 
-now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
-terms, items = '', ''
-for i, g in enumerate(G, 1):
-    slug, cat, cslug, prods, order = MAP[g['slug']]
-    terms += f'''	<wp:term><wp:term_id>{900 + i}</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug>{cdata(cslug)}</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name>{cdata(cat)}</wp:term_name><wp:termmeta><wp:meta_key>{cdata('_llm_guide_product_slugs')}</wp:meta_key><wp:meta_value>{cdata(','.join(prods))}</wp:meta_value></wp:termmeta></wp:term>
-'''
-    items += f'''	<item>
-		<title>{cdata(g['title'])}</title>
-		<dc:creator>{cdata('admin')}</dc:creator>
-		<content:encoded>{cdata(body(g))}</content:encoded>
-		<excerpt:encoded>{cdata(g['intro'][:250])}</excerpt:encoded>
-		<wp:post_id>{9000 + i}</wp:post_id>
-		<wp:post_date>{cdata(now)}</wp:post_date>
-		<wp:post_date_gmt>{cdata(now)}</wp:post_date_gmt>
-		<wp:comment_status>{cdata('closed')}</wp:comment_status>
-		<wp:ping_status>{cdata('closed')}</wp:ping_status>
-		<wp:post_name>{cdata(slug)}</wp:post_name>
-		<wp:status>{cdata('publish')}</wp:status>
-		<wp:post_parent>0</wp:post_parent>
-		<wp:menu_order>{order}</wp:menu_order>
-		<wp:post_type>{cdata('guide')}</wp:post_type>
-		<wp:post_password>{cdata('')}</wp:post_password>
-		<wp:is_sticky>0</wp:is_sticky>
-		<category domain="guide_category" nicename="{cslug}">{cdata(cat)}</category>
-	</item>
-'''
-xml = f'''<?xml version="1.0" encoding="UTF-8" ?>
-<rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
-<channel>
-	<title>Laghavi guides</title>
-	<link>https://laghavi.site</link>
-	<description>Rinnovo and Sarala customer guides</description>
-	<language>en-US</language>
-	<wp:wxr_version>1.2</wp:wxr_version>
-	<wp:base_site_url>https://laghavi.site</wp:base_site_url>
-	<wp:base_blog_url>https://laghavi.site</wp:base_blog_url>
-{terms}{items}</channel>
-</rss>
-'''
-out = os.path.join(os.path.dirname(here), 'import', 'laghavi-guides.xml')
-open(out, 'w').write(xml)
-print('wrote', out, len(G), 'guides')
+if __name__ == '__main__':
+    now = datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+    terms, items = '', ''
+    for i, g in enumerate(G, 1):
+        slug, cat, cslug, prods, order = MAP[g['slug']]
+        terms += f'''	<wp:term><wp:term_id>{900 + i}</wp:term_id><wp:term_taxonomy>guide_category</wp:term_taxonomy><wp:term_slug>{cdata(cslug)}</wp:term_slug><wp:term_parent></wp:term_parent><wp:term_name>{cdata(cat)}</wp:term_name><wp:termmeta><wp:meta_key>{cdata('_llm_guide_product_slugs')}</wp:meta_key><wp:meta_value>{cdata(','.join(prods))}</wp:meta_value></wp:termmeta></wp:term>
+    '''
+        items += f'''	<item>
+    		<title>{cdata(g['title'])}</title>
+    		<dc:creator>{cdata('admin')}</dc:creator>
+    		<content:encoded>{cdata(body(g))}</content:encoded>
+    		<excerpt:encoded>{cdata(g['intro'][:250])}</excerpt:encoded>
+    		<wp:post_id>{9000 + i}</wp:post_id>
+    		<wp:post_date>{cdata(now)}</wp:post_date>
+    		<wp:post_date_gmt>{cdata(now)}</wp:post_date_gmt>
+    		<wp:comment_status>{cdata('closed')}</wp:comment_status>
+    		<wp:ping_status>{cdata('closed')}</wp:ping_status>
+    		<wp:post_name>{cdata(slug)}</wp:post_name>
+    		<wp:status>{cdata('publish')}</wp:status>
+    		<wp:post_parent>0</wp:post_parent>
+    		<wp:menu_order>{order}</wp:menu_order>
+    		<wp:post_type>{cdata('guide')}</wp:post_type>
+    		<wp:post_password>{cdata('')}</wp:post_password>
+    		<wp:is_sticky>0</wp:is_sticky>
+    		<category domain="guide_category" nicename="{cslug}">{cdata(cat)}</category>
+    	</item>
+    '''
+    xml = f'''<?xml version="1.0" encoding="UTF-8" ?>
+    <rss version="2.0" xmlns:excerpt="http://wordpress.org/export/1.2/excerpt/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:wfw="http://wellformedweb.org/CommentAPI/" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:wp="http://wordpress.org/export/1.2/">
+    <channel>
+    	<title>Laghavi guides</title>
+    	<link>https://laghavi.site</link>
+    	<description>Rinnovo and Sarala customer guides</description>
+    	<language>en-US</language>
+    	<wp:wxr_version>1.2</wp:wxr_version>
+    	<wp:base_site_url>https://laghavi.site</wp:base_site_url>
+    	<wp:base_blog_url>https://laghavi.site</wp:base_blog_url>
+    {terms}{items}</channel>
+    </rss>
+    '''
+    out = os.path.join(os.path.dirname(here), 'import', 'laghavi-guides.xml')
+    open(out, 'w').write(xml)
+    print('wrote', out, len(G), 'guides')

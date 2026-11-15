@@ -42,7 +42,7 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 == Changelog ==
 
 = 1.2.1 =
-* Guide pages get their own layout on the site: a guide switcher (grouped by guide category, locked guides marked), a sticky list of the guide's sections built from its headings (click to jump, current section highlighted) and styles for tables. Write guides in the normal editor; the plugin adds the rest.
+* Guide pages get their own layout on the site: a guide switcher (grouped by guide category, locked guides marked), a sticky list of the guide's sections built from its headings (click to jump, current section highlighted) and styles for tables. Write guides in the normal editor; the plugin adds the rest. Guides designed with Elementor keep their own layout, and "Edit with Elementor" is available on guides.
 * Guide categories can name their products by slug (_llm_guide_product_slugs, e.g. in an import file); they are connected to the products automatically.
 * Guides made as llm_guide in the first 1.2.0 build are moved to the guide post type.
 

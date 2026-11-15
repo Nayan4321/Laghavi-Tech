@@ -1,0 +1,79 @@
+<!--
+  Every Rinnovo Pro: invoices, page builders and insights – Elementor HTML widget for laghavi.site/guides/every-rinnovo-pro/
+  Guides › Add guide (title "Every Rinnovo Pro: invoices, page builders and insights", slug "every-rinnovo-pro", guide category "Rinnovo Pro guides") › Edit with Elementor.
+  Add a full-width container with no padding, drop in an "HTML" widget and paste everything in this file.
+-->
+<style>
+#lg-guide{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#ea580c;--brand2:#db2777;--navy:#140f3a;color:var(--ink);font-family:inherit;line-height:1.65;max-width:1180px;margin:0 auto;padding:24px 16px 56px;box-sizing:border-box}
+#lg-guide *,#lg-guide *::before,#lg-guide *::after{box-sizing:border-box}
+#lg-guide h1,#lg-guide h2,#lg-guide h3,#lg-guide p{margin:0}
+#lg-guide a{text-decoration:none;box-shadow:none;border-bottom:0}
+#lg-guide .lg-hero{border-radius:22px;padding:clamp(24px,4vw,40px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(219,39,119,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(234,88,12,.4),transparent 60%),linear-gradient(135deg,#140f3a,#24185a)}
+#lg-guide .lg-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fed7aa}
+#lg-guide .lg-hero h1{font-size:clamp(28px,4.4vw,42px);font-weight:800;letter-spacing:-.02em;line-height:1.12;margin-top:14px;color:#fff}
+#lg-guide .lg-hero p{color:#d6d9f5;margin-top:12px;font-size:16.5px;max-width:760px}
+#lg-guide .lg-switch{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-top:22px;padding-top:18px;border-top:1px solid rgba(255,255,255,.15)}
+#lg-guide .lg-switch label{font-size:14px;font-weight:600;color:#fff}
+#lg-guide .lg-switch select{flex:1 1 260px;min-width:0;max-width:460px;padding:10px 12px;border-radius:10px;border:0;font:600 15px/1.2 inherit;color:#0f172a;background:#fff;cursor:pointer}
+#lg-guide .lg-switch a{color:#fdba74;font-weight:700;font-size:14px}
+#lg-guide .lg-layout{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start;margin-top:26px}
+#lg-guide .lg-toc{position:sticky;top:100px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 10px 12px;max-height:calc(100vh - 120px);overflow:auto}
+#lg-guide .lg-toc p{margin:0 10px 8px;font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+#lg-guide .lg-toc ol{list-style:none;margin:0;padding:0;counter-reset:lg}
+#lg-guide .lg-toc li{margin:0;padding:0}
+#lg-guide .lg-toc li::marker{content:none}
+#lg-guide .lg-toc a{display:flex;gap:10px;padding:8px 10px;border-radius:10px;color:#374151;font-size:14.5px;line-height:1.35;transition:background .15s,color .15s}
+#lg-guide .lg-toc a::before{counter-increment:lg;content:counter(lg);flex:none;width:22px;height:22px;border-radius:50%;background:#f3f4f6;color:var(--muted);font-size:12px;font-weight:700;line-height:22px;text-align:center}
+#lg-guide .lg-toc a:hover,#lg-guide .lg-toc a.is-on{background:#fff7ed;color:#c2410c}
+#lg-guide .lg-toc a.is-on{font-weight:700}
+#lg-guide .lg-toc a.is-on::before{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
+#lg-guide .lg-body{background:#fff;border:1px solid var(--line);border-radius:16px;padding:clamp(18px,3vw,34px);min-width:0}
+#lg-guide .lg-sec{scroll-margin-top:100px}
+#lg-guide .lg-sec+.lg-sec{margin-top:26px;padding-top:24px;border-top:1px solid var(--line)}
+#lg-guide .lg-sec h2{display:flex;gap:12px;align-items:center;font-size:clamp(20px,2.4vw,24px);font-weight:800;letter-spacing:-.01em;color:var(--ink);font-family:inherit;text-transform:none;line-height:1.25;padding:0;border:0;background:none}
+#lg-guide .lg-sec h2 span{flex:none;width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-size:15px;display:grid;place-items:center}
+#lg-guide .lg-sec p{margin:12px 0 0;color:#374151;font-size:16px}
+#lg-guide .lg-sec ul,#lg-guide .lg-sec ol{margin:12px 0 0;padding-left:22px;color:#374151;font-size:16px}
+#lg-guide .lg-sec li{margin:6px 0}
+#lg-guide .lg-sec ol.steps{list-style:none;padding:0;counter-reset:st}
+#lg-guide .lg-sec ol.steps li{position:relative;padding:10px 12px 10px 48px;background:var(--soft);border-radius:12px;margin:8px 0}
+#lg-guide .lg-sec ol.steps li::before{counter-increment:st;content:counter(st);position:absolute;left:12px;top:10px;width:24px;height:24px;border-radius:8px;background:var(--brand);color:#fff;font-size:13px;font-weight:700;display:grid;place-items:center}
+#lg-guide .lg-table{margin-top:14px;overflow-x:auto;border:1px solid var(--line);border-radius:12px}
+#lg-guide table{width:100%;border-collapse:collapse;font-size:15px;margin:0;border:0;background:#fff}
+#lg-guide th,#lg-guide td{padding:10px 12px;text-align:left;vertical-align:top;border:0;border-top:1px solid var(--line);color:#374151;background:transparent}
+#lg-guide tr:first-child th{border-top:0;background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#lg-guide td:first-child{font-weight:600;color:var(--ink)}
+#lg-guide .lg-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--muted)}
+#lg-guide .lg-works{margin-top:30px;padding:18px 20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px}
+#lg-guide .lg-works b{font-size:15px;color:var(--ink)}
+#lg-guide .lg-works ul{margin:8px 0 0;padding-left:20px;color:#374151}
+#lg-guide .lg-works a{color:#c2410c;font-weight:600}
+#lg-guide.lg-anim .lg-sec{opacity:0;transform:translateY(16px);transition:opacity .5s ease,transform .5s ease}
+#lg-guide.lg-anim .lg-sec.is-in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){#lg-guide *{transition:none!important}#lg-guide.lg-anim .lg-sec{opacity:1;transform:none}}
+@media (max-width:900px){#lg-guide .lg-layout{grid-template-columns:1fr}#lg-guide .lg-toc{position:static;max-height:none}}
+</style>
+<div id="lg-guide">
+  <header class="lg-hero">
+    <span class="lg-badge">All Rinnovo Pro plugins</span>
+    <h1>Every Rinnovo Pro: invoices, page builders and insights</h1>
+    <p>These parts are the same in all seven Rinnovo Pro plugins. Set them up once; they keep working when you add another Pro.</p>
+    <div class="lg-switch"><label>Guide for</label><select aria-label="Open another guide"><optgroup label="Rinnovo"><option value="https://laghavi.site/guides/every-rinnovo-pro/" selected>Every Rinnovo Pro: invoices, page builders and insights</option><option value="https://laghavi.site/guides/rinnovo-subscriptions-licenses-pro/">Rinnovo Subscriptions &amp; Licenses Pro guide</option><option value="https://laghavi.site/guides/rinnovo-boxes-pro/">Rinnovo Boxes Pro guide</option><option value="https://laghavi.site/guides/rinnovo-membership-content-pro/">Rinnovo Membership Content Pro guide</option><option value="https://laghavi.site/guides/rinnovo-media-archives-pro/">Rinnovo Media Archives Pro guide</option><option value="https://laghavi.site/guides/rinnovo-service-contracts-pro/">Rinnovo Service Contracts Pro guide</option><option value="https://laghavi.site/guides/rinnovo-session-membership-pro/">Rinnovo Session Membership Pro guide</option><option value="https://laghavi.site/guides/rinnovo-bundles-variable-subscriptions-pro/">Rinnovo Bundles &amp; Variable Subscriptions Pro guide</option></optgroup><optgroup label="Sarala"><option value="https://laghavi.site/guides/sarala-login-page/">Sarala Login Page guide</option></optgroup></select><a href="https://laghavi.site/guides/">All guides →</a></div>
+  </header>
+  <div class="lg-layout">
+    <nav class="lg-toc" aria-label="In this guide"><p>In this guide</p><ol><li><a href="#what-you-install">What you install</a></li><li><a href="#invoices-set-up-once-for-all-pros">Invoices, set up once for all Pros</a></li><li><a href="#page-builders-widgets-and-members-only-sections">Page builders: widgets and members-only sections</a></li><li><a href="#insights-for-your-dashboard">Insights for your dashboard</a></li></ol></nav>
+    <main class="lg-body"><section class="lg-sec" id="what-you-install"><h2><span>1</span>What you install</h2><p>Every Pro download is a package with two zips. Unzip the package on your computer, then upload both zips in Plugins › Add New › Upload: the Pro plugin and the Rinnovo Box Builder. The free Rinnovo Subscriptions &amp; Licenses plugin from WordPress.org must be active too.</p><ol class="steps"><li>Install and activate the free Rinnovo Subscriptions &amp; Licenses plugin.</li><li>Upload and activate the Pro zip, then the Rinnovo Box Builder zip.</li><li>Open the Pro's license screen under WooCommerce, paste your license key and click Activate.</li><li>Automatic updates now arrive in Dashboard › Updates.</li></ol><p>The Box Builder has no license of its own and keeps working if a license expires. It only runs while at least one Rinnovo Pro is active.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="invoices-set-up-once-for-all-pros"><h2><span>2</span>Invoices, set up once for all Pros</h2><p>Go to WooCommerce › Invoices. Whichever Pros you use, there is one invoice engine: one invoice per order, one number sequence, one settings screen.</p><ol class="steps"><li>Company: legal name, address, logo, tax number (TRN, GSTIN or VAT number) and the label printed before it.</li><li>Numbering: prefix, digits and next number. Add {fy} to restart numbering each financial year, for example INV-{fy}-0001.</li><li>Template: pick one of three designs and a colour, then preview.</li><li>Customer details: whether business customers can, must or cannot add a company name and tax number at checkout.</li><li>Emails: attach the PDF to order emails, or add a download link.</li></ol><div class="lg-table"><table><tr><th>Where you sell</th><th>What the invoice shows</th></tr><tr><td>India (GST)</td><td>GSTIN, SAC/HSN codes per product, CGST + SGST inside your state, IGST between states, export without GST</td></tr><tr><td>UAE (VAT)</td><td>TRN, "Tax Invoice" title, VAT per line and total in AED</td></tr><tr><td>EU / UK (VAT)</td><td>VAT number, reverse charge note when it applies, VAT per rate</td></tr><tr><td>Anywhere else</td><td>A plain invoice with your company details</td></tr></table></div><p>Refunds create a credit note linked to the original invoice, for the full or the refunded amount. An issued invoice never changes: a correction is always a credit note or a corrected document that points to the original.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="page-builders-widgets-and-members-only-sections"><h2><span>3</span>Page builders: widgets and members-only sections</h2><p>Every Pro adds its widgets to the "Rinnovo" category in Elementor and in the block editor (for example Class schedule, Contract quota, Media library, Bundle builder, Plan table). In Divi, Beaver Builder, Bricks, WPBakery, Oxygen or Breakdance, paste the shortcode into a shortcode or text module.</p><p>With Membership Content Pro you can also hide or show any part of a page by membership:</p><ol class="steps"><li>Elementor: select the section, container, column or widget (a tab or heading too) › Advanced › Members only (Rinnovo). Choose Show to (logged in, any member, a group, a tier or higher, non-members, expired members, course owners, a download plan) and an optional "Show instead" teaser.</li><li>Block editor: select any block › the Members only panel in the sidebar › the same choices.</li><li>Click Update. Hidden parts are removed on the server, so they never reach the visitor's browser, and members-only pages are not served from the page cache.</li></ol><p>Screenshots of both screens are on the guide page in your account.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><section class="lg-sec" id="insights-for-your-dashboard"><h2><span>4</span>Insights for your dashboard</h2><p>Each Pro shares read-only numbers with the Performance Insight for WooCommerce dashboard: MRR and ARR, churn, renewals, trials and the Pro's own figures (boxes, members, plays, contract quotas, class utilisation, bundles), plus a list of things to follow up. Only shop managers can see them. Developers can read the same data with rinnovo_insights( $section ) or GET /wp-json/rinnovo/v1/insights?section=sections.</p><a class="lg-top" href="#lg-guide">↑ Back to top</a></section><div class="lg-works"><b>Works great with</b><ul><li><a href="https://laghavi.site/product/sarala-login-page-pro/">Sarala Login Page</a>: designed log-in, sign-up and account pages with social log-ins.</li><li><a href="https://laghavi.site/product/vacanam-language-switcher-pro/">Vacanam Language Switcher</a>: your store, emails and invoices in the customer's language.</li><li><a href="https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/">Performance Insight for WooCommerce</a>: cookieless analytics and SEO, with every Rinnovo plugin's numbers.</li></ul></div></main>
+  </div>
+</div>
+<script>
+(function(){var root=document.getElementById('lg-guide');if(!root)return;
+var sel=root.querySelector('.lg-switch select');if(sel)sel.addEventListener('change',function(){if(this.value)location.href=this.value;});
+var links=[].slice.call(root.querySelectorAll('.lg-toc a'));var secs=links.map(function(a){return document.getElementById(a.hash.slice(1));});
+var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+function mark(){var y=window.scrollY+140,cur=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top+window.scrollY<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);});}
+links.forEach(function(a,i){a.addEventListener('click',function(ev){if(!secs[i])return;ev.preventDefault();secs[i].scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});history.replaceState(null,'',a.hash);});});
+root.querySelectorAll('.lg-top').forEach(function(a){a.addEventListener('click',function(ev){ev.preventDefault();root.scrollIntoView({behavior:reduce?'auto':'smooth'});});});
+window.addEventListener('scroll',mark,{passive:true});mark();
+if('IntersectionObserver' in window&&!reduce){root.classList.add('lg-anim');var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('is-in');io.unobserve(x.target);}});},{threshold:.08});secs.forEach(function(s){if(s)io.observe(s);});}
+})();
+</script>
