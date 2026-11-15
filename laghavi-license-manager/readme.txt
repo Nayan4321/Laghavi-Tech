@@ -46,6 +46,7 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * Guide pages are never page-cached (LiteSpeed Cache, WP Rocket, W3TC and others are told, and their caches are emptied after the update and when guide rules change).
 * Guides › Settings lists every guide category and who can read it; guide screens warn about categories with no product connected.
 * Product slugs on guide categories (from an import file) are connected on every admin page load.
+* domain.com/guides/ has its own full-width page (no theme title banner, no widget needed): a header and every guide as a card with its status (Open, Your license, Log in to read, License needed) and a button to read it, log in or get a license. Guide categories (domain.com/guides/topic/…) use the same page.
 
 = 1.2.1 =
 * Guide pages get their own layout on the site: a guide switcher (grouped by guide category, locked guides marked), a sticky list of the guide's sections built from its headings (click to jump, current section highlighted) and styles for tables. Write guides in the normal editor; the plugin adds the rest. Guides designed with Elementor keep their own layout, are shown full width without the theme title banner (Nioland and similar themes), and "Edit with Elementor" is available on guides.

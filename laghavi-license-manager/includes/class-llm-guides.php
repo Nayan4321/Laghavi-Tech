@@ -48,6 +48,7 @@ class LLM_Guides {
 		add_action( 'admin_notices', array( __CLASS__, 'unconnected_notice' ) );
 		add_action( 'save_post_' . self::TYPE, array( __CLASS__, 'purge_caches' ) );
 		add_filter( 'wp_sitemaps_post_types', array( __CLASS__, 'sitemap_types' ) );
+		add_filter( 'template_include', array( __CLASS__, 'archive_template' ), 99 );
 		add_action( 'import_end', array( __CLASS__, 'resolve_product_slugs' ) );
 		// Page builders (Elementor and others) put their own layout in later: lock again at the very end.
 		add_filter( 'the_content', array( __CLASS__, 'content' ), PHP_INT_MAX );
@@ -490,6 +491,12 @@ class LLM_Guides {
 		if ( ! is_singular( self::TYPE ) && ! is_post_type_archive( self::TYPE ) && ! is_tax( self::TAX ) ) {
 			return;
 		}
+		if ( is_post_type_archive( self::TYPE ) || is_tax( self::TAX ) ) {
+			wp_register_style( 'llm-guides-full', false, array(), LLM_VERSION );
+			wp_enqueue_style( 'llm-guides-full' );
+			wp_add_inline_style( 'llm-guides-full', str_replace( 'body.single-guide.elementor-page', 'body.llm-guides-archive', self::full_width_css() ) . self::archive_css() );
+			return;
+		}
 		if ( is_singular( self::TYPE ) && 'builder' === get_post_meta( get_queried_object_id(), '_elementor_edit_mode', true ) ) {
 			// Guides designed in Elementor: themes that print their own title banner and a boxed content area
 			// around every post (Nioland and similar) are made full width, without the banner.
@@ -604,6 +611,130 @@ class LLM_Guides {
 			$out .= '</optgroup>';
 		}
 		return $out . '</select></label><a href="' . esc_url( get_post_type_archive_link( self::TYPE ) ) . '">' . esc_html__( 'All guides', self::TD ) . '</a></div>';
+	}
+
+	/**
+	 * Our own list for domain.com/guides/ and guide categories.
+	 *
+	 * @param string $template Template.
+	 * @return string
+	 */
+	public static function archive_template( $template ) {
+		if ( is_post_type_archive( self::TYPE ) || is_tax( self::TAX ) ) {
+			add_filter(
+				'body_class',
+				static function ( $c ) {
+					$c[] = 'llm-guides-archive';
+					return $c;
+				}
+			);
+			return LLM_DIR . 'templates/archive-guide.php';
+		}
+		return $template;
+	}
+
+	/**
+	 * The guides list: a header, then every guide grouped by guide category, with its access status.
+	 *
+	 * @return string
+	 */
+	public static function archive_html() {
+		$term   = is_tax( self::TAX ) ? get_queried_object() : null;
+		$args   = array(
+			'post_type'        => self::TYPE,
+			'numberposts'      => 500,
+			'orderby'          => array(
+				'menu_order' => 'ASC',
+				'title'      => 'ASC',
+			),
+			'suppress_filters' => true,
+		);
+		if ( $term instanceof WP_Term ) {
+			$args['tax_query'] = array( array( 'taxonomy' => self::TAX, 'field' => 'term_id', 'terms' => $term->term_id ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
+		}
+		$groups = array();
+		foreach ( get_posts( $args ) as $g ) {
+			$terms = get_the_terms( $g, self::TAX );
+			$name  = is_array( $terms ) && $terms ? $terms[0]->name : __( 'More guides', self::TD );
+			$groups[ $name ][] = $g;
+		}
+		// One guide per category: show them all in one grid, with the category on each card.
+		if ( count( $groups ) > 1 && max( array_map( 'count', $groups ) ) < 2 ) {
+			$groups = array( '' => array_merge( ...array_values( $groups ) ) );
+		}
+		$logged = is_user_logged_in();
+		$html   = '<div id="lg-archive"><header class="lga-hero"><span class="lga-badge">' . esc_html__( 'Customer guides', self::TD ) . '</span><h1>' . esc_html( $term instanceof WP_Term ? $term->name : __( 'Guides', self::TD ) ) . '</h1><p>' . esc_html__( 'Step-by-step guides for installing, setting up and getting the most from your plugins. Log in with the account you bought with; guides for a product open while its license is active.', self::TD ) . '</p>';
+		if ( ! $logged ) {
+			$html .= '<p class="lga-cta"><a class="lga-btn" href="' . esc_url( wp_login_url( get_post_type_archive_link( self::TYPE ) ) ) . '">' . esc_html__( 'Log in to read the guides', self::TD ) . '</a></p>';
+		}
+		if ( $term instanceof WP_Term ) {
+			$html .= '<p class="lga-cta"><a class="lga-link" href="' . esc_url( get_post_type_archive_link( self::TYPE ) ) . '">← ' . esc_html__( 'All guides', self::TD ) . '</a></p>';
+		}
+		$html .= '</header>';
+		if ( ! $groups ) {
+			$html .= '<p class="lga-empty">' . esc_html__( 'No guides yet.', self::TD ) . '</p>';
+		}
+		foreach ( $groups as $name => $items ) {
+			$html .= '<section class="lga-group">' . ( '' !== $name ? '<h2>' . esc_html( $name ) . '</h2>' : '' ) . '<div class="lga-grid">';
+			foreach ( $items as $g ) {
+				$can  = self::can_read( $g->ID );
+				$need = self::needs( $g->ID );
+				if ( $can ) {
+					$pill = $need ? '<span class="lga-pill lga-pill--ok">✓ ' . esc_html__( 'Your license', self::TD ) . '</span>' : '<span class="lga-pill lga-pill--ok">' . esc_html__( 'Open', self::TD ) . '</span>';
+					$btn  = '<a class="lga-btn" href="' . esc_url( get_permalink( $g ) ) . '">' . esc_html__( 'Read the guide', self::TD ) . ' →</a>';
+				} elseif ( ! $logged ) {
+					$pill = '<span class="lga-pill">🔒 ' . esc_html( $need ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
+					$btn  = '<a class="lga-btn lga-btn--line" href="' . esc_url( wp_login_url( get_permalink( $g ) ) ) . '">' . esc_html__( 'Log in to read', self::TD ) . '</a>';
+				} else {
+					$pill = '<span class="lga-pill">🔒 ' . esc_html__( 'License needed', self::TD ) . '</span>';
+					$p    = $need && function_exists( 'wc_get_product' ) ? wc_get_product( $need[0] ) : null;
+					$btn  = $p ? '<a class="lga-btn lga-btn--line" href="' . esc_url( $p->get_permalink() ) . '">' . esc_html__( 'Get a license', self::TD ) . '</a>' : '';
+				}
+				$text  = $can && has_excerpt( $g ) ? '<p>' . esc_html( wp_trim_words( get_the_excerpt( $g ), 28 ) ) . '</p>' : '';
+				$cats  = get_the_terms( $g, self::TAX );
+				$cat   = is_array( $cats ) && $cats ? '<span class="lga-cat">' . esc_html( $cats[0]->name ) . '</span>' : '';
+				$html .= '<article class="lga-card' . ( $can ? '' : ' is-locked' ) . '"><div class="lga-top">' . $pill . $cat . '</div><h3><a href="' . esc_url( $can ? get_permalink( $g ) : ( $logged ? get_permalink( $g ) : wp_login_url( get_permalink( $g ) ) ) ) . '">' . esc_html( get_the_title( $g ) ) . '</a></h3>' . $text . '<div class="lga-foot">' . $btn . '</div></article>';
+			}
+			$html .= '</div></section>';
+		}
+		return $html . '</div>';
+	}
+
+	/**
+	 * Guides list styles.
+	 *
+	 * @return string
+	 */
+	private static function archive_css() {
+		return '
+#lg-archive{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--brand:#ea580c;--brand2:#db2777;max-width:1180px;margin:0 auto;padding:24px 16px 64px;box-sizing:border-box;font-family:inherit;color:var(--ink);line-height:1.6}
+#lg-archive *{box-sizing:border-box}
+#lg-archive h1,#lg-archive h2,#lg-archive h3,#lg-archive p{margin:0;font-family:inherit;text-transform:none;letter-spacing:normal}
+#lg-archive a{text-decoration:none;box-shadow:none;border:0}
+#lg-archive .lga-hero{border-radius:22px;padding:clamp(26px,4vw,44px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(219,39,119,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(234,88,12,.4),transparent 60%),linear-gradient(135deg,#140f3a,#24185a)}
+#lg-archive .lga-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:#fed7aa}
+#lg-archive .lga-hero h1{font-size:clamp(30px,4.6vw,46px);font-weight:800;line-height:1.1;margin-top:14px;color:#fff}
+#lg-archive .lga-hero p{color:#d6d9f5;margin-top:12px;font-size:16.5px;max-width:760px}
+#lg-archive .lga-hero .lga-cta{margin-top:20px}
+#lg-archive .lga-link{color:#fdba74!important;font-weight:700}
+#lg-archive .lga-group{margin-top:40px}
+#lg-archive .lga-group h2{font-size:clamp(20px,2.4vw,24px);font-weight:800;color:var(--ink);margin-bottom:16px;padding:0;border:0;background:none}
+#lg-archive .lga-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+#lg-archive .lga-card{display:flex;flex-direction:column;gap:10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;transition:transform .2s,box-shadow .2s,border-color .2s}
+#lg-archive .lga-card:hover{transform:translateY(-3px);border-color:var(--brand);box-shadow:0 16px 30px -18px rgba(15,23,42,.45)}
+#lg-archive .lga-card h3{font-size:18px;font-weight:800;line-height:1.3}
+#lg-archive .lga-card h3 a{color:var(--ink)!important}
+#lg-archive .lga-card p{color:var(--muted);font-size:14.5px}
+#lg-archive .lga-card.is-locked h3 a{color:#475569!important}
+#lg-archive .lga-top{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+#lg-archive .lga-cat{font-size:12px;color:var(--muted);font-weight:600}
+#lg-archive .lga-pill{align-self:flex-start;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#fff7ed;color:#c2410c}
+#lg-archive .lga-pill--ok{background:#dcfce7;color:#15803d}
+#lg-archive .lga-foot{margin-top:auto;padding-top:6px}
+#lg-archive .lga-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14.5px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important}
+#lg-archive .lga-btn--line{background:#fff;color:var(--brand)!important;border:2px solid var(--brand)}
+#lg-archive .lga-hero .lga-btn{background:#fff;color:#140f3a!important}
+#lg-archive .lga-empty{margin-top:30px;color:var(--muted)}';
 	}
 
 	/**
