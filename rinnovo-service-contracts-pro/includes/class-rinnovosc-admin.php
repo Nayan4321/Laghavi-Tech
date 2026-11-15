@@ -136,29 +136,7 @@ class RINNOVOSC_Admin {
 
 		echo '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:16px">';
 
-		// Quota.
-		echo '<div class="card"><h3>' . esc_html__( 'Quota', self::TD ) . '</h3>';
-		if ( $c['quota']['alloc'] > 0 ) {
-			/* translators: 1: balance, 2: unit, 3: allocation. */
-			echo '<p>' . esc_html( sprintf( __( '%1$s %2$s left of %3$s this month', self::TD ), wc_format_localized_decimal( $c['quota']['balance'] ), $c['quota']['unit'], wc_format_localized_decimal( $c['quota']['alloc'] ) ) ) . '</p>';
-			self::form( 'use', $id );
-			echo '<p><input type="number" step="0.25" name="amount" placeholder="1.5" style="width:80px" required /> <input type="text" name="note" placeholder="' . esc_attr__( 'What was done', self::TD ) . '" /> <button class="button">' . esc_html__( 'Log', self::TD ) . '</button></p></form>';
-		} else {
-			echo '<p>' . esc_html__( 'This package has no quota.', self::TD ) . '</p>';
-		}
-		echo '</div>';
-
-		// Requests.
-		echo '<div class="card"><h3>' . esc_html__( 'Requests', self::TD ) . '</h3>';
-		foreach ( array_reverse( $c['requests'] ) as $r ) {
-			echo '<p><strong>' . esc_html( $r['title'] ) . '</strong> <small>' . esc_html( wp_date( get_option( 'date_format' ), (int) $r['created'] ) ) . '</small><br />' . esc_html( $r['details'] ) . '</p>';
-			if ( 'open' === $r['status'] ) {
-				self::form( 'finish', $id );
-				echo '<input type="hidden" name="request" value="' . esc_attr( $r['id'] ) . '" /><p>' . esc_html( $c['quota']['unit'] ) . ' <input type="number" step="0.25" name="amount" value="0" style="width:80px" /> <button class="button">' . esc_html__( 'Mark done', self::TD ) . '</button></p></form>';
-			}
-		}
-		echo $c['requests'] ? '' : '<p>' . esc_html__( 'No requests yet.', self::TD ) . '</p>';
-		echo '</div>';
+		RINNOVOSC_WorkUI::admin( $sub, $c );
 
 		// Terms and billing.
 		echo '<div class="card"><h3>' . esc_html__( 'Terms and billing', self::TD ) . '</h3>';
@@ -226,9 +204,15 @@ class RINNOVOSC_Admin {
 	 */
 	private static function settings() {
 		$s     = RINNOVOSC_Settings::all();
-		$input = static function ( $key, $label, $help = '', $type = 'text' ) use ( $s ) {
+		$input = static function ( $key, $label, $help = '', $type = 'text', $choices = array() ) use ( $s ) {
 			echo '<tr><th><label for="sc-' . esc_attr( $key ) . '">' . esc_html( $label ) . '</label></th><td>';
-			if ( 'textarea' === $type ) {
+			if ( 'select' === $type ) {
+				echo '<select id="sc-' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']">';
+				foreach ( $choices as $v => $l ) {
+					echo '<option value="' . esc_attr( $v ) . '"' . selected( (string) $s[ $key ], (string) $v, false ) . '>' . esc_html( $l ) . '</option>';
+				}
+				echo '</select>';
+			} elseif ( 'textarea' === $type ) {
 				echo '<textarea id="sc-' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']" rows="3" class="large-text">' . esc_textarea( (string) $s[ $key ] ) . '</textarea>';
 			} elseif ( 'checkbox' === $type ) {
 				echo '<label><input type="checkbox" id="sc-' . esc_attr( $key ) . '" name="s[' . esc_attr( $key ) . ']" value="1" ' . checked( (bool) $s[ $key ], true, false ) . ' /> ' . esc_html( $help ) . '</label>';
@@ -259,6 +243,18 @@ class RINNOVOSC_Admin {
 		$input( 'clickup_token', __( 'ClickUp token', self::TD ), '', 'password' );
 		$input( 'clickup_list', __( 'ClickUp list ID', self::TD ) );
 		$input( 'webhook', __( 'Webhook (Zapier, Make…)', self::TD ), __( 'Gets contract.started and contract.renewed with the client, contract and tasks.', self::TD ), 'url' );
+		$input( 'webhook_secret', __( 'Webhook secret', self::TD ), __( 'Signs each webhook: X-Rinnovo-Signature = HMAC-SHA256 of "timestamp.body". X-Rinnovo-Event-Id lets the receiver ignore duplicates; failed deliveries are retried 3 times. Tokens and the webhook are stored encrypted.', self::TD ), 'password' );
+		echo '</table><h2>' . esc_html__( 'Cancellations', self::TD ) . '</h2><table class="form-table" role="presentation">';
+		$input(
+			'cancel_mode',
+			__( 'When a client asks to cancel', self::TD ),
+			__( 'Scheduled: the end date is set at once (end of the billing period after the minimum term and the product\'s notice period). Review: you confirm or set the date on the contract.', self::TD ),
+			'select',
+			array(
+				'auto'   => __( 'Schedule the end automatically', self::TD ),
+				'manual' => __( 'Wait for me to review it', self::TD ),
+			)
+		);
 		echo '</table>';
 		submit_button();
 		echo '</form>';

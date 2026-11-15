@@ -150,23 +150,8 @@ class RINNOVOSC_Account {
 			echo '</ul>';
 		}
 
-		// Quota and requests.
-		if ( $c['quota']['alloc'] > 0 ) {
-			$pct = $c['quota']['alloc'] > 0 ? max( 0, min( 100, (int) round( 100 * $c['quota']['balance'] / $c['quota']['alloc'] ) ) ) : 0;
-			/* translators: 1: left, 2: unit. */
-			echo '<h4>' . esc_html__( 'This month', self::TD ) . '</h4><p>' . esc_html( sprintf( __( '%1$s %2$s left', self::TD ), wc_format_localized_decimal( $c['quota']['balance'] ), $c['quota']['unit'] ) ) . ( (float) $c['quota']['balance'] < 0 ? ' <strong>' . esc_html__( '(over the plan)', self::TD ) . '</strong>' : '' ) . '</p><div class="rinnovosc-bar"><span style="width:' . (int) $pct . '%"></span></div>';
-		}
-		if ( $live ) {
-			echo '<details class="rinnovosc-requests"><summary>' . esc_html__( 'Requests', self::TD ) . ' (' . count( $c['requests'] ) . ')</summary>';
-			foreach ( array_reverse( $c['requests'] ) as $r ) {
-				echo '<p><strong>' . esc_html( $r['title'] ) . '</strong> · ' . esc_html( 'done' === $r['status'] ? __( 'Done', self::TD ) . ( $r['amount'] ? ' (' . wc_format_localized_decimal( $r['amount'] ) . ' ' . $c['quota']['unit'] . ')' : '' ) : __( 'Open', self::TD ) ) . '</p>';
-			}
-			echo '<form method="post">';
-			self::fields( 'request', (int) $sub->id );
-			echo '<p><input type="text" name="title" required placeholder="' . esc_attr__( 'What do you need? e.g. Instagram post for Diwali', self::TD ) . '" style="width:100%" /></p><p><textarea name="details" rows="3" placeholder="' . esc_attr__( 'Details, links, deadline', self::TD ) . '" style="width:100%"></textarea></p><button class="button">' . esc_html__( 'Send request', self::TD ) . '</button></form></details>';
-		}
+		RINNOVOSC_WorkUI::client( $sub, $c );
 
-		// Add-ons.
 		if ( $live && $terms['addons'] ) {
 			echo '<h4>' . esc_html__( 'Add to your next invoice', self::TD ) . '</h4><form method="post" class="rinnovosc-addons">';
 			self::fields( 'extra', (int) $sub->id );

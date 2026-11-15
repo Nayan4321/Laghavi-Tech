@@ -22,6 +22,7 @@ class RINNOVOSC_Integrations {
 	public static function init() {
 		add_action( 'rinnovosc_contract_started', array( __CLASS__, 'started' ), 10, 3 );
 		add_action( 'rinnovosc_contract_renewed', array( __CLASS__, 'renewed' ), 10, 3 );
+		add_action( 'rinnovosc_hourly', array( __CLASS__, 'retry' ) );
 	}
 
 	/**
@@ -45,6 +46,61 @@ class RINNOVOSC_Integrations {
 	 */
 	public static function renewed( $sub, $contract, $order ) {
 		self::run( 'contract.renewed', $sub, $contract, $order );
+	}
+
+	/**
+	 * Send a signed webhook (timestamp + event ID against replays and duplicates); failures are retried.
+	 *
+	 * @param string $url   Address.
+	 * @param string $body  JSON.
+	 * @param string $id    Event ID.
+	 * @param int    $tries Tries so far.
+	 * @return array|WP_Error
+	 */
+	public static function deliver( $url, $body, $id, $tries = 0 ) {
+		$time   = time();
+		$secret = (string) RINNOVOSC_Settings::get( 'webhook_secret' );
+		$secret = '' !== $secret ? $secret : wp_salt( 'auth' );
+		$r      = wp_remote_post(
+			$url,
+			array(
+				'timeout' => 10,
+				'headers' => array(
+					'Content-Type'        => 'application/json',
+					'X-Rinnovo-Event-Id'  => $id,
+					'X-Rinnovo-Timestamp' => (string) $time,
+					'X-Rinnovo-Signature' => hash_hmac( 'sha256', $time . '.' . $body, $secret ),
+				),
+				'body'    => $body,
+			)
+		);
+		$code = is_wp_error( $r ) ? 0 : (int) wp_remote_retrieve_response_code( $r );
+		if ( ( $code < 200 || $code >= 300 ) && $tries < 3 ) {
+			$queue   = (array) get_option( 'rinnovosc_webhook_queue', array() );
+			$queue[] = array( $url, $body, $id, $tries + 1, time() + ( 2 ** $tries ) * 15 * MINUTE_IN_SECONDS );
+			update_option( 'rinnovosc_webhook_queue', array_slice( $queue, -200 ), false );
+		}
+		return $r;
+	}
+
+	/**
+	 * Hourly: send failed webhooks again (15 min, 30 min, 1 hour).
+	 */
+	public static function retry() {
+		$queue = (array) get_option( 'rinnovosc_webhook_queue', array() );
+		if ( ! $queue ) {
+			return;
+		}
+		update_option( 'rinnovosc_webhook_queue', array(), false );
+		foreach ( $queue as $row ) {
+			if ( (int) $row[4] > time() ) {
+				$keep   = (array) get_option( 'rinnovosc_webhook_queue', array() );
+				$keep[] = $row;
+				update_option( 'rinnovosc_webhook_queue', $keep, false );
+				continue;
+			}
+			self::deliver( $row[0], $row[1], $row[2], (int) $row[3] );
+		}
 	}
 
 	/**
@@ -118,6 +174,14 @@ class RINNOVOSC_Integrations {
 	 * @param WC_Order $order    Order.
 	 */
 	private static function run( $event, $sub, $contract, $order ) {
+		// Once per contract and billing cycle: a retried renewal never creates the month's tasks twice.
+		$key  = 'rinnovosc_tasks_' . (int) $sub->id . '_' . ( 'contract.started' === $event ? 'start' : (int) $order->get_id() );
+		$done_cycles = (array) get_option( 'rinnovosc_tasks_done', array() );
+		if ( isset( $done_cycles[ $key ] ) ) {
+			return;
+		}
+		$done_cycles[ $key ] = time();
+		update_option( 'rinnovosc_tasks_done', array_slice( $done_cycles, -2000, null, true ), false );
 		$terms  = RINNOVOSC_Product::terms( (int) $sub->product_id );
 		$tasks  = RINNOVOSC_Product::lines( $terms['tasks'] );
 		$client = self::client( $sub, $contract, $order );
@@ -196,17 +260,7 @@ class RINNOVOSC_Integrations {
 					'order'    => $order->get_id(),
 				)
 			);
-			$r      = wp_remote_post(
-				$hook,
-				array(
-					'timeout' => 10,
-					'headers' => array(
-						'Content-Type'        => 'application/json',
-						'X-Rinnovo-Signature' => hash_hmac( 'sha256', $body, wp_salt( 'auth' ) ),
-					),
-					'body'    => $body,
-				)
-			);
+			$r      = self::deliver( $hook, $body, $key );
 			$done[] = 'Webhook: ' . ( is_wp_error( $r ) ? $r->get_error_message() : wp_remote_retrieve_response_code( $r ) );
 		}
 		if ( $done ) {

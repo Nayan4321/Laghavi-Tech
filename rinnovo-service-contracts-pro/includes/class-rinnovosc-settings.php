@@ -54,7 +54,18 @@ class RINNOVOSC_Settings {
 			'clickup_token'   => '',
 			'clickup_list'    => '',
 			'webhook'         => '',
+			'webhook_secret'  => '',
+			'cancel_mode'     => 'auto',
 		);
+	}
+
+	/**
+	 * Settings stored encrypted (integration tokens and the webhook address and secret).
+	 *
+	 * @return string[]
+	 */
+	public static function secrets() {
+		return array( 'trello_key', 'trello_token', 'clickup_token', 'webhook', 'webhook_secret' );
 	}
 
 	/**
@@ -66,6 +77,9 @@ class RINNOVOSC_Settings {
 		if ( null === self::$cache ) {
 			$saved       = get_option( self::OPTION, array() );
 			self::$cache = wp_parse_args( is_array( $saved ) ? $saved : array(), self::defaults() );
+			foreach ( self::secrets() as $k ) {
+				self::$cache[ $k ] = RINNOVOSC_Intake::decrypt( (string) self::$cache[ $k ] );
+			}
 		}
 		return self::$cache;
 	}
@@ -87,7 +101,12 @@ class RINNOVOSC_Settings {
 	 * @param array $values Values.
 	 */
 	public static function save( $values ) {
-		update_option( self::OPTION, array_merge( self::all(), $values ) );
+		$all = array_merge( self::all(), $values );
+		foreach ( self::secrets() as $k ) {
+			// Kept encrypted at rest (AES-256, key from the site's salts).
+			$all[ $k ] = '' === (string) $all[ $k ] ? '' : RINNOVOSC_Intake::encrypt( (string) $all[ $k ] );
+		}
+		update_option( self::OPTION, $all );
 		self::$cache = null;
 	}
 }

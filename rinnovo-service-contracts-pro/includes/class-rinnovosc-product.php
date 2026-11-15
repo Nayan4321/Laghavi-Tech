@@ -263,6 +263,55 @@ class RINNOVOSC_Product {
 				'value'       => $g( 'tasks' ),
 			)
 		);
+		echo '</div><div class="options_group">';
+		woocommerce_wp_textarea_input(
+			array(
+				'id'          => '_rinnovosc_allowances',
+				'label'       => __( 'Monthly allowances', self::TD ),
+				'placeholder' => __( "Consulting | 10 | hours | cap 5 | max 15 | expiry 2
+Articles | 8 | posts | expire
+Technical requests | 4 | requests | all", self::TD ),
+				'description' => __( 'One per line: name | amount | unit | rollover (expire, all, or cap N) | max N (most that can be held) | expiry N (months a rolled-over unit lasts). Empty = the single quota above.', self::TD ),
+				'value'       => $g( 'allowances' ),
+				'rows'        => 4,
+			)
+		);
+		woocommerce_wp_text_input(
+			array(
+				'id'                => '_rinnovosc_notice',
+				'label'             => __( 'Notice period (days)', self::TD ),
+				'type'              => 'number',
+				'custom_attributes' => array( 'min' => 0 ),
+				'description'       => __( 'A cancellation takes effect at the end of the billing period after the notice period and the minimum term.', self::TD ),
+				'desc_tip'          => true,
+				'value'             => $g( 'notice' ),
+			)
+		);
+		woocommerce_wp_select(
+			array(
+				'id'      => '_rinnovosc_onboarding_mode',
+				'label'   => __( 'Onboarding fee is', self::TD ),
+				'options' => array(
+					'checkout' => __( 'Paid at sign-up with the first payment', self::TD ),
+					'separate' => __( 'Invoiced separately after sign-up', self::TD ),
+				),
+				'value'   => $g( 'onboarding_mode', 'checkout' ),
+				'description' => __( 'Never prorated with the retainer.', self::TD ),
+				'desc_tip'    => true,
+			)
+		);
+		woocommerce_wp_select(
+			array(
+				'id'      => '_rinnovosc_approval_flow',
+				'label'   => __( 'Invoice approval', self::TD ),
+				'options' => array(
+					''               => __( 'No approval: invoice and charge as usual', self::TD ),
+					'before_issue'   => __( 'Client approves before the invoice is issued', self::TD ),
+					'before_payment' => __( 'Invoice issued, client approves it for payment', self::TD ),
+				),
+				'value'   => $g( 'approval_flow', '' ),
+			)
+		);
 		echo '</div></div>';
 	}
 
@@ -293,7 +342,10 @@ class RINNOVOSC_Product {
 		foreach ( array( 'onboarding_label', 'sac', 'intake_form', 'quota_unit', 'rollover' ) as $k ) {
 			$p->update_meta_data( '_rinnovosc_' . $k, $text( '_rinnovosc_' . $k ) );
 		}
-		foreach ( array( 'intake', 'tasks', 'deliverables' ) as $k ) {
+		$p->update_meta_data( '_rinnovosc_notice', absint( $text( '_rinnovosc_notice' ) ) );
+		$p->update_meta_data( '_rinnovosc_onboarding_mode', 'separate' === $text( '_rinnovosc_onboarding_mode' ) ? 'separate' : 'checkout' );
+		$p->update_meta_data( '_rinnovosc_approval_flow', in_array( $text( '_rinnovosc_approval_flow' ), array( 'before_issue', 'before_payment' ), true ) ? $text( '_rinnovosc_approval_flow' ) : '' );
+		foreach ( array( 'intake', 'tasks', 'deliverables', 'allowances' ) as $k ) {
 			$p->update_meta_data( '_rinnovosc_' . $k, $text( '_rinnovosc_' . $k, true ) );
 		}
 		foreach ( array( 'quota', 'rollover_cap' ) as $k ) {
@@ -442,8 +494,9 @@ class RINNOVOSC_Product {
 			if ( ! RINNOVO_Product::plan( $item['data'] ) ) {
 				continue;
 			}
-			$t = self::terms( $item['data'] );
-			if ( $t['enabled'] && $t['onboarding'] > 0 ) {
+			$t      = self::terms( $item['data'] );
+			$parent = $item['data']->is_type( 'variation' ) ? $item['data']->get_parent_id() : $item['data']->get_id();
+			if ( $t['enabled'] && $t['onboarding'] > 0 && 'separate' !== get_post_meta( $parent, '_rinnovosc_onboarding_mode', true ) ) {
 				$cart->add_fee( $t['onboarding_label'], rinnovo_convert_price( $t['onboarding'] * $item['quantity'] ), 'taxable' === $item['data']->get_tax_status(), $item['data']->get_tax_class() );
 			}
 		}

@@ -29,7 +29,7 @@ if ( ! defined( 'RINNOVOSC_LICENSE_SERVER' ) ) {
 	define( 'RINNOVOSC_LICENSE_SERVER', 'https://laghavi.site/wp-json/laghavi-licenses/v1/' );
 }
 
-foreach ( array( 'license', 'settings', 'store', 'product', 'contracts', 'billing', 'intake', 'integrations', 'gst', 'pdf', 'account', 'admin' ) as $rinnovosc_file ) {
+foreach ( array( 'license', 'settings', 'store', 'product', 'contracts', 'billing', 'intake', 'integrations', 'gst', 'pdf', 'account', 'admin', 'work', 'workui' ) as $rinnovosc_file ) {
 	require_once RINNOVOSC_DIR . 'includes/class-rinnovosc-' . $rinnovosc_file . '.php';
 }
 unset( $rinnovosc_file );
@@ -67,6 +67,7 @@ add_action(
 		RINNOVOSC_GST::init();
 		RINNOVOSC_Account::init();
 		RINNOVOSC_Admin::init();
+		RINNOVOSC_Work::init();
 		add_action(
 			'wp_enqueue_scripts',
 			static function () {
