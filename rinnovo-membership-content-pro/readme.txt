@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Memberships for Rinnovo Subscriptions & Licenses: members-only content with tiers, drip, paywalls, protected files and video, forums and courses, directory, plan switching, perks, teams and sharing limits.
@@ -106,7 +106,21 @@ Requires the free **Rinnovo Subscriptions & Licenses** plugin and WooCommerce. W
 * **License server (laghavi.site):** to activate your key, check it daily and look for updates, this plugin sends your license key, your site's address, the plugin's name and version to https://laghavi.site/. [Terms](https://laghavi.site/terms-and-conditions/)
 * **Video hosts:** members' browsers load videos from the host you choose (Bunny Stream, Vimeo, Wistia, YouTube) when you use [member_video]. Nothing is sent by the plugin itself.
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Entitlement ledger: access from all memberships, purchases and grants; membership groups; lifecycle rules.
+* Drip timeline, course and product mapping, course bundles, courses and tiers matrix, product-connected categories.
+* Download plans with credits, per-category quotas or one wallet, top-up packs, resource library.
+* My Membership dashboard, REST API, webhooks, invites, gifts, trials.
+* Members only controls on every Elementor element and every block (and Bricks), dynamic tags.
+* Shared kit: insights data source and Works great with panel.
 
 = 1.0.0 =
 * First release.

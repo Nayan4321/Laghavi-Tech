@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 
 Pro add-on for Rinnovo Subscriptions & Licenses: invoices and tax invoices, trial and first-payment offers, VAT / GST with reverse charge, subscriptions and licenses on variable products, "Ask for price" products and a currency switcher.
@@ -78,7 +78,22 @@ Turn on in WooCommerce > Settings > Subscriptions > VAT / GST for digital goods.
 * **EU VIES (ec.europa.eu):** only when VAT / GST numbers are turned on and a customer types an EU VAT number at checkout, the number and its country are sent to the European Commission's VIES service to check it. [Privacy](https://ec.europa.eu/taxation_customs/vies/#/privacy-statement)
 * **Exchange rates (open.er-api.com):** only when you click "Update rates now" or turn on daily updates, the plugin asks open.er-api.com for exchange rates from your store currency. Nothing about you or your customers is sent. [Terms](https://www.exchangerate-api.com/terms)
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.3.0 =
+* Trials: one trial per customer or product (account, email, card fingerprint), trial-ending reminders, failed first payment handling, trial end date and first renewal amount everywhere.
+* Credit notes for refunds, financial-year numbering, invoice snapshots and CSV export (shared invoice engine).
+* Licenses follow upgrades, downgrades and renewals, with a license history.
+* Quote enquiries for "Ask for price" with statuses and convert to order.
+* Currency: converted or fixed prices per currency, currency locked per subscription, gateway currency warnings.
+* VAT/GST: tax decisions with evidence, customer tax-exemption history.
+* Shared kit: insights data source, Works great with panel, Currency switcher widget for Elementor and blocks.
 
 = 1.2.0 =
 * New: trials with or without a card, and a discount on the first payment.

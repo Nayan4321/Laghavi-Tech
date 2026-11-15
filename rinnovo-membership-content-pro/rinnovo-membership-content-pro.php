@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Membership Content Pro
  * Plugin URI:           https://laghavi.site/rinnovo-membership-content-pro/
  * Description:          Memberships for Rinnovo Subscriptions & Licenses: members-only pages, posts, categories and blocks with tiers that inherit access, content dripping, teasers and paywalls, protected files, private video, forums and courses (bbPress, BuddyBoss, LearnDash, LifterLMS), member directory and badges, plan switching with credit, member discounts and free shipping, team memberships, login and stream limits, and a "My Content" dashboard.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOMEM_VERSION', '1.0.0' );
+define( 'RINNOVOMEM_VERSION', '1.1.0' );
 define( 'RINNOVOMEM_FILE', __FILE__ );
 define( 'RINNOVOMEM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOMEM_URL', plugin_dir_url( __FILE__ ) );

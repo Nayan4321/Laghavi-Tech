@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Streaming archives and web app access for Rinnovo Subscriptions & Licenses: signed expiring media links, watermarked players, private podcast feeds, view-only galleries, status API, webhooks, single sign-on, feature flags, device limits and a self-service portal.
@@ -83,7 +83,20 @@ For video courses, podcasts, music and art archives, and SaaS or hosted tools, s
 * **Media hosts you set up (Bunny.net, Cloudflare Stream, Amazon CloudFront / S3, Vimeo, Presto Player):** links to them are signed on your site; subscribers' browsers and podcast apps load the media from them.
 * **Your web app:** webhooks are sent to the addresses you enter.
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Setup wizard for four business models: video library, podcast network, stock media, private portals.
+* One authorization pipeline for every play and download with rate limits, events and share links.
+* Collections, libraries, playlists, history, resume, scheduled publishing, free previews, usage add-ons.
+* Media account portal with layout options; dashboard tabs Plans & Quotas, Media Providers, Protection, App & Integrations, Security & Activity.
+* Shared kit: insights data source, Works great with panel, Media library / My media / Media gallery / Media account widgets.
 
 = 1.0.0 =
 * First release.

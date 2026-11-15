@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Subscription boxes and physical goods for Rinnovo Subscriptions & Licenses: skip, swap, frequencies, one shipping day with an order cut-off, Subscribe & Save, prepaid and gift plans, shipping on renewals, bundles, packing list and box emails.
@@ -84,7 +84,20 @@ WooCommerce emails (WooCommerce > Settings > Emails), each with its own subject,
 * **License server (laghavi.site):** to activate your key, check it daily and look for updates, this plugin sends your license key, your site's address, the plugin's name and version to https://laghavi.site/. [Terms](https://laghavi.site/terms-and-conditions/)
 * **Stripe:** for card subscriptions, changes to a box (amount, frequency, skipped box, billing day, new card) are sent to Stripe through Rinnovo Subscriptions & Licenses' Stripe connection.
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Guided product creation: recurring box, subscribe & save or build-your-own box.
+* Frequency chips, swap price rules, out-of-stock rules, gift subscriptions with a recipient page.
+* Delivery calendar and prepaid tracking screens; shipping recalculated on address changes.
+* Uses the shared Rinnovo Box Builder (fixed, pick-your-items, sized and rotating menu boxes).
+* Shared kit: insights data source and Works great with panel.
 
 = 1.0.0 =
 * First release.

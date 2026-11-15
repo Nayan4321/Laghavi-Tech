@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Service retainers for Rinnovo Subscriptions & Licenses: onboarding fees, minimum terms, billing on the 1st, packages with deliverables, hours and request quotas, one-click add-ons, intake briefs, CRM and project boards, pause, GST tax invoices with PO numbers and bank transfer billing.
@@ -74,7 +74,20 @@ For monthly SEO packages, design retainers, marketing support and freelance cont
 * **Your webhook (only if set):** contract and client details are sent to the address you enter.
 * **Stripe (through Rinnovo Subscriptions & Licenses):** for card contracts, add-ons, pauses and billing day changes are sent to Stripe.
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Several allowances per contract with rollover, maximum and expiry; quota ledger with reserved, approved and completed.
+* Client requests, approvals, deliverable statuses, revisions, work log, staff, notes and monthly service reports.
+* Cancellation requested, scheduled and terminated; notice periods; contract PDF; onboarding fee options.
+* Two invoice approval workflows; encrypted credentials, signed and retried webhooks, idempotent tasks.
+* [contract_quota] shortcode and Contract quota widget; shared kit: insights data source and Works great with panel.
 
 = 1.0.0 =
 * First release.

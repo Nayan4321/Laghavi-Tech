@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Service Contracts Pro
  * Plugin URI:           https://laghavi.site/rinnovo-service-contracts-pro/
  * Description:          Service retainers for Rinnovo Subscriptions & Licenses: onboarding fees, minimum contract terms, billing on the 1st with proration, tiered packages with deliverables, hours or request quotas with rollover, one-click add-ons on the next invoice, intake forms, CRM and project board tasks, pause, GST / VAT tax invoices with PO numbers, and bank transfer billing.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOSC_VERSION', '1.0.0' );
+define( 'RINNOVOSC_VERSION', '1.1.0' );
 define( 'RINNOVOSC_FILE', __FILE__ );
 define( 'RINNOVOSC_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOSC_URL', plugin_dir_url( __FILE__ ) );

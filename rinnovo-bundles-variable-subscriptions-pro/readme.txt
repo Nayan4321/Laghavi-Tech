@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Subscription bundles and variable subscriptions for Rinnovo Subscriptions & Licenses: bundle stock, packing lines, out-of-stock safeguards, flat or dynamic prices, a box builder, plan switching with proration, self-service swaps, one invoice and one renewal day.
@@ -62,7 +62,20 @@ For subscription boxes, "build your own" bundles and plans sold as variations (B
 * **License server (laghavi.site):** sends your license key, site address, plugin name and version to activate, check and update. [Terms](https://laghavi.site/terms-and-conditions/)
 * **Stripe (through Rinnovo Subscriptions & Licenses, only for card subscriptions):** the new price of a subscription is sent when a customer switches plan or changes the items of a dynamic-price box. [Terms](https://stripe.com/legal)
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Optional and extra-price components, exclusions, builder on the shared Rinnovo Box Builder.
+* Held renewals for out-of-stock critical components with a resolution workflow.
+* Next shipment only changes, copy previous, favourites, component replace tool, packing CSV, bundle coupons and weight.
+* One renewal statement for several subscriptions.
+* [bundle_plans] shortcode and Plan table / Bundle builder widgets; shared kit: insights data source and Works great with panel.
 
 = 1.0.0 =
 * First release.

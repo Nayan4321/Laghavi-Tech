@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Media Archives Pro
  * Plugin URI:           https://laghavi.site/rinnovo-media-archives-pro/
  * Description:          Streaming archives and web app access for Rinnovo Subscriptions & Licenses: expiring signed media links (Bunny, Cloudflare Stream, CloudFront, S3), watermarked players, private podcast feeds, view-only art galleries, a subscription status API with webhooks, single sign-on (OAuth / JWT), feature flags and usage quotas, device and stream limits, location alerts, instant cut-off, and a self-service portal.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOMA_VERSION', '1.0.0' );
+define( 'RINNOVOMA_VERSION', '1.1.0' );
 define( 'RINNOVOMA_FILE', __FILE__ );
 define( 'RINNOVOMA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOMA_URL', plugin_dir_url( __FILE__ ) );

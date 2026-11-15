@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Bundles & Variable Subscriptions Pro
  * Plugin URI:           https://laghavi.site/rinnovo-bundles-variable-subscriptions-pro/
  * Description:          Subscription bundles and variable subscriptions for Rinnovo Subscriptions & Licenses: bundles made of other products with stock that follows every renewal, packing lines, out-of-stock safeguards, flat or dynamic bundle prices, a step-by-step box builder with minimum / maximum items, plan switching between variations with proration, a plan table per variation (sign-up fees, trials), self-service variation and item swaps, one recurring invoice for everything bought together, and one renewal day.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOBV_VERSION', '1.0.0' );
+define( 'RINNOVOBV_VERSION', '1.1.0' );
 define( 'RINNOVOBV_FILE', __FILE__ );
 define( 'RINNOVOBV_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOBV_URL', plugin_dir_url( __FILE__ ) );

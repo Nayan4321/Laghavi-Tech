@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Session Membership Pro
  * Plugin URI:           https://laghavi.site/rinnovo-session-membership-pro/
  * Description:          Classes, coaching and lessons for Rinnovo Subscriptions & Licenses: a class schedule members book with session credits (or unlimited passes), recurring weekly slots, capacity and waitlists, credits per billing cycle with rollover and top-ups, rescheduling with cut-offs, freeze, attendance and progress, family accounts, waivers and intake forms, Zoom / Meet / Teams links, calendar feeds, email and SMS reminders, and WooCommerce Bookings / Amelia / Bookly products booked with credits.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOSE_VERSION', '1.0.0' );
+define( 'RINNOVOSE_VERSION', '1.1.0' );
 define( 'RINNOVOSE_FILE', __FILE__ );
 define( 'RINNOVOSE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOSE_URL', plugin_dir_url( __FILE__ ) );

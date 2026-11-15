@@ -3,7 +3,7 @@
  * Plugin Name:          Rinnovo Physical Subscription Boxes & Goods Pro
  * Plugin URI:           https://laghavi.site/rinnovo-physical-subscription-boxes-pro/
  * Description:          Subscription boxes and physical goods for Rinnovo Subscriptions & Licenses: customers choose, switch, skip and swap their box, Subscribe & Save on any product, prepaid and gift plans, one shipping day with an order cut-off, shipping recalculated on renewals, bundle (build-a-box) support, a packing list and customizable box emails.
- * Version:              1.0.0
+ * Version:              1.1.0
  * Requires at least:    6.0
  * Requires PHP:         7.4
  * Requires Plugins:     rinnovo-subscriptions-licenses
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'RINNOVOBOX_VERSION', '1.0.0' );
+define( 'RINNOVOBOX_VERSION', '1.1.0' );
 define( 'RINNOVOBOX_FILE', __FILE__ );
 define( 'RINNOVOBOX_DIR', plugin_dir_path( __FILE__ ) );
 define( 'RINNOVOBOX_URL', plugin_dir_url( __FILE__ ) );

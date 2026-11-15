@@ -3,7 +3,7 @@ Contributors: nayan4321
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 
 Classes, coaching and lessons for Rinnovo Subscriptions & Licenses: book with session credits or unlimited passes, recurring slots, waitlists, cut-offs, freeze, attendance, family accounts, waivers, video links, calendars and reminders.
@@ -84,7 +84,21 @@ For yoga and fitness studios, tutoring, coaching and therapy sessions billed wee
 * **Zoom (only if you enter its keys):** the class name, start time and length are sent to create a meeting. [Terms](https://explore.zoom.us/en/terms/)
 * **Twilio (only if you enter its keys):** the member's phone number and the reminder text are sent to deliver SMS. [Terms](https://www.twilio.com/en-us/legal/tos)
 
+== Works great with ==
+
+* Sarala Login Page: designed log-in, sign-up and account pages with social log-ins.
+* Vacanam Language Switcher: a multilingual store, with emails and invoices in the customer's language.
+* WooCommerce performance insights: reads this plugin's numbers through rinnovo_insights().
+
 == Changelog ==
+
+= 1.1.0 =
+* Credit ledger with atomic booking, packs with expiry, credits per class type, family pools.
+* Class cards schedule with filters, recurring reservations until a date, guest and trial bookings.
+* Time zone per class, blackout dates, one-date cancellations, substitute instructors, missed-class notices.
+* QR and code check-in, reports and instructor roster, progress-note retention.
+* Adapters for WooCommerce Bookings, Amelia and Bookly.
+* Shared kit: insights data source, Works great with panel, Class schedule and Class credits widgets.
 
 = 1.0.0 =
 * First release.
