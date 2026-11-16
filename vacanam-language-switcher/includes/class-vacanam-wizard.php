@@ -248,8 +248,8 @@ class Vacanam_Wizard {
 	 */
 	public static function page() {
 		$steps = self::steps();
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Navigation.
-		$step = isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : 'languages';
+		$nav  = isset( $_GET['_vacanam_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_vacanam_nav'] ) ), 'vacanam_nav' );
+		$step = $nav && isset( $_GET['step'] ) ? sanitize_key( wp_unslash( $_GET['step'] ) ) : 'languages';
 		$step = isset( $steps[ $step ] ) ? $step : 'languages';
 		if ( 'languages' !== $step && ! Vacanam_Languages::all() ) {
 			$step = 'languages';
@@ -285,7 +285,7 @@ class Vacanam_Wizard {
 	 * @return string
 	 */
 	private static function url( $step ) {
-		return admin_url( 'admin.php?page=' . self::PAGE . '&step=' . $step );
+		return Vacanam_Admin::nav_url( admin_url( 'admin.php?page=' . self::PAGE . '&step=' . $step ) );
 	}
 
 	/**
@@ -438,7 +438,6 @@ class Vacanam_Wizard {
 			wp_die( esc_html__( 'You are not allowed to do this.', 'vacanam-language-switcher' ), 403 );
 		}
 		check_admin_referer( 'vacanam_setup' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked above.
 		$step = isset( $_POST['step'] ) ? sanitize_key( wp_unslash( $_POST['step'] ) ) : '';
 		$next = 'languages';
 		if ( 'languages' === $step ) {
@@ -446,7 +445,8 @@ class Vacanam_Wizard {
 				$main   = isset( $_POST['main'] ) ? sanitize_text_field( wp_unslash( $_POST['main'] ) ) : '';
 				$result = Vacanam_Languages::add( array( 'locale' => $main ) );
 				if ( is_wp_error( $result ) ) {
-					wp_safe_redirect( add_query_arg( 'vacanam_err', rawurlencode( $result->get_error_message() ), self::url( 'languages' ) ) );
+					Vacanam_Admin::flash( '', $result->get_error_message() );
+					wp_safe_redirect( self::url( 'languages' ) );
 					exit;
 				}
 				Vacanam_Settings::update( array( 'default' => $result['slug'] ) );
@@ -459,7 +459,8 @@ class Vacanam_Wizard {
 			}
 			$next = count( Vacanam_Languages::all() ) > 1 ? 'content' : 'languages';
 			if ( 'languages' === $next ) {
-				wp_safe_redirect( add_query_arg( 'vacanam_err', rawurlencode( __( 'Choose at least one other language.', 'vacanam-language-switcher' ) ), self::url( 'languages' ) ) );
+				Vacanam_Admin::flash( '', __( 'Choose at least one other language.', 'vacanam-language-switcher' ) );
+					wp_safe_redirect( self::url( 'languages' ) );
 				exit;
 			}
 		} elseif ( 'content' === $step ) {

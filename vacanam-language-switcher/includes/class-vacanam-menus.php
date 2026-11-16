@@ -333,12 +333,14 @@ class Vacanam_Menus {
 	 * @param int $id   Item ID.
 	 */
 	public static function save_item( $menu, $id ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Appearance > Menus checks its own nonce before saving items.
+		// The nonce of Appearance > Menus.
+		if ( ! isset( $_POST['update-nav-menu-nonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['update-nav-menu-nonce'] ) ), 'update-nav_menu' ) ) {
+			return;
+		}
 		if ( empty( $_POST['vacanam_switcher'][ $id ]['sent'] ) || ! current_user_can( 'edit_theme_options' ) ) {
 			return;
 		}
 		$in = wp_unslash( $_POST['vacanam_switcher'][ $id ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value is checked below.
-		// phpcs:enable
 		update_post_meta(
 			$id,
 			self::META,

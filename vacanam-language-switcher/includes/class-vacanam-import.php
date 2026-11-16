@@ -1136,7 +1136,7 @@ class Vacanam_Import {
 		if ( 'translatepress' === $job['source'] ) {
 			/* translators: %d: number */
 			$out .= '<li>' . esc_html( sprintf( __( '%d translated texts ready to fill your copies', 'vacanam-language-switcher' ), $c['texts'] ) ) . '</li></ul>';
-			$out .= '<p><a class="button button-primary button-hero" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup&step=copy' ) ) . '">' . esc_html__( 'Copy your site into the languages', 'vacanam-language-switcher' ) . '</a></p>';
+			$out .= '<p><a class="button button-primary button-hero" href="' . esc_url( Vacanam_Admin::nav_url( admin_url( 'admin.php?page=vacanam-setup&step=copy' ) ) ) . '">' . esc_html__( 'Copy your site into the languages', 'vacanam-language-switcher' ) . '</a></p>';
 			return $out;
 		}
 		/* translators: %d: number */
@@ -1150,7 +1150,7 @@ class Vacanam_Import {
 		/* translators: %d: number */
 		$out .= '<li>' . esc_html( sprintf( _n( '%d translated text', '%d translated texts', $c['texts'], 'vacanam-language-switcher' ), $c['texts'] ) ) . '</li></ul>';
 		$out .= '<p>' . esc_html__( 'Your site works in all its languages now. Last step: put a Vacanam language switcher where the old one was (menu, Elementor widget, block or shortcode).', 'vacanam-language-switcher' ) . '</p>';
-		$out .= '<p><a class="button button-primary button-hero" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup&step=switcher' ) ) . '">' . esc_html__( 'Add the language switcher', 'vacanam-language-switcher' ) . '</a> &nbsp; <a href="' . esc_url( admin_url( 'admin.php?page=' . Vacanam_Admin::SLUG ) ) . '">' . esc_html__( 'See the languages', 'vacanam-language-switcher' ) . '</a></p>';
+		$out .= '<p><a class="button button-primary button-hero" href="' . esc_url( Vacanam_Admin::nav_url( admin_url( 'admin.php?page=vacanam-setup&step=switcher' ) ) ) . '">' . esc_html__( 'Add the language switcher', 'vacanam-language-switcher' ) . '</a> &nbsp; <a href="' . esc_url( admin_url( 'admin.php?page=' . Vacanam_Admin::SLUG ) ) . '">' . esc_html__( 'See the languages', 'vacanam-language-switcher' ) . '</a></p>';
 		return $out;
 	}
 

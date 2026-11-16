@@ -76,11 +76,9 @@ class Vacanam_Admin_Content {
 	 * ?vacanam_lang=ar in any admin address changes the filter.
 	 */
 	public static function read_filter() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- A view filter, like ?post_status.
-		if ( ! isset( $_GET['vacanam_lang'] ) ) {
+		if ( ! isset( $_GET['vacanam_lang'], $_GET['_vacanam_nav'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_vacanam_nav'] ) ), 'vacanam_nav' ) ) {
 			return;
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
 		$lang = sanitize_key( wp_unslash( $_GET['vacanam_lang'] ) );
 		update_user_meta( get_current_user_id(), self::USER_META, Vacanam_Languages::exists( $lang ) ? $lang : '' );
 	}
@@ -110,7 +108,7 @@ class Vacanam_Admin_Content {
 					'parent' => 'vacanam',
 					'id'     => 'vacanam-all',
 					'title'  => esc_html__( 'All languages', 'vacanam-language-switcher' ),
-					'href'   => add_query_arg( 'vacanam_lang', 'all' ),
+					'href'   => Vacanam_Admin::nav_url( add_query_arg( 'vacanam_lang', 'all' ) ),
 				)
 			);
 			foreach ( Vacanam_Languages::all() as $slug => $info ) {
@@ -119,7 +117,7 @@ class Vacanam_Admin_Content {
 						'parent' => 'vacanam',
 						'id'     => 'vacanam-' . $slug,
 						'title'  => Vacanam_Admin::flag( $info ) . ' ' . esc_html( $info['name'] ),
-						'href'   => add_query_arg( 'vacanam_lang', $slug ),
+						'href'   => Vacanam_Admin::nav_url( add_query_arg( 'vacanam_lang', $slug ) ),
 					)
 				);
 			}
@@ -191,10 +189,7 @@ class Vacanam_Admin_Content {
 		if ( ! Vacanam_Model::is_translated_type( 'attachment' ) ) {
 			return $args;
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing -- Read-only query of the media library.
-		$post = isset( $_POST['post_id'] ) ? absint( $_POST['post_id'] ) : 0;
-		$lang = $post ? Vacanam_Model::post_lang( $post ) : '';
-		$lang = '' !== $lang ? $lang : self::filter_language();
+		$lang = self::filter_language();
 		if ( '' !== $lang ) {
 			$args['tax_query'] = array( Vacanam_Frontend::language_clause( $lang ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Needed to filter by language.
 		}
@@ -388,17 +383,18 @@ class Vacanam_Admin_Content {
 				++$done;
 			}
 		}
-		return add_query_arg( 'vacanam_bulk', $done, remove_query_arg( 'vacanam_bulk', $redirect ) );
+		set_transient( 'vacanam_bulk_' . get_current_user_id(), $done, 5 * MINUTE_IN_SECONDS );
+		return $redirect;
 	}
 
 	/**
 	 * Result of a bulk action.
 	 */
 	public static function bulk_notice() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Message after a redirect.
-		if ( isset( $_GET['vacanam_bulk'] ) ) {
-			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-			$n = absint( $_GET['vacanam_bulk'] );
+		$n = get_transient( 'vacanam_bulk_' . get_current_user_id() );
+		if ( false !== $n ) {
+			delete_transient( 'vacanam_bulk_' . get_current_user_id() );
+			$n = absint( $n );
 			/* translators: %d: number */
 			echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf( _n( '%d item done.', '%d items done.', $n, 'vacanam-language-switcher' ), $n ) ) . '</p></div>';
 		}
@@ -429,18 +425,16 @@ class Vacanam_Admin_Content {
 	 * @return string
 	 */
 	public static function duplicate_url( $id, $lang ) {
-		return wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_duplicate&post=' . (int) $id . '&lang=' . rawurlencode( $lang ) ), 'vacanam_duplicate_' . (int) $id );
+		return wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_duplicate&post=' . (int) $id . '&lang=' . rawurlencode( $lang ) ), 'vacanam_duplicate' );
 	}
 
 	/**
 	 * Copy a post, then open the copy.
 	 */
 	public static function handle_duplicate() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checked below.
+		check_admin_referer( 'vacanam_duplicate' );
 		$id   = isset( $_GET['post'] ) ? absint( $_GET['post'] ) : 0;
 		$lang = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
-		// phpcs:enable
-		check_admin_referer( 'vacanam_duplicate_' . $id );
 		if ( ! current_user_can( 'edit_post', $id ) ) {
 			wp_die( esc_html__( 'You are not allowed to do this.', 'vacanam-language-switcher' ), 403 );
 		}
@@ -457,10 +451,8 @@ class Vacanam_Admin_Content {
 	 */
 	public static function handle_duplicate_term() {
 		check_admin_referer( 'vacanam_duplicate_term' );
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checked above.
 		$id   = isset( $_GET['term'] ) ? absint( $_GET['term'] ) : 0;
 		$lang = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
-		// phpcs:enable
 		$term = get_term( $id );
 		if ( ! $term instanceof WP_Term || ! current_user_can( 'edit_term', $id ) ) {
 			wp_die( esc_html__( 'You are not allowed to do this.', 'vacanam-language-switcher' ), 403 );
@@ -479,8 +471,8 @@ class Vacanam_Admin_Content {
 	 * @return string
 	 */
 	public static function new_post_language() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Pre-selecting a field.
-		$lang = isset( $_GET['new_lang'] ) ? sanitize_key( wp_unslash( $_GET['new_lang'] ) ) : '';
+		$nav  = isset( $_GET['_vacanam_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_vacanam_nav'] ) ), 'vacanam_nav' );
+		$lang = $nav && isset( $_GET['new_lang'] ) ? sanitize_key( wp_unslash( $_GET['new_lang'] ) ) : '';
 		if ( Vacanam_Languages::exists( $lang ) ) {
 			return $lang;
 		}
@@ -629,7 +621,6 @@ class Vacanam_Admin_Content {
 		if ( ! current_user_can( 'edit_posts' ) ) {
 			wp_send_json_error( null, 403 );
 		}
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Checked above.
 		$lang    = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
 		$type    = isset( $_GET['type'] ) ? sanitize_key( wp_unslash( $_GET['type'] ) ) : 'post';
 		$search  = isset( $_GET['q'] ) ? sanitize_text_field( wp_unslash( $_GET['q'] ) ) : '';

@@ -26,7 +26,7 @@ class Vacanam_Fonts {
 	 */
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 100 );
-		add_action( 'wp_head', array( __CLASS__, 'print_css' ), 100 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'print_css' ), 999 );
 		if ( is_admin() ) {
 			add_action( 'admin_menu', array( __CLASS__, 'menu' ), 20 );
 			add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
@@ -487,12 +487,14 @@ class Vacanam_Fonts {
 	}
 
 	/**
-	 * Print the CSS late in the head, after the theme's and Elementor's styles.
+	 * Add the CSS as an inline style, enqueued last so it comes after the theme's and Elementor's styles.
 	 */
 	public static function print_css() {
 		$css = self::css();
 		if ( '' !== $css ) {
-			echo '<style id="vacanam-fonts">' . wp_strip_all_tags( $css ) . "</style>\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from cleaned font names, tags stripped.
+			wp_register_style( 'vacanam-fonts', false, array(), VACANAM_VERSION );
+			wp_enqueue_style( 'vacanam-fonts' );
+			wp_add_inline_style( 'vacanam-fonts', wp_strip_all_tags( $css ) );
 		}
 	}
 
@@ -652,8 +654,9 @@ class Vacanam_Fonts {
 	 * Save the fonts.
 	 */
 	public static function handle_save_fonts() {
+		check_admin_referer( 'vacanam_save_fonts' );
 		Vacanam_Admin::check( 'vacanam_save_fonts' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in check().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$body = isset( $_POST['font'] ) ? (array) wp_unslash( $_POST['font'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cleaned below.
 		$head = isset( $_POST['font_h'] ) ? (array) wp_unslash( $_POST['font_h'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Cleaned below.
 		foreach ( Vacanam_Languages::slugs() as $slug ) {
@@ -679,8 +682,9 @@ class Vacanam_Fonts {
 	 * Download a Google font.
 	 */
 	public static function handle_add_google_font() {
+		check_admin_referer( 'vacanam_add_google_font' );
 		Vacanam_Admin::check( 'vacanam_add_google_font' );
-		$family = isset( $_POST['family'] ) ? sanitize_text_field( wp_unslash( $_POST['family'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Checked in check().
+		$family = isset( $_POST['family'] ) ? sanitize_text_field( wp_unslash( $_POST['family'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$result = self::download_google( $family );
 		Vacanam_Admin::back( self::PAGE, 'font_added', is_wp_error( $result ) ? $result->get_error_message() : '' );
 	}
@@ -689,8 +693,9 @@ class Vacanam_Fonts {
 	 * Delete a downloaded font.
 	 */
 	public static function handle_delete_font() {
+		check_admin_referer( 'vacanam_delete_font' );
 		Vacanam_Admin::check( 'vacanam_delete_font' );
-		$family = isset( $_GET['family'] ) ? self::clean_family( sanitize_text_field( wp_unslash( $_GET['family'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked in check().
+		$family = isset( $_GET['family'] ) ? self::clean_family( sanitize_text_field( wp_unslash( $_GET['family'] ) ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce checked above.
 		self::delete_google( $family );
 		foreach ( Vacanam_Languages::all() as $slug => $lang ) {
 			foreach ( array( 'font', 'font_h' ) as $key ) {

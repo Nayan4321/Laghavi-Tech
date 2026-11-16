@@ -128,13 +128,15 @@ class Vacanam_Admin {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Vacanam Language Switcher: another translation plugin is active (Polylang, WPML, TranslatePress or Weglot). Use only one translation plugin at a time.', 'vacanam-language-switcher' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=vacanam-import' ) ) . '">' . esc_html__( 'Move its languages and translations to Vacanam', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
 		$screen = get_current_screen();
-		if ( ! Vacanam_Languages::all() && $screen && false === strpos( $screen->id, 'vacanam-setup' ) ) {
+		if ( ! Vacanam_Languages::all() && $screen && false === strpos( $screen->id, 'vacanam-setup' ) && ( in_array( $screen->id, array( 'dashboard', 'plugins' ), true ) || false !== strpos( $screen->id, 'vacanam' ) ) ) {
 			echo '<div class="notice notice-info"><p><strong>' . esc_html__( 'Vacanam Language Switcher', 'vacanam-language-switcher' ) . '</strong> – ' . esc_html__( 'Add your languages in a few steps.', 'vacanam-language-switcher' ) . ' <a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup' ) ) . '">' . esc_html__( 'Start the setup', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Message after a redirect.
-		$msg = isset( $_GET['vacanam_msg'] ) ? sanitize_key( wp_unslash( $_GET['vacanam_msg'] ) ) : '';
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$err = isset( $_GET['vacanam_err'] ) ? sanitize_text_field( wp_unslash( $_GET['vacanam_err'] ) ) : '';
+		$flash = get_transient( 'vacanam_notice_' . get_current_user_id() );
+		if ( is_array( $flash ) ) {
+			delete_transient( 'vacanam_notice_' . get_current_user_id() );
+		}
+		$msg = is_array( $flash ) && isset( $flash['msg'] ) ? sanitize_key( $flash['msg'] ) : '';
+		$err = is_array( $flash ) && isset( $flash['err'] ) ? sanitize_text_field( $flash['err'] ) : '';
 		$messages = array(
 			'saved'    => __( 'Saved.', 'vacanam-language-switcher' ),
 			'added'    => __( 'Language added.', 'vacanam-language-switcher' ),
@@ -159,14 +161,36 @@ class Vacanam_Admin {
 	 * @param string $err  Error text.
 	 */
 	public static function back( $page, $msg = 'saved', $err = '' ) {
-		$args = array( 'page' => $page );
-		if ( '' !== $err ) {
-			$args['vacanam_err'] = rawurlencode( $err );
-		} else {
-			$args['vacanam_msg'] = $msg;
-		}
-		wp_safe_redirect( add_query_arg( $args, admin_url( 'admin.php' ) ) );
+		self::flash( $msg, $err );
+		wp_safe_redirect( add_query_arg( 'page', $page, admin_url( 'admin.php' ) ) );
 		exit;
+	}
+
+	/**
+	 * Keep a message for the next screen the current user opens (no message in the address).
+	 *
+	 * @param string $msg Message key.
+	 * @param string $err Error text.
+	 */
+	public static function flash( $msg = 'saved', $err = '' ) {
+		set_transient( 'vacanam_notice_' . get_current_user_id(), array( 'msg' => (string) $msg, 'err' => (string) $err ), 5 * MINUTE_IN_SECONDS );
+	}
+
+	/**
+	 * Add the navigation nonce to an admin address (language to edit, filters, setup steps).
+	 *
+	 * @param string $url Address.
+	 * @return string
+	 */
+	public static function nav_url( $url ) {
+		return add_query_arg( '_vacanam_nav', wp_create_nonce( 'vacanam_nav' ), $url );
+	}
+
+	/**
+	 * Hidden nonce field for navigation forms sent with GET.
+	 */
+	public static function nav_field() {
+		echo '<input type="hidden" name="_vacanam_nav" value="' . esc_attr( wp_create_nonce( 'vacanam_nav' ) ) . '" />';
 	}
 
 	/**
@@ -233,8 +257,8 @@ class Vacanam_Admin {
 		self::header( __( 'Languages', 'vacanam-language-switcher' ), self::SLUG );
 		$langs   = Vacanam_Languages::all();
 		$default = Vacanam_Languages::default_slug();
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Which language to edit.
-		$edit    = isset( $_GET['edit'] ) ? Vacanam_Languages::get( sanitize_key( wp_unslash( $_GET['edit'] ) ) ) : null;
+		$nav     = isset( $_GET['_vacanam_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_vacanam_nav'] ) ), 'vacanam_nav' );
+		$edit    = $nav && isset( $_GET['edit'] ) ? Vacanam_Languages::get( sanitize_key( wp_unslash( $_GET['edit'] ) ) ) : null;
 		$missing = $langs ? Vacanam_Model::count_without_language() : 0;
 		if ( $missing ) {
 			echo '<div class="notice notice-warning inline"><p>' . esc_html( sprintf( /* translators: %d: number */ _n( '%d page, post or category has no language yet. Without a language it is shown only in the main language.', '%d pages, posts or categories have no language yet. Without a language they are shown only in the main language.', $missing, 'vacanam-language-switcher' ), $missing ) ) . '</p><form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="vacanam_assign_all" />';
@@ -326,7 +350,7 @@ class Vacanam_Admin {
 							<td><?php echo $lang['rtl'] ? esc_html__( 'Right to left', 'vacanam-language-switcher' ) : esc_html__( 'Left to right', 'vacanam-language-switcher' ); ?></td>
 							<td><?php echo esc_html( number_format_i18n( $count ) ); ?></td>
 							<td class="vacanam-actions">
-								<a href="<?php echo esc_url( admin_url( 'admin.php?page=' . self::SLUG . '&edit=' . $slug ) ); ?>"><?php esc_html_e( 'Edit', 'vacanam-language-switcher' ); ?></a>
+								<a href="<?php echo esc_url( self::nav_url( admin_url( 'admin.php?page=' . self::SLUG . '&edit=' . $slug ) ) ); ?>"><?php esc_html_e( 'Edit', 'vacanam-language-switcher' ); ?></a>
 								<?php if ( $slug !== $default ) : ?>
 									| <a href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_default_language&slug=' . $slug ), 'vacanam_default_language' ) ); ?>" data-confirm="<?php esc_attr_e( 'Make this the main language? Pages without a language and the address without a language code will be in this language.', 'vacanam-language-switcher' ); ?>"><?php esc_html_e( 'Make main', 'vacanam-language-switcher' ); ?></a>
 								<?php endif; ?>
@@ -385,7 +409,7 @@ class Vacanam_Admin {
 						'tax_query'      => array( Vacanam_Frontend::language_clause( $slug ) ), // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Admin overview.
 					)
 				);
-				$url = admin_url( 'edit.php?post_type=' . $type . '&vacanam_lang=' . $slug );
+				$url = self::nav_url( admin_url( 'edit.php?post_type=' . $type . '&vacanam_lang=' . $slug ) );
 				echo '<td><a href="' . esc_url( $url ) . '">' . esc_html( number_format_i18n( $q->found_posts ) ) . '</a></td>';
 			}
 			echo '</tr>';
@@ -422,8 +446,9 @@ class Vacanam_Admin {
 	 * Add a language.
 	 */
 	public static function handle_add_language() {
+		check_admin_referer( 'vacanam_add_language' );
 		self::check( 'vacanam_add_language' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in check().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$locale = isset( $_POST['locale'] ) ? sanitize_text_field( wp_unslash( $_POST['locale'] ) ) : '';
 		$custom = isset( $_POST['locale_custom'] ) ? sanitize_text_field( wp_unslash( $_POST['locale_custom'] ) ) : '';
 		$data   = array( 'locale' => '' !== $custom ? $custom : $locale );
@@ -450,8 +475,9 @@ class Vacanam_Admin {
 	 * Edit a language.
 	 */
 	public static function handle_edit_language() {
+		check_admin_referer( 'vacanam_edit_language' );
 		self::check( 'vacanam_edit_language' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in check().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$slug = isset( $_POST['slug'] ) ? sanitize_key( wp_unslash( $_POST['slug'] ) ) : '';
 		$data = array(
 			'name'     => isset( $_POST['name'] ) ? sanitize_text_field( wp_unslash( $_POST['name'] ) ) : '',
@@ -477,8 +503,8 @@ class Vacanam_Admin {
 	 *
 	 * @return string
 	 */
-	private static function slug_param() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked in check().
+	private static function slug_param( $action ) {
+		check_admin_referer( $action );
 		return isset( $_GET['slug'] ) ? sanitize_key( wp_unslash( $_GET['slug'] ) ) : '';
 	}
 
@@ -486,8 +512,9 @@ class Vacanam_Admin {
 	 * Remove a language.
 	 */
 	public static function handle_delete_language() {
+		check_admin_referer( 'vacanam_delete_language' );
 		self::check( 'vacanam_delete_language' );
-		Vacanam_Languages::delete( self::slug_param() );
+		Vacanam_Languages::delete( self::slug_param( 'vacanam_delete_language' ) );
 		self::back( self::SLUG, 'deleted' );
 	}
 
@@ -495,8 +522,9 @@ class Vacanam_Admin {
 	 * Main language.
 	 */
 	public static function handle_default_language() {
+		check_admin_referer( 'vacanam_default_language' );
 		self::check( 'vacanam_default_language' );
-		$slug = self::slug_param();
+		$slug = self::slug_param( 'vacanam_default_language' );
 		if ( Vacanam_Languages::exists( $slug ) ) {
 			Vacanam_Settings::update( array( 'default' => $slug ) );
 			Vacanam_Languages::update( $slug, array( 'active' => true ) );
@@ -508,12 +536,12 @@ class Vacanam_Admin {
 	 * Order.
 	 */
 	public static function handle_move_language() {
+		check_admin_referer( 'vacanam_move_language' );
 		self::check( 'vacanam_move_language' );
-		$slug  = self::slug_param();
+		$slug  = self::slug_param( 'vacanam_move_language' );
 		$slugs = Vacanam_Languages::slugs();
 		$pos   = array_search( $slug, $slugs, true );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked in check().
-		$dir = isset( $_GET['dir'] ) && 'up' === $_GET['dir'] ? -1 : 1;
+		$dir   = isset( $_GET['dir'] ) && 'up' === sanitize_key( wp_unslash( $_GET['dir'] ) ) ? -1 : 1;
 		if ( false !== $pos && isset( $slugs[ $pos + $dir ] ) ) {
 			$other               = $slugs[ $pos + $dir ];
 			$slugs[ $pos + $dir ] = $slug;
@@ -527,6 +555,7 @@ class Vacanam_Admin {
 	 * Everything without a language → main language.
 	 */
 	public static function handle_assign_all() {
+		check_admin_referer( 'vacanam_assign_all' );
 		self::check( 'vacanam_assign_all' );
 		Vacanam_Model::assign_all( Vacanam_Languages::default_slug() );
 		self::back( self::SLUG, 'assigned' );
@@ -680,8 +709,9 @@ class Vacanam_Admin {
 	 * Save menu locations.
 	 */
 	public static function handle_save_menus() {
+		check_admin_referer( 'vacanam_save_menus' );
 		self::check( 'vacanam_save_menus' );
-		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checked in check(); values cast below.
+		// phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce checked above; values cast below.
 		$locs = isset( $_POST['loc'] ) && is_array( $_POST['loc'] ) ? wp_unslash( $_POST['loc'] ) : array();
 		foreach ( $locs as $location => $per_lang ) {
 			foreach ( (array) $per_lang as $slug => $menu ) {
@@ -697,10 +727,10 @@ class Vacanam_Admin {
 	 * Copy a menu.
 	 */
 	public static function handle_copy_menu() {
+		check_admin_referer( 'vacanam_copy_menu' );
 		self::check( 'vacanam_copy_menu' );
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Checked in check().
 		$menu   = isset( $_GET['menu'] ) ? absint( $_GET['menu'] ) : 0;
-		$result = Vacanam_Duplicator::duplicate_menu( $menu, self::slug_param() );
+		$result = Vacanam_Duplicator::duplicate_menu( $menu, self::slug_param( 'vacanam_copy_menu' ) );
 		self::back( 'vacanam-menus', 'copied', is_wp_error( $result ) ? $result->get_error_message() : '' );
 	}
 
@@ -714,11 +744,10 @@ class Vacanam_Admin {
 	public static function page_strings() {
 		self::header( __( 'Translate texts', 'vacanam-language-switcher' ), 'vacanam-strings' );
 		$langs = Vacanam_Languages::all();
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Filters of the list.
-		$lang   = isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
-		$search = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
-		$group  = isset( $_GET['group'] ) ? sanitize_text_field( wp_unslash( $_GET['group'] ) ) : '';
-		// phpcs:enable
+		$nav    = isset( $_GET['_vacanam_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_vacanam_nav'] ) ), 'vacanam_nav' );
+		$lang   = $nav && isset( $_GET['lang'] ) ? sanitize_key( wp_unslash( $_GET['lang'] ) ) : '';
+		$search = $nav && isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
+		$group  = $nav && isset( $_GET['group'] ) ? sanitize_text_field( wp_unslash( $_GET['group'] ) ) : '';
 		$others = array_diff_key( $langs, array( Vacanam_Languages::default_slug() => 1 ) );
 		if ( ! isset( $others[ $lang ] ) ) {
 			$lang = $others ? (string) key( $others ) : '';
@@ -732,6 +761,7 @@ class Vacanam_Admin {
 		$translations = Vacanam_Strings::translations();
 		$groups       = array_unique( wp_list_pluck( $strings, 'group' ) );
 		echo '<form method="get" class="vacanam-filter"><input type="hidden" name="page" value="vacanam-strings" />';
+		self::nav_field();
 		echo '<select name="lang">';
 		foreach ( $others as $slug => $info ) {
 			echo '<option value="' . esc_attr( $slug ) . '" ' . selected( $lang, $slug, false ) . '>' . esc_html( $info['name'] ) . '</option>';
@@ -781,15 +811,17 @@ class Vacanam_Admin {
 	 * Save texts.
 	 */
 	public static function handle_save_strings() {
+		check_admin_referer( 'vacanam_save_strings' );
 		self::check( 'vacanam_save_strings' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in check().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$lang  = isset( $_POST['lang'] ) ? sanitize_key( wp_unslash( $_POST['lang'] ) ) : '';
 		$items = isset( $_POST['t'] ) && is_array( $_POST['t'] ) ? array_map( 'wp_kses_post', wp_unslash( $_POST['t'] ) ) : array();
 		// phpcs:enable
 		if ( Vacanam_Languages::exists( $lang ) ) {
 			Vacanam_Strings::save( $lang, $items );
 		}
-		wp_safe_redirect( add_query_arg( array( 'page' => 'vacanam-strings', 'lang' => $lang, 'vacanam_msg' => 'saved' ), admin_url( 'admin.php' ) ) );
+		self::flash( 'saved' );
+		wp_safe_redirect( self::nav_url( add_query_arg( array( 'page' => 'vacanam-strings', 'lang' => $lang ), admin_url( 'admin.php' ) ) ) );
 		exit;
 	}
 
@@ -914,8 +946,9 @@ class Vacanam_Admin {
 	 * Save the switcher look.
 	 */
 	public static function handle_save_switcher() {
+		check_admin_referer( 'vacanam_save_switcher' );
 		self::check( 'vacanam_save_switcher' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Checked in check(); cleaned below.
+		// phpcs:disable WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce checked above; cleaned below.
 		$s = isset( $_POST['s'] ) && is_array( $_POST['s'] ) ? wp_unslash( $_POST['s'] ) : array();
 		$f = isset( $_POST['f'] ) && is_array( $_POST['f'] ) ? wp_unslash( $_POST['f'] ) : array();
 		// phpcs:enable
@@ -1043,8 +1076,9 @@ class Vacanam_Admin {
 	 * Save settings.
 	 */
 	public static function handle_save_settings() {
+		check_admin_referer( 'vacanam_save_settings' );
 		self::check( 'vacanam_save_settings' );
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in check().
+		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Nonce checked above.
 		$modes  = array_keys( apply_filters( 'vacanam_url_modes', array( 'directory' => 1, 'query' => 1 ) ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Documented in page_settings().
 		$mode   = isset( $_POST['url_mode'] ) ? sanitize_key( wp_unslash( $_POST['url_mode'] ) ) : 'directory';
 		$values = array(

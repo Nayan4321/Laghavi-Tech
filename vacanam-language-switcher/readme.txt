@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,10 +87,6 @@ Already have a multilingual site? Vacanam finds your old plugin's data and takes
 * **Hidden languages**: prepare a language while only editors can see it.
 * **Theme compatibility**: themes and plugins written for Polylang (`pll__()`, `pll_the_languages()`, `pll_get_post()`…) or WPML (`wpml_object_id`…) work as they are.
 
-= Vacanam Pro =
-
-[Vacanam Language Switcher Pro](https://laghavi.site/vacanam-language-switcher/) is a separate add-on that translates pages, Elementor designs, SEO texts, categories, menus and texts with AI (Claude, ChatGPT or Gemini, with your own key) into as many languages as you need, and adds shared and translated slugs, and one domain or sub-domain per language.
-
 == Installation ==
 
 1. Install and activate the plugin from Plugins > Add New, or upload the folder to `/wp-content/plugins/`.
@@ -168,9 +164,14 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 == Changelog ==
 
+= 1.1.3 =
+* Security: every admin link and form that changes or filters something is checked with a nonce; messages after saving no longer travel in the address.
+* The setup reminder shows only on the Dashboard, Plugins and Vacanam screens.
+* Font CSS is added with wp_add_inline_style().
+
 = 1.1.2 =
-* Lists show how far each translation is when an add-on reports it.
-* Language switchers can show a language a page is not translated into yet as faded.
+* Developers: a filter to show how far each translation is in the lists.
+* Developers: switcher items can be marked as not translated yet (shown faded).
 
 = 1.1.1 =
 * Fix: category filters built with "OR" (for example portfolio tabs) now keep working: the language is added with "AND", so each tab shows only its own category.
@@ -183,15 +184,18 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 * Fix: flags in the admin bar language menu were shown at full size.
 
 = 1.0.1 =
-* Elementor Pro: copies of headers, footers and other theme templates no longer take over the original's display conditions, which made Elementor report a conflict. The Languages panel in Elementor explains how to set conditions.
+* Elementor theme templates: copies of headers, footers and other theme templates no longer take over the original's display conditions, which made Elementor report a conflict. The Languages panel in Elementor explains how to set conditions.
 
 = 1.0.0 =
 * First release.
 
 == Upgrade Notice ==
 
+= 1.1.3 =
+Security hardening of the admin screens.
+
 = 1.1.2 =
-Small additions for the Pro add-on; nothing changes on your site.
+Small fixes and developer hooks; nothing changes on your site.
 
 = 1.1.1 =
 Fixes category filters with OR conditions and slider arrows on right-to-left pages.
