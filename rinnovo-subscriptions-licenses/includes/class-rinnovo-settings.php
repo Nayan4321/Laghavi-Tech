@@ -276,7 +276,15 @@ class RINNOVO_Settings {
 	 * Show the tab.
 	 */
 	public static function render() {
+		self::guide_box();
 		woocommerce_admin_fields( self::fields() );
+	}
+
+	/**
+	 * Link to the step-by-step guides.
+	 */
+	public static function guide_box() {
+		echo '<div class="notice notice-info inline rinnovo-guide-box"><p><strong>' . esc_html__( 'New to Rinnovo?', 'rinnovo-subscriptions-licenses' ) . '</strong> ' . esc_html__( 'The step-by-step guide explains installing, Stripe, renewals, subscription products and every setting on this page.', 'rinnovo-subscriptions-licenses' ) . '</p><p><a class="button button-primary" href="' . esc_url( RINNOVO_GUIDE_URL ) . '" target="_blank" rel="noopener">' . esc_html__( 'Open the setup guide', 'rinnovo-subscriptions-licenses' ) . '</a> <a class="button" href="' . esc_url( RINNOVO_LICENSE_GUIDE_URL ) . '" target="_blank" rel="noopener">' . esc_html__( 'License keys guide', 'rinnovo-subscriptions-licenses' ) . '</a> <span class="description">' . esc_html__( 'Free to read with a free account on laghavi.site.', 'rinnovo-subscriptions-licenses' ) . '</span></p></div>';
 	}
 
 	/**

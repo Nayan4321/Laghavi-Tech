@@ -104,6 +104,7 @@ class RINNOVO_License_Guide {
 		<div class="wrap rinnovo-guide">
 			<h1><?php esc_html_e( 'License guide', 'rinnovo-subscriptions-licenses' ); ?></h1>
 			<p class="rinnovo-guide__lead"><?php esc_html_e( 'How the products you sell check their license keys against this store: WordPress plugins and themes, desktop and mobile apps, browser extensions, SaaS, developer tools, games and digital assets.', 'rinnovo-subscriptions-licenses' ); ?></p>
+			<p><a class="button button-primary" href="<?php echo esc_url( RINNOVO_LICENSE_GUIDE_URL ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Read the full guide online', 'rinnovo-subscriptions-licenses' ); ?></a> <span class="description"><?php esc_html_e( 'Where the license screen goes in each kind of product, code in ten languages, every error message and how to fix it.', 'rinnovo-subscriptions-licenses' ); ?></span></p>
 
 			<div class="rinnovo-guide__card">
 				<h2><?php esc_html_e( '1. How it works', 'rinnovo-subscriptions-licenses' ); ?></h2>

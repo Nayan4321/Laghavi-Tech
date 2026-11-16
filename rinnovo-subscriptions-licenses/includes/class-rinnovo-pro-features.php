@@ -28,6 +28,7 @@ class RINNOVO_Pro_Features {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 60 );
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( RINNOVO_FILE ), array( __CLASS__, 'action_link' ), 20 );
+		add_filter( 'plugin_row_meta', array( __CLASS__, 'row_meta' ), 10, 2 );
 	}
 
 	/**
@@ -49,7 +50,21 @@ class RINNOVO_Pro_Features {
 	}
 
 	/**
-	 * "Pro features" on the Plugins screen.
+	 * "Setup guide" under the plugin's description on the Plugins screen.
+	 *
+	 * @param array  $links Links.
+	 * @param string $file  Plugin file.
+	 * @return array
+	 */
+	public static function row_meta( $links, $file ) {
+		if ( plugin_basename( RINNOVO_FILE ) === $file ) {
+			$links[] = '<a href="' . esc_url( RINNOVO_GUIDE_URL ) . '" target="_blank" rel="noopener">' . esc_html__( 'Setup guide', 'rinnovo-subscriptions-licenses' ) . '</a>';
+		}
+		return $links;
+	}
+
+	/**
+	 * Plugins screen: link to the Pro features screen.
 	 *
 	 * @param array $links Links.
 	 * @return array

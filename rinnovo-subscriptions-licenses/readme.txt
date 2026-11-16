@@ -4,7 +4,7 @@ Tags: subscriptions, recurring payments, stripe, license manager, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,6 +13,8 @@ Subscriptions for WooCommerce with any payment method, automatic Stripe renewals
 == Description ==
 
 Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, without a separate subscription plugin. Sell monthly or yearly plans, charge renewals automatically with Stripe, and if you sell software (WordPress plugins and themes, desktop or mobile apps, SaaS), hand out license keys, downloads and updates from the same shop.
+
+**Step-by-step guide:** [Rinnovo Subscriptions & Licenses: setup and settings](https://laghavi.site/guides/rinnovo-subscriptions-licenses-free/) covers installing, Stripe, renewals with your own payment plugin, subscription products, every setting and troubleshooting. Selling software? [Rinnovo license keys: connect your software](https://laghavi.site/guides/rinnovo-license-keys/) shows where the license screen goes in each kind of product, with code in ten languages. The guides are free to read with a free account on laghavi.site.
 
 = Subscription products =
 
@@ -72,6 +74,8 @@ Rinnovo Subscriptions & Licenses turns WooCommerce into a subscription shop, wit
 * Tick "Show downloads" on a product to show "1,234 downloads" under its price, counted from paid orders. `[rinnovo_downloads]` shows it anywhere.
 
 == Installation ==
+
+Full step-by-step guide with every setting: https://laghavi.site/guides/rinnovo-subscriptions-licenses-free/
 
 1. Install and activate WooCommerce, then Rinnovo Subscriptions & Licenses. Go to Settings > Permalinks and click Save once.
 2. **Stripe:** in Stripe go to Developers > API keys and copy the secret key. In WooCommerce > Settings > Payments open "Stripe", tick Enable, paste the key and save. The webhook line turns green ("Connected"). Try test mode first with the card 4242 4242 4242 4242.
@@ -158,6 +162,9 @@ Separate Pro plugins add invoices and tax invoices, free trials and first-paymen
 6. WooCommerce > Licenses.
 
 == Changelog ==
+
+= 1.1.2 =
+* Links to the step-by-step guides on the settings tab, the Subscriptions screen, the License guide and the Plugins list.
 
 = 1.1.1 =
 * Developers: rinnovo_plan filter, rinnovo_subscription_updated action and rinnovo_license_admin_row action for add-ons.

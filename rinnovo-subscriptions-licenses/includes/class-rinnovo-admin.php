@@ -198,6 +198,7 @@ class RINNOVO_Admin {
 		}
 		?>
 		<h1 class="wp-heading-inline"><?php esc_html_e( 'Subscriptions', 'rinnovo-subscriptions-licenses' ); ?></h1>
+		<a class="page-title-action" href="<?php echo esc_url( RINNOVO_GUIDE_URL ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Setup guide', 'rinnovo-subscriptions-licenses' ); ?></a>
 		<div class="rinnovo-admin-stats">
 			<div><strong><?php echo esc_html( number_format_i18n( RINNOVO_Subscriptions::count( "status IN ('active','trial','pending-cancel')" ) ) ); ?></strong><span><?php esc_html_e( 'Active', 'rinnovo-subscriptions-licenses' ); ?></span></div>
 			<div><strong><?php echo esc_html( number_format_i18n( RINNOVO_Subscriptions::count( "status = 'trial'" ) ) ); ?></strong><span><?php esc_html_e( 'In free trial', 'rinnovo-subscriptions-licenses' ); ?></span></div>
