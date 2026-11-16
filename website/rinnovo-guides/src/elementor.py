@@ -59,6 +59,21 @@ CSS = '''<style>
 #lg-guide th,#lg-guide td{padding:10px 12px;text-align:left;vertical-align:top;border:0;border-top:1px solid var(--line);color:#374151;background:transparent}
 #lg-guide tr:first-child th{border-top:0;background:var(--soft);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
 #lg-guide td:first-child{font-weight:600;color:var(--ink)}
+#lg-guide .lg-sec h3{font-size:18px;font-weight:800;color:var(--ink);margin:22px 0 0;font-family:inherit;text-transform:none;letter-spacing:normal;line-height:1.3}
+#lg-guide .lg-sec p.note{background:#eff6ff;border:1px solid #bfdbfe;border-left:4px solid #3b82f6;border-radius:10px;padding:12px 14px;color:#1e3a8a;font-size:15px}
+#lg-guide .code{margin-top:14px;border-radius:12px;overflow:hidden;background:#0f172a;border:1px solid #1e293b}
+#lg-guide .code__bar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 12px;background:#1e293b;color:#cbd5e1;font-size:12.5px;font-weight:700;letter-spacing:.02em}
+#lg-guide .code__copy{all:unset;cursor:pointer;padding:4px 10px;border-radius:7px;background:#334155;color:#fff;font-size:12px;font-weight:700}
+#lg-guide .code__copy:hover{background:var(--brand)}
+#lg-guide .code pre{margin:0;padding:14px 16px;overflow:auto;max-height:560px;background:transparent;border:0;color:#e2e8f0;font:13px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre;tab-size:4}
+#lg-guide .code code{background:none;color:inherit;padding:0;font:inherit;white-space:inherit}
+#lg-guide .tabs{margin-top:14px}
+#lg-guide .tabs__bar{display:flex;flex-wrap:wrap;gap:6px}
+#lg-guide .tabs__btn{all:unset;cursor:pointer;padding:7px 12px;border-radius:9px;background:var(--soft);border:1px solid var(--line);color:#374151;font-size:13.5px;font-weight:700}
+#lg-guide .tabs__btn:hover{border-color:var(--brand);color:#c2410c}
+#lg-guide .tabs__btn.is-on{background:linear-gradient(135deg,var(--brand),var(--brand2));border-color:transparent;color:#fff}
+#lg-guide .tabs__pane[hidden]{display:none!important}
+#lg-guide .tabs__pane .code{margin-top:10px}
 #lg-guide .lg-top{display:inline-block;margin-top:14px;font-size:13px;color:var(--muted)}
 #lg-guide .lg-works{margin-top:30px;padding:18px 20px;background:#fff7ed;border:1px solid #fed7aa;border-radius:14px}
 #lg-guide .lg-works b{font-size:15px;color:var(--ink)}
@@ -82,6 +97,8 @@ function unSelect2(){var $=window.jQuery;if(!sel||!$)return;var $s=$(sel);
  $s.off('change.lg').on('change.lg',function(){if(this.value&&this.value!==location.href)location.href=this.value;});}
 if(document.readyState!=='complete'){window.addEventListener('load',function(){unSelect2();setTimeout(unSelect2,300);setTimeout(unSelect2,1200);});}else{unSelect2();}
 if(window.jQuery)window.jQuery(function(){setTimeout(unSelect2,0);});
+root.querySelectorAll('.tabs').forEach(function(t){var bs=t.querySelectorAll('.tabs__btn'),ps=t.querySelectorAll('.tabs__pane');bs.forEach(function(b){b.addEventListener('click',function(){bs.forEach(function(x){x.classList.toggle('is-on',x===b);});ps.forEach(function(p){p.hidden=p.getAttribute('data-pane')!==b.getAttribute('data-tab');});});});});
+root.querySelectorAll('.code__copy').forEach(function(b){b.addEventListener('click',function(){var c=b.closest('.code').querySelector('code').innerText;var done=function(){b.textContent='Copied!';setTimeout(function(){b.textContent='Copy';},1500);};if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(c).then(done);}else{var a=document.createElement('textarea');a.value=c;document.body.appendChild(a);a.select();try{document.execCommand('copy');done();}catch(e){}document.body.removeChild(a);}});});
 var links=[].slice.call(root.querySelectorAll('.lg-toc a'));var secs=links.map(function(a){return document.getElementById(a.hash.slice(1));});
 var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 function mark(){var y=window.scrollY+140,cur=0;secs.forEach(function(s,i){if(s&&s.getBoundingClientRect().top+window.scrollY<=y)cur=i;});links.forEach(function(a,i){a.classList.toggle('is-on',i===cur);});}

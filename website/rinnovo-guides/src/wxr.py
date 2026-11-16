@@ -12,6 +12,8 @@ PRO = ['rinnovo-subscriptions-licenses-pro', 'rinnovo-physical-subscription-boxe
        'rinnovo-bundles-variable-subscriptions-pro']
 # guide slug -> (post slug, category name, category slug, product slugs, order)
 MAP = {
+ 'rinnovo-free-setup': ('rinnovo-subscriptions-licenses-free', 'Rinnovo free plugin guides', 'rinnovo-free-plugin-guides', [], -2),
+ 'rinnovo-free-licenses': ('rinnovo-license-keys', 'Rinnovo free plugin guides', 'rinnovo-free-plugin-guides', [], -1),
  'rinnovo-guide-shared': ('every-rinnovo-pro', 'Rinnovo Pro guides', 'rinnovo-pro-guides', PRO, 0),
  'rinnovo-guide-subscriptions-licenses-pro': ('rinnovo-subscriptions-licenses-pro', 'Rinnovo Subscriptions & Licenses Pro guide', 'rinnovo-subscriptions-licenses-pro-guide', [PRO[0]], 1),
  'rinnovo-guide-boxes-pro': ('rinnovo-boxes-pro', 'Rinnovo Boxes Pro guide', 'rinnovo-boxes-pro-guide', [PRO[1]], 2),

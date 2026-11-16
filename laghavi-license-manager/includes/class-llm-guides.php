@@ -23,6 +23,7 @@ class LLM_Guides {
 	const TYPE = 'guide';
 	const TAX  = 'guide_category';
 	const META = '_llm_guide_products';
+	const FREE = '_llm_guide_free';
 	const TD   = 'laghavi-license-manager';
 
 	/**
@@ -149,11 +150,84 @@ class LLM_Guides {
 	}
 
 	/**
+	 * The "free guides" checkbox.
+	 *
+	 * @param bool $on Checked.
+	 */
+	private static function free_box( $on ) {
+		echo '<label><input type="checkbox" name="llm_guide_free" value="yes"' . checked( $on, true, false ) . ' /> ' . esc_html__( 'Free guides: anyone with a free account can read them', self::TD ) . '</label>';
+		echo '<p class="description">' . esc_html__( 'For guides of free plugins. Leave "Only for customers with a license for" empty. Visitors are asked to log in or create a free account.', self::TD ) . '</p>';
+	}
+
+	/**
+	 * Whether a guide category is marked as free guides.
+	 *
+	 * @param int $term_id Term.
+	 * @return bool
+	 */
+	public static function is_free_term( $term_id ) {
+		return 'yes' === get_term_meta( (int) $term_id, self::FREE, true );
+	}
+
+	/**
+	 * Whether a guide is in a guide category marked as free guides.
+	 *
+	 * @param int $post_id Guide.
+	 * @return bool
+	 */
+	public static function is_free_guide( $post_id ) {
+		$terms = get_the_terms( $post_id, self::TAX );
+		foreach ( is_array( $terms ) ? $terms : array() as $t ) {
+			if ( self::is_free_term( $t->term_id ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Where visitors create a free account: the WooCommerce My Account page when it allows sign-up,
+	 * otherwise the WordPress registration page when anyone can register. Empty when sign-up is off.
+	 *
+	 * @param string $back Page to come back to.
+	 * @return string
+	 */
+	public static function register_url( $back = '' ) {
+		$url = '';
+		if ( function_exists( 'wc_get_page_permalink' ) && 'yes' === get_option( 'woocommerce_enable_myaccount_registration' ) ) {
+			$url = wc_get_page_permalink( 'myaccount' );
+		} elseif ( get_option( 'users_can_register' ) ) {
+			$url = wp_registration_url();
+		}
+		if ( $url && $back ) {
+			$url = add_query_arg( 'redirect_to', rawurlencode( $back ), $url );
+		}
+		/**
+		 * Filter the "Create a free account" link on guides.
+		 *
+		 * @param string $url  Link, empty to hide it.
+		 * @param string $back Page to come back to.
+		 */
+		return (string) apply_filters( 'llm_guides_register_url', $url, $back );
+	}
+
+	/**
+	 * Small lock icon (inline SVG, no emoji image).
+	 *
+	 * @return string
+	 */
+	private static function lock() {
+		return '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:inline-block;vertical-align:-1px;margin-right:4px"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+	}
+
+	/**
 	 * New category form.
 	 */
 	public static function add_field() {
 		echo '<div class="form-field"><label for="llm_guide_products">' . esc_html__( 'Only for customers with a license for', self::TD ) . '</label>';
 		self::picker( array() );
+		echo '</div><div class="form-field">';
+		self::free_box( false );
 		echo '</div>';
 	}
 
@@ -165,6 +239,8 @@ class LLM_Guides {
 	public static function edit_field( $term ) {
 		echo '<tr class="form-field"><th scope="row"><label for="llm_guide_products">' . esc_html__( 'Only for customers with a license for', self::TD ) . '</label></th><td>';
 		self::picker( self::products_of( (int) $term->term_id ) );
+		echo '</td></tr><tr class="form-field"><th scope="row">' . esc_html__( 'Free guides', self::TD ) . '</th><td>';
+		self::free_box( self::is_free_term( (int) $term->term_id ) );
 		echo '</td></tr>';
 	}
 
@@ -183,6 +259,11 @@ class LLM_Guides {
 			update_term_meta( $term_id, self::META, $ids );
 		} else {
 			delete_term_meta( $term_id, self::META );
+		}
+		if ( isset( $_POST['llm_guide_free'] ) && ! $ids ) {
+			update_term_meta( $term_id, self::FREE, 'yes' );
+		} else {
+			delete_term_meta( $term_id, self::FREE );
 		}
 		delete_transient( 'llm_guide_terms' );
 	}
@@ -424,7 +505,8 @@ class LLM_Guides {
 		}
 		$html = '<div class="llm-guide-locked" style="border:1px solid #dcdcde;border-radius:10px;padding:20px;margin:16px 0;background:#f6f7f7">';
 		if ( ! is_user_logged_in() ) {
-			$html .= '<p><strong>' . esc_html( $need ? __( 'This guide is for customers with an active license.', self::TD ) : __( 'Please log in to read this guide.', self::TD ) ) . '</strong></p><p><a class="button button-primary" href="' . esc_url( wp_login_url( get_permalink( $post_id ) ) ) . '">' . esc_html__( 'Log in to read it', self::TD ) . '</a> ' . implode( ' ', $links ) . '</p>';
+			$reg   = $need ? '' : self::register_url( get_permalink( $post_id ) );
+			$html .= '<p><strong>' . esc_html( $need ? __( 'This guide is for customers with an active license.', self::TD ) : __( 'Please log in to read this guide. Accounts are free.', self::TD ) ) . '</strong></p><p><a class="button button-primary" href="' . esc_url( wp_login_url( get_permalink( $post_id ) ) ) . '">' . esc_html__( 'Log in to read it', self::TD ) . '</a> ' . ( $reg ? '<a class="button" href="' . esc_url( $reg ) . '">' . esc_html__( 'Create a free account', self::TD ) . '</a> ' : '' ) . implode( ' ', $links ) . '</p>';
 		} else {
 			$html .= '<p><strong>' . esc_html__( 'Access denied: this guide needs an active license.', self::TD ) . '</strong></p><p>' . esc_html__( 'Your account has no active license for this product. If your license expired, renew it to read the guide again.', self::TD ) . '</p><p>' . implode( ' ', $links ) . ( function_exists( 'wc_get_account_endpoint_url' ) ? ' <a href="' . esc_url( wc_get_account_endpoint_url( 'dashboard' ) ) . '">' . esc_html__( 'My account', self::TD ) . '</a>' : '' ) . '</p>';
 		}
@@ -494,7 +576,7 @@ class LLM_Guides {
 		if ( is_post_type_archive( self::TYPE ) || is_tax( self::TAX ) ) {
 			wp_register_style( 'llm-guides-full', false, array(), LLM_VERSION );
 			wp_enqueue_style( 'llm-guides-full' );
-			wp_add_inline_style( 'llm-guides-full', str_replace( 'body.single-guide.elementor-page', 'body.llm-guides-archive', self::full_width_css() ) . self::archive_css() );
+			wp_add_inline_style( 'llm-guides-full', self::boxed_css() . self::archive_css() );
 			return;
 		}
 		if ( is_singular( self::TYPE ) && 'builder' === get_post_meta( get_queried_object_id(), '_elementor_edit_mode', true ) ) {
@@ -653,7 +735,13 @@ class LLM_Guides {
 			$args['tax_query'] = array( array( 'taxonomy' => self::TAX, 'field' => 'term_id', 'terms' => $term->term_id ) ); // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query
 		}
 		$groups = array();
-		foreach ( get_posts( $args ) as $g ) {
+		$posts  = get_posts( $args );
+		// Free guides (open with a free account) first.
+		$free   = array_filter( $posts, array( __CLASS__, 'is_free_guide' ) );
+		$posts  = array_merge( $free, array_udiff( $posts, $free, static function ( $a, $b ) {
+			return $a->ID - $b->ID;
+		} ) );
+		foreach ( $posts as $g ) {
 			$terms = get_the_terms( $g, self::TAX );
 			$name  = is_array( $terms ) && $terms ? $terms[0]->name : __( 'More guides', self::TD );
 			$groups[ $name ][] = $g;
@@ -663,9 +751,10 @@ class LLM_Guides {
 			$groups = array( '' => array_merge( ...array_values( $groups ) ) );
 		}
 		$logged = is_user_logged_in();
-		$html   = '<div id="lg-archive"><header class="lga-hero"><span class="lga-badge">' . esc_html__( 'Customer guides', self::TD ) . '</span><h1>' . esc_html( $term instanceof WP_Term ? $term->name : __( 'Guides', self::TD ) ) . '</h1><p>' . esc_html__( 'Step-by-step guides for installing, setting up and getting the most from your plugins. Log in with the account you bought with; guides for a product open while its license is active.', self::TD ) . '</p>';
+		$html   = '<div id="lg-archive"><header class="lga-hero"><span class="lga-badge">' . esc_html__( 'Customer guides', self::TD ) . '</span><h1>' . esc_html( $term instanceof WP_Term ? $term->name : __( 'Guides', self::TD ) ) . '</h1><p>' . esc_html__( 'Step-by-step guides for installing, setting up and getting the most from our plugins. Guides for free plugins open with a free account; guides for a Pro plugin open while its license is active.', self::TD ) . '</p>';
 		if ( ! $logged ) {
-			$html .= '<p class="lga-cta"><a class="lga-btn" href="' . esc_url( wp_login_url( get_post_type_archive_link( self::TYPE ) ) ) . '">' . esc_html__( 'Log in to read the guides', self::TD ) . '</a></p>';
+			$reg   = self::register_url( get_post_type_archive_link( self::TYPE ) );
+			$html .= '<p class="lga-cta"><a class="lga-btn" href="' . esc_url( wp_login_url( get_post_type_archive_link( self::TYPE ) ) ) . '">' . esc_html__( 'Log in to read the guides', self::TD ) . '</a>' . ( $reg ? ' <a class="lga-btn lga-btn--ghost" href="' . esc_url( $reg ) . '">' . esc_html__( 'Create a free account', self::TD ) . '</a>' : '' ) . '</p>';
 		}
 		if ( $term instanceof WP_Term ) {
 			$html .= '<p class="lga-cta"><a class="lga-link" href="' . esc_url( get_post_type_archive_link( self::TYPE ) ) . '">← ' . esc_html__( 'All guides', self::TD ) . '</a></p>';
@@ -679,14 +768,15 @@ class LLM_Guides {
 			foreach ( $items as $g ) {
 				$can  = self::can_read( $g->ID );
 				$need = self::needs( $g->ID );
+				$free = ! $need && self::is_free_guide( $g->ID );
 				if ( $can ) {
-					$pill = $need ? '<span class="lga-pill lga-pill--ok">✓ ' . esc_html__( 'Your license', self::TD ) . '</span>' : '<span class="lga-pill lga-pill--ok">' . esc_html__( 'Open', self::TD ) . '</span>';
+					$pill = $need ? '<span class="lga-pill lga-pill--ok">✓ ' . esc_html__( 'Your license', self::TD ) . '</span>' : '<span class="lga-pill lga-pill--ok">' . esc_html( $free ? __( 'Free guide', self::TD ) : __( 'Open', self::TD ) ) . '</span>';
 					$btn  = '<a class="lga-btn" href="' . esc_url( get_permalink( $g ) ) . '">' . esc_html__( 'Read the guide', self::TD ) . ' →</a>';
 				} elseif ( ! $logged ) {
-					$pill = '<span class="lga-pill">🔒 ' . esc_html( $need ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
+					$pill = $free ? '<span class="lga-pill lga-pill--free">' . esc_html__( 'Free with an account', self::TD ) . '</span>' : '<span class="lga-pill">' . self::lock() . esc_html( $need ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
 					$btn  = '<a class="lga-btn lga-btn--line" href="' . esc_url( wp_login_url( get_permalink( $g ) ) ) . '">' . esc_html__( 'Log in to read', self::TD ) . '</a>';
 				} else {
-					$pill = '<span class="lga-pill">🔒 ' . esc_html__( 'License needed', self::TD ) . '</span>';
+					$pill = '<span class="lga-pill">' . self::lock() . esc_html__( 'License needed', self::TD ) . '</span>';
 					$p    = $need && function_exists( 'wc_get_product' ) ? wc_get_product( $need[0] ) : null;
 					$btn  = $p ? '<a class="lga-btn lga-btn--line" href="' . esc_url( $p->get_permalink() ) . '">' . esc_html__( 'Get a license', self::TD ) . '</a>' : '';
 				}
@@ -730,11 +820,26 @@ class LLM_Guides {
 #lg-archive .lga-cat{font-size:12px;color:var(--muted);font-weight:600}
 #lg-archive .lga-pill{align-self:flex-start;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:#fff7ed;color:#c2410c}
 #lg-archive .lga-pill--ok{background:#dcfce7;color:#15803d}
+#lg-archive .lga-pill--free{background:#e0f2fe;color:#0369a1}
 #lg-archive .lga-foot{margin-top:auto;padding-top:6px}
 #lg-archive .lga-btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:10px;font-weight:700;font-size:14.5px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important}
 #lg-archive .lga-btn--line{background:#fff;color:var(--brand)!important;border:2px solid var(--brand)}
 #lg-archive .lga-hero .lga-btn{background:#fff;color:#140f3a!important}
-#lg-archive .lga-empty{margin-top:30px;color:var(--muted)}';
+#lg-archive .lga-empty{margin-top:30px;color:var(--muted)}
+#lg-archive .lga-hero .lga-btn.lga-btn--ghost{background:transparent;color:#fff!important;border:2px solid rgba(255,255,255,.75);margin:8px 0 0 8px}';
+	}
+
+	/**
+	 * The guides list: the theme's boxed content area without its title banner, and the list centred
+	 * at 1180px (themes like Nioland stretch every child of their content row to 100%).
+	 *
+	 * @return string
+	 */
+	public static function boxed_css() {
+		return 'body.llm-guides-archive .page_header_default,body.llm-guides-archive .page-header,body.llm-guides-archive .entry-header{display:none!important}
+body.llm-guides-archive #content .row.default_row>#lg-archive,body.llm-guides-archive #lg-archive{width:100%!important;max-width:1180px!important;margin-left:auto!important;margin-right:auto!important;flex:0 1 1180px}
+body.llm-guides-archive #content .row.default_row{justify-content:center}
+body.llm-guides-archive .site-content{padding-top:0!important}';
 	}
 
 	/**
@@ -819,7 +924,7 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		if ( is_admin() || ! $id || is_singular() || self::TYPE !== get_post_type( $id ) || ! in_the_loop() || self::can_read( (int) $id ) ) {
 			return $title;
 		}
-		return $title . ' <span class="llm-guide-lock" style="font-size:.7em;font-weight:600;padding:2px 8px;border-radius:999px;background:#fff7ed;color:#c2410c;white-space:nowrap">&#128274; ' . esc_html( self::needs( (int) $id ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
+		return $title . ' <span class="llm-guide-lock" style="font-size:.7em;font-weight:600;padding:2px 8px;border-radius:999px;background:#fff7ed;color:#c2410c;white-space:nowrap">' . self::lock() . esc_html( self::needs( (int) $id ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
 	}
 
 	/**
@@ -943,8 +1048,9 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		$terms = get_terms( array( 'taxonomy' => self::TAX, 'hide_empty' => false ) );
 		foreach ( is_array( $terms ) ? $terms : array() as $t ) {
 			$names = array_map( 'get_the_title', self::products_of( $t->term_id ) );
-			$who   = $names ? sprintf( /* translators: %s: products. */ __( 'Logged in, with an active license for: %s', self::TD ), implode( ', ', $names ) ) : ( self::login_required() ? __( 'Anyone logged in (no product connected)', self::TD ) : __( 'Everyone (no product connected)', self::TD ) );
-			echo '<tr><td><a href="' . esc_url( get_edit_term_link( $t->term_id, self::TAX ) ) . '">' . esc_html( $t->name ) . '</a></td><td>' . (int) $t->count . '</td><td' . ( $names ? '' : ' style="color:#b32d2e"' ) . '>' . esc_html( $who ) . '</td></tr>';
+			$free  = ! $names && self::is_free_term( $t->term_id );
+			$who   = $names ? sprintf( /* translators: %s: products. */ __( 'Logged in, with an active license for: %s', self::TD ), implode( ', ', $names ) ) : ( $free ? ( self::login_required() ? __( 'Free guides: anyone with a free account', self::TD ) : __( 'Free guides: everyone', self::TD ) ) : ( self::login_required() ? __( 'Anyone logged in (no product connected)', self::TD ) : __( 'Everyone (no product connected)', self::TD ) ) );
+			echo '<tr><td><a href="' . esc_url( get_edit_term_link( $t->term_id, self::TAX ) ) . '">' . esc_html( $t->name ) . '</a></td><td>' . (int) $t->count . '</td><td' . ( $names || $free ? '' : ' style="color:#b32d2e"' ) . '>' . esc_html( $who ) . '</td></tr>';
 		}
 		echo '</tbody></table></div>';
 	}
@@ -973,12 +1079,12 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		$open  = array();
 		$terms = get_terms( array( 'taxonomy' => self::TAX, 'hide_empty' => true ) );
 		foreach ( is_array( $terms ) ? $terms : array() as $t ) {
-			if ( ! self::products_of( $t->term_id ) ) {
+			if ( ! self::products_of( $t->term_id ) && ! self::is_free_term( $t->term_id ) ) {
 				$open[] = '<a href="' . esc_url( get_edit_term_link( $t->term_id, self::TAX ) ) . '">' . esc_html( $t->name ) . '</a>';
 			}
 		}
 		if ( $open ) {
-			echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'These guide categories are not connected to a product:', self::TD ) . '</strong> ' . implode( ', ', $open ) . '. ' . esc_html( self::login_required() ? __( 'Their guides only need a log-in, not a license. Open each one and choose the product under "Only for customers with a license for".', self::TD ) : __( 'Their guides are public. Open each one and choose the product under "Only for customers with a license for".', self::TD ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Links escaped above.
+			echo '<div class="notice notice-warning"><p><strong>' . esc_html__( 'These guide categories are not connected to a product:', self::TD ) . '</strong> ' . implode( ', ', $open ) . '. ' . esc_html( self::login_required() ? __( 'Their guides only need a log-in, not a license. Open each one and choose the product under "Only for customers with a license for", or tick "Free guides" for guides of free plugins.', self::TD ) : __( 'Their guides are public. Open each one and choose the product under "Only for customers with a license for".', self::TD ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Links escaped above.
 		}
 	}
 
@@ -1109,7 +1215,7 @@ window.addEventListener("scroll",mark,{passive:true});mark();})();';
 		$args['suppress_filters'] = true;
 		$out = '';
 		foreach ( get_posts( $args ) as $p ) {
-			$lock = self::can_read( $p->ID ) ? '' : ' <span class="llm-guide-lock">&#128274; ' . esc_html( self::needs( $p->ID ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
+			$lock = self::can_read( $p->ID ) ? '' : ' <span class="llm-guide-lock">' . self::lock() . esc_html( self::needs( $p->ID ) ? __( 'License needed', self::TD ) : __( 'Log in to read', self::TD ) ) . '</span>';
 			$out .= '<li><a href="' . esc_url( get_permalink( $p ) ) . '">' . esc_html( $p->post_title ) . '</a>' . $lock . '</li>';
 		}
 		return '' !== $out ? '<ul class="llm-guides">' . $out . '</ul>' : '<p>' . esc_html__( 'No guides for your account yet.', self::TD ) . '</p>';

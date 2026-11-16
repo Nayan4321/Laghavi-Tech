@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2.2
+Stable tag: 1.2.3
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -40,6 +40,16 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `GET /download` – the zip, for sites allowed to update
 
 == Changelog ==
+
+= 1.2.3 =
+* Guides list (/guides/) uses the theme's boxed width, without the title banner.
+* Guide categories: "Free guides" for guides of free plugins: anyone with a free account can read them, with a "Create a free account" button for visitors.
+* Lock labels use an icon instead of an emoji image.
+
+= 1.2.3 =
+* Guides list (/guides/) uses the theme's boxed width, without the title banner.
+* Guide categories: "Free guides" for guides of free plugins: anyone with a free account can read them, with a "Create a free account" button for visitors.
+* Lock labels use an icon instead of an emoji image.
 
 = 1.2.2 =
 * Every guide needs a log-in (Guides › Settings, on by default). Guides in a category connected to products also need an active license for one of them.

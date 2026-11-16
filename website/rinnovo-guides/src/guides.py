@@ -268,3 +268,7 @@ sections=[
 ('Recommended plugins', [
  'Sarala Login Page › Settings shows a "Works great with" box: Rinnovo Subscriptions & Licenses (sell subscriptions and licenses with WooCommerce) and Performance Insight for WooCommerce (cookieless analytics and SEO). Click Install to add them from WordPress.org, or Not now to hide the suggestion.']),
 ]))
+
+# Free plugin guides first (readable with a free account).
+from free import FREE
+G[0:0] = FREE

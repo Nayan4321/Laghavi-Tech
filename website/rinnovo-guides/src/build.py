@@ -13,6 +13,9 @@ WORKS = {
  'Rinnovo': [('Sarala Login Page', 'https://laghavi.site/product/sarala-login-page-pro/', 'designed log-in, sign-up and account pages with social log-ins.'),
              ('Vacanam Language Switcher', 'https://laghavi.site/product/vacanam-language-switcher-pro/', 'your store, emails and invoices in the customer\'s language.'),
              ('Performance Insight for WooCommerce', 'https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/', 'cookieless analytics and SEO, with every Rinnovo plugin\'s numbers.')],
+ 'Rinnovo (free plugin)': [('Rinnovo Pro plugins', 'https://laghavi.site/rinnovo-subscriptions-licenses/', 'trials, VAT/GST, invoices, boxes, memberships, media, contracts, classes and bundles.'),
+             ('Sarala Login Page', 'https://wordpress.org/plugins/sarala-login-page/', 'designed log-in and sign-up pages with social log-ins, for your customers\' accounts.'),
+             ('Performance Insight for WooCommerce', 'https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/', 'cookieless analytics and SEO, with your MRR and renewals on the dashboard.')],
  'Sarala': [('Rinnovo Subscriptions & Licenses', 'https://wordpress.org/plugins/rinnovo-subscriptions-licenses/', 'sell subscriptions, memberships and license keys with WooCommerce.'),
             ('Performance Insight for WooCommerce', 'https://wordpress.org/plugins/laghavi-performance-insight-for-woocommerce/', 'cookieless analytics and SEO for your store.'),
             ('Vacanam Language Switcher', 'https://laghavi.site/product/vacanam-language-switcher-pro/', 'login and account pages in the visitor\'s language.')],
@@ -54,9 +57,23 @@ links.forEach(function(a,i){a.addEventListener('click',function(ev){ev.preventDe
 window.addEventListener('scroll',mark,{passive:true});mark();})();
 </script>'''
 
+def code_box(label, text):
+    return (f'<div class="code"><div class="code__bar"><span>{e(label)}</span><button type="button" class="code__copy">Copy</button></div>'
+            f'<pre><code>{html.escape(text, quote=False)}</code></pre></div>')
+
 def block(b):
     if isinstance(b, str):
         return f'<p>{e(b)}</p>'
+    if b[0] == 'h3':
+        return f'<h3>{e(b[1])}</h3>'
+    if b[0] == 'note':
+        return f'<p class="note">{e(b[1])}</p>'
+    if b[0] == 'code':
+        return code_box(b[1], b[2])
+    if b[0] == 'tabs':
+        tabs = ''.join(f'<button type="button" class="tabs__btn{" is-on" if i == 0 else ""}" data-tab="{i}">{e(lbl)}</button>' for i, (lbl, _) in enumerate(b[1]))
+        panes = ''.join(f'<div class="tabs__pane"{"" if i == 0 else " hidden"} data-pane="{i}">{code_box(lbl, txt)}</div>' for i, (lbl, txt) in enumerate(b[1]))
+        return f'<div class="tabs"><div class="tabs__bar" role="tablist">{tabs}</div>{panes}</div>'
     if b[0] == 'ul':
         return '<ul>' + ''.join(f'<li>{e(i)}</li>' for i in b[1]) + '</ul>'
     if b[0] == 'ol':
