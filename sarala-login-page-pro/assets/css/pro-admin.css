@@ -277,3 +277,16 @@
 	height: 720px;
 	zoom: 0.58;
 }
+
+/* Registration fields builder */
+.slpp-fields-admin .slpp-field-card { background: #fff; border: 1px solid #dcdcde; border-radius: 8px; padding: 14px 16px; margin: 12px 0; max-width: 980px; }
+.slpp-field-card__head { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.slpp-field-card__title { font-size: 14px; }
+.slpp-field-card__type { color: #646970; background: #f0f0f1; border-radius: 99px; padding: 2px 10px; font-size: 12px; }
+.slpp-field-card__tools { margin-left: auto; display: flex; gap: 10px; }
+.slpp-field-grid { display: grid; grid-template-columns: repeat( auto-fill, minmax( 260px, 1fr ) ); gap: 12px 18px; }
+.slpp-field-grid label { display: flex; flex-direction: column; gap: 4px; font-weight: 600; }
+.slpp-field-grid label .description { font-weight: normal; }
+.slpp-field-grid input[type="text"], .slpp-field-grid select, .slpp-field-grid textarea { width: 100%; max-width: none; }
+.slpp-inline { display: flex; gap: 12px; }
+.slpp-field-checks { display: flex; flex-wrap: wrap; gap: 8px 22px; margin: 12px 0 0; }

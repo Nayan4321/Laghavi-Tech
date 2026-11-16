@@ -1,0 +1,18 @@
+/* Sarala Login Page Pro – registration fields */
+.slpp-fields { display: flex; flex-wrap: wrap; gap: 0 4%; margin: 0 0 8px; }
+.slpp-fields > .slpp-field { flex: 1 1 100%; box-sizing: border-box; }
+.slpp-fields > .slpp-field--half { flex: 0 1 48%; }
+.slpp-field label { display: block; }
+.slpp-field .slpp-input { width: 100%; box-sizing: border-box; }
+.slpp-fields--wp .slpp-field { margin-bottom: 16px; }
+.slpp-fields--wp .slpp-input { font-size: 16px; padding: 3px 5px; min-height: 40px; margin: 2px 0 0; }
+.slpp-fields--wp textarea.slpp-input { min-height: 70px; }
+.slpp-fields--wp select[multiple].slpp-input { min-height: 90px; }
+.slpp-choices { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 4px; }
+.slpp-choice { display: inline-flex !important; align-items: center; gap: 6px; font-weight: normal; cursor: pointer; }
+.slpp-choice input { margin: 0; width: auto; }
+.slpp-field-help { display: block; font-size: .85em; opacity: .75; margin-top: 4px; }
+.slpp-req { color: #d63638; }
+.slpp-account-fields { margin: 1.5em 0; }
+.slpp-field--readonly .slpp-readonly-label { display: block; opacity: .75; }
+@media (max-width: 600px) { .slpp-fields > .slpp-field--half { flex-basis: 100%; } }

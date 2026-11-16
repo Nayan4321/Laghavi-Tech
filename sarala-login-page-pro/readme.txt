@@ -4,7 +4,7 @@ Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,6 +24,15 @@ Requires the free **Sarala Login Page** plugin. Buy a license at [laghavi.site](
 * Icon tiles, outline boxes or brand pills, besides the standard buttons.
 * Rounded, pill, square or circle corners.
 * Each provider's own colours, or your brand colours (background, text, border, hover) for every button, with a live preview.
+
+**Registration fields**
+
+* Ask for more details when people sign up: text, paragraph, number (with lowest and highest), phone, date, dropdown, radio buttons, multiple select, checkboxes and a single yes/no checkbox.
+* Shown on the WordPress and WooCommerce registration forms and when an account is created at checkout; required fields, half or full width, help text and placeholders.
+* Saved on the customer's account. Customers change their answers later in My Account > Account details and in their profile; or show a field read-only, or hide it from customers.
+* Use billing_phone, billing_company and other WooCommerce keys to fill WooCommerce's own fields.
+* Columns in the Users list, every answer on the user's profile, and included in WordPress's personal data export.
+* People who sign up with a social log-in are asked to complete required details in My Account.
 
 **CAPTCHA with a backup**
 
@@ -126,6 +135,10 @@ Yes. Click "Deactivate on this site" on the Pro license screen, then activate it
 Page caching plugins usually serve the same page to every logged-out visitor and skip the cache for logged-in users, so "logged-out visitors" rules and role rules both work. If your cache also serves logged-in users, exclude pages that use role-based blocks.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: registration fields (Sarala Login Page > Registration fields): number, dropdown, radio buttons, multiple select, checkboxes and more on the WordPress and WooCommerce sign-up forms and checkout, editable later in My Account and the profile.
+* Fix: the login designer no longer loads translations before WordPress is ready.
 
 = 1.2.0 =
 * New: Slack, TikTok, Twitch, VK, Patreon, Amazon and Disqus login (needs Sarala Login Page 1.2.0).

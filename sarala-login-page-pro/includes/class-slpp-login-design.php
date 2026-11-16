@@ -25,7 +25,9 @@ class SLPP_Login_Design {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'admin_assets' ) );
 		add_action( 'admin_post_slpp_preview_reset', array( __CLASS__, 'preview_reset' ) );
 
-		if ( ! self::get( 'enabled' ) ) {
+		// Read the saved flag directly: the defaults contain translated texts, which must not load this early.
+		$saved = get_option( self::OPTION, array() );
+		if ( ! is_array( $saved ) || empty( $saved['enabled'] ) ) {
 			return;
 		}
 		add_action( 'login_enqueue_scripts', array( __CLASS__, 'assets' ), 20 );
