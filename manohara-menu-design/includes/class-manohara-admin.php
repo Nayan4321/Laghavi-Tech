@@ -609,6 +609,17 @@ class Manohara_Admin {
 					self::type_fields( $p . '[style]', $style );
 					?>
 				</div>
+				<?php
+				/**
+				 * More fields for a device (add-ons).
+				 *
+				 * @param string $p      Field name prefix.
+				 * @param array  $set    Device setup.
+				 * @param string $device Device.
+				 * @param array  $design Design.
+				 */
+				do_action( 'manohara_device_fields', $p, $set, $device, $design );
+				?>
 			</div>
 		</section>
 		<?php
@@ -860,6 +871,14 @@ class Manohara_Admin {
 				'style_override' => empty( $raw['style_override'] ) ? 0 : 1,
 				'style'          => empty( $raw['style_override'] ) ? array() : self::clean_style( isset( $raw['style'] ) ? $raw['style'] : array() ),
 			);
+			/**
+			 * A device's setup about to be saved (add-ons clean and keep their fields).
+			 *
+			 * @param array  $set    Clean setup.
+			 * @param array  $raw    Posted fields (unslashed, not cleaned).
+			 * @param string $device Device.
+			 */
+			$design['devices'][ $device ] = (array) apply_filters( 'manohara_device_clean', $design['devices'][ $device ], $raw, $device );
 		}
 		return $design;
 	}

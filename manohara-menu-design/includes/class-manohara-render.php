@@ -103,10 +103,11 @@ class Manohara_Render {
 	/**
 	 * One item's link.
 	 *
-	 * @param WP_Post $item Item.
+	 * @param WP_Post $item  Item.
+	 * @param int     $depth Depth.
 	 * @return string
 	 */
-	private static function link( $item ) {
+	private static function link( $item, $depth = 0 ) {
 		$atts = array(
 			'href'   => ! empty( $item->url ) ? $item->url : '',
 			'target' => ! empty( $item->target ) ? $item->target : '',
@@ -123,7 +124,15 @@ class Manohara_Render {
 			}
 		}
 		$title = apply_filters( 'the_title', $item->title, $item->ID ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WordPress's own filter, as menus use it.
-		return $html . '><span class="mnh-label">' . wp_kses_post( $title ) . '</span></a>';
+		$inner = '<span class="mnh-label">' . wp_kses_post( $title ) . '</span>';
+		/**
+		 * Inside of a menu link (add-ons add icons, images, badges and descriptions).
+		 *
+		 * @param string  $inner HTML.
+		 * @param WP_Post $item  Item.
+		 * @param int     $depth Depth.
+		 */
+		return $html . '>' . apply_filters( 'manohara_link_inner', $inner, $item, $depth ) . '</a>';
 	}
 
 	/**
@@ -143,8 +152,21 @@ class Manohara_Render {
 		$html  = '<ul class="' . esc_attr( $list_class ) . '">';
 		$count = count( $tree[ $parent_id ] );
 		foreach ( $tree[ $parent_id ] as $i => $item ) {
-			$has     = ! empty( $tree[ (int) $item->ID ] );
+			/**
+			 * A custom submenu for an item (add-ons show mega menus here). Null keeps the normal submenu.
+			 *
+			 * @param string|null $custom HTML of the panel, or null.
+			 * @param WP_Post     $item   Item.
+			 * @param array       $tree   All items by parent.
+			 * @param array       $opts   Template options.
+			 * @param int         $depth  Depth.
+			 */
+			$custom  = apply_filters( 'manohara_item_submenu', null, $item, $tree, $opts, $depth );
+			$has     = is_string( $custom ) || ! empty( $tree[ (int) $item->ID ] );
 			$classes = array( 'mnh-item' );
+			if ( is_string( $custom ) ) {
+				$classes[] = 'mnh-has-mega';
+			}
 			if ( $has ) {
 				$classes[] = 'mnh-has-sub';
 			}
@@ -162,15 +184,29 @@ class Manohara_Render {
 					$classes[] = sanitize_html_class( $custom );
 				}
 			}
-			$html .= '<li class="' . esc_attr( implode( ' ', array_unique( $classes ) ) ) . '">';
-			$html .= '<div class="mnh-row">' . self::link( $item );
+			/**
+			 * Classes of a menu item.
+			 *
+			 * @param string[] $classes Classes.
+			 * @param WP_Post  $item    Item.
+			 * @param int      $depth   Depth.
+			 */
+			$classes = (array) apply_filters( 'manohara_item_classes', $classes, $item, $depth );
+			$html   .= '<li class="' . esc_attr( implode( ' ', array_unique( $classes ) ) ) . '">';
+			$html   .= '<div class="mnh-row">' . self::link( $item, $depth );
 			if ( $has ) {
 				/* translators: %s: menu item name. */
 				$label = sprintf( __( 'Show submenu of %s', 'manohara-menu-design' ), wp_strip_all_tags( $item->title ) );
 				$html .= '<button type="button" class="mnh-sub-toggle" aria-expanded="false" aria-label="' . esc_attr( $label ) . '">' . self::icon( 'chevron' ) . '</button>';
 			}
 			$html .= '</div>';
-			if ( $has ) {
+			if ( is_string( $custom ) ) {
+				$html .= '<div class="mnh-sub-wrap mnh-mega-wrap"><div class="mnh-sub-inner">';
+				if ( 'drilldown' === ( isset( $opts['submenu'] ) ? $opts['submenu'] : '' ) ) {
+					$html .= '<button type="button" class="mnh-back">' . self::icon( 'back' ) . '<span>' . esc_html( wp_strip_all_tags( $item->title ) ) . '</span></button>';
+				}
+				$html .= $custom . '</div></div>';
+			} elseif ( $has ) {
 				$html .= '<div class="mnh-sub-wrap"><div class="mnh-sub-inner">';
 				if ( 'drilldown' === ( isset( $opts['submenu'] ) ? $opts['submenu'] : '' ) ) {
 					$html .= '<button type="button" class="mnh-back">' . self::icon( 'back' ) . '<span>' . esc_html( wp_strip_all_tags( $item->title ) ) . '</span></button>';
@@ -343,12 +379,22 @@ class Manohara_Render {
 				$classes[] = 'mnh-shadow';
 			}
 		}
-		$label = '' !== $design['name'] ? $design['name'] : __( 'Menu', 'manohara-menu-design' );
-		$html  = '<nav class="' . esc_attr( implode( ' ', $classes ) ) . '" style="' . esc_attr( self::vars( $style ) ) . '" aria-label="' . esc_attr( $label ) . '" data-mnh="' . esc_attr( $key ) . '">';
+		/**
+		 * Classes of a menu design on a device.
+		 *
+		 * @param string[] $classes Classes.
+		 * @param array    $design  Design.
+		 * @param string   $device  Device.
+		 * @param string   $context location, bar or embed.
+		 */
+		$classes = (array) apply_filters( 'manohara_nav_classes', $classes, $design, $device, $context );
+		$label   = '' !== $design['name'] ? $design['name'] : __( 'Menu', 'manohara-menu-design' );
+		$html    = '<nav class="' . esc_attr( implode( ' ', $classes ) ) . '" style="' . esc_attr( self::vars( $style ) ) . '" aria-label="' . esc_attr( $label ) . '" data-mnh="' . esc_attr( $key ) . '">';
 
 		if ( 'bar' === $template['kind'] ) {
 			$html .= self::items( $tree, 0, $opts ) . '</nav>';
-			return $html;
+			/** This filter is documented below. */
+			return (string) apply_filters( 'manohara_device_html', $html, $design, $device, $context );
 		}
 
 		$id     = 'mnh-panel-' . ( ++self::$count );
@@ -401,7 +447,15 @@ class Manohara_Render {
 		if ( in_array( $key, array( 'overlay', 'drawer' ), true ) || ! $bar ) {
 			$html .= '<div class="mnh-backdrop" hidden></div>';
 		}
-		return $html . '</nav>';
+		/**
+		 * HTML of a menu design on a device.
+		 *
+		 * @param string $html    HTML.
+		 * @param array  $design  Design.
+		 * @param string $device  Device.
+		 * @param string $context location, bar or embed.
+		 */
+		return (string) apply_filters( 'manohara_device_html', $html . '</nav>', $design, $device, $context );
 	}
 
 	/**

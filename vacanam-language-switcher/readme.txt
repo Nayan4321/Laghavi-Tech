@@ -165,6 +165,7 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 == Changelog ==
 
 = 1.1.3 =
+* Developers: vacanam_menu_item_copied action, so menu plugins can copy their item settings into menu translations.
 * Security: every admin link and form that changes or filters something is checked with a nonce; messages after saving no longer travel in the address.
 * The setup reminder shows only on the Dashboard, Plugins and Vacanam screens.
 * Font CSS is added with wp_add_inline_style().

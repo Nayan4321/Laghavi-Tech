@@ -656,6 +656,14 @@ class Vacanam_Duplicator {
 				if ( $switcher ) {
 					update_post_meta( $new_item, Vacanam_Menus::META, $switcher );
 				}
+				/**
+				 * A menu item was copied into another language (menu plugins copy their item settings here).
+				 *
+				 * @param int    $from Original item.
+				 * @param int    $to   Copy.
+				 * @param string $lang Language of the copy.
+				 */
+				do_action( 'vacanam_menu_item_copied', (int) $item->ID, (int) $new_item, $lang );
 			}
 		}
 		$group = array();
