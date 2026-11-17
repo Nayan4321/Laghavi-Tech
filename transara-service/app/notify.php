@@ -289,3 +289,32 @@ function trs_notify_subscribers( $site, $set, $m, $down ) {
 		);
 	}
 }
+
+/**
+ * A message to the Transara bot: reply with the chat ID (for Transara › Pro › Telegram chat ID).
+ *
+ * @param mixed $update Telegram update.
+ */
+function trs_telegram_update( $update ) {
+	if ( ! is_array( $update ) || empty( $update['message']['chat']['id'] ) ) {
+		return;
+	}
+	$chat = (string) $update['message']['chat']['id'];
+	$text = isset( $update['message']['text'] ) ? (string) $update['message']['text'] : '';
+	if ( 0 !== strpos( trim( $text ), '/start' ) && 0 !== strpos( trim( $text ), '/id' ) ) {
+		return;
+	}
+	trs_http(
+		'https://api.telegram.org/bot' . trs_config( 'telegram_token' ) . '/sendMessage',
+		array(
+			'method'  => 'POST',
+			'headers' => array( 'Content-Type: application/json' ),
+			'body'    => json_encode(
+				array(
+					'chat_id' => $chat,
+					'text'    => "Your chat ID is {$chat}\n\nPaste it in WordPress: Transara › Pro › Telegram chat ID. Alerts from Transara will then arrive here. For a group, add this bot to the group and send /id there.",
+				)
+			),
+		)
+	);
+}

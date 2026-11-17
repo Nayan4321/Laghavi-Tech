@@ -71,6 +71,13 @@ try {
 		}
 		trs_status_page( $trs_site, isset( $trs_parts[2] ) ? $trs_parts[2] : '' );
 	}
+	// Telegram bot: "/start" answers with the chat ID to paste into Transara Pro.
+	if ( 'tg' === $trs_first && isset( $trs_parts[1] ) && 'POST' === $trs_method ) {
+		if ( '' !== (string) trs_config( 'telegram_token' ) && hash_equals( trs_sign( 'telegram' ), (string) $trs_parts[1] ) ) {
+			trs_telegram_update( json_decode( (string) file_get_contents( 'php://input' ), true ) );
+		}
+		trs_json( array( 'ok' => true ) );
+	}
 	if ( 'ack' === $trs_first && isset( $trs_parts[1], $trs_parts[2] ) ) {
 		$id = (int) $trs_parts[1];
 		if ( hash_equals( trs_sign( 'ack' . $id ), (string) $trs_parts[2] ) ) {

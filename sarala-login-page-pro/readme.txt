@@ -4,7 +4,7 @@ Tags: super admin, activity log, admin menu editor, hide blocks, user roles
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,6 +135,9 @@ Yes. Click "Deactivate on this site" on the Pro license screen, then activate it
 Page caching plugins usually serve the same page to every logged-out visitor and skip the cache for logged-in users, so "logged-out visitors" rules and role rules both work. If your cache also serves logged-in users, exclude pages that use role-based blocks.
 
 == Changelog ==
+
+= 1.3.1 =
+* The daily license check is scheduled once WordPress is ready, so other plugins (such as WooCommerce) no longer load their translations too early.
 
 = 1.3.0 =
 * New: registration fields (Sarala Login Page > Registration fields): number, dropdown, radio buttons, multiple select, checkboxes and more on the WordPress and WooCommerce sign-up forms and checkout, editable later in My Account and the profile.

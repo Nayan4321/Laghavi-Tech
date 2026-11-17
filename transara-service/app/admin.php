@@ -105,6 +105,13 @@ function trs_admin( $parts ) {
 	$html = '<div class="row"><h1>Transara service</h1><a href="' . trs_e( trs_config( 'base_url' ) ) . '/admin/logout">Log out</a></div>';
 	$cron = $last ? (int) $last['value'] : 0;
 	$html .= '<p class="note' . ( time() - $cron > 300 ? ' bad' : '' ) . '">Checks last ran ' . ( $cron ? trs_e( trs_ago( $cron ) ) . ' ago' : 'never – set up the cron job (see README)' ) . ' · Regions: ' . trs_e( implode( ', ', trs_regions() ) ) . '</p>';
+	if ( '' !== (string) trs_config( 'telegram_token' ) ) {
+		if ( isset( $_POST['do'] ) && 'telegram' === $_POST['do'] ) { // phpcs:ignore -- CSRF checked at the top of trs_admin().
+			$r     = trs_http( 'https://api.telegram.org/bot' . trs_config( 'telegram_token' ) . '/setWebhook?url=' . rawurlencode( trs_config( 'base_url' ) . '/tg/' . trs_sign( 'telegram' ) ), array( 'timeout' => 20 ) );
+			$html .= '<p class="note' . ( 200 === $r['status'] ? '' : ' bad' ) . '">Telegram bot: ' . ( 200 === $r['status'] ? 'connected. Customers can now send /start to the bot to get their chat ID.' : 'Telegram refused: ' . trs_e( substr( $r['body'], 0, 200 ) ) ) . '</p>';
+		}
+		$html .= '<form method="post" class="inline">' . $csrf . '<input type="hidden" name="do" value="telegram"><button>Connect the Telegram bot</button></form> <span class="note">Once, after adding telegram_token to the config.</span>';
+	}
 	$html .= '<table><tr><th>Site</th><th>Status</th><th>License</th><th>Monitors</th><th>Down</th><th>Last seen</th></tr>';
 	foreach ( trs_rows( "SELECT s.*, (SELECT COUNT(*) FROM monitors m WHERE m.site_id = s.id) AS mons, (SELECT COUNT(*) FROM monitors m WHERE m.site_id = s.id AND m.status = 'down' AND m.paused = 0) AS downs FROM sites s ORDER BY s.id DESC" ) as $s ) {
 		$html .= '<tr><td><a href="' . trs_e( trs_config( 'base_url' ) ) . '/admin/site/' . (int) $s['id'] . '">' . trs_e( $s['site_url'] ) . '</a></td><td>' . trs_e( $s['status'] ) . '</td><td>' . trs_e( $s['license_status'] ) . '</td><td>' . (int) $s['mons'] . '</td><td>' . ( (int) $s['downs'] ? '<strong style="color:#dc2626">' . (int) $s['downs'] . '</strong>' : '0' ) . '</td><td>' . ( (int) $s['last_seen'] ? trs_e( trs_ago( (int) $s['last_seen'] ) ) . ' ago' : '—' ) . '</td></tr>';

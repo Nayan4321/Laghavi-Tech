@@ -23,13 +23,21 @@ class SLPP_License {
 		add_action( 'admin_post_slpp_license', array( __CLASS__, 'handle_form' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notice' ) );
 		add_action( 'slpp_daily', array( __CLASS__, 'check' ) );
-		if ( ! wp_next_scheduled( 'slpp_daily' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'slpp_daily' );
-		}
+		add_action( 'init', array( __CLASS__, 'schedule' ) );
 
 		// WordPress 5.8+ asks plugins with an "Update URI" header for their own updates.
 		add_filter( 'update_plugins_laghavi.site', array( __CLASS__, 'update_info' ), 10, 3 );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugin_details' ), 10, 3 );
+	}
+
+	/**
+	 * Daily license check, scheduled once WordPress is ready (scheduling earlier makes other plugins
+	 * load their translations too soon).
+	 */
+	public static function schedule() {
+		if ( ! wp_next_scheduled( 'slpp_daily' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'slpp_daily' );
+		}
 	}
 
 	/**

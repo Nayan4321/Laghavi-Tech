@@ -23,13 +23,21 @@ class MNHP_License {
 		add_action( 'admin_post_mnhp_license', array( __CLASS__, 'handle_form' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notice' ) );
 		add_action( 'mnhp_daily', array( __CLASS__, 'check' ) );
-		if ( ! wp_next_scheduled( 'mnhp_daily' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'mnhp_daily' );
-		}
+		add_action( 'init', array( __CLASS__, 'schedule' ) );
 
 		// WordPress 5.8+ asks plugins with an "Update URI" header for their own updates.
 		add_filter( 'update_plugins_laghavi.site', array( __CLASS__, 'update_info' ), 10, 3 );
 		add_filter( 'plugins_api', array( __CLASS__, 'plugin_details' ), 10, 3 );
+	}
+
+	/**
+	 * Daily license check, scheduled once WordPress is ready (scheduling earlier makes other plugins
+	 * load their translations too soon).
+	 */
+	public static function schedule() {
+		if ( ! wp_next_scheduled( 'mnhp_daily' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'daily', 'mnhp_daily' );
+		}
 	}
 
 	/**
@@ -348,7 +356,7 @@ class MNHP_License {
 			'package'      => isset( $info['package'] ) ? $info['package'] : '',
 			'tested'       => isset( $info['tested'] ) ? $info['tested'] : '',
 			'requires_php' => isset( $info['requires_php'] ) ? $info['requires_php'] : '',
-			'icons'        => array( '1x' => SARALOPA_URL . 'assets/images/menu-icon-2x.png' ),
+			'icons'        => ! empty( $info['icon'] ) ? array( '1x' => esc_url_raw( $info['icon'] ) ) : array(),
 		);
 	}
 
