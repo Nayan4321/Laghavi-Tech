@@ -102,7 +102,7 @@ class Transara_Monitoring_Admin {
 	private static function overview() {
 		$monitors = Transara_Monitors::all();
 		echo '<section class="transara-card"><h2>' . esc_html__( 'Monitors', 'transara' ) . ' <a class="page-title-action" href="' . esc_url( self::view_url( 'add' ) ) . '">' . esc_html__( 'Add monitor', 'transara' ) . '</a> ' . Transara_Admin::action_button( 'transara_monitor_check', __( 'Check all now', 'transara' ), 'secondary' ) . '</h2>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in action_button().
-		echo '<p class="transara-card__lead">' . esc_html__( 'Checks run from this site every minute in the background. To be alerted when this site itself is down, a check from outside is needed: Transara Pro checks from several locations.', 'transara' ) . '</p>';
+		echo '<p class="transara-card__lead">' . esc_html__( 'Checks run from this site every minute in the background. A site cannot report its own complete outage, so pair it with a check from another server for this site itself.', 'transara' ) . '</p>';
 		if ( ! $monitors ) {
 			echo '<p>' . esc_html__( 'No monitors yet.', 'transara' ) . '</p>';
 		} else {

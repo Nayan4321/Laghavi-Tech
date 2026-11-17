@@ -138,7 +138,7 @@ class Transara_Alerts {
 			return false;
 		}
 		/**
-		 * Change or stop an alert (Transara Pro adds SMS, WhatsApp, Telegram, on-call…).
+		 * Change or stop an alert (add-ons add more channels here).
 		 *
 		 * @param array $alert event, subject, lines, data.
 		 */

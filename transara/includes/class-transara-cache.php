@@ -247,6 +247,7 @@ class Transara_Cache {
 			. "header( 'Last-Modified: ' . gmdate( 'D, d M Y H:i:s', \$transara_time ) . ' GMT' );\n"
 			. "header( 'Vary: Accept-Encoding, Cookie' );\n"
 			. "header( 'X-Transara-Cache: HIT' );\n"
+			. "foreach ( isset( \$transara_config['headers'] ) ? (array) \$transara_config['headers'] : array() as \$transara_header ) {\n\theader( \$transara_header );\n}\n"
 			. "if ( \$transara_since && \$transara_since >= \$transara_time ) {\n\thttp_response_code( 304 );\n\texit;\n}\n"
 			. "\$transara_gzip = isset( \$_SERVER['HTTP_ACCEPT_ENCODING'] ) && false !== strpos( (string) \$_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip' ) && is_file( \$transara_html . '.gz' ) && ! ini_get( 'zlib.output_compression' );\n"
 			. "if ( \$transara_gzip ) {\n\theader( 'Content-Encoding: gzip' );\n\t\$transara_html .= '.gz';\n}\n"
