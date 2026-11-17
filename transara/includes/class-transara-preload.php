@@ -102,6 +102,9 @@ class Transara_Preload {
 	private static function save( $queue ) {
 		$queue = array_values( array_unique( $queue ) );
 		update_option( self::QUEUE, $queue, false );
+		if ( Transara_Cache::$deactivating ) {
+			return;
+		}
 		if ( $queue && ! wp_next_scheduled( 'transara_preload_run' ) ) {
 			wp_schedule_event( time() + 30, 'transara_minute', 'transara_preload_run' );
 		} elseif ( ! $queue ) {

@@ -376,23 +376,15 @@ class Transara_Monitoring_Admin {
 	 * Actions.
 	 */
 
-	/**
-	 * Check the request.
-	 *
-	 * @param string $action Nonce action.
-	 */
-	private static function guard( $action ) {
-		check_admin_referer( $action );
-		if ( ! current_user_can( Transara_Admin::cap() ) ) {
-			wp_die( esc_html__( 'You are not allowed to do this.', 'transara' ), 403 );
-		}
-	}
 
 	/**
 	 * Save a monitor.
 	 */
 	public static function handle_save() {
-		self::guard( 'transara_monitor_save' );
+		check_admin_referer( 'transara_monitor_save' );
+		if ( ! current_user_can( Transara_Admin::cap() ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'transara' ), 403 );
+		}
 		$type   = isset( $_POST['type'] ) ? sanitize_key( wp_unslash( $_POST['type'] ) ) : 'http';
 		$target = isset( $_POST['target'] ) ? sanitize_text_field( wp_unslash( $_POST['target'] ) ) : '';
 		if ( 'heartbeat' !== $type && '' === Transara_Monitors::clean_target( $type, $target ) ) {
@@ -426,7 +418,10 @@ class Transara_Monitoring_Admin {
 	 * Delete a monitor.
 	 */
 	public static function handle_delete() {
-		self::guard( 'transara_monitor_delete' );
+		check_admin_referer( 'transara_monitor_delete' );
+		if ( ! current_user_can( Transara_Admin::cap() ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'transara' ), 403 );
+		}
 		Transara_Monitors::delete( isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0 );
 		Transara_Admin::flash( __( 'Monitor deleted.', 'transara' ) );
 		wp_safe_redirect( admin_url( 'admin.php?page=' . self::PAGE ) );
@@ -437,7 +432,10 @@ class Transara_Monitoring_Admin {
 	 * Pause or resume.
 	 */
 	public static function handle_pause() {
-		self::guard( 'transara_monitor_pause' );
+		check_admin_referer( 'transara_monitor_pause' );
+		if ( ! current_user_can( Transara_Admin::cap() ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'transara' ), 403 );
+		}
 		$m = Transara_Monitors::get( isset( $_GET['id'] ) ? absint( $_GET['id'] ) : 0 );
 		if ( $m ) {
 			Transara_Monitors::save(
@@ -454,7 +452,10 @@ class Transara_Monitoring_Admin {
 	 * Check all now.
 	 */
 	public static function handle_check() {
-		self::guard( 'transara_monitor_check' );
+		check_admin_referer( 'transara_monitor_check' );
+		if ( ! current_user_can( Transara_Admin::cap() ) ) {
+			wp_die( esc_html__( 'You are not allowed to do this.', 'transara' ), 403 );
+		}
 		Transara_Monitors::run( true );
 		Transara_Admin::flash( __( 'All monitors checked.', 'transara' ) );
 		Transara_Admin::back();

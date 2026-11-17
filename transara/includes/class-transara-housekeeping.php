@@ -384,6 +384,10 @@ class Transara_Housekeeping {
 	 * Notice while development mode is on.
 	 */
 	public static function dev_mode_notice() {
+		$screen = get_current_screen();
+		if ( ! $screen || ( ! in_array( $screen->id, array( 'plugins', 'dashboard' ), true ) && false === strpos( $screen->id, 'transara' ) ) ) {
+			return;
+		}
 		if ( self::dev_mode() && current_user_can( Transara_Admin::cap() ) ) {
 			echo '<div class="notice notice-warning"><p>' . esc_html( sprintf( /* translators: %s: time left */ __( 'Transara development mode is on for %s more: pages are not cached or optimised.', 'transara' ), human_time_diff( (int) get_option( 'transara_dev_until' ) ) ) ) . ' ' . Transara_Admin::action_button( 'transara_dev_mode', __( 'Turn off', 'transara' ), 'secondary', array( 'hours' => 0 ) ) . '</p></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in action_button().
 		}

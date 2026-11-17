@@ -68,7 +68,7 @@ class Transara_Scanner {
 							'type'        => 'checkbox',
 							'label'       => __( 'Check for known vulnerabilities', 'transara' ),
 							'description' => __( 'Sends the names and versions of WordPress, your plugins and themes to wpvulnerability.net (a free public database). Nothing else is sent.', 'transara' ),
-							'default'     => 1,
+							'default'     => 0,
 						),
 						'alert_scan'    => array(
 							'type'    => 'checkbox',
@@ -408,12 +408,24 @@ class Transara_Scanner {
 	 * @return string
 	 */
 	private static function list_file() {
-		$dir = WP_CONTENT_DIR . '/transara-scan';
+		$dir = self::work_dir();
 		if ( ! is_dir( $dir ) && wp_mkdir_p( $dir ) ) {
 			Transara_Cache::fs()->put_contents( $dir . '/index.php', "<?php\n// Silence is golden.\n" );
+			Transara_Cache::fs()->put_contents( $dir . '/index.html', '' );
 			Transara_Cache::fs()->put_contents( $dir . '/.htaccess', "Require all denied\n" );
 		}
-		return $dir . '/files-' . substr( wp_hash( 'transara-scan' ), 0, 12 ) . '.txt';
+		// A long name that cannot be guessed and no extension, so no web server shows it as a page.
+		return $dir . '/' . substr( wp_hash( 'transara-scan-list' ), 0, 32 ) . '.list';
+	}
+
+	/**
+	 * Transara's private working folder in uploads.
+	 *
+	 * @return string
+	 */
+	public static function work_dir() {
+		$up = wp_upload_dir( null, false );
+		return trailingslashit( $up['basedir'] ) . 'transara';
 	}
 
 	/**

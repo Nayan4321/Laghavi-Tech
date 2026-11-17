@@ -58,7 +58,8 @@ class Transara_Pagespeed {
 								'daily'  => __( 'Every day', 'transara' ),
 								'weekly' => __( 'Every week', 'transara' ),
 							),
-							'default' => 'weekly',
+							'description' => __( 'Tests send the addresses of the pages below to Google PageSpeed Insights.', 'transara' ),
+							'default'     => 'off',
 						),
 						'psi_urls'     => array(
 							'type'        => 'lines',

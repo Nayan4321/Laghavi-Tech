@@ -15,6 +15,13 @@ require_once __DIR__ . '/cache-key.php';
  */
 class Transara_Cache {
 
+	/**
+	 * Whether the plugin is being deactivated (nothing new is scheduled then).
+	 *
+	 * @var bool
+	 */
+	public static $deactivating = false;
+
 	const MARK = 'Transara page cache drop-in';
 
 	/**
@@ -36,6 +43,9 @@ class Transara_Cache {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'schedule_events' ) );
+		if ( wp_doing_cron() ) {
+			add_action( 'shutdown', array( __CLASS__, 'cron_guard' ), 9999 );
+		}
 		add_action( 'template_redirect', array( __CLASS__, 'start_buffer' ), -9999 );
 		add_action( 'admin_post_transara_purge_all', array( __CLASS__, 'handle_purge_all' ) );
 		add_action( 'admin_post_transara_purge_url', array( __CLASS__, 'handle_purge_url' ) );
@@ -315,16 +325,53 @@ class Transara_Cache {
 	 * Deactivation: remove what Transara added.
 	 */
 	public static function deactivate() {
+		self::$deactivating = true;
 		if ( self::dropin_is_ours() && file_exists( self::dropin_path() ) ) {
 			wp_delete_file( self::dropin_path() );
 		}
 		self::set_wp_cache( false );
 		self::purge_all();
 		Transara_Server_Rules::remove();
-		foreach ( array( 'transara_cache_gc', 'transara_preload_run', 'transara_monitor_run', 'transara_monitor_daily', 'transara_health_run', 'transara_speed_daily', 'transara_speed_run', 'transara_db_cleanup' ) as $hook ) {
+		foreach ( self::cron_hooks() as $hook ) {
 			wp_clear_scheduled_hook( $hook );
 		}
 		delete_option( 'transara_cache_version' );
+		delete_option( 'transara_preload_queue' );
+		wp_clear_scheduled_hook( 'transara_preload_run' );
+	}
+
+	/**
+	 * Background tasks that were running while Transara was deactivated save WordPress's task list at
+	 * the end, with Transara's tasks still in it. Check whether Transara is still active (read fresh
+	 * from the database) and remove its tasks if it is not.
+	 */
+	public static function cron_guard() {
+		global $wpdb;
+		$plugin = plugin_basename( TRANSARA_FILE );
+		$active = maybe_unserialize( $wpdb->get_var( $wpdb->prepare( "SELECT option_value FROM {$wpdb->options} WHERE option_name = %s", 'active_plugins' ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Must bypass the cached value from the start of this request.
+		if ( in_array( $plugin, (array) $active, true ) ) {
+			return;
+		}
+		if ( is_multisite() ) {
+			$network = (array) get_site_option( 'active_sitewide_plugins', array() );
+			if ( isset( $network[ $plugin ] ) ) {
+				return;
+			}
+		}
+		wp_cache_delete( 'alloptions', 'options' );
+		wp_cache_delete( 'cron', 'options' );
+		foreach ( self::cron_hooks() as $hook ) {
+			wp_clear_scheduled_hook( $hook );
+		}
+	}
+
+	/**
+	 * Transara's background tasks.
+	 *
+	 * @return string[]
+	 */
+	public static function cron_hooks() {
+		return array( 'transara_cache_gc', 'transara_preload_run', 'transara_monitor_run', 'transara_monitor_daily', 'transara_health_run', 'transara_speed_daily', 'transara_speed_run', 'transara_db_cleanup', 'transara_scan_continue', 'transara_scan_daily' );
 	}
 
 	/**

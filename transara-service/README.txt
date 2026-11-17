@@ -42,6 +42,11 @@ The license is checked again every day; when it ends, checks for that site stop.
    /usr/bin/php /home/YOUR_USER/domains/laghavi.site/public_html/transara/cron.php
    (use the real path of the subdomain folder; hPanel shows it in File Manager).
 
+6b. Telegram alerts (optional)
+   Create a bot with @BotFather in Telegram, put its token in config.php as telegram_token, then
+   open https://transara.laghavi.site/admin and click "Connect the Telegram bot" once. Customers
+   send /start to the bot and it answers with the chat ID they paste into Transara › Pro.
+
 7. The product on laghavi.site
    In Laghavi License Manager, the Transara Pro product's plugin slug must be: transara-pro
    (the same as license_slug in config.php).
