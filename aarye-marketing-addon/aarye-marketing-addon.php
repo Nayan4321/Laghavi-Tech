@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Aarye Marketing Addon
  * Description:       A helper for your marketing team: see which ad, campaign, keyword or website brought every lead, check whether each lead is real, keep every lead in one dashboard, and send them to Google Sheets.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYE_VERSION', '1.1.0' );
+define( 'AARYE_VERSION', '1.1.1' );
 define( 'AARYE_FILE', __FILE__ );
 define( 'AARYE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYE_URL', plugin_dir_url( __FILE__ ) );
@@ -67,14 +67,20 @@ add_action(
 				add_action( 'admin_init', array( 'AARYE_Entries', 'score_unchecked' ) );
 			}
 		}
-		if ( ! wp_next_scheduled( 'aarye_hourly' ) ) {
-			wp_schedule_event( time() + 300, 'hourly', 'aarye_hourly' );
-		}
-
 		/**
 		 * Aarye is loaded: add-ons start here.
 		 */
 		do_action( 'aarye_loaded' );
+	}
+);
+
+// Scheduled on init: earlier, other plugins (WooCommerce) would load their translations too soon.
+add_action(
+	'init',
+	static function () {
+		if ( ! wp_next_scheduled( 'aarye_hourly' ) ) {
+			wp_schedule_event( time() + 300, 'hourly', 'aarye_hourly' );
+		}
 	}
 );
 

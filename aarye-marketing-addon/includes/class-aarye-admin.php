@@ -688,7 +688,7 @@ class AARYE_Admin {
 		if ( ! $path || ! $base || 0 !== strpos( $path, $base ) || ! is_file( $path ) ) {
 			wp_die( esc_html__( 'File not found.', 'aarye-marketing-addon' ) );
 		}
-		$type = wp_check_filetype( $path );
+		$type = wp_check_filetype( $files[ $i ]['name'] );
 		nocache_headers();
 		header( 'Content-Type: ' . ( $type['type'] ? $type['type'] : 'application/octet-stream' ) );
 		header( 'Content-Disposition: attachment; filename="' . rawurlencode( $files[ $i ]['name'] ) . '"' );

@@ -4,7 +4,7 @@ Tags: utm, lead tracking, marketing attribution, google ads, google sheets
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,7 +54,9 @@ Every new lead can be added as a row to your own Google Sheet, with its source, 
 
 = Privacy =
 
-* Tracking uses two first-party cookies on your own domain; nothing is sent to us or to third parties.
+* Tracking uses two first-party cookies on your own domain. Nothing is sent to us.
+* Leads are sent to a third party only if you connect Google Sheets: each new lead (its fields and tracking details) is then sent to Google, to the spreadsheet you own. See "External services" below.
+* Copies of uploaded files are kept in a private folder under uploads, with random names and no file extension, so web servers never run or show them; admins download them from the lead's page.
 * Optional: wait for cookie consent (works with the WP Consent API).
 * Visitor IP addresses are not stored unless you turn it on.
 * Suggested text for your privacy policy, and support for WordPress's personal data export and erase tools.
@@ -122,6 +124,11 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 5. Google Sheets: each lead as a row with its source.
 
 == Changelog ==
+
+= 1.1.1 =
+* Kept copies of uploaded files get random names with no extension, so no web server runs or shows them; scripts and programs are never kept.
+* The hourly task is scheduled on init.
+* The privacy notes now say that Google Sheets, when connected, receives each lead.
 
 = 1.1.0 =
 * Source proof and a Spam check with plain-language reasons for every lead.

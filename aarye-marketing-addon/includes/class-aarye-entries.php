@@ -126,6 +126,27 @@ class AARYE_Entries {
 	}
 
 	/**
+	 * Whether a file of this type may be kept: only types WordPress allows in the media library, and
+	 * never scripts or programs.
+	 *
+	 * @param string $name File name.
+	 * @return bool
+	 */
+	public static function safe_type( $name ) {
+		$check = wp_check_filetype( $name );
+		if ( empty( $check['ext'] ) || empty( $check['type'] ) ) {
+			return false;
+		}
+		$blocked = array( 'php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'pht', 'cgi', 'pl', 'py', 'sh', 'exe', 'bat', 'cmd', 'com', 'js', 'mjs', 'html', 'htm', 'shtml', 'svg', 'svgz', 'xml', 'htaccess', 'swf', 'jar' );
+		foreach ( explode( '.', strtolower( $name ) ) as $part ) {
+			if ( in_array( $part, $blocked, true ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Create the files folder with "no direct access" files.
 	 */
 	public static function protect_dir() {
@@ -133,6 +154,9 @@ class AARYE_Entries {
 		wp_mkdir_p( $dir );
 		if ( ! file_exists( $dir . '.htaccess' ) ) {
 			file_put_contents( $dir . '.htaccess', "Require all denied\nDeny from all\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Tiny static file in our own uploads folder.
+		}
+		if ( ! file_exists( $dir . 'index.html' ) ) {
+			file_put_contents( $dir . 'index.html', '' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- Empty file: no folder listing on any web server.
 		}
 		if ( ! file_exists( $dir . 'index.php' ) ) {
 			file_put_contents( $dir . 'index.php', "<?php\n// Silence is golden.\n" ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents
@@ -465,10 +489,17 @@ class AARYE_Entries {
 			$path   = isset( $file['path'] ) ? (string) $file['path'] : '';
 			$name   = isset( $file['name'] ) && '' !== $file['name'] ? sanitize_file_name( (string) $file['name'] ) : sanitize_file_name( wp_basename( '' !== $path ? $path : (string) wp_parse_url( $url, PHP_URL_PATH ) ) );
 			$stored = '';
-			if ( $keep && '' !== $path && is_file( $path ) && is_readable( $path ) && filesize( $path ) <= 50 * MB_IN_BYTES ) {
-				$dir = self::files_dir() . gmdate( 'Y/m/' ) . wp_generate_password( 12, false, false ) . '/';
-				if ( wp_mkdir_p( $dir ) && copy( $path, $dir . $name ) ) {
-					$stored = substr( $dir . $name, strlen( self::files_dir() ) );
+			if ( $keep && '' !== $path && self::safe_type( $name ) && is_file( $path ) && is_readable( $path ) && filesize( $path ) <= 50 * MB_IN_BYTES ) {
+				/*
+				 * The copy gets a long random name with no extension of its own: web servers (Apache,
+				 * Nginx or any other) neither run it nor show it as a page, and its address cannot be
+				 * guessed. Admins download it through admin-post.php, under its original name.
+				 */
+				self::protect_dir();
+				$dir  = self::files_dir() . gmdate( 'Y/m/' );
+				$file = wp_generate_password( 40, false, false ) . '.aarye';
+				if ( wp_mkdir_p( $dir ) && copy( $path, $dir . $file ) ) {
+					$stored = substr( $dir . $file, strlen( self::files_dir() ) );
 				}
 			}
 			if ( '' === $url && '' === $stored ) {
