@@ -292,7 +292,7 @@ class MNHP_Items {
 		foreach ( array( 'btn1_url', 'btn2_url', 'promo_url', 'foot_url' ) as $k ) {
 			$out['mega'][ $k ] = isset( $mega[ $k ] ) ? esc_url_raw( trim( (string) $mega[ $k ] ) ) : '';
 		}
-		update_post_meta( (int) $id, self::META, $out );
+		update_post_meta( (int) $id, self::META, wp_slash( $out ) ); // Meta functions strip slashes; the builder JSON keeps its own.
 	}
 
 	/**
@@ -318,7 +318,7 @@ class MNHP_Items {
 	public static function copy( $from, $to ) {
 		$meta = get_post_meta( (int) $from, self::META, true );
 		if ( $meta ) {
-			update_post_meta( (int) $to, self::META, $meta );
+			update_post_meta( (int) $to, self::META, wp_slash( $meta ) );
 		}
 	}
 

@@ -117,6 +117,9 @@ No. The plugin does not connect to any external service and does not load fonts 
 
 = 1.1.0 =
 * Multilingual: menus follow the visitor's language with Vacanam Language Switcher, Polylang and WPML; button text, button links and logo images can be translated; the logo leads to the home page of the current language.
+* Block themes: Appearance › Menus stays available, so the menus a design shows can be created and edited.
+* Add-ons can add mega menus, icons and badges to menu items.
+* Device styles are added the WordPress way (no inline style tag).
 
 = 1.0.0 =
 * First release: 7 templates, a design per device, a menu per device, call-to-action buttons, social icons, colours, typography, animation, live preview, theme location, Elementor widget, block and shortcode.

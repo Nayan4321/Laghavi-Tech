@@ -141,6 +141,11 @@ class MNHP_Mega {
 	 * @return string
 	 */
 	public static function clean_builder( $json ) {
+		$json = trim( (string) $json );
+		// The builder sends its JSON URL-encoded, so no backslashes are lost on the way.
+		if ( '' !== $json && '[' !== $json[0] ) {
+			$json = rawurldecode( $json );
+		}
 		$data = json_decode( $json, true );
 		if ( ! is_array( $data ) ) {
 			return '';

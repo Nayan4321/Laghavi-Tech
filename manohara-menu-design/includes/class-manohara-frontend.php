@@ -34,6 +34,17 @@ class Manohara_Frontend {
 	public static function init() {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ), 20 );
 		add_action( 'init', array( __CLASS__, 'hooks' ) );
+		add_action( 'after_setup_theme', array( __CLASS__, 'menus_screen' ), 99 );
+	}
+
+	/**
+	 * Block themes hide Appearance › Menus. Designs show classic menus, so keep that screen available
+	 * to create and edit them.
+	 */
+	public static function menus_screen() {
+		if ( function_exists( 'wp_is_block_theme' ) && wp_is_block_theme() && ! current_theme_supports( 'menus' ) ) {
+			add_theme_support( 'menus' );
+		}
 	}
 
 	/**

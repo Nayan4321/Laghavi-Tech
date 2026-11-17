@@ -91,9 +91,10 @@
 	 * dragging; the result is kept as JSON in the hidden field.
 	 */
 	function load( el ) {
-		var raw = $( el ).closest( '.mnhp-src-builder' ).find( '.mnhp-builder-data' ).val();
+		var raw = $( el ).closest( '.mnhp-src-builder' ).find( '.mnhp-builder-data' ).val() || '';
 		try {
-			var data = JSON.parse( raw || '[]' );
+			// Saved as JSON; sent URL-encoded (WordPress strips backslashes from menu form data).
+			var data = JSON.parse( raw && '[' !== raw.charAt( 0 ) ? decodeURIComponent( raw ) : ( raw || '[]' ) );
 			return Array.isArray( data ) ? data : [];
 		} catch ( e ) {
 			return [];
@@ -119,7 +120,7 @@
 			} );
 			rows.push( row );
 		} );
-		$( el ).closest( '.mnhp-src-builder' ).find( '.mnhp-builder-data' ).val( rows.length ? JSON.stringify( rows ) : '' ).trigger( 'change' );
+		$( el ).closest( '.mnhp-src-builder' ).find( '.mnhp-builder-data' ).val( rows.length ? encodeURIComponent( JSON.stringify( rows ) ) : '' ).trigger( 'change' );
 	}
 	function field( k, type, value ) {
 		var v = null == value ? '' : value;

@@ -12,6 +12,7 @@
 .mnhp-icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:4px;max-height:200px;overflow:auto;margin:6px 0 10px;padding:8px;border:1px solid #dcdcde;border-radius:6px;background:#fff}
 .mnhp-icon-btn{display:flex;align-items:center;justify-content:center;height:36px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;cursor:pointer;color:#1d2327}
 .mnhp-icon-btn:hover{border-color:#2271b1;color:#2271b1}
+.mnhp-icon-btn svg{pointer-events:none}
 .mnhp-icon-img,.mnhp-icon-none{grid-column:span 3;font-size:12px}
 .mnhp-mega-box{margin-top:6px;padding-top:10px;border-top:1px solid #e0e0e0}
 .menu-item:not(.menu-item-depth-0) .mnhp-mega-box{display:none}
