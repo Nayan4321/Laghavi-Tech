@@ -1,6 +1,19 @@
 /* Aarye Marketing Addon – "Copy" buttons, confirmations and the past entries import. */
 ( function () {
 	'use strict';
+	// Date range: a new range clears the custom dates and applies at once.
+	document.addEventListener( 'change', function ( e ) {
+		if ( e.target.classList && e.target.classList.contains( 'aarye-range' ) && e.target.form ) {
+			var form = e.target.form;
+			if ( form.from ) {
+				form.from.value = '';
+			}
+			if ( form.to ) {
+				form.to.value = '';
+			}
+			form.submit();
+		}
+	} );
 	document.addEventListener( 'click', function ( e ) {
 		var ask = e.target.closest ? e.target.closest( '[data-confirm]' ) : null;
 		if ( ask && ! window.confirm( ask.getAttribute( 'data-confirm' ) ) ) {

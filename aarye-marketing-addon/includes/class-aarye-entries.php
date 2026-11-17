@@ -671,7 +671,6 @@ class AARYE_Entries {
 				$path = self::files_dir() . $file['stored'];
 				if ( is_file( $path ) && 0 === strpos( realpath( $path ), realpath( self::files_dir() ) ) ) {
 					wp_delete_file( $path );
-					@rmdir( dirname( $path ) ); // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged, WordPress.WP.AlternativeFunctions.file_system_operations_rmdir -- Empty random folder.
 				}
 			}
 		}

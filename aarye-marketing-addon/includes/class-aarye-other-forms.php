@@ -91,14 +91,14 @@ class AARYE_Other_Forms {
 	 */
 	public static function enqueue() {
 		wp_enqueue_script( 'aarye-other-forms', AARYE_URL . 'assets/js/other-forms.js', array(), aarye_asset_version( 'assets/js/other-forms.js' ), array( 'in_footer' => true, 'strategy' => 'defer' ) );
-		$exclude = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', (string) AARYE_Settings::get( 'other_forms_exclude' ) ) ) );
+		$ignored = array_filter( array_map( 'trim', preg_split( '/[\r\n,]+/', (string) AARYE_Settings::get( 'other_forms_exclude' ) ) ) );
 		wp_add_inline_script(
 			'aarye-other-forms',
 			'window.aaryeOther=' . wp_json_encode(
 				array(
 					'url'     => esc_url_raw( rest_url( 'aarye/v1/form' ) ),
 					'skip'    => self::skip_selector(),
-					'exclude' => implode( ', ', $exclude ),
+					'ignore'  => implode( ', ', $ignored ),
 				)
 			) . ';',
 			'before'
@@ -151,7 +151,7 @@ class AARYE_Other_Forms {
 				'name'  => mb_substr( sanitize_text_field( (string) $f['n'] ), 0, 100 ),
 				'label' => isset( $f['l'] ) ? mb_substr( sanitize_text_field( (string) $f['l'] ), 0, 100 ) : '',
 				'type'  => isset( $f['t'] ) ? sanitize_key( (string) $f['t'] ) : '',
-				'value' => mb_substr( (string) $f['v'], 0, 5000 ),
+				'value' => mb_substr( sanitize_textarea_field( (string) $f['v'] ), 0, 5000 ),
 			);
 		}
 		$contact = AARYE_Entries::contact( $fields );
@@ -236,10 +236,11 @@ class AARYE_Other_Forms {
 	 * @return array
 	 */
 	public static function save_settings( $values ) {
-		// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked before this filter runs.
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_key( wp_unslash( $_POST['_wpnonce'] ) ), 'aarye_settings' ) || ! current_user_can( 'manage_options' ) ) {
+			return $values;
+		}
 		$values['other_forms']         = ! empty( $_POST['other_forms'] ) ? 'yes' : 'no';
 		$values['other_forms_exclude'] = isset( $_POST['other_forms_exclude'] ) ? sanitize_textarea_field( wp_unslash( $_POST['other_forms_exclude'] ) ) : '';
-		// phpcs:enable
 		return $values;
 	}
 }

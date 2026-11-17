@@ -129,6 +129,8 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 * Kept copies of uploaded files get random names with no extension, so no web server runs or shows them; scripts and programs are never kept.
 * The hourly task is scheduled on init.
 * The privacy notes now say that Google Sheets, when connected, receives each lead.
+* Admin screens check a nonce before using filters, page numbers or an entry from the address; messages after saving are shown without values in the address.
+* Uninstall cleans up every site of a multisite network.
 
 = 1.1.0 =
 * Source proof and a Spam check with plain-language reasons for every lead.

@@ -110,7 +110,55 @@ class AARYE_Admin {
 	 * @return string
 	 */
 	public static function url( $sub = '', $args = array() ) {
-		return add_query_arg( $args, admin_url( 'admin.php?page=' . self::SLUG . ( '' !== $sub ? '-' . $sub : '' ) ) );
+		$url = admin_url( 'admin.php?page=' . self::SLUG . ( '' !== $sub ? '-' . $sub : '' ) );
+		return $args ? self::nav_url( add_query_arg( $args, $url ) ) : $url;
+	}
+
+	/**
+	 * A link to one of our screens with values (filters, an entry): carries a nonce, checked before
+	 * the values are used.
+	 *
+	 * @param string $url Link.
+	 * @return string
+	 */
+	public static function nav_url( $url ) {
+		return add_query_arg( '_aarye_nav', wp_create_nonce( 'aarye_nav' ), $url );
+	}
+
+	/**
+	 * The same nonce in a form sent with GET (filters, link tester).
+	 */
+	public static function nav_field() {
+		echo '<input type="hidden" name="_aarye_nav" value="' . esc_attr( wp_create_nonce( 'aarye_nav' ) ) . '" />';
+	}
+
+	/**
+	 * Message shown once on the next screen.
+	 *
+	 * @param string $text Message.
+	 * @param string $type success or error.
+	 */
+	public static function flash( $text, $type = 'success' ) {
+		set_transient(
+			'aarye_flash_' . get_current_user_id(),
+			array(
+				'text' => (string) $text,
+				'type' => 'error' === $type ? 'error' : 'success',
+			),
+			MINUTE_IN_SECONDS * 5
+		);
+	}
+
+	/**
+	 * Show the message saved with flash().
+	 */
+	public static function show_flash() {
+		$key   = 'aarye_flash_' . get_current_user_id();
+		$flash = get_transient( $key );
+		if ( is_array( $flash ) && ! empty( $flash['text'] ) ) {
+			delete_transient( $key );
+			echo '<div class="notice notice-' . esc_attr( 'error' === $flash['type'] ? 'error' : 'success' ) . ' is-dismissible inline"><p>' . esc_html( $flash['text'] ) . '</p></div>';
+		}
 	}
 
 	/**
@@ -140,13 +188,12 @@ class AARYE_Admin {
 	 * @return array
 	 */
 	private static function filters() {
-		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- Read-only filters.
-		$f = array();
+		$ok = isset( $_GET['_aarye_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_aarye_nav'] ) ), 'aarye_nav' );
+		$f  = array();
 		foreach ( array( 'channel', 'source', 'campaign', 'form', 'lang', 'status', 'quality', 's', 'from', 'to', 'range' ) as $key ) {
-			$f[ $key ] = isset( $_GET[ $key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) : '';
+			$f[ $key ] = $ok && isset( $_GET[ $key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) : '';
 		}
-		$f['bots'] = ! empty( $_GET['bots'] );
-		// phpcs:enable
+		$f['bots'] = $ok && ! empty( $_GET['bots'] );
 		if ( '' === $f['from'] && '' === $f['to'] ) {
 			$days       = in_array( $f['range'], array( '7', '30', '90', '365', 'all' ), true ) ? $f['range'] : '30';
 			$f['range'] = $days;
@@ -216,7 +263,8 @@ class AARYE_Admin {
 		?>
 		<form method="get" class="aarye-filters">
 			<input type="hidden" name="page" value="<?php echo esc_attr( $page ); ?>" />
-			<select name="range" onchange="this.form.from.value='';this.form.to.value='';this.form.submit()">
+			<?php self::nav_field(); ?>
+			<select name="range" class="aarye-range">
 				<?php
 				foreach ( array(
 					'7'   => __( 'Last 7 days', 'aarye-marketing-addon' ),
@@ -382,15 +430,14 @@ class AARYE_Admin {
 	 * All entries, or one entry.
 	 */
 	public static function page_entries() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Viewing.
+		$ok = isset( $_GET['_aarye_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_aarye_nav'] ) ), 'aarye_nav' );
 		$id = isset( $_GET['entry'] ) ? absint( $_GET['entry'] ) : 0;
-		if ( $id ) {
+		if ( $id && $ok ) {
 			self::page_entry( $id );
 			return;
 		}
-		$f = self::filters();
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Paging.
-		$paged   = isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
+		$f       = self::filters();
+		$paged   = $ok && isset( $_GET['paged'] ) ? max( 1, absint( $_GET['paged'] ) ) : 1;
 		$result  = AARYE_Entries::query( $f, 50, ( $paged - 1 ) * 50 );
 		$export  = wp_nonce_url( add_query_arg( array_merge( array( 'action' => 'aarye_export' ), array_filter( $f ) ), admin_url( 'admin-post.php' ) ), 'aarye_export' );
 		$plugins = AARYE_Integrations::plugins();
@@ -398,6 +445,9 @@ class AARYE_Admin {
 		<div class="wrap aarye">
 			<h1 class="wp-heading-inline"><?php esc_html_e( 'All entries', 'aarye-marketing-addon' ); ?></h1>
 			<a class="page-title-action" href="<?php echo esc_url( $export ); ?>"><?php esc_html_e( 'Export CSV', 'aarye-marketing-addon' ); ?></a>
+			<?php if ( $id ) : ?>
+				<div class="notice notice-info inline"><p><a href="<?php echo esc_url( self::url( 'entries', array( 'entry' => $id ) ) ); ?>"><?php echo esc_html( sprintf( /* translators: %d: entry number. */ __( 'Open entry #%d', 'aarye-marketing-addon' ), $id ) ); ?></a></p></div>
+			<?php endif; ?>
 			<?php self::filter_bar( $f, self::SLUG . '-entries' ); ?>
 			<p class="aarye-muted">
 				<?php
@@ -471,7 +521,7 @@ class AARYE_Admin {
 				echo '<div class="tablenav"><div class="tablenav-pages">' . wp_kses_post(
 					paginate_links(
 						array(
-							'base'    => add_query_arg( 'paged', '%#%' ),
+							'base'    => self::nav_url( add_query_arg( 'paged', '%#%' ) ),
 							'format'  => '',
 							'current' => $paged,
 							'total'   => $pages,
@@ -807,8 +857,8 @@ class AARYE_Admin {
 	 * Ad setup guide, with a link tester.
 	 */
 	public static function page_guide() {
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only tester.
-		$test = isset( $_GET['test_url'] ) ? esc_url_raw( wp_unslash( $_GET['test_url'] ) ) : '';
+		$ok   = isset( $_GET['_aarye_nav'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_GET['_aarye_nav'] ) ), 'aarye_nav' );
+		$test = $ok && isset( $_GET['test_url'] ) ? esc_url_raw( wp_unslash( $_GET['test_url'] ) ) : '';
 		?>
 		<div class="wrap aarye">
 			<h1><?php esc_html_e( 'Connect your ads', 'aarye-marketing-addon' ); ?></h1>
@@ -819,6 +869,7 @@ class AARYE_Admin {
 				<p class="aarye-muted"><?php esc_html_e( 'Paste the address an ad opens (copy it from the ad preview, or click your ad and copy the address bar) to see how its leads will be shown.', 'aarye-marketing-addon' ); ?></p>
 				<form method="get">
 					<input type="hidden" name="page" value="<?php echo esc_attr( self::SLUG . '-guide' ); ?>" />
+					<?php self::nav_field(); ?>
 					<input type="url" name="test_url" class="large-text" value="<?php echo esc_attr( $test ); ?>" placeholder="https://example.com/?utm_source=facebook&utm_medium=paid&utm_campaign=..." />
 					<p><button class="button button-primary"><?php esc_html_e( 'Test', 'aarye-marketing-addon' ); ?></button></p>
 				</form>
@@ -970,14 +1021,10 @@ class AARYE_Admin {
 		if ( '' === (string) AARYE_Settings::get( 'sheets_secret' ) ) {
 			AARYE_Settings::update( array( 'sheets_secret' => wp_generate_password( 32, false, false ) ) );
 		}
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Message after redirect.
-		$msg = isset( $_GET['msg'] ) ? sanitize_text_field( wp_unslash( $_GET['msg'] ) ) : '';
 		?>
 		<div class="wrap aarye">
 			<h1><?php esc_html_e( 'Google Sheets', 'aarye-marketing-addon' ); ?></h1>
-			<?php if ( '' !== $msg ) : ?>
-				<div class="notice <?php echo 'ok' === $msg ? 'notice-success' : 'notice-error'; ?> inline"><p><?php echo esc_html( 'ok' === $msg ? __( 'Connected: a test reached your spreadsheet. New entries will appear there as rows.', 'aarye-marketing-addon' ) : $msg ); ?></p></div>
-			<?php endif; ?>
+			<?php self::show_flash(); ?>
 			<p class="aarye-lead"><?php esc_html_e( 'Every new entry is added to your spreadsheet as a row with its source, campaign and ad, and every detail in its own column. Your Google account stays with you: WordPress only gets a private web address of your sheet.', 'aarye-marketing-addon' ); ?></p>
 			<div class="aarye-card">
 				<ol class="aarye-steps">
@@ -1010,7 +1057,8 @@ class AARYE_Admin {
 		}
 		$url = ! empty( $_POST['sheets_url_clear'] ) ? '' : ( isset( $_POST['sheets_url'] ) ? esc_url_raw( wp_unslash( $_POST['sheets_url'] ) ) : '' );
 		if ( '' !== $url && 0 !== strpos( $url, 'https://script.google.com/' ) ) {
-			wp_safe_redirect( self::url( 'sheets', array( 'msg' => rawurlencode( __( 'Paste the Web app URL from Apps Script: it starts with https://script.google.com/', 'aarye-marketing-addon' ) ) ) ) );
+			self::flash( __( 'Paste the Web app URL from Apps Script: it starts with https://script.google.com/', 'aarye-marketing-addon' ), 'error' );
+			wp_safe_redirect( self::url( 'sheets' ) );
 			exit;
 		}
 		AARYE_Settings::update(
@@ -1019,12 +1067,17 @@ class AARYE_Admin {
 				'sheets_tab_per_form' => ! empty( $_POST['sheets_tab_per_form'] ) ? 'yes' : 'no',
 			)
 		);
-		$msg = '';
 		if ( '' !== $url ) {
 			$test = AARYE_Sheets::send( null );
-			$msg  = true === $test ? 'ok' : (string) $test;
+			if ( true === $test ) {
+				self::flash( __( 'Connected: a test reached your spreadsheet. New entries will appear there as rows.', 'aarye-marketing-addon' ) );
+			} else {
+				self::flash( (string) $test, 'error' );
+			}
+		} else {
+			self::flash( __( 'Settings saved.', 'aarye-marketing-addon' ) );
 		}
-		wp_safe_redirect( self::url( 'sheets', $msg ? array( 'msg' => rawurlencode( $msg ) ) : array() ) );
+		wp_safe_redirect( self::url( 'sheets' ) );
 		exit;
 	}
 
@@ -1036,6 +1089,7 @@ class AARYE_Admin {
 		?>
 		<div class="wrap aarye">
 			<h1><?php esc_html_e( 'Settings', 'aarye-marketing-addon' ); ?></h1>
+			<?php self::show_flash(); ?>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="aarye-card">
 				<input type="hidden" name="action" value="aarye_settings" />
 				<?php wp_nonce_field( 'aarye_settings' ); ?>
@@ -1078,7 +1132,8 @@ class AARYE_Admin {
 		 * @param array $values Values.
 		 */
 		AARYE_Settings::update( (array) apply_filters( 'aarye_save_settings', $values ) );
-		wp_safe_redirect( self::url( 'settings', array( 'updated' => 1 ) ) );
+		self::flash( __( 'Settings saved.', 'aarye-marketing-addon' ) );
+		wp_safe_redirect( self::url( 'settings' ) );
 		exit;
 	}
 }

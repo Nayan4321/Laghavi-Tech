@@ -18,7 +18,7 @@
 			return true;
 		}
 		try {
-			if ( form.matches( cfg.skip ) || ( cfg.exclude && form.matches( cfg.exclude ) ) ) {
+			if ( form.matches( cfg.skip ) || ( cfg.ignore && form.matches( cfg.ignore ) ) ) {
 				return true;
 			}
 		} catch ( e ) {}
