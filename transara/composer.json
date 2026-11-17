@@ -1,0 +1,10 @@
+{
+    "name": "laghavi/transara",
+    "description": "Speed, uptime and security for WordPress.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "require": {
+        "php": ">=7.4",
+        "matthiasmullie/minify": "^1.3"
+    }
+}

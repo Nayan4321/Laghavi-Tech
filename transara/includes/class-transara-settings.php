@@ -44,6 +44,10 @@ class Transara_Settings {
 	 * @return array
 	 */
 	public static function schema() {
+		static $cached = null;
+		if ( null !== $cached && did_action( 'init' ) ) {
+			return $cached;
+		}
 		$schema = array(
 			'speed' => array(
 				'title'    => __( 'Speed', 'transara' ),
@@ -165,7 +169,38 @@ class Transara_Settings {
 		 *
 		 * @param array $schema Schema.
 		 */
-		return (array) apply_filters( 'transara_schema', $schema );
+		$schema = (array) apply_filters( 'transara_schema', $schema );
+		if ( did_action( 'init' ) ) {
+			$cached = $schema;
+		}
+		return $schema;
+	}
+
+	/**
+	 * Insert sections into a tab, before another section (or at the end).
+	 *
+	 * @param array  $schema   Schema.
+	 * @param string $tab      Tab.
+	 * @param array  $sections Sections to add.
+	 * @param string $before   Section key to insert before.
+	 * @return array
+	 */
+	public static function insert_sections( $schema, $tab, $sections, $before = '' ) {
+		if ( ! isset( $schema[ $tab ] ) ) {
+			return $schema;
+		}
+		$out = array();
+		foreach ( $schema[ $tab ]['sections'] as $key => $section ) {
+			if ( $key === $before ) {
+				$out = array_merge( $out, $sections );
+			}
+			$out[ $key ] = $section;
+		}
+		if ( '' === $before || ! isset( $schema[ $tab ]['sections'][ $before ] ) ) {
+			$out = array_merge( $out, $sections );
+		}
+		$schema[ $tab ]['sections'] = $out;
+		return $schema;
 	}
 
 	/**
