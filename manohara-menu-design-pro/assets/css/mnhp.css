@@ -25,7 +25,9 @@
 .mnhp-mega img{display:block;max-width:100%;height:auto}
 .mnhp-mega ul{list-style:none;margin:0;padding:0}
 .mnhp-body{display:flex;gap:var(--mnhp-gap);align-items:stretch}
-.mnhp-main{flex:1 1 auto;min-width:0}
+.mnhp-main{flex:1 1 auto;min-width:0;display:flex;flex-direction:column}
+.mnhp-main>*{flex:1 1 auto}
+.mnhp-main>.mnhp-cols,.mnhp-main>.mnhp-cards{flex:0 0 auto;align-content:start}
 .mnhp-intro{flex:0 0 230px;display:flex;flex-direction:column;gap:12px;padding:22px;margin:-26px 0 -26px -26px;background:var(--mnhp-soft)}
 html[dir=rtl] .mnhp-intro{margin:-26px -26px -26px 0}
 .mnhp-intro-title{font-size:1.35em;font-weight:700;line-height:1.25}
@@ -39,7 +41,8 @@ html[dir=rtl] .mnhp-intro{margin:-26px -26px -26px 0}
 
 /* Links, headings, cards. */
 .mnhp-link,.mnhp-heading,.mnhp-card,.mnhp-product,.mnhp-tile,.mnhp-post,.mnhp-cart-card{display:flex;align-items:flex-start;gap:12px;color:inherit;text-decoration:none}
-.mnhp-text{display:flex;flex-direction:column;min-width:0}
+.mnhp-text{display:flex;flex-direction:column;align-items:flex-start;min-width:0}
+.mnhp-text>.mnhp-badge{margin-top:3px}
 .mnhp-label{font-weight:500}
 .mnhp-links{display:flex;flex-direction:column;gap:2px}
 .mnhp-links .mnhp-link{padding:7px 10px;margin-inline:-10px;border-radius:8px;transition:background-color .2s,color .2s}

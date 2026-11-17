@@ -279,7 +279,7 @@ class Transara_Files {
 			}
 		}
 		$haystack = $open . $code;
-		if ( $delay && ! Transara_Html::matches( $haystack, Transara_Settings::lines( 'delay_exclude' ) ) && ( '' !== $src || '' !== trim( $code ) ) ) {
+		if ( $delay && ! Transara_Html::matches( $haystack, array_merge( Transara_Settings::lines( 'delay_exclude' ), self::never_delay() ) ) && ( '' !== $src || '' !== trim( $code ) ) ) {
 			if ( 'module' === $type ) {
 				$open = Transara_Html::set( $open, 'data-transara-type', 'module' );
 			}
@@ -316,5 +316,19 @@ class Transara_Files {
 			},
 			$html
 		);
+	}
+
+	/**
+	 * Scripts that are never delayed: header menus must open on the first tap.
+	 *
+	 * @return string[]
+	 */
+	public static function never_delay() {
+		/**
+		 * Parts of script addresses that are never delayed.
+		 *
+		 * @param string[] $parts Parts.
+		 */
+		return (array) apply_filters( 'transara_never_delay', array( '/manohara-menu-design/', '/manohara-menu-design-pro/' ) );
 	}
 }

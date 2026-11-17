@@ -47,7 +47,7 @@ class MNHP_Items {
 				'source'      => 'menu',
 				'width'       => 'container',
 				'width_px'    => 960,
-				'columns'     => 4,
+				'columns'     => 0,
 				'intro_title' => '',
 				'intro_text'  => '',
 				'btn1_text'   => '',
@@ -222,7 +222,7 @@ class MNHP_Items {
 							</select><input type="number" min="240" max="2400" class="small-text" name="<?php echo esc_attr( $mn( 'width_px' ) ); ?>" value="<?php echo (int) $m['width_px']; ?>" /></span>
 						</label>
 						<label><?php esc_html_e( 'Columns', 'manohara-menu-design-pro' ); ?>
-							<input type="number" min="1" max="6" class="small-text" name="<?php echo esc_attr( $mn( 'columns' ) ); ?>" value="<?php echo (int) $m['columns']; ?>" />
+							<input type="number" min="0" max="6" class="small-text" name="<?php echo esc_attr( $mn( 'columns' ) ); ?>" value="<?php echo (int) $m['columns']; ?>" /> <span class="description"><?php esc_html_e( '0 = the design\'s own', 'manohara-menu-design-pro' ); ?></span>
 						</label>
 					</div>
 					<details class="mnhp-extra"><summary><?php esc_html_e( 'Intro, buttons, promo card and footer strip (templates that show them)', 'manohara-menu-design-pro' ); ?></summary>
@@ -280,7 +280,7 @@ class MNHP_Items {
 				'source'      => isset( $mega['source'] ) && in_array( $mega['source'], array( 'menu', 'builder', 'block', 'elementor' ), true ) ? $mega['source'] : 'menu',
 				'width'       => isset( $mega['width'] ) && in_array( $mega['width'], array( 'container', 'full', 'custom' ), true ) ? $mega['width'] : 'container',
 				'width_px'    => isset( $mega['width_px'] ) ? max( 240, min( 2400, absint( $mega['width_px'] ) ) ) : 960,
-				'columns'     => isset( $mega['columns'] ) ? max( 1, min( 6, absint( $mega['columns'] ) ) ) : 4,
+				'columns'     => isset( $mega['columns'] ) ? min( 6, absint( $mega['columns'] ) ) : 0,
 				'promo_image' => isset( $mega['promo_image'] ) ? absint( $mega['promo_image'] ) : 0,
 				'template_id' => isset( $mega['template_id'] ) ? absint( $mega['template_id'] ) : 0,
 				'builder'     => isset( $mega['builder'] ) ? MNHP_Mega::clean_builder( (string) $mega['builder'] ) : '',

@@ -260,9 +260,13 @@
 			setupSticky();
 		}, 150 );
 	} );
-	if ( 'loading' === document.readyState ) {
-		document.addEventListener( 'DOMContentLoaded', setupSticky );
-	} else {
+	function start() {
+		placeAll();
 		setupSticky();
+	}
+	if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', start );
+	} else {
+		start();
 	}
 }() );

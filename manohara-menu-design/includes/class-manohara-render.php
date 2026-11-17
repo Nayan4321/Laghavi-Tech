@@ -179,9 +179,9 @@ class Manohara_Render {
 			if ( 0 === $depth && ! empty( $opts['highlight_last'] ) && $i === $count - 1 ) {
 				$classes[] = 'mnh-highlight';
 			}
-			foreach ( (array) $item->classes as $custom ) {
-				if ( $custom && 0 !== strpos( $custom, 'menu-item' ) && 0 !== strpos( $custom, 'current' ) && 'page_item' !== $custom ) {
-					$classes[] = sanitize_html_class( $custom );
+			foreach ( (array) $item->classes as $class_name ) {
+				if ( $class_name && 0 !== strpos( $class_name, 'menu-item' ) && 0 !== strpos( $class_name, 'current' ) && 'page_item' !== $class_name ) {
+					$classes[] = sanitize_html_class( $class_name );
 				}
 			}
 			/**
