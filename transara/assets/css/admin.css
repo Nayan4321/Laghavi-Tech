@@ -1,0 +1,36 @@
+/* Transara admin */
+.transara { --t-ink:#0f172a; --t-muted:#5b6476; --t-line:#e3e6ee; --t-brand:#4f46e5; --t-brand2:#0ea5e9; --t-ok:#16a34a; --t-bad:#dc2626; --t-warn:#d97706; max-width: 1280px; }
+.transara-head { display:flex; align-items:center; gap:10px; margin:14px 0 4px; }
+.transara-logo { display:flex; align-items:center; gap:8px; font-size:24px; font-weight:800; margin:0; padding:0; }
+.transara-logo .dashicons { width:34px; height:34px; font-size:22px; line-height:34px; border-radius:9px; color:#fff; background:linear-gradient(135deg,var(--t-brand),var(--t-brand2)); text-align:center; }
+.transara-ver { font-size:12px; color:var(--t-muted); background:#f0f1f5; border-radius:99px; padding:2px 9px; }
+.transara-tabs { margin-bottom:18px; }
+.transara-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; }
+.transara-grid--wide { grid-template-columns:repeat(auto-fill,minmax(440px,1fr)); }
+.transara-card { background:#fff; border:1px solid var(--t-line); border-radius:12px; padding:18px 20px; margin:0 0 16px; box-shadow:0 1px 2px rgba(15,23,42,.04); }
+.transara-card h2 { margin:0 0 6px; font-size:16px; }
+.transara-card__lead { color:var(--t-muted); margin:0 0 6px; }
+.transara-card .form-table th { width:230px; }
+.transara-stat .transara-big { font-size:34px; font-weight:800; margin:6px 0 0; line-height:1.1; color:var(--t-ink); }
+.transara-stat .transara-big.is-ok { color:var(--t-ok); }
+.transara-stat .transara-big.is-bad { color:var(--t-bad); }
+.transara-warn { color:var(--t-warn); font-weight:600; }
+.transara-layout { display:grid; grid-template-columns:200px minmax(0,1fr); gap:20px; align-items:start; }
+.transara-side { position:sticky; top:46px; display:flex; flex-direction:column; gap:2px; background:#fff; border:1px solid var(--t-line); border-radius:12px; padding:8px; }
+.transara-side a { padding:8px 10px; border-radius:8px; text-decoration:none; color:#1d2327; }
+.transara-side a:hover, .transara-side a.is-on { background:#eef2ff; color:var(--t-brand); }
+.transara-savebar { position:sticky; bottom:0; padding:12px 0; background:linear-gradient(transparent,#f0f0f1 30%); }
+.transara-switch { display:inline-flex; align-items:center; gap:10px; cursor:pointer; }
+.transara-switch input { position:absolute; opacity:0; width:1px; height:1px; }
+.transara-switch__ui { position:relative; flex:none; width:38px; height:22px; border-radius:22px; background:#c3c4c7; transition:background .15s; }
+.transara-switch__ui::after { content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:#fff; transition:transform .15s; }
+.transara-switch input:checked + .transara-switch__ui { background:var(--t-brand); }
+.transara-switch input:checked + .transara-switch__ui::after { transform:translateX(16px); }
+.transara-switch input:focus-visible + .transara-switch__ui { outline:2px solid var(--t-brand); outline-offset:2px; }
+.transara-table { width:100%; border-collapse:collapse; }
+.transara-table th, .transara-table td { text-align:left; padding:8px 10px; border-bottom:1px solid var(--t-line); vertical-align:top; }
+.transara-pill { display:inline-block; padding:2px 9px; border-radius:99px; font-size:12px; font-weight:600; background:#f0f1f5; color:var(--t-muted); }
+.transara-pill.is-up, .transara-pill.is-ok { background:#dcfce7; color:#15803d; }
+.transara-pill.is-down, .transara-pill.is-bad { background:#fee2e2; color:#b91c1c; }
+.transara-pill.is-warn { background:#fef3c7; color:#b45309; }
+@media (max-width:960px) { .transara-layout { grid-template-columns:1fr; } .transara-side { position:static; flex-direction:row; flex-wrap:wrap; } }
