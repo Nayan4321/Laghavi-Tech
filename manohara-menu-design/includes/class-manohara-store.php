@@ -326,10 +326,10 @@ class Manohara_Store {
 	public static function device_menu( $design, $device ) {
 		$set = $design['devices'][ $device ];
 		if ( $set['menu'] && is_nav_menu( (int) $set['menu'] ) ) {
-			return (int) $set['menu'];
+			return Manohara_I18n::menu( (int) $set['menu'] );
 		}
 		if ( $design['menu'] && is_nav_menu( (int) $design['menu'] ) ) {
-			return (int) $design['menu'];
+			return Manohara_I18n::menu( (int) $design['menu'] );
 		}
 		$locations = get_nav_menu_locations();
 		if ( '' !== $design['location'] && ! empty( $locations[ $design['location'] ] ) ) {

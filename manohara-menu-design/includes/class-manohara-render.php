@@ -310,7 +310,7 @@ class Manohara_Render {
 			return '';
 		}
 		$key   = $set['template'];
-		$opts  = $set['opts'];
+		$opts  = Manohara_I18n::options( $set['opts'], $design, $device );
 		$style = Manohara_Store::device_style( $design, $device );
 		$tree  = self::tree( Manohara_Store::device_menu( $design, $device ) );
 		if ( ! $tree && 'preview' === $context ) {
@@ -390,7 +390,7 @@ class Manohara_Render {
 		if ( ! $top ) {
 			$html .= $buttons;
 		}
-		$secondary = ! empty( $set['menu2'] ) && is_nav_menu( (int) $set['menu2'] ) && Manohara_Templates::has( $key, 'secondary' ) ? self::tree( (int) $set['menu2'] ) : array();
+		$secondary = ! empty( $set['menu2'] ) && is_nav_menu( (int) $set['menu2'] ) && Manohara_Templates::has( $key, 'secondary' ) ? self::tree( Manohara_I18n::menu( (int) $set['menu2'] ) ) : array();
 		if ( $secondary ) {
 			$html .= '<div class="mnh-secondary">' . self::items( $secondary, 0, array(), 0, 'mnh-secondary-list' ) . '</div>';
 		}
@@ -415,7 +415,7 @@ class Manohara_Render {
 		if ( 'none' === $logo ) {
 			return '<span class="mnh-logo"></span>';
 		}
-		$home = home_url( '/' );
+		$home = Manohara_I18n::home();
 		if ( 'custom' === $logo && ! empty( $opts['logo_url'] ) ) {
 			return '<a class="mnh-logo" href="' . esc_url( $home ) . '"><img src="' . esc_url( $opts['logo_url'] ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></a>';
 		}

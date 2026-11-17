@@ -4,7 +4,7 @@ Tags: mobile menu, menu design, responsive menu, elementor menu, hamburger menu
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,9 +59,13 @@ Manohara Menu Design gives your site's menu a modern look without touching your 
 * Keyboard friendly: Esc closes, focus stays inside full-screen menus, ARIA labels on every button.
 * Works in right-to-left languages.
 
-**Coming in Manohara Menu Design Pro**
+**Multilingual sites**
 
-More templates, icons on menu items (WordPress icons or your own SVG, PNG or AVIF images, also icon-only items) and mega menus.
+* Works with Vacanam Language Switcher, Polylang and WPML: a menu chosen in a design is replaced by its copy in the visitor's language.
+* Button text, button links and logo images are registered with your translation plugin, so you translate them in its string list.
+* The logo leads to the home page of the current language.
+* Right-to-left languages (Arabic, Hebrew, Persian, Urdu) mirror arrows, drawers and submenus.
+* TranslatePress translates the menu text directly on the page.
 
 == Installation ==
 
@@ -110,6 +114,9 @@ No. The plugin does not connect to any external service and does not load fonts 
 5. The list of designs, each with its design per device.
 
 == Changelog ==
+
+= 1.1.0 =
+* Multilingual: menus follow the visitor's language with Vacanam Language Switcher, Polylang and WPML; button text, button links and logo images can be translated; the logo leads to the home page of the current language.
 
 = 1.0.0 =
 * First release: 7 templates, a design per device, a menu per device, call-to-action buttons, social icons, colours, typography, animation, live preview, theme location, Elementor widget, block and shortcode.
