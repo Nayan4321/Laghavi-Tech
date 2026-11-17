@@ -44,7 +44,7 @@ class Manohara_Frontend {
 			return;
 		}
 		add_filter( 'pre_wp_nav_menu', array( __CLASS__, 'takeover' ), 20, 2 );
-		add_action( 'wp_head', array( __CLASS__, 'head_css' ), 99 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'head_css' ), 30 );
 		add_action( 'wp_body_open', array( __CLASS__, 'bars' ), 5 );
 		add_action( 'wp_footer', array( __CLASS__, 'bars_fallback' ), 5 );
 	}
@@ -195,7 +195,9 @@ class Manohara_Frontend {
 		foreach ( array_unique( $hide ) as $device ) {
 			$css .= '@media ' . $queries[ $device ] . '{' . $selectors . '{display:none!important}}';
 		}
-		echo '<style id="manohara-devices">' . wp_strip_all_tags( $css ) . '</style>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSS built from numbers and the saved, cleaned selector list.
+		wp_register_style( 'manohara-devices', false, array(), MANOHARA_VERSION );
+		wp_enqueue_style( 'manohara-devices' );
+		wp_add_inline_style( 'manohara-devices', wp_strip_all_tags( $css ) );
 	}
 
 	/**
