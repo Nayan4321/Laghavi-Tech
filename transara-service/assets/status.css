@@ -1,0 +1,25 @@
+/* Transara hosted status page */
+*{box-sizing:border-box}
+body{margin:0;background:#f4f5f8;color:#0f172a;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+.wrap{max-width:820px;margin:0 auto;padding:32px 18px}
+.head{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.head h1{font-size:26px;margin:0}
+.logo{max-height:44px;max-width:180px}
+.banner{padding:16px 18px;border-radius:12px;color:#fff;font-weight:700;margin-bottom:14px}
+.banner.ok{background:#16a34a}.banner.bad{background:#dc2626}
+.notice{padding:12px 16px;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;margin-bottom:14px}
+.card{background:#fff;border:1px solid #e3e6ee;border-radius:12px;padding:14px 16px;margin-bottom:10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.small{font-size:12px;color:#6b7280}
+.state{font-size:13px;font-weight:600;color:#15803d}.state.down{color:#b91c1c}.state.pending{color:#6b7280}
+.bars{display:flex;gap:2px;height:32px;margin:10px 0 6px}
+.bars span{flex:1;border-radius:2px;background:#e3e6ee}.bars .good{background:#16a34a}.bars .warn{background:#d97706}.bars .bad{background:#dc2626}
+h2{font-size:18px;margin:26px 0 10px}
+.incident{background:#fff;border:1px solid #e3e6ee;border-radius:12px;padding:12px 16px;margin-bottom:8px}
+.incident p{margin:6px 0 0;color:#374151}
+.sub{margin-top:24px}.sub label{display:block;font-weight:600;margin-bottom:8px}
+input[type=email],input[type=password]{flex:1;padding:10px 12px;border:1px solid #cbd0dc;border-radius:8px;font:inherit}
+button{padding:10px 16px;border:0;border-radius:8px;background:var(--brand,#4f46e5);color:#fff;font:600 14px inherit;cursor:pointer}
+.note{padding:10px 14px;border-radius:10px;background:#ecfdf5;color:#065f46}.note.bad{background:#fef2f2;color:#991b1b}
+.updated{text-align:center;margin-top:18px}
+.foot{text-align:center;font-size:12px;color:#9ca3af;padding:0 0 28px}.foot a{color:inherit}
