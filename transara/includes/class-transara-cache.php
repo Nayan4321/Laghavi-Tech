@@ -556,6 +556,10 @@ class Transara_Cache {
 	 * Clear everything after a site-wide change, and preload again.
 	 */
 	public static function purge_all_quietly() {
+		if ( self::$deactivating ) {
+			// Transara itself is being switched off: deactivate() already cleared everything.
+			return;
+		}
 		self::purge_all();
 		if ( class_exists( 'Transara_Preload' ) ) {
 			Transara_Preload::start();

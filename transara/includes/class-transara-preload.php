@@ -116,6 +116,9 @@ class Transara_Preload {
 	 * Start a full preload from the sitemap.
 	 */
 	public static function start() {
+		if ( Transara_Cache::$deactivating ) {
+			return;
+		}
 		if ( ! Transara_Settings::on( 'preload_enabled' ) || ! Transara_Settings::on( 'cache_enabled' ) ) {
 			self::save( array() );
 			return;
