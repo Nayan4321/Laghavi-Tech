@@ -35,6 +35,7 @@ class Transara_Cache {
 	 * Hook up.
 	 */
 	public static function init() {
+		add_action( 'init', array( __CLASS__, 'schedule_events' ) );
 		add_action( 'template_redirect', array( __CLASS__, 'start_buffer' ), -9999 );
 		add_action( 'admin_post_transara_purge_all', array( __CLASS__, 'handle_purge_all' ) );
 		add_action( 'admin_post_transara_purge_url', array( __CLASS__, 'handle_purge_url' ) );
@@ -42,9 +43,6 @@ class Transara_Cache {
 		add_action( 'admin_init', array( __CLASS__, 'maybe_upgrade' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'problem_notice' ) );
 		add_action( 'transara_cache_gc', array( __CLASS__, 'garbage_collect' ) );
-		if ( ! wp_next_scheduled( 'transara_cache_gc' ) ) {
-			wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', 'transara_cache_gc' );
-		}
 
 		// Content changes.
 		add_action( 'transition_post_status', array( __CLASS__, 'on_post_status' ), 10, 3 );
@@ -62,6 +60,15 @@ class Transara_Cache {
 			add_action( $hook, array( __CLASS__, 'purge_all_quietly' ) );
 		}
 		add_action( 'shutdown', array( __CLASS__, 'preload_cleared' ) );
+	}
+
+	/**
+	 * Background events (scheduled once WordPress is ready).
+	 */
+	public static function schedule_events() {
+		if ( ! wp_next_scheduled( 'transara_cache_gc' ) ) {
+			wp_schedule_event( time() + HOUR_IN_SECONDS, 'hourly', 'transara_cache_gc' );
+		}
 	}
 
 	/*
@@ -313,8 +320,9 @@ class Transara_Cache {
 		self::set_wp_cache( false );
 		self::purge_all();
 		Transara_Server_Rules::remove();
-		wp_clear_scheduled_hook( 'transara_cache_gc' );
-		wp_clear_scheduled_hook( 'transara_preload_run' );
+		foreach ( array( 'transara_cache_gc', 'transara_preload_run', 'transara_monitor_run', 'transara_monitor_daily', 'transara_health_run', 'transara_speed_daily', 'transara_speed_run', 'transara_db_cleanup' ) as $hook ) {
+			wp_clear_scheduled_hook( $hook );
+		}
 		delete_option( 'transara_cache_version' );
 	}
 

@@ -1,0 +1,16 @@
+/* Transara status page */
+.transara-status { max-width: 860px; margin: 0 auto; font-size: 15px; }
+.transara-status__title { margin: 0 0 14px; }
+.transara-status__banner { padding: 16px 18px; border-radius: 10px; font-weight: 700; color: #fff; margin-bottom: 14px; }
+.transara-status__banner.is-up { background: #16a34a; }
+.transara-status__banner.is-down { background: #dc2626; }
+.transara-status__notice { padding: 12px 16px; border-radius: 10px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1e3a8a; margin-bottom: 14px; }
+.transara-status__row { border: 1px solid #e3e6ee; border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; background: #fff; }
+.transara-status__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; gap: 10px; }
+.transara-status__state { font-size: 13px; font-weight: 600; color: #15803d; }
+.transara-status__state.is-down { color: #b91c1c; }
+.transara-status__state.is-pending { color: #6b7280; }
+.transara-status__foot { display: flex; justify-content: space-between; font-size: 12px; color: #6b7280; margin-top: 6px; }
+.transara-status__sub { margin: 22px 0 8px; font-size: 17px; }
+.transara-status__incidents { margin: 0; padding-left: 18px; }
+.transara-status__updated { font-size: 12px; color: #6b7280; margin-top: 16px; }

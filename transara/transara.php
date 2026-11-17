@@ -23,7 +23,7 @@ define( 'TRANSARA_FILE', __FILE__ );
 define( 'TRANSARA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'TRANSARA_URL', plugin_dir_url( __FILE__ ) );
 
-foreach ( array( 'settings', 'html', 'admin', 'cache', 'preload', 'server-rules', 'files', 'media', 'fonts', 'housekeeping', 'cdn' ) as $transara_file ) {
+foreach ( array( 'settings', 'html', 'admin', 'cache', 'preload', 'server-rules', 'files', 'media', 'fonts', 'housekeeping', 'cdn', 'monitors', 'alerts', 'health', 'pagespeed', 'monitoring-admin', 'status-page' ) as $transara_file ) {
 	require_once TRANSARA_DIR . 'includes/class-transara-' . $transara_file . '.php';
 }
 unset( $transara_file );
@@ -41,6 +41,12 @@ add_action(
 		Transara_Fonts::init();
 		Transara_Housekeeping::init();
 		Transara_Cdn::init();
+		Transara_Monitors::init();
+		Transara_Alerts::init();
+		Transara_Health::init();
+		Transara_Pagespeed::init();
+		Transara_Monitoring_Admin::init();
+		Transara_Status_Page::init();
 		/**
 		 * Transara is loaded: add-ons start here.
 		 */

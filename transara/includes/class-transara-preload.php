@@ -38,7 +38,7 @@ class Transara_Preload {
 	public static function schedules( $s ) {
 		$s['transara_minute'] = array(
 			'interval' => MINUTE_IN_SECONDS,
-			'display'  => __( 'Every minute (Transara)', 'transara' ),
+			'display'  => did_action( 'init' ) ? __( 'Every minute (Transara)', 'transara' ) : 'Every minute (Transara)',
 		);
 		return $s;
 	}

@@ -22,3 +22,34 @@
 	window.addEventListener( 'scroll', mark, { passive: true } );
 	mark();
 } )();
+
+/* Confirm links, and show only the fields of the chosen monitor type. */
+( function () {
+	document.addEventListener( 'click', function ( e ) {
+		var a = e.target.closest ? e.target.closest( '[data-transara-confirm]' ) : null;
+		if ( a && ! window.confirm( a.getAttribute( 'data-transara-confirm' ) ) ) {
+			e.preventDefault();
+		}
+	} );
+	var type = document.getElementById( 'tm-type' );
+	if ( ! type ) {
+		return;
+	}
+	function sync() {
+		var t = type.value;
+		var show = {
+			'tm-keyword': 'keyword' === t,
+			'tm-http': 'http' === t || 'keyword' === t,
+			'tm-ssl': 'ssl' === t,
+			'tm-not-heartbeat': 'heartbeat' !== t,
+			'tm-heartbeat': 'heartbeat' === t
+		};
+		Object.keys( show ).forEach( function ( cls ) {
+			[].forEach.call( document.querySelectorAll( '.' + cls ), function ( el ) {
+				el.style.display = show[ cls ] ? '' : 'none';
+			} );
+		} );
+	}
+	type.addEventListener( 'change', sync );
+	sync();
+} )();
