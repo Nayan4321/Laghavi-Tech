@@ -11,6 +11,11 @@
 #hs-lp h1,#hs-lp h2,#hs-lp h3,#hs-lp p{margin:0}
 #hs-lp a{text-decoration:none}
 #hs-lp section{margin-top:56px}
+#hs-lp .hs-video{position:relative;width:100%;aspect-ratio:16/9;margin-top:22px;border-radius:18px;overflow:hidden;background:#0b0b14;box-shadow:0 24px 50px -24px rgba(26,20,70,.45),0 0 0 1px var(--line)}
+#hs-lp .hs-video iframe{position:absolute;inset:0;width:100%!important;height:100%!important;max-width:none;border:0;margin:0}
+@supports not (aspect-ratio:16/9){#hs-lp .hs-video{height:0;padding-bottom:56.25%}}
+#hs-lp .hs-video-note{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:14px;font-size:14px;color:var(--muted)}
+#hs-lp .hs-video-note span::before{content:"✓ ";color:var(--brand);font-weight:700}
 #hs-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
 #hs-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
 #hs-lp .hs-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
@@ -274,6 +279,10 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>
             Download free plugin
           </a>
+          <a class="hs-btn hs-btn--ghost" href="#video">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            Watch the video
+          </a>
           <a class="hs-btn hs-btn--ghost" href="#pro">See the Pro plugins – from $99/year</a>
         </div>
         <div class="hs-stats">
@@ -299,6 +308,16 @@
         </div>
       </div>
     </div>
+  </section>
+
+  <!-- Video -->
+  <section id="video">
+    <h2>See Rinnovo in action</h2>
+    <p class="lead">Watch the walkthrough to see how Rinnovo works in WooCommerce and what your customers see, before you install it.</p>
+    <div class="hs-video">
+      <iframe src="https://www.youtube-nocookie.com/embed/kbHoRRfp16M?rel=0" title="Rinnovo Subscriptions &amp; Licenses walkthrough" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
+    <div class="hs-video-note"><span>Free plugin, no account needed</span><span>Works with your WooCommerce payment methods</span><span><a href="https://youtu.be/kbHoRRfp16M" target="_blank" rel="noopener">Open on YouTube</a></span></div>
   </section>
 
   <!-- Free features -->
