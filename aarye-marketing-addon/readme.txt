@@ -4,7 +4,7 @@ Tags: utm, lead tracking, marketing attribution, google ads, google sheets
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -35,7 +35,7 @@ Install it and every new enquiry sent from your website is saved with its source
 * **All leads**: search, filter by source, ad network, campaign or language, and export to CSV (opens correctly in Excel, in any language).
 * **Lead details**: every detail the visitor sent, attachments to download, and all tracking parameters.
 * **Lead status**: New, Contacted, Qualified, Won, Lost or Spam.
-* **Attachments are kept** as a private copy that only administrators can download.
+* **Attachments are kept**: images and PDF files as a private copy that only administrators can download; other files as a link to the form plugin's copy.
 * **Past leads**: bring in enquiries your site saved before Aarye was installed, with their original dates.
 
 = Connect your ads: built-in guide =
@@ -56,7 +56,7 @@ Every new lead can be added as a row to your own Google Sheet, with its source, 
 
 * Tracking uses two first-party cookies on your own domain. Nothing is sent to us.
 * Leads are sent to a third party only if you connect Google Sheets: each new lead (its fields and tracking details) is then sent to Google, to the spreadsheet you own. See "External services" below.
-* Copies of uploaded files are kept in a private folder under uploads, with random names and no file extension, so web servers never run or show them; admins download them from the lead's page.
+* Only images (JPG, PNG, GIF, WebP) and PDF files are copied, after checking their real contents. Copies are kept in a private folder under uploads, with random names and no file extension, so web servers never run or show them; admins download them from the lead's page. Archives, documents and other files are never copied.
 * Optional: wait for cookie consent (works with the WP Consent API).
 * Visitor IP addresses are not stored unless you turn it on.
 * Suggested text for your privacy policy, and support for WordPress's personal data export and erase tools.
@@ -125,8 +125,11 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 
 == Changelog ==
 
+= 1.1.2 =
+* Private copies are made only of images and PDF files whose contents are checked; archives and all other files keep their link to the form plugin's file.
+
 = 1.1.1 =
-* Kept copies of uploaded files get random names with no extension, so no web server runs or shows them; scripts and programs are never kept.
+* Only images and PDF files are copied, after checking their real contents; archives and every other type keep their link only. Copies get random names with no extension, so no web server runs or shows them.
 * The hourly task is scheduled on init.
 * The privacy notes now say that Google Sheets, when connected, receives each lead.
 * Admin screens check a nonce before using filters, page numbers or an entry from the address; messages after saving are shown without values in the address.

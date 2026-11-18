@@ -126,24 +126,52 @@ class AARYE_Entries {
 	}
 
 	/**
-	 * Whether a file of this type may be kept: only types WordPress allows in the media library, and
-	 * never scripts or programs.
+	 * File types Aarye keeps its own copy of: images and PDF only. Archives, office documents, scripts
+	 * and every other type are never copied; their entry keeps the link to the form plugin's file.
 	 *
-	 * @param string $name File name.
+	 * @return array Extension => MIME type.
+	 */
+	public static function copy_types() {
+		return array(
+			'jpg|jpeg|jpe' => 'image/jpeg',
+			'png'          => 'image/png',
+			'gif'          => 'image/gif',
+			'webp'         => 'image/webp',
+			'pdf'          => 'application/pdf',
+		);
+	}
+
+	/**
+	 * Whether a file may be copied: its name must have one allowed extension, and its contents must
+	 * really be that kind of file (checked from the file itself, not only from its name).
+	 *
+	 * @param string $path File on disk.
+	 * @param string $name Original file name.
 	 * @return bool
 	 */
-	public static function safe_type( $name ) {
-		$check = wp_check_filetype( $name );
+	public static function may_copy( $path, $name ) {
+		$name = strtolower( (string) $name );
+		// One extension only: "cv.pdf" yes, "cv.php.pdf" or "cv.pdf.zip" no.
+		if ( substr_count( $name, '.' ) !== 1 ) {
+			return false;
+		}
+		$types = self::copy_types();
+		$check = wp_check_filetype( $name, $types );
 		if ( empty( $check['ext'] ) || empty( $check['type'] ) ) {
 			return false;
 		}
-		$blocked = array( 'php', 'phtml', 'phar', 'php3', 'php4', 'php5', 'php7', 'php8', 'phps', 'pht', 'cgi', 'pl', 'py', 'sh', 'exe', 'bat', 'cmd', 'com', 'js', 'mjs', 'html', 'htm', 'shtml', 'svg', 'svgz', 'xml', 'htaccess', 'swf', 'jar' );
-		foreach ( explode( '.', strtolower( $name ) ) as $part ) {
-			if ( in_array( $part, $blocked, true ) ) {
+		if ( 'application/pdf' === $check['type'] ) {
+			$handle = fopen( $path, 'rb' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen -- Reading the first bytes of the uploaded file.
+			if ( ! $handle ) {
 				return false;
 			}
+			$head = (string) fread( $handle, 5 ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fread
+			fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+			return '%PDF-' === $head;
 		}
-		return true;
+		// Images: the real image type, read from the file, must match the extension.
+		$real = wp_get_image_mime( $path );
+		return $real === $check['type'];
 	}
 
 	/**
@@ -489,7 +517,7 @@ class AARYE_Entries {
 			$path   = isset( $file['path'] ) ? (string) $file['path'] : '';
 			$name   = isset( $file['name'] ) && '' !== $file['name'] ? sanitize_file_name( (string) $file['name'] ) : sanitize_file_name( wp_basename( '' !== $path ? $path : (string) wp_parse_url( $url, PHP_URL_PATH ) ) );
 			$stored = '';
-			if ( $keep && '' !== $path && self::safe_type( $name ) && is_file( $path ) && is_readable( $path ) && filesize( $path ) <= 50 * MB_IN_BYTES ) {
+			if ( $keep && '' !== $path && is_file( $path ) && is_readable( $path ) && self::may_copy( $path, $name ) && filesize( $path ) <= 50 * MB_IN_BYTES ) {
 				/*
 				 * The copy gets a long random name with no extension of its own: web servers (Apache,
 				 * Nginx or any other) neither run it nor show it as a page, and its address cannot be
