@@ -569,7 +569,14 @@ class AARYE_Admin {
 						<h3><?php esc_html_e( 'Attachments', 'aarye-marketing-addon' ); ?></h3>
 						<ul class="aarye-files">
 							<?php foreach ( $files as $i => $file ) : ?>
-								<li><span class="dashicons dashicons-paperclip" aria-hidden="true"></span> <a href="<?php echo esc_url( '' !== $file['stored'] ? self::file_url( $e->id, $i ) : $file['url'] ); ?>" target="_blank" rel="noopener"><?php echo esc_html( $file['name'] ); ?></a><?php echo '' !== $file['label'] ? ' <span class="aarye-muted">(' . esc_html( $file['label'] ) . ')</span>' : ''; ?></li>
+								<li><span class="dashicons dashicons-paperclip" aria-hidden="true"></span>
+								<?php if ( '' !== $file['stored'] ) : ?>
+									<a href="<?php echo esc_url( self::file_url( $e->id, $i ) ); ?>"><?php echo esc_html( $file['name'] ); ?></a>
+								<?php else : ?>
+									<?php // Addresses sent with a form are shown as text, never as links: they could lead anywhere. ?>
+									<?php echo esc_html( $file['name'] ); ?> <code class="aarye-break"><?php echo esc_html( $file['url'] ); ?></code>
+								<?php endif; ?>
+								<?php echo '' !== $file['label'] ? ' <span class="aarye-muted">(' . esc_html( $file['label'] ) . ')</span>' : ''; ?></li>
 							<?php endforeach; ?>
 						</ul>
 					<?php endif; ?>

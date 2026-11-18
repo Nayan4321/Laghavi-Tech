@@ -35,7 +35,7 @@ Install it and every new enquiry sent from your website is saved with its source
 * **All leads**: search, filter by source, ad network, campaign or language, and export to CSV (opens correctly in Excel, in any language).
 * **Lead details**: every detail the visitor sent, attachments to download, and all tracking parameters.
 * **Lead status**: New, Contacted, Qualified, Won, Lost or Spam.
-* **Attachments are kept**: images and PDF files as a private copy that only administrators can download; other files as a link to the form plugin's copy.
+* **Attachments are kept**: images and PDF files as a private copy that only administrators can download; other files as their address, shown as text.
 * **Past leads**: bring in enquiries your site saved before Aarye was installed, with their original dates.
 
 = Connect your ads: built-in guide =
@@ -127,6 +127,7 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 
 = 1.1.2 =
 * Private copies are made only of images and PDF files whose contents are checked; archives and all other files keep their link to the form plugin's file.
+* Addresses sent with a form (in fields, referrers and attachments that are not copied) are shown as plain text, never as clickable links.
 
 = 1.1.1 =
 * Only images and PDF files are copied, after checking their real contents; archives and every other type keep their link only. Copies get random names with no extension, so no web server runs or shows them.
