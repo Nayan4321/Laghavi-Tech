@@ -194,6 +194,7 @@
         <div class="mh-hero__ctas">
           <a class="mh-btn mh-btn--white" href="https://laghavi.site/wp-content/uploads/manohara-menu-design.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Download free plugin</a>
           <a class="mh-btn mh-btn--ghost" href="#templates">See the templates</a>
+          <a class="mh-btn mh-btn--ghost" href="#pro">Mega menus with Pro</a>
         </div>
         <div class="mh-stats">
           <div><b>7</b><span>free templates</span></div>
@@ -252,7 +253,7 @@
       <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="6" y="10" width="20" height="6" rx="2" fill="#d1d5db"/><rect x="36" y="8" width="18" height="10" rx="5" fill="#7c3aed"/><rect x="58" y="11" width="12" height="4" rx="2" fill="#6b7280"/><rect x="74" y="11" width="12" height="4" rx="2" fill="#6b7280"/><rect x="6" y="28" width="88" height="26" rx="4" fill="#f3f4f6"/></svg><h3>Pills</h3><p>Rounded buttons; the current page is highlighted and hover glides between items.</p><div class="mh-tpl__best"><span>Desktop</span><span>Tablet</span></div></div>
       <div class="mh-tpl"><svg viewBox="0 0 100 60" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><rect x="10" y="6" width="44" height="48" rx="5" fill="#fff" stroke="#d1d5db"/><rect x="16" y="12" width="26" height="4" rx="2" fill="#7c3aed"/><rect x="16" y="22" width="30" height="4" rx="2" fill="#6b7280"/><rect x="16" y="32" width="24" height="4" rx="2" fill="#6b7280"/><rect x="16" y="42" width="28" height="4" rx="2" fill="#6b7280"/><path d="M47 13l2 1.5-2 1.5" stroke="#6b7280" fill="none"/><rect x="60" y="6" width="34" height="48" rx="4" fill="#f3f4f6"/></svg><h3>Vertical list</h3><p>A stacked menu for sidebars and footers, with arrows that open submenus.</p><div class="mh-tpl__best"><span>Desktop</span><span>Tablet</span><span>Mobile</span></div></div>
     </div>
-    <p class="mh-note">More templates, icons and mega menus are coming in Manohara Menu Design Pro.</p>
+    <p class="mh-note">Want mega menus, icons and a sticky header? <a href="#pro">See Manohara Menu Design Pro</a>.</p>
   </section>
 
   <!-- Design -->
@@ -297,6 +298,7 @@
       <div class="mh-box"><h3>Only what you use</h3><p>One small script without jQuery or libraries, and only the styles of the templates your designs use. Nothing is loaded from other websites, no fonts, no tracking.</p></div>
       <div class="mh-box"><h3>Smooth on every phone</h3><p>Animations use CSS transforms, the browser's fastest path. Visitors who ask their device for less motion get instant menus.</p></div>
       <div class="mh-box"><h3>Accessible</h3><p>Keyboard friendly: Esc closes, focus stays inside full-screen menus and returns to the menu button, every button has a label for screen readers.</p></div>
+      <div class="mh-box"><h3>Multilingual sites</h3><p>Menus follow the visitor's language with Vacanam Language Switcher, Polylang and WPML; button texts, links and logos can be translated, and the logo leads to the home page of each language. TranslatePress translates the menu on the page.</p></div>
       <div class="mh-box"><h3>Right to left</h3><p>Drawers and arrows follow the reading direction, for Arabic, Hebrew, Persian and Urdu sites.</p></div>
     </div>
   </section>
@@ -304,16 +306,45 @@
   <!-- Pro -->
   <section id="pro">
     <div class="mh-pro">
-      <span class="mh-pill">Coming soon</span>
+      <span class="mh-pill">Pro add-on</span>
       <h2 style="margin-top:12px">Manohara Menu Design Pro</h2>
-      <p class="lead">An add-on to the free plugin, with more ways to design your menu.</p>
-      <ul class="mh-list">
-        <li><b>More templates</b> for desktop, tablet and mobile.</li>
-        <li><b>Icons on menu items</b>: WordPress icons, or your own SVG, PNG or AVIF images, and icon-only items.</li>
-        <li><b>Mega menus</b>: wide dropdowns with columns, horizontal and vertical.</li>
-      </ul>
-      <p class="mh-note">Install the free plugin now: Pro adds to it, nothing to redo.</p>
+      <p class="lead">Mega menus, a drag-and-drop builder, icons and badges, a sticky header and WooCommerce menus. It adds to the free plugin, so your designs stay as they are.</p>
+      <div class="mh-cards">
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#0f766e"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M9 9v11M15 9v11"/></svg></span><div><h3>Mega menus</h3><small>19 ready designs</small></div></div><ul><li>Built from your menu: second-level items become columns, cards or tabs</li><li>Intro text with buttons, a promo card with price, and a footer strip</li><li>Content width, full screen width or a fixed width, always on screen</li><li>Phones and tablets: an accordion with everything in one column</li></ul></div>
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg></span><div><h3>Drag-and-drop grid builder</h3><small>Rows, columns, blocks</small></div></div><ul><li>Rows of 12 column units; drag rows and blocks to move them</li><li>Headings, links, a menu, text, images, buttons, promo banners</li><li>Videos (YouTube, Vimeo, files), social links, latest posts, shortcodes</li><li>Or a block editor pattern or Elementor template as the whole panel</li></ul></div>
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#7c3aed"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/></svg></span><div><h3>Icons, images and badges</h3><small>On every menu item</small></div></div><ul><li>57 built-in icons, Dashicons, Font Awesome or your own images</li><li>An image for cards, carousels and product tiles</li><li>Badges such as New, Popular or -20% in any colour</li><li>Description under the label; hide any item on desktop, tablet or mobile</li></ul></div>
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#db2777"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 13H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></span><div><h3>WooCommerce</h3><small>Shop menus that sell</small></div></div><ul><li>Cart button with the number of items, updated when products are added</li><li>My account button in the header bar</li><li>Product and product category grids inside mega menus</li><li>Popular, latest, best rated, on sale or featured products</li></ul></div>
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#0284c7"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></span><div><h3>Headers and menu buttons</h3><small>Sticky, shrink, hide</small></div></div><ul><li>Header stays at the top, gets smaller, or hides when scrolling down</li><li>Eight menu button styles with their own animation</li><li>Text next to the menu button, such as "Menu"</li><li>A different logo on phones, and the side panel width you want</li></ul></div>
+      <div class="mh-card"><div class="mh-card__head"><span class="mh-icon" style="background:#16a34a"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13V5a2 2 0 0 1 4 0v6"/><path d="M12 11V9a2 2 0 0 1 4 0v4a7 7 0 0 1-7 7h-1a5 5 0 0 1-4-2l-2-3a2 2 0 0 1 3-2l1 1"/></svg></span><div><h3>Touch and devices</h3><small>Made for phones</small></div></div><ul><li>Swipe the panel away to close it</li><li>First tap on a parent item opens its submenu, the second follows the link</li><li>Hide theme elements on a device: a second menu, a desktop-only bar</li><li>Uses the breakpoints you set in the free plugin</li></ul></div>
+      </div>
+      <h3 style="margin-top:28px;font-size:18px">19 mega menu designs</h3>
+      <div class="mh-chips"><span class="mh-chip"><i></i>Icon cards</span><span class="mh-chip"><i></i>Platform grid with intro</span><span class="mh-chip"><i></i>Side tabs with badges</span><span class="mh-chip"><i></i>Features and showcase</span><span class="mh-chip"><i></i>Vertical tabs, grouped</span><span class="mh-chip"><i></i>Classic columns</span><span class="mh-chip"><i></i>Dark icon tiles</span><span class="mh-chip"><i></i>Store columns and banner</span><span class="mh-chip"><i></i>Underlined headings</span><span class="mh-chip"><i></i>Image cards and list</span><span class="mh-chip"><i></i>Resources and insight card</span><span class="mh-chip"><i></i>Columns and best seller</span><span class="mh-chip"><i></i>Category tabs with products</span><span class="mh-chip"><i></i>Products panel and what's new</span><span class="mh-chip"><i></i>Side tabs and carousel</span><span class="mh-chip"><i></i>Product lists and promo</span><span class="mh-chip"><i></i>Fashion lists and image tiles</span><span class="mh-chip"><i></i>Dark grid and gradient promo</span><span class="mh-chip"><i></i>Wide columns and footer row</span></div>
+      <p class="mh-note">Each design works in every language and right to left, and turns into an accordion in phone menus.</p>
     </div>
+  </section>
+
+  <!-- Free or Pro -->
+  <section>
+    <h2>Free or Pro</h2>
+    <p class="lead">The free plugin is complete for most sites. Pro is for shops, larger sites and agencies that want mega menus and more control.</p>
+    <div class="mh-table-wrap">
+      <table class="mh-table">
+        <thead><tr><th>Feature</th><th>Free</th><th>Pro</th></tr></thead>
+        <tbody><tr><td>Templates for desktop, tablet and mobile</td><td>7</td><td>7, plus 19 mega menu designs</td></tr><tr><td>A design and a menu per device</td><td class="mh-yes">✓</td><td class="mh-yes">✓</td></tr><tr><td>Colours, fonts, animation, live preview</td><td class="mh-yes">✓</td><td class="mh-yes">✓</td></tr><tr><td>Call-to-action buttons, social icons, header bar</td><td class="mh-yes">✓</td><td class="mh-yes">✓</td></tr><tr><td>Multilingual (Vacanam, Polylang, WPML) and right to left</td><td class="mh-yes">✓</td><td class="mh-yes">✓</td></tr><tr><td>Elementor widget, block, shortcode</td><td class="mh-yes">✓</td><td class="mh-yes">✓</td></tr><tr><td>Mega menus with columns, cards, tabs and carousels</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Drag-and-drop grid builder</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Block editor patterns and Elementor templates as panels</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Icons, images, badges and descriptions on items</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Hide items per device</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>WooCommerce cart, account, products and categories</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Sticky, shrinking and hide-on-scroll header</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Eight menu button styles, button text, phone logo</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Swipe to close, tap to open</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Hide theme elements per device</td><td class="mh-no">—</td><td class="mh-yes">✓</td></tr><tr><td>Support</td><td>Community support</td><td>Email support</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section id="pricing">
+    <h2>Pro prices</h2>
+    <p class="lead">Billed yearly, with updates and support. Use it on as many sites as your plan includes.</p>
+      <div class="mh-prices">
+        <div class="mh-price"><h3>Single site</h3><span class="mh-price__sites">1 website</span><div class="mh-price__amt">$49<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Email support</li></ul><a class="mh-btn mh-btn--line" href="https://laghavi.site/product/manohara-menu-design-pro/">Get Pro for 1 site</a></div>
+        <div class="mh-price mh-price--pop"><span class="mh-price__tag">Most popular</span><h3>5 sites</h3><span class="mh-price__sites">Businesses with a few websites</span><div class="mh-price__amt">$99<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Email support</li></ul><a class="mh-btn mh-btn--brand" href="https://laghavi.site/product/manohara-menu-design-pro/">Get Pro for 5 sites</a></div>
+        <div class="mh-price"><h3>Unlimited sites</h3><span class="mh-price__sites">Agencies and freelancers</span><div class="mh-price__amt">$199<span> / year</span></div><ul><li>Every Pro feature</li><li>Updates for a year</li><li>Priority support</li></ul><a class="mh-btn mh-btn--line" href="https://laghavi.site/product/manohara-menu-design-pro/">Get Pro for unlimited sites</a></div>
+      </div>
+      <p class="mh-price__fine">Pro is an add-on: it needs the free Manohara Menu Design. If you don't renew, Pro keeps working; only updates and support stop.</p>
   </section>
 
   <!-- FAQ -->
@@ -325,6 +356,10 @@
       <details><summary>Does it work with my theme?</summary><p>Yes. It works with classic themes through their menu locations, with block themes through the block, and with any theme through the shortcode or the Elementor widget. When a device shows Manohara's own header bar, the theme's header is hidden on that device; the common themes are covered, and you can add your theme's header selector in the settings.</p></details>
       <details><summary>Does it slow my site down?</summary><p>No. The script is about 7 KB without jQuery, only the styles of the templates you use are loaded, and nothing is loaded from other websites.</p></details>
       <details><summary>Does it work with page caching?</summary><p>Yes. Devices are told apart by screen width in CSS, so cached pages are the same for everyone.</p></details>
+      <details><summary>Does it work on multilingual sites?</summary><p>Yes. With Vacanam Language Switcher, Polylang or WPML each language shows its own menu, and button texts, links and logos can be translated. With Pro, each language's menu keeps its own icons, badges and mega menus; when Vacanam copies a menu for a new language, they are copied too.</p></details>
+      <details><summary>Do I need Pro?</summary><p>No. The free plugin gives every device a modern menu. Pro is for mega menus, icons and badges, a sticky or hiding header, WooCommerce menus and more control on phones.</p></details>
+      <details><summary>Where do I set up a mega menu?</summary><p>In Appearance › Menus: open a top-level item, tick "Mega menu" and choose a design, or build the panel with the grid builder. On block themes, Manohara keeps the Menus screen available.</p></details>
+      <details><summary>What happens when my Pro license ends?</summary><p>Pro keeps working on your site. Renew to keep getting updates and support. You can move a license to another site from My Account › Licenses on laghavi.site.</p></details>
       <details><summary>What if I delete the plugin?</summary><p>Your theme's menu comes back. Your designs are removed only if you choose so in the settings.</p></details>
     </div>
   </section>
@@ -344,6 +379,7 @@
     <p>Install the free plugin, choose a template for mobile, and see it live in a few minutes.</p>
     <div class="mh-hero__ctas">
       <a class="mh-btn mh-btn--white" href="https://laghavi.site/wp-content/uploads/manohara-menu-design.zip" download>Download free plugin</a>
+      <a class="mh-btn mh-btn--ghost" href="https://laghavi.site/product/manohara-menu-design-pro/">Get Pro</a>
     </div>
   </section>
 
