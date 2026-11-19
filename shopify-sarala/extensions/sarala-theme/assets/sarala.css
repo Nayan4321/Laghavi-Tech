@@ -1,0 +1,10 @@
+.sarala-lock{display:flex;justify-content:center;padding:12vh 20px}
+.sarala-lock__card{max-width:480px;text-align:center;padding:32px;border:1px solid rgba(0,0,0,.1);border-radius:12px;background:#fff;color:#222}
+.sarala-lock__text{font-size:1.1em;margin:0 0 20px}
+.sarala-lock__note{opacity:.75;margin:0}
+.sarala-lock__button{display:inline-block;padding:12px 24px;border-radius:8px;background:#222;color:#fff;text-decoration:none}
+.sarala-prompt{display:flex;gap:12px;align-items:center;justify-content:center;padding:8px 40px;background:#222;color:#fff;font-size:14px;position:relative}
+.sarala-prompt[hidden]{display:none}
+.sarala-prompt a{color:#fff;text-decoration:underline;font-weight:600}
+.sarala-prompt__close{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:0;color:#fff;font-size:20px;cursor:pointer}
+.sarala-price-link{display:inline-block;font-weight:600;text-decoration:underline;margin:4px 0}

@@ -1,0 +1,106 @@
+{%- comment -%}
+  Sarala User Access: locks pages, hides prices and shows sign-in prompts on the storefront.
+  Settings are saved by the app on the app installation (metafield sarala.access).
+{%- endcomment -%}
+{%- assign cfg = app.metafields.sarala.access.value -%}
+{%- if cfg and cfg.active -%}
+  {%- liquid
+    assign skip = false
+    if request.page_type contains 'customers' or request.page_type == 'password' or request.page_type == 'policy' or request.design_mode
+      assign skip = true
+    endif
+
+    assign allowed = false
+    if customer
+      assign allowed = true
+      if cfg.approval and customer.tags contains 'sarala-pending'
+        assign allowed = false
+      endif
+      if allowed and cfg.allowedTags.size > 0
+        assign allowed = false
+        for t in cfg.allowedTags
+          if customer.tags contains t
+            assign allowed = true
+            break
+          endif
+        endfor
+      endif
+    endif
+
+    assign locked = false
+    if cfg.storeLock
+      assign locked = true
+    elsif request.page_type == 'page' and cfg.lockedPages contains page.handle
+      assign locked = true
+    elsif request.page_type == 'collection' and cfg.lockedCollections contains collection.handle
+      assign locked = true
+    elsif request.page_type == 'product'
+      if cfg.lockedProducts contains product.handle
+        assign locked = true
+      else
+        for c in product.collections
+          if cfg.lockedCollections contains c.handle
+            assign locked = true
+            break
+          endif
+        endfor
+      endif
+    endif
+    if skip
+      assign locked = false
+    endif
+
+    assign login_url = routes.account_login_url | append: '?return_url=' | append: request.path
+  -%}
+
+  {%- if locked and allowed == false -%}
+    <style>main, #MainContent, [role="main"] { display: none !important; }</style>
+    <div class="sarala-lock">
+      <div class="sarala-lock__card">
+        <p class="sarala-lock__text">{{ cfg.lockMessage | escape | newline_to_br }}</p>
+        {%- if customer -%}
+          <p class="sarala-lock__note">{{ 'sarala.not_yet' | t }}</p>
+        {%- else -%}
+          <a class="sarala-lock__button" href="{{ login_url | escape }}">{{ cfg.lockButton | escape }}</a>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if cfg.hidePrices and allowed == false and skip == false -%}
+    {%- assign price_sel = cfg.priceSelectors | default: '.price, .product__price, .price__container, .product-price, [data-product-price]' -%}
+    {%- assign cart_sel = cfg.cartSelectors | default: 'form[action*="/cart/add"] [type="submit"], .shopify-payment-button, .quick-add, product-form' -%}
+    <style>{{ price_sel }}, {{ cart_sel }} { display: none !important; }</style>
+  {%- endif -%}
+
+  {%- if cfg.prompt and customer == nil and skip == false and locked == false -%}
+    <div class="sarala-prompt" hidden>
+      <span>{{ cfg.promptText | escape }}</span>
+      <a href="{{ login_url | escape }}">{{ cfg.promptButton | escape }}</a>
+      <button type="button" class="sarala-prompt__close" aria-label="{{ 'sarala.close' | t }}">&times;</button>
+    </div>
+  {%- endif -%}
+
+  <script type="application/json" id="sarala-data">
+    {
+      "guest": {% if customer %}false{% else %}true{% endif %},
+      "tags": {% if customer %}{{ customer.tags | json }}{% else %}[]{% endif %},
+      "path": {{ request.path | json }},
+      "hidePrices": {% if cfg.hidePrices and allowed == false and skip == false %}true{% else %}false{% endif %},
+      "priceSelectors": {{ price_sel | json }},
+      "loginUrl": {{ login_url | json }},
+      "priceText": {{ 'sarala.sign_in_for_prices' | t | json }},
+      "redirects": {{ cfg.redirects | json }}
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Sarala access",
+  "target": "body",
+  "javascript": "sarala.js",
+  "stylesheet": "sarala.css",
+  "settings": []
+}
+{% endschema %}

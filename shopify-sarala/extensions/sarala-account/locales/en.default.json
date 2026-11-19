@@ -1,0 +1,9 @@
+{
+  "title": "More about you",
+  "save": "Save",
+  "saved": "Saved. Thank you!",
+  "saveFailed": "Could not save. Please try again.",
+  "loadFailed": "This section could not be loaded. Please refresh the page.",
+  "required": "Please fill this in.",
+  "number": "Please enter a number."
+}

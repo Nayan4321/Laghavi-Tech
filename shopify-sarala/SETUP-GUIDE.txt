@@ -1,0 +1,187 @@
+SARALA USER ACCESS  (Shopify app)  -  SETUP GUIDE
+=================================================
+
+What the app does
+-----------------
+- Extra sign-up / profile fields (text, number, date, dropdown, radio, checkboxes, yes/no).
+  Answers are saved on the customer in Shopify (customer metafields).
+- Smart tags: tag customers by their answers (for example "Wholesale").
+- Approve new accounts: new customers get tag "sarala-pending" until you approve them.
+- Members only: lock the whole store, or chosen pages / collections / products.
+  Only certain tags (e.g. VIP) can be allowed.
+- Hide prices and add-to-cart from guests ("Sign in to see prices").
+- Sign-in bar for guests, and "after sign in, go to page X" by tag.
+- Messages on the customer's account page (waiting message, per-tag announcements).
+- Fake sign-up check: throwaway emails, random addresses, links in names are tagged
+  "sarala-suspicious" so you can review or delete them.
+- One plan, 15-day free trial, Shopify billing. Everything included.
+
+The app stores NO customer data on your server. All data stays in Shopify.
+Your server only stores the Shopify login sessions (MySQL table "shopify_sessions").
+
+
+STEP 1 - Subdomain and hosting  (sarala.laghavi.site)
+-----------------------------------------------------
+The app needs Node.js 20+ and a MySQL database. On Hostinger use a VPS or the
+"Node.js app" feature of Business/Cloud hosting (shared PHP hosting is not enough).
+
+1. In hPanel create the subdomain  sarala.laghavi.site  and point it to the Node app.
+2. Create a MySQL database + user. Note: name, user, password.
+3. Turn on SSL (free Let's Encrypt) for sarala.laghavi.site. Shopify needs https.
+
+
+STEP 2 - Create the app in the Partner Dashboard
+------------------------------------------------
+1. partners.shopify.com -> Apps -> Create app -> "Create app manually".
+   Name: Sarala User Access
+2. Copy the Client ID and the Client secret.
+3. Open shopify.app.toml in this folder and put the Client ID in  client_id = "..."
+4. Configuration:
+   App URL:            https://sarala.laghavi.site
+   Redirect URL:       https://sarala.laghavi.site/auth/callback
+   (shopify app deploy in step 5 sets these from shopify.app.toml anyway.)
+
+
+STEP 3 - Pricing (Shopify managed pricing)
+------------------------------------------
+Partner Dashboard -> your app -> Distribution -> Shopify App Store listing ->
+Pricing -> "Managed pricing" -> Add plan:
+   Plan name:      Sarala
+   Monthly:        9.99 USD
+   Yearly:         99 USD
+   Free trial:     15 days
+   Features list:  Custom sign-up fields, smart tags, account approval,
+                   members-only pages, hide prices, sign-in prompts,
+                   fake sign-up detection
+The app sends merchants without a plan to this pricing page automatically.
+When a plan ends or is cancelled, the storefront locks and account blocks turn off
+by themselves (webhook app_subscriptions/update).
+
+
+STEP 4 - Put the app on the server
+----------------------------------
+Upload this folder (without node_modules) to the server, then create a file  .env :
+
+   SHOPIFY_API_KEY=<Client ID>
+   SHOPIFY_API_SECRET=<Client secret>
+   SHOPIFY_APP_URL=https://sarala.laghavi.site
+   SCOPES=read_customers,write_customers,customer_read_customers,customer_write_customers
+   DATABASE_URL=mysql://DBUSER:DBPASSWORD@localhost:3306/DBNAME
+   PORT=3000
+   NODE_ENV=production
+
+Then run:
+   npm ci
+   npm run build
+   npm run start            (keep it running with pm2:  pm2 start npm --name sarala -- run start)
+
+Check https://sarala.laghavi.site opens the Sarala landing page.
+
+
+STEP 5 - Send the extensions to Shopify
+---------------------------------------
+On your computer (with Shopify CLI:  npm i -g @shopify/cli ):
+   cd shopify-sarala
+   npm install
+   cd extensions/sarala-account && npm install && cd ../..
+   shopify app deploy
+This uploads the app settings, the theme embed "Sarala access" and the
+customer account blocks "Sarala profile fields" / messages.
+
+
+STEP 6 - Requests in the Partner Dashboard (needed before review)
+-----------------------------------------------------------------
+1. API access -> Protected customer data access -> Request access.
+   Choose: Name, Email. Reasons: "Show customers to approve or review in the app,
+   apply tags based on the customer's own answers." Fill the data protection form
+   (data not stored on our servers, only processed through Shopify's API).
+2. API access -> "Allow network access in customer account UI extensions" -> Request.
+   Reason: "After a customer saves the profile form, the block calls our app
+   (https://sarala.laghavi.site/api/account/saved) to add the smart tags."
+3. Privacy policy URL:  https://laghavi.site/sarala-user-access-privacy/
+   (create this page on your website; text below).
+
+
+STEP 7 - Test in a development store
+------------------------------------
+Partner Dashboard -> Stores -> Add store -> Development store.
+Install the app, then check:
+  [ ] Install -> you are sent to the pricing page -> approve the test charge.
+  [ ] Sign-up fields: add 2-3 fields with a smart tag, Save.
+  [ ] Settings -> Checkout and accounts -> Customize customer accounts:
+      add "Sarala profile fields" on Profile page, messages block on Orders page.
+  [ ] As a customer: fill the fields, Save -> answers + tag appear on the customer in admin.
+  [ ] Access: lock a page, hide prices -> open the store logged out and logged in.
+  [ ] Turn on approval -> new customer gets "sarala-pending" -> Approve in "Customers to review".
+  [ ] Sign up with test@mailinator.com -> appears under "Look fake".
+  [ ] Uninstall + reinstall works.
+If something does not work, send me the exact error text and a screenshot.
+
+
+STEP 8 - Submit for review
+--------------------------
+Partner Dashboard -> Distribution -> Shopify App Store -> fill the listing
+(texts below), screenshots (1600x900) of: Home, Fields, Access, Customers to review,
+storefront lock page, account profile block. Add a test store + login for the reviewer
+and a short screencast video (required) showing install, plan, setup and the storefront.
+
+
+=================================================
+LISTING TEXTS
+=================================================
+
+App name:  Sarala User Access
+
+Tagline (max 62):
+  Custom sign-up fields, account approval and members-only pages
+
+Introduction:
+  Know your customers and decide who sees what. Add your own sign-up questions,
+  approve new accounts, lock pages for members and hide prices from guests.
+
+Details:
+  Sarala User Access turns your customer accounts into a members area.
+  Ask customers for their company, birthday or interests right on their account
+  profile; every answer is saved on the customer in Shopify, ready for segments
+  and Shopify Email. Tag customers automatically by their answers. Approve new
+  accounts before they can see wholesale prices, lock the whole store or only
+  chosen pages, collections and products, and show guests a friendly sign-in bar.
+  Fake sign-ups from throwaway email services are flagged for your review.
+
+Key features:
+  - Custom profile fields with smart tags
+  - Approve new customer accounts
+  - Members-only store, pages, collections and products
+  - Hide prices and add to cart from guests
+  - Fake sign-up detection
+
+Pricing: one plan, 9.99 USD/month or 99 USD/year, 15-day free trial.
+
+Support: info@laghavi.site   Website: https://laghavi.site
+
+
+=================================================
+PRIVACY POLICY TEXT  (for laghavi.site/sarala-user-access-privacy/)
+=================================================
+
+Sarala User Access - Privacy Policy
+
+Sarala User Access ("the App") is made by Laghavi Tech. This policy explains which
+information the App uses when a merchant installs it on a Shopify store.
+
+What we access: when installed, the App can read and change customer records of the
+store through Shopify's API: names, email addresses, tags and the answers customers
+give in the App's profile fields. This is used only to show customers to the merchant
+for approval or review, to add tags, and to show the right content on the storefront.
+
+What we store: customer information and answers are stored in the merchant's Shopify
+store, not on our servers. Our server stores only the technical login session that
+Shopify gives the App (shop domain and access token).
+
+Sharing: we do not sell or share any information with third parties.
+
+Deleting data: when the App is uninstalled, its login session is deleted. Shopify's
+privacy requests (customer data request, customer redact, shop redact) are handled
+automatically; shop data is removed 48 hours after uninstall.
+
+Contact: info@laghavi.site

@@ -1,0 +1,46 @@
+# Sarala User Access – Shopify app configuration.
+# client_id comes from your app in the Partner Dashboard (Apps > Sarala User Access > Client credentials).
+client_id = "PASTE_CLIENT_ID_HERE"
+name = "Sarala User Access"
+handle = "sarala-user-access"
+application_url = "https://sarala.laghavi.site"
+embedded = true
+
+[build]
+automatically_update_urls_on_dev = true
+include_config_on_deploy = true
+
+[webhooks]
+api_version = "2026-10"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/uninstalled" ]
+  uri = "/webhooks/app/uninstalled"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  [[webhooks.subscriptions]]
+  topics = [ "app_subscriptions/update" ]
+  uri = "/webhooks/app/subscriptions"
+
+  [[webhooks.subscriptions]]
+  topics = [ "customers/create" ]
+  uri = "/webhooks/customers/create"
+
+  # Required privacy webhooks (Shopify App Store requirement).
+  [[webhooks.subscriptions]]
+  compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
+  uri = "/webhooks/compliance"
+
+[access_scopes]
+# read/write customers: tags for approval and smart tags, customer metafields for the fields.
+# customer_read/write_customers: the account page blocks read and save the customer's own answers.
+scopes = "read_customers,write_customers,customer_read_customers,customer_write_customers"
+
+[auth]
+redirect_urls = [ "https://sarala.laghavi.site/auth/callback" ]
+
+[pos]
+embedded = false

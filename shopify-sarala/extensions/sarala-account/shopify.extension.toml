@@ -1,0 +1,19 @@
+api_version = "2026-10"
+
+[[extensions]]
+name = "Sarala profile fields"
+handle = "sarala-account"
+type = "ui_extension"
+uid = "sarala-account"
+
+[[extensions.targeting]]
+module = "./src/ProfileFields.jsx"
+target = "customer-account.profile.block.render"
+
+[[extensions.targeting]]
+module = "./src/Announcement.jsx"
+target = "customer-account.order-index.announcement.render"
+
+[extensions.capabilities]
+api_access = true
+network_access = true
