@@ -1,8 +1,7 @@
 node_modules
-build
-.react-router
 .env
 .shopify
 *.log
 extensions/*/dist
 extensions/*/node_modules
+php/private/config.php

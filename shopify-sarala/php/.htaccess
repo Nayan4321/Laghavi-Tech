@@ -1,0 +1,9 @@
+Options -Indexes
+RewriteEngine On
+# Session tokens arrive in the Authorization header.
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+# Settings and code are never served directly.
+RewriteRule ^(private|lib)(/|$) - [F,L]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^assets/ - [L]
+RewriteRule ^ index.php [L,QSA]

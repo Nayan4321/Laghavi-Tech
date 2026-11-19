@@ -15,32 +15,34 @@ api_version = "2026-10"
 
   [[webhooks.subscriptions]]
   topics = [ "app/uninstalled" ]
-  uri = "/webhooks/app/uninstalled"
+  uri = "/webhooks"
 
   [[webhooks.subscriptions]]
   topics = [ "app/scopes_update" ]
-  uri = "/webhooks/app/scopes_update"
+  uri = "/webhooks"
 
   [[webhooks.subscriptions]]
   topics = [ "app_subscriptions/update" ]
-  uri = "/webhooks/app/subscriptions"
+  uri = "/webhooks"
 
   [[webhooks.subscriptions]]
   topics = [ "customers/create" ]
-  uri = "/webhooks/customers/create"
+  uri = "/webhooks"
 
   # Required privacy webhooks (Shopify App Store requirement).
   [[webhooks.subscriptions]]
   compliance_topics = [ "customers/data_request", "customers/redact", "shop/redact" ]
-  uri = "/webhooks/compliance"
+  uri = "/webhooks"
 
 [access_scopes]
 # read/write customers: tags for approval and smart tags, customer metafields for the fields.
 # customer_read/write_customers: the account page blocks read and save the customer's own answers.
+use_legacy_install_flow = false
 scopes = "read_customers,write_customers,customer_read_customers,customer_write_customers"
 
 [auth]
-redirect_urls = [ "https://sarala.laghavi.site/auth/callback" ]
+# The app signs in with Shopify managed installation and token exchange; this address is not called.
+redirect_urls = [ "https://sarala.laghavi.site/app" ]
 
 [pos]
 embedded = false

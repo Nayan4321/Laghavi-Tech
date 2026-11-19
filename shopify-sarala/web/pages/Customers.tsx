@@ -1,10 +1,10 @@
 import { useEffect } from "react";
-import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { useFetcher, useLoaderData, useSearchParams } from "react-router";
-import { boundary } from "@shopify/shopify-app-react-router/server";
-import { authenticate } from "../shopify.server";
+import { useSearchParams } from "react-router";
 import { APPROVED_TAG, PENDING_TAG, SUSPICIOUS_TAG } from "../lib/config";
-import { ShopifyError, changeTags, deleteCustomer, listCustomers } from "../lib/shop-data.server";
+import { useData, useFetcher } from "../api";
+
+type CustomersData = { view: View; store: string; customers: { id: string; name: string; email: string; createdAt: string; tags: string[] }[] };
+type CustomersResult = { ok: boolean; message: string };
 
 const VIEWS = {
   pending: { tag: PENDING_TAG, title: "Waiting for approval", empty: "Nobody is waiting for approval." },
@@ -13,48 +13,13 @@ const VIEWS = {
 } as const;
 type View = keyof typeof VIEWS;
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin, session } = await authenticate.admin(request);
-  const param = new URL(request.url).searchParams.get("view");
-  const view: View = param === "suspicious" || param === "approved" ? param : "pending";
-  const customers = await listCustomers(admin.graphql, `tag:'${VIEWS[view].tag}'`, 100);
-  return { view, customers, store: session.shop.replace(/\.myshopify\.com$/, "") };
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const form = await request.formData();
-  const id = String(form.get("id") ?? "");
-  const todo = String(form.get("todo") ?? "");
-  if (!/^gid:\/\/shopify\/Customer\/\d+$/.test(id)) return { ok: false, message: "Unknown customer." };
-  try {
-    switch (todo) {
-      case "approve":
-        await changeTags(admin.graphql, id, [APPROVED_TAG], [PENDING_TAG]);
-        return { ok: true, message: "Approved. The customer can now see members' pages and prices." };
-      case "decline":
-        await changeTags(admin.graphql, id, [], [PENDING_TAG, APPROVED_TAG]);
-        await deleteCustomer(admin.graphql, id);
-        return { ok: true, message: "Declined and removed." };
-      case "keep":
-        await changeTags(admin.graphql, id, [], [SUSPICIOUS_TAG]);
-        return { ok: true, message: "Marked as a real customer." };
-      case "delete":
-        await deleteCustomer(admin.graphql, id);
-        return { ok: true, message: "Customer deleted." };
-    }
-  } catch (e) {
-    // Customers with orders cannot be deleted in Shopify.
-    return { ok: false, message: e instanceof ShopifyError ? e.message : "That did not work. Please try again." };
-  }
-  return { ok: false, message: "Unknown action." };
-};
-
 function Row({ c, view, store }: { c: { id: string; name: string; email: string; createdAt: string }; view: View; store: string }) {
-  const fetcher = useFetcher<typeof action>();
+  const fetcher = useFetcher<CustomersResult>("/api/customers");
   useEffect(() => {
     if (fetcher.state === "idle" && fetcher.data) shopify.toast.show(fetcher.data.message, { isError: !fetcher.data.ok });
   }, [fetcher.state, fetcher.data]);
+  // Done: the customer has left this list.
+  if (fetcher.state === "idle" && fetcher.data?.ok) return null;
   const act = (todo: string) => fetcher.submit({ id: c.id, todo }, { method: "post" });
   const busy = fetcher.state !== "idle" || undefined;
   const numericId = c.id.split("/").pop();
@@ -86,7 +51,7 @@ function Row({ c, view, store }: { c: { id: string; name: string; email: string;
 }
 
 export default function Customers() {
-  const { view, customers, store } = useLoaderData<typeof loader>();
+  const { view, customers, store } = useData<CustomersData>();
   const [, setParams] = useSearchParams();
   return (
     <s-page heading="Customers to review">
@@ -125,4 +90,3 @@ export default function Customers() {
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { checkSignup } from "../app/lib/signup-check";
+import { checkSignup } from "../web/lib/signup-check";
 
 describe("checkSignup", () => {
   it("lets normal customers through", () => {

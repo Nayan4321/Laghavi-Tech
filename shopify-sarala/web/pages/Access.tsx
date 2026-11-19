@@ -1,30 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { type SubmitTarget, useFetcher, useLoaderData } from "react-router";
-import { boundary } from "@shopify/shopify-app-react-router/server";
-import { authenticate } from "../shopify.server";
-import { type AccessConfig, DEFAULT_CART_SELECTORS, DEFAULT_PRICE_SELECTORS, PENDING_TAG, cleanAccessConfig } from "../lib/config";
-import { ShopifyError, getInstallation, saveAccess } from "../lib/shop-data.server";
+import { type AccessConfig, DEFAULT_CART_SELECTORS, DEFAULT_PRICE_SELECTORS, PENDING_TAG } from "../lib/config";
+import { useData, useFetcher } from "../api";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const inst = await getInstallation(admin.graphql);
-  return { access: inst.access };
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const body = (await request.json()) as Record<string, unknown>;
-  const inst = await getInstallation(admin.graphql);
-  // "active" follows the plan, never the form.
-  const access = cleanAccessConfig({ ...body, active: inst.access.active });
-  try {
-    await saveAccess(admin.graphql, inst.id, access);
-  } catch (e) {
-    return { ok: false, error: e instanceof ShopifyError ? e.message : "Could not save. Please try again.", access: inst.access };
-  }
-  return { ok: true, error: "", access };
-};
+type AccessData = { access: AccessConfig };
+type AccessResult = { ok: boolean; error: string; access: AccessConfig };
 
 type Form = Omit<AccessConfig, "lockedPages" | "lockedCollections" | "lockedProducts" | "allowedTags"> & {
   lockedPages: string;
@@ -42,8 +21,8 @@ const toForm = (a: AccessConfig): Form => ({
 });
 
 export default function Access() {
-  const { access } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof action>();
+  const { access } = useData<AccessData>();
+  const fetcher = useFetcher<AccessResult>("/api/access");
   const [f, setF] = useState<Form>(() => toForm(access));
   const set = (patch: Partial<Form>) => setF((x) => ({ ...x, ...patch }));
   const saving = fetcher.state !== "idle";
@@ -59,7 +38,7 @@ export default function Access() {
     }
   }, [fetcher.state, fetcher.data]);
 
-  const save = () => fetcher.submit(f as unknown as SubmitTarget, { method: "post", encType: "application/json" });
+  const save = () => fetcher.submit(f, { method: "post", encType: "application/json" });
 
   return (
     <s-page heading="Access & approval">
@@ -155,4 +134,3 @@ export default function Access() {
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

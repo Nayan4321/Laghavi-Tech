@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { type SubmitTarget, useFetcher, useLoaderData } from "react-router";
-import { boundary } from "@shopify/shopify-app-react-router/server";
-import { authenticate } from "../shopify.server";
-import { type FieldDef, type FieldType, cleanAccountConfig } from "../lib/config";
-import { ShopifyError, getShop, saveAccount } from "../lib/shop-data.server";
+import { type AccountConfig, type FieldDef, type FieldType } from "../lib/config";
+import { useData, useFetcher } from "../api";
+
+type FieldsData = { account: AccountConfig };
+type FieldsResult = { ok: boolean; error: string; account: AccountConfig };
 
 const TYPE_LABELS: Record<FieldType, string> = {
   text: "Short text",
@@ -18,46 +17,13 @@ const TYPE_LABELS: Record<FieldType, string> = {
 };
 const WITH_OPTIONS: FieldType[] = ["dropdown", "radio", "checkboxes"];
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const shop = await getShop(admin.graphql);
-  return { account: shop.account };
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const body = (await request.json()) as { fields?: unknown; fieldsTitle?: unknown; fieldsIntro?: unknown };
-  const shop = await getShop(admin.graphql);
-  const before = new Map(shop.account.fields.map((f) => [f.key, f]));
-  // A field whose type changed gets a new key, so old answers of the other type stay readable.
-  const incoming = Array.isArray(body.fields)
-    ? body.fields.map((f) => {
-        const ff = f as Partial<FieldDef>;
-        const old = ff.key ? before.get(ff.key) : undefined;
-        return old && old.type !== ff.type ? { ...ff, key: "" } : ff;
-      })
-    : [];
-  const account = cleanAccountConfig({
-    ...shop.account,
-    fields: incoming,
-    fieldsTitle: body.fieldsTitle,
-    fieldsIntro: body.fieldsIntro,
-  });
-  try {
-    await saveAccount(admin.graphql, shop.id, account);
-  } catch (e) {
-    return { ok: false, error: e instanceof ShopifyError ? e.message : "Could not save. Please try again.", account: shop.account };
-  }
-  return { ok: true, error: "", account };
-};
-
 type Draft = FieldDef & { _id: string; optionsText: string };
 
 const toDraft = (f: FieldDef, i: number): Draft => ({ ...f, _id: `${f.key}-${i}`, optionsText: f.options.join("\n") });
 
 export default function Fields() {
-  const { account } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof action>();
+  const { account } = useData<FieldsData>();
+  const fetcher = useFetcher<FieldsResult>("/api/fields");
   const [fields, setFields] = useState<Draft[]>(() => account.fields.map(toDraft));
   const [title, setTitle] = useState(account.fieldsTitle);
   const [intro, setIntro] = useState(account.fieldsIntro);
@@ -103,7 +69,7 @@ export default function Fields() {
           options: f.optionsText.split("\n"),
           tagRules: f.tagRules,
         })),
-      } as unknown as SubmitTarget,
+      },
       { method: "post", encType: "application/json" },
     );
 
@@ -220,4 +186,3 @@ export default function Fields() {
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

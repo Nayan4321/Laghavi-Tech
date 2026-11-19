@@ -8,7 +8,7 @@ import {
   cleanUrl,
   tagsFromAnswers,
   validateAnswer,
-} from "../app/lib/config";
+} from "../web/lib/config";
 
 describe("cleaners", () => {
   it("accepts handles and full addresses", () => {

@@ -1,32 +1,7 @@
-import type { HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { useLoaderData } from "react-router";
-import { boundary } from "@shopify/shopify-app-react-router/server";
-import { authenticate } from "../shopify.server";
-import { APPROVED_TAG, PENDING_TAG, SUSPICIOUS_TAG } from "../lib/config";
-import { countCustomers, getInstallation, getShop, setActive } from "../lib/shop-data.server";
+import type { AccessConfig } from "../lib/config";
+import { useData } from "../api";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin, session } = await authenticate.admin(request);
-  const inst = await getInstallation(admin.graphql);
-  // The parent route only lets merchants with an active plan in, so switch everything on.
-  if (inst.subscribed && !inst.access.active) await setActive(admin.graphql, true);
-  const shop = await getShop(admin.graphql);
-  const since = new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
-  const [signups, pending, approved, suspicious] = await Promise.all([
-    countCustomers(admin.graphql, `created_at:>='${since}'`),
-    countCustomers(admin.graphql, `tag:'${PENDING_TAG}'`),
-    countCustomers(admin.graphql, `tag:'${APPROVED_TAG}'`),
-    countCustomers(admin.graphql, `tag:'${SUSPICIOUS_TAG}'`),
-  ]);
-  const store = session.shop.replace(/\.myshopify\.com$/, "");
-  return {
-    store,
-    apiKey: process.env.SHOPIFY_API_KEY || "",
-    fields: shop.account.fields.length,
-    access: inst.access,
-    stats: { signups, pending, approved, suspicious },
-  };
-};
+type HomeData = { store: string; apiKey: string; fields: number; access: AccessConfig; stats: { signups: number; pending: number; approved: number; suspicious: number } };
 
 function Stat({ label, value, href }: { label: string; value: number; href?: string }) {
   return (
@@ -41,7 +16,7 @@ function Stat({ label, value, href }: { label: string; value: number; href?: str
 }
 
 export default function Home() {
-  const { store, apiKey, fields, access, stats } = useLoaderData<typeof loader>();
+  const { store, apiKey, fields, access, stats } = useData<HomeData>();
   const themeEditor = `https://admin.shopify.com/store/${store}/themes/current/editor?context=apps&activateAppId=${apiKey}/sarala-access`;
   const accountEditor = `https://admin.shopify.com/store/${store}/settings/checkout`;
   const steps = [
@@ -85,4 +60,3 @@ export default function Home() {
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);

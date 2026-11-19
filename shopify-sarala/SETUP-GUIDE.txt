@@ -17,32 +17,35 @@ What the app does
 - One plan, 15-day free trial, Shopify billing. Everything included.
 
 The app stores NO customer data on your server. All data stays in Shopify.
-Your server only stores the Shopify login sessions (MySQL table "shopify_sessions").
+Your server only stores each store's Shopify access token (MySQL table "sarala_shops").
 
 
-STEP 1 - Subdomain and hosting  (sarala.laghavi.site)
------------------------------------------------------
-The app needs Node.js 20+ and a MySQL database. On Hostinger use a VPS or the
-"Node.js app" feature of Business/Cloud hosting (shared PHP hosting is not enough).
-
-1. In hPanel create the subdomain  sarala.laghavi.site  and point it to the Node app.
-2. Create a MySQL database + user. Note: name, user, password.
-3. Turn on SSL (free Let's Encrypt) for sarala.laghavi.site. Shopify needs https.
+STEP 1 - Server  (DONE)
+-----------------------
+The app server is PHP and runs on your Hostinger Premium shared hosting:
+  https://sarala.laghavi.site   (folder public_html/sarala)
+  Database: u469315892_sarala (created; the password is already in the config file).
+  Store logins are kept in the table "sarala_shops" (made automatically).
 
 
 STEP 2 - Create the app in the Partner Dashboard
 ------------------------------------------------
-1. partners.shopify.com -> Apps -> Create app -> "Create app manually".
+1. partners.shopify.com (or dev.shopify.com) -> Apps -> Create app -> "Create app manually".
    Name: Sarala User Access
 2. Copy the Client ID and the Client secret.
 3. Open shopify.app.toml in this folder and put the Client ID in  client_id = "..."
-4. Configuration:
-   App URL:            https://sarala.laghavi.site
-   Redirect URL:       https://sarala.laghavi.site/auth/callback
-   (shopify app deploy in step 5 sets these from shopify.app.toml anyway.)
+4. App URL: https://sarala.laghavi.site  (shopify app deploy in step 5 sets this anyway.)
 
 
-STEP 3 - Pricing (Shopify managed pricing)
+STEP 3 - Put the Client ID and secret on the server
+---------------------------------------------------
+hPanel -> Files -> File Manager -> domains/laghavi.site/public_html/sarala/private/config.php
+-> Edit. Replace PASTE_CLIENT_ID_HERE and PASTE_CLIENT_SECRET_HERE, Save.
+(Do not change the db lines.) Until this is done the app pages show "not set up yet".
+Never send the secret in chat or email.
+
+
+STEP 4 - Pricing (Shopify managed pricing)
 ------------------------------------------
 Partner Dashboard -> your app -> Distribution -> Shopify App Store listing ->
 Pricing -> "Managed pricing" -> Add plan:
@@ -58,24 +61,10 @@ When a plan ends or is cancelled, the storefront locks and account blocks turn o
 by themselves (webhook app_subscriptions/update).
 
 
-STEP 4 - Put the app on the server
-----------------------------------
-Upload this folder (without node_modules) to the server, then create a file  .env :
-
-   SHOPIFY_API_KEY=<Client ID>
-   SHOPIFY_API_SECRET=<Client secret>
-   SHOPIFY_APP_URL=https://sarala.laghavi.site
-   SCOPES=read_customers,write_customers,customer_read_customers,customer_write_customers
-   DATABASE_URL=mysql://DBUSER:DBPASSWORD@localhost:3306/DBNAME
-   PORT=3000
-   NODE_ENV=production
-
-Then run:
-   npm ci
-   npm run build
-   npm run start            (keep it running with pm2:  pm2 start npm --name sarala -- run start)
-
-Check https://sarala.laghavi.site opens the Sarala landing page.
+UPDATING THE SERVER LATER
+-------------------------
+On your computer: npm install, npm run build (makes php/assets/app.js), then upload
+the php/ folder contents to public_html/sarala (keep private/config.php on the server).
 
 
 STEP 5 - Send the extensions to Shopify

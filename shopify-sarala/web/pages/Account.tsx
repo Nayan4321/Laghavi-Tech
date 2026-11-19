@@ -1,33 +1,13 @@
 import { useEffect, useState } from "react";
-import type { ActionFunctionArgs, HeadersFunction, LoaderFunctionArgs } from "react-router";
-import { type SubmitTarget, useFetcher, useLoaderData } from "react-router";
-import { boundary } from "@shopify/shopify-app-react-router/server";
-import { authenticate } from "../shopify.server";
-import { type Announcement, cleanAccountConfig } from "../lib/config";
-import { ShopifyError, getShop, saveAccount } from "../lib/shop-data.server";
+import { type AccountConfig, type Announcement } from "../lib/config";
+import { useData, useFetcher } from "../api";
 
-export const loader = async ({ request }: LoaderFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const shop = await getShop(admin.graphql);
-  return { account: shop.account };
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const { admin } = await authenticate.admin(request);
-  const body = (await request.json()) as { pendingMessage?: unknown; announcements?: unknown };
-  const shop = await getShop(admin.graphql);
-  const account = cleanAccountConfig({ ...shop.account, pendingMessage: body.pendingMessage, announcements: body.announcements });
-  try {
-    await saveAccount(admin.graphql, shop.id, account);
-  } catch (e) {
-    return { ok: false, error: e instanceof ShopifyError ? e.message : "Could not save. Please try again.", account: shop.account };
-  }
-  return { ok: true, error: "", account };
-};
+type AccountData = { account: AccountConfig };
+type AccountResult = { ok: boolean; error: string; account: AccountConfig };
 
 export default function Account() {
-  const { account } = useLoaderData<typeof loader>();
-  const fetcher = useFetcher<typeof action>();
+  const { account } = useData<AccountData>();
+  const fetcher = useFetcher<AccountResult>("/api/account");
   const [pending, setPending] = useState(account.pendingMessage);
   const [items, setItems] = useState<Announcement[]>(account.announcements);
   const saving = fetcher.state !== "idle";
@@ -44,7 +24,7 @@ export default function Account() {
   }, [fetcher.state, fetcher.data]);
 
   const save = () =>
-    fetcher.submit({ pendingMessage: pending, announcements: items } as unknown as SubmitTarget, { method: "post", encType: "application/json" });
+    fetcher.submit({ pendingMessage: pending, announcements: items }, { method: "post", encType: "application/json" });
   const update = (i: number, patch: Partial<Announcement>) => setItems((all) => all.map((a, x) => (x === i ? { ...a, ...patch } : a)));
 
   return (
@@ -87,4 +67,3 @@ export default function Account() {
   );
 }
 
-export const headers: HeadersFunction = (headersArgs) => boundary.headers(headersArgs);
