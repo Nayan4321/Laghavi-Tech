@@ -246,7 +246,7 @@ class Manohara_Store {
 				continue;
 			}
 			$at = isset( $locations[ $design['location'] ] ) ? (int) $locations[ $design['location'] ] : 0;
-			if ( $id === (int) $design['menu'] || $id === $at || $id === Manohara_I18n::menu( $at ) ) {
+			if ( in_array( $id, array( (int) $design['menu'], $at, (int) Manohara_I18n::menu( $at ) ), true ) ) {
 				return $design;
 			}
 		}
@@ -263,8 +263,8 @@ class Manohara_Store {
 	public static function normalize( $design, $id ) {
 		$design           = array_merge(
 			array(
-				'name'     => '',
-				'location' => '',
+				'name'       => '',
+				'location'   => '',
 				'menu'       => 0,
 				'everywhere' => 1,
 				'style'      => array(),
