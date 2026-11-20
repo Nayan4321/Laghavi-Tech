@@ -199,12 +199,39 @@ class Vacanam_Frontend {
 	}
 
 	/**
+	 * A theme or plugin asking for one post by its ID (headers, footers, mega menus, popups and other
+	 * templates chosen in its options) gets the translation in the language of the visit, when there is one.
+	 *
+	 * @param WP_Query $query Query.
+	 */
+	private static function translate_requested_post( $query ) {
+		if ( $query->is_main_query() || ( is_admin() && ! wp_doing_ajax() ) || ! Vacanam_Router::is_front() ) {
+			return;
+		}
+		$lang = Vacanam_Router::current();
+		if ( '' === $lang ) {
+			return;
+		}
+		foreach ( array( 'p', 'page_id' ) as $key ) {
+			$id = (int) $query->get( $key );
+			if ( ! $id ) {
+				continue;
+			}
+			$translated = (int) Vacanam_Model::post_translation( $id, $lang );
+			if ( $translated && $translated !== $id && 'publish' === get_post_status( $translated ) ) {
+				$query->set( $key, $translated );
+			}
+		}
+	}
+
+	/**
 	 * Lists of posts show the posts of the language of the visit. In the main language, posts that
 	 * have no language yet are shown too.
 	 *
 	 * @param WP_Query $query Query.
 	 */
 	public static function filter_posts( $query ) {
+		self::translate_requested_post( $query );
 		$q = $query->query_vars;
 		if ( array_key_exists( 'lang', $q ) ) {
 			$lang = (string) $q['lang'];

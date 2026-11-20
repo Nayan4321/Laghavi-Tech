@@ -166,6 +166,7 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 
 = 1.2.0 =
 * New: WooCommerce synchronization (Settings › Synchronization). Saving a product or variation in one language copies its prices, sale dates, stock, tax, shipping and product settings, and subscription prices, to its translations, through WooCommerce so sorting and price filters stay right. Names, descriptions, slugs and SKUs stay per language.
+* New: headers, footers, mega menus and other templates a theme loads by ID (for example Nioland, chosen in the theme options) show their translation in the visitor's language.
 
 = 1.1.3 =
 * Developers: vacanam_menu_item_copied action, so menu plugins can copy their item settings into menu translations.
