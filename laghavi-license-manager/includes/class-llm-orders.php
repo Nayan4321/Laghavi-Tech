@@ -104,7 +104,7 @@ class LLM_Orders {
 				<tbody>
 				<?php foreach ( $licenses as $license ) : ?>
 					<tr>
-						<td><?php echo esc_html( get_the_title( $license->product_id ) ); ?></td>
+						<td><?php echo esc_html( LLM_Product::name( $license->product_id ) ); ?></td>
 						<td><code><?php echo esc_html( $license->license_key ); ?></code></td>
 						<td><?php echo esc_html( LLM_Licenses::expiry_label( $license ) ); ?></td>
 						<td>
@@ -140,14 +140,14 @@ class LLM_Orders {
 		if ( $plain_text ) {
 			echo "\n" . esc_html__( 'Your license keys', 'laghavi-license-manager' ) . "\n";
 			foreach ( $licenses as $license ) {
-				echo esc_html( get_the_title( $license->product_id ) . ': ' . $license->license_key ) . "\n";
+				echo esc_html( LLM_Product::name( $license->product_id ) . ': ' . $license->license_key ) . "\n";
 			}
 			echo "\n" . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses:', 'laghavi-license-manager' ) . ' ' . esc_url_raw( wc_get_account_endpoint_url( LLM_Account::ENDPOINT ) ) . "\n\n";
 			return;
 		}
 		echo '<h2>' . esc_html__( 'Your license keys', 'laghavi-license-manager' ) . '</h2><ul>';
 		foreach ( $licenses as $license ) {
-			echo '<li>' . esc_html( get_the_title( $license->product_id ) ) . ': <strong style="font-family:monospace">' . esc_html( $license->license_key ) . '</strong></li>';
+			echo '<li>' . esc_html( LLM_Product::name( $license->product_id ) ) . ': <strong style="font-family:monospace">' . esc_html( $license->license_key ) . '</strong></li>';
 		}
 		echo '</ul><p>' . esc_html__( 'Enter the key in the plugin\'s license screen.', 'laghavi-license-manager' ) . ' <a href="' . esc_url( wc_get_account_endpoint_url( LLM_Account::ENDPOINT ) ) . '">' . esc_html__( 'Download the plugin and manage your sites in My Account > Licenses.', 'laghavi-license-manager' ) . '</a></p>';
 	}

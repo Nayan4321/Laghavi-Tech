@@ -3,7 +3,7 @@
  * Plugin Name:       Laghavi License Manager
  * Plugin URI:        https://laghavi.site/
  * Description:       Sell plugins with WooCommerce: license keys on purchase, downloads in My Account, keys that follow Laghavi Subscriptions (cancel any time, key works until the paid period ends), site activations and automatic updates.
- * Version:           1.2.3
+ * Version:           1.3.0
  * Requires at least: 6.0
  * Requires PHP:      7.4
  * Requires Plugins:  woocommerce
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LLM_VERSION', '1.2.3' );
+define( 'LLM_VERSION', '1.3.0' );
 define( 'LLM_FILE', __FILE__ );
 define( 'LLM_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LLM_URL', plugin_dir_url( __FILE__ ) );
@@ -44,6 +44,16 @@ add_action(
 			return;
 		}
 		LLM_Product::init();
+		if ( '1' !== get_option( 'llm_translations_merged' ) && did_action( 'init' ) === 0 ) {
+			add_action(
+				'init',
+				static function () {
+					LLM_Product::merge_translated_licenses();
+					update_option( 'llm_translations_merged', '1', false );
+				},
+				50
+			);
+		}
 		LLM_Orders::init();
 		LLM_Account::init();
 		LLM_Invoices::init();

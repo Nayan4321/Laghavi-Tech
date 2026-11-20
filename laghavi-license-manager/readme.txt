@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Requires at least: 6.0
 Requires PHP: 7.4
-Stable tag: 1.2.3
+Stable tag: 1.3.0
 License: GPLv2 or later
 
 Sell your plugins with WooCommerce on laghavi.site: license keys, site activations and automatic updates.
@@ -40,6 +40,11 @@ Namespace `laghavi-licenses/v1`, all with `license_key`, `site_url` and `slug`:
 * `GET /download` – the zip, for sites allowed to update
 
 == Changelog ==
+
+= 1.3.0 =
+* Multilingual stores (Vacanam, Polylang, WPML): a translated product uses the original product's License tab. Keys bought on any language's page belong to the original product, so plugin slug, file, version, sites, days, updates and guides are set once. Product names in the account, emails and guides show in the visitor's language.
+* Licenses saved earlier with a translated product are moved to the original product once, automatically.
+* The Licenses screen lists each product once (no translations).
 
 = 1.2.3 =
 * Guides list (/guides/) uses the theme's boxed width, without the title banner.

@@ -125,7 +125,7 @@ class LLM_Account {
 		}
 
 		$settings = LLM_Product::settings( $license->product_id );
-		$name     = ( '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( get_the_title( $license->product_id ) ) ) . ( $path !== LLM_Licenses::file_path( $license ) ? '-package' : '' ) . '.zip';
+		$name     = ( '' !== $settings['slug'] ? $settings['slug'] : sanitize_title( LLM_Product::name( $license->product_id ) ) ) . ( $path !== LLM_Licenses::file_path( $license ) ? '-package' : '' ) . '.zip';
 		nocache_headers();
 		header( 'Content-Type: application/zip' );
 		header( 'Content-Disposition: attachment; filename="' . $name . '"' );
@@ -227,7 +227,7 @@ class LLM_Account {
 			<article class="llm-license llm-license--<?php echo esc_attr( $status ); ?>">
 				<header class="llm-license__head">
 					<div>
-						<h3><?php echo esc_html( get_the_title( $license->product_id ) ); ?></h3>
+						<h3><?php echo esc_html( LLM_Product::name( $license->product_id ) ); ?></h3>
 						<?php if ( '' !== $settings['version'] ) : ?>
 							<span class="llm-version">
 								<?php

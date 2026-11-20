@@ -41,6 +41,126 @@ class LLM_Product {
 		return $single;
 	}
 
+	/*
+	 * Multilingual stores (Vacanam, Polylang, WPML): a translated product is a separate product with its
+	 * own address. For licenses, every translation is the original product: one License tab, one plugin
+	 * slug, one file, and keys bought on any language's page are keys for the original.
+	 */
+
+	/**
+	 * The store's default language, or '' without a multilingual plugin.
+	 *
+	 * @return string
+	 */
+	private static function default_language() {
+		if ( function_exists( 'vacanam_default_language' ) ) {
+			return (string) vacanam_default_language();
+		}
+		if ( function_exists( 'pll_default_language' ) ) {
+			return (string) pll_default_language();
+		}
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			return (string) apply_filters( 'wpml_default_language', '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
+		}
+		return '';
+	}
+
+	/**
+	 * A post in a language (0 when it has no translation there).
+	 *
+	 * @param int    $id   Post.
+	 * @param string $lang Language.
+	 * @return int
+	 */
+	private static function in_language( $id, $lang ) {
+		$id = (int) $id;
+		if ( ! $id || '' === $lang ) {
+			return $id;
+		}
+		if ( class_exists( 'Vacanam_Model' ) ) {
+			return (int) Vacanam_Model::post_translation( $id, $lang );
+		}
+		if ( function_exists( 'pll_get_post' ) ) {
+			return (int) pll_get_post( $id, $lang );
+		}
+		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			return (int) apply_filters( 'wpml_object_id', $id, get_post_type( $id ), false, $lang ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
+		}
+		return $id;
+	}
+
+	/**
+	 * The original product (default language) of a product or one of its translations.
+	 *
+	 * @param int $id Product or variation.
+	 * @return int
+	 */
+	public static function source_id( $id ) {
+		$id     = (int) $id;
+		$source = self::in_language( $id, self::default_language() );
+		return $source ? $source : $id;
+	}
+
+	/**
+	 * Is this product a translation of another one?
+	 *
+	 * @param int $id Product.
+	 * @return bool
+	 */
+	public static function is_translation( $id ) {
+		return self::source_id( $id ) !== (int) $id;
+	}
+
+	/**
+	 * The product in the visitor's language, for names and links (the original when not translated).
+	 *
+	 * @param int $id Product.
+	 * @return int
+	 */
+	public static function local_id( $id ) {
+		$id = (int) $id;
+		if ( function_exists( 'vacanam_current_language' ) ) {
+			$lang = (string) vacanam_current_language();
+		} elseif ( function_exists( 'pll_current_language' ) ) {
+			$lang = (string) pll_current_language();
+		} elseif ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
+			$lang = (string) apply_filters( 'wpml_current_language', '' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML's own filter.
+		} else {
+			return $id;
+		}
+		$local = self::in_language( $id, $lang );
+		return $local ? $local : $id;
+	}
+
+	/**
+	 * A product's name in the visitor's language.
+	 *
+	 * @param int $id Product.
+	 * @return string
+	 */
+	public static function name( $id ) {
+		return get_the_title( self::local_id( $id ) );
+	}
+
+	/**
+	 * Licenses saved with a translated product (before 1.3.0) move to the original product.
+	 */
+	public static function merge_translated_licenses() {
+		global $wpdb;
+		$table = LLM_Licenses::tables()['licenses'];
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- One-time update of our own table.
+		$ids = $wpdb->get_col( "SELECT DISTINCT product_id FROM {$table}" );
+		foreach ( $ids as $pid ) {
+			$source = self::source_id( (int) $pid );
+			$parent = (int) wp_get_post_parent_id( $source );
+			$source = 'product_variation' === get_post_type( $source ) && $parent ? $parent : $source;
+			if ( $source && $source !== (int) $pid ) {
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- One-time update of our own table.
+				$wpdb->update( $table, array( 'product_id' => $source ), array( 'product_id' => (int) $pid ) );
+			}
+		}
+	}
+
 	/**
 	 * Settings of a product. Variations use their parent's, except for their own number of sites when set
 	 * (e.g. 1 site, 5 sites, unlimited at different prices).
@@ -49,10 +169,11 @@ class LLM_Product {
 	 * @return array
 	 */
 	public static function settings( $product_id ) {
-		$parent   = wp_get_post_parent_id( $product_id );
-		$is_child = 'product_variation' === get_post_type( $product_id ) && $parent;
-		$id       = $is_child ? $parent : $product_id;
-		$settings = array(
+		$product_id = self::source_id( $product_id );
+		$parent     = wp_get_post_parent_id( $product_id );
+		$is_child   = 'product_variation' === get_post_type( $product_id ) && $parent;
+		$id         = $is_child ? self::source_id( $parent ) : $product_id;
+		$settings   = array(
 			'id'           => $id,
 			'enabled'      => 'yes' === get_post_meta( $id, '_llm_enabled', true ),
 			'slug'         => (string) get_post_meta( $id, '_llm_slug', true ),
@@ -171,6 +292,13 @@ class LLM_Product {
 	 */
 	public static function panel() {
 		global $post;
+		if ( self::is_translation( $post->ID ) ) {
+			$source = self::source_id( $post->ID );
+			echo '<div id="llm_license_data" class="panel woocommerce_options_panel"><div class="options_group"><p>';
+			echo esc_html__( 'This is a translation. Licenses use the original product\'s License tab (plugin slug, file, version, sites and days), so keys bought in any language work the same.', 'laghavi-license-manager' );
+			echo ' <a href="' . esc_url( get_edit_post_link( $source ) ) . '">' . esc_html( sprintf( /* translators: %s: product name. */ __( 'Open “%s”', 'laghavi-license-manager' ), get_the_title( $source ) ) ) . '</a></p></div></div>';
+			return;
+		}
 		$s = self::settings( $post->ID );
 		?>
 		<div id="llm_license_data" class="panel woocommerce_options_panel">
@@ -297,7 +425,7 @@ class LLM_Product {
 	 */
 	public static function save( $product_id ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing -- WooCommerce verified the product form nonce.
-		if ( ! current_user_can( 'edit_product', $product_id ) ) {
+		if ( ! current_user_can( 'edit_product', $product_id ) || self::is_translation( $product_id ) ) {
 			return;
 		}
 		update_post_meta( $product_id, '_llm_enabled', isset( $_POST['_llm_enabled'] ) ? 'yes' : 'no' );

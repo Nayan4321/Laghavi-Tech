@@ -392,7 +392,8 @@ class LLM_Guides {
 			$terms = get_the_terms( $post_id, $tax );
 			foreach ( is_array( $terms ) ? $terms : array() as $t ) {
 				if ( isset( $prot[ $t->term_id ] ) ) {
-					$need = array_merge( $need, $prot[ $t->term_id ] );
+					// Guides may name a translated product; licenses belong to the original.
+					$need = array_merge( $need, array_map( array( 'LLM_Product', 'source_id' ), (array) $prot[ $t->term_id ] ) );
 				}
 			}
 		}
@@ -498,7 +499,7 @@ class LLM_Guides {
 		$need  = self::needs( $post_id );
 		$links = array();
 		foreach ( $need as $pid ) {
-			$p = function_exists( 'wc_get_product' ) ? wc_get_product( $pid ) : null;
+			$p = function_exists( 'wc_get_product' ) ? wc_get_product( LLM_Product::local_id( $pid ) ) : null;
 			if ( $p && 'publish' === $p->get_status() ) {
 				$links[] = '<a class="button" href="' . esc_url( $p->get_permalink() ) . '">' . esc_html( sprintf( /* translators: %s: product. */ __( 'Get %s', self::TD ), $p->get_name() ) ) . '</a>';
 			}
@@ -777,7 +778,7 @@ class LLM_Guides {
 					$btn  = '<a class="lga-btn lga-btn--line" href="' . esc_url( wp_login_url( get_permalink( $g ) ) ) . '">' . esc_html__( 'Log in to read', self::TD ) . '</a>';
 				} else {
 					$pill = '<span class="lga-pill">' . self::lock() . esc_html__( 'License needed', self::TD ) . '</span>';
-					$p    = $need && function_exists( 'wc_get_product' ) ? wc_get_product( $need[0] ) : null;
+					$p    = $need && function_exists( 'wc_get_product' ) ? wc_get_product( LLM_Product::local_id( $need[0] ) ) : null;
 					$btn  = $p ? '<a class="lga-btn lga-btn--line" href="' . esc_url( $p->get_permalink() ) . '">' . esc_html__( 'Get a license', self::TD ) . '</a>' : '';
 				}
 				$text  = $can && has_excerpt( $g ) ? '<p>' . esc_html( wp_trim_words( get_the_excerpt( $g ), 28 ) ) . '</p>' : '';

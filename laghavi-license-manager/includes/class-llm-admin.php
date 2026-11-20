@@ -107,13 +107,28 @@ class LLM_Admin {
 		$total = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$t} {$where}" );
 		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$t} {$where} ORDER BY id DESC LIMIT 50 OFFSET %d", ( $paged - 1 ) * 50 ) );
 		// phpcs:enable
-		$back     = add_query_arg( array( 's' => $search, 'paged' => $paged ), admin_url( 'admin.php?page=' . self::PAGE ) );
+		$back     = add_query_arg(
+			array(
+				's'     => $search,
+				'paged' => $paged,
+			),
+			admin_url( 'admin.php?page=' . self::PAGE )
+		);
 		$products = get_posts(
 			array(
 				'post_type'      => 'product',
 				'posts_per_page' => 100,
 				'meta_key'       => '_llm_enabled', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
 				'meta_value'     => 'yes', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_value
+			)
+		);
+		// Translations share the original's licenses: list each product once.
+		$products = array_values(
+			array_filter(
+				$products,
+				static function ( $p ) {
+					return ! LLM_Product::is_translation( $p->ID );
+				}
 			)
 		);
 		$form     = static function ( $license, $todo, $label, $extra = '' ) use ( $back ) {
@@ -172,7 +187,7 @@ class LLM_Admin {
 					?>
 					<tr>
 						<td><code><?php echo esc_html( $license->license_key ); ?></code></td>
-						<td><?php echo esc_html( get_the_title( $license->product_id ) ); ?></td>
+						<td><?php echo esc_html( LLM_Product::name( $license->product_id ) ); ?></td>
 						<td>
 							<?php echo esc_html( $license->email ); ?>
 							<?php $order = $license->order_id ? wc_get_order( $license->order_id ) : null; ?>
@@ -204,7 +219,20 @@ class LLM_Admin {
 				</tbody>
 			</table>
 			<?php if ( $total > 50 ) : ?>
-				<p><?php echo wp_kses_post( paginate_links( array( 'base' => add_query_arg( 'paged', '%#%' ), 'format' => '', 'current' => $paged, 'total' => (int) ceil( $total / 50 ) ) ) ); ?></p>
+				<p>
+				<?php
+				echo wp_kses_post(
+					paginate_links(
+						array(
+							'base'    => add_query_arg( 'paged', '%#%' ),
+							'format'  => '',
+							'current' => $paged,
+							'total'   => (int) ceil( $total / 50 ),
+						)
+					)
+				);
+				?>
+					</p>
 			<?php endif; ?>
 
 			<h2><?php esc_html_e( 'Add a license by hand', 'laghavi-license-manager' ); ?></h2>
