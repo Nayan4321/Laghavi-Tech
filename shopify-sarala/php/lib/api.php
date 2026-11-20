@@ -8,17 +8,43 @@ function api_store(SaralaShop $s): string
     return preg_replace('/\.myshopify\.com$/', '', $s->shop);
 }
 
-/** Every page needs an active plan (the 15-day trial counts). Without one: Shopify's plan page. */
+/** The plans, charged through Shopify's Billing API. */
+const SARALA_PLANS = [
+    'monthly' => ['name' => 'Sarala monthly', 'amount' => 9.99, 'interval' => 'EVERY_30_DAYS'],
+    'yearly' => ['name' => 'Sarala yearly', 'amount' => 99.0, 'interval' => 'ANNUAL'],
+];
+const SARALA_TRIAL_DAYS = 15;
+
+/** Every page needs an active plan (the 15-day trial counts). Without one, the app shows the plans. */
 function api_boot(SaralaShop $s, ?array $body): array
 {
     $inst = sd_installation($s);
     if ($inst['subscribed'] && !$inst['access']['active']) sd_set_active($s, true);
+    return ['ok' => true, 'subscribed' => $inst['subscribed'], 'trialDays' => SARALA_TRIAL_DAYS];
+}
+
+/** Starts a plan: Shopify shows the merchant the charge to approve, then returns to the app. */
+function api_subscribe(SaralaShop $s, ?array $body): array
+{
+    $plan = SARALA_PLANS[$body['plan'] ?? ''] ?? null;
+    if (!$plan) return ['ok' => false, 'error' => 'Unknown plan.'];
+    $shop = $s->gql('query SaralaPlan { shop { plan { partnerDevelopment } } }')['shop'];
     $handle = sarala_config()['app_handle'] ?? 'sarala-user-access';
-    return [
-        'ok' => true,
-        'subscribed' => $inst['subscribed'],
-        'pricingUrl' => 'https://admin.shopify.com/store/' . api_store($s) . "/charges/$handle/pricing_plans",
-    ];
+    $d = $s->gql('mutation SaralaSubscribe($name: String!, $returnUrl: URL!, $trialDays: Int, $test: Boolean, $lineItems: [AppSubscriptionLineItemInput!]!) {
+      appSubscriptionCreate(name: $name, returnUrl: $returnUrl, trialDays: $trialDays, test: $test, lineItems: $lineItems) {
+        confirmationUrl userErrors { field message } } }', [
+        'name' => $plan['name'],
+        'returnUrl' => 'https://admin.shopify.com/store/' . api_store($s) . "/apps/$handle",
+        'trialDays' => SARALA_TRIAL_DAYS,
+        // Development stores are never charged.
+        'test' => (bool) ($shop['plan']['partnerDevelopment'] ?? false),
+        'lineItems' => [['plan' => ['appRecurringPricingDetails' => [
+            'price' => ['amount' => $plan['amount'], 'currencyCode' => 'USD'],
+            'interval' => $plan['interval'],
+        ]]]],
+    ]);
+    sd_user_errors($d['appSubscriptionCreate']['userErrors']);
+    return ['ok' => true, 'confirmationUrl' => $d['appSubscriptionCreate']['confirmationUrl']];
 }
 
 function api_home(SaralaShop $s, ?array $body): array

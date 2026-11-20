@@ -7,6 +7,7 @@ import Fields from "./pages/Fields";
 import Access from "./pages/Access";
 import Account from "./pages/Account";
 import Customers from "./pages/Customers";
+import Plans from "./pages/Plans";
 
 /** Links inside the app (nav menu, buttons, links) change the page without reloading the frame. */
 function useAppLinks() {
@@ -35,19 +36,21 @@ function useAppLinks() {
 function App() {
   useAppLinks();
   const location = useLocation();
-  const [ready, setReady] = useState<"wait" | "ok" | string>("wait");
+  const [ready, setReady] = useState<"wait" | "ok" | "plans" | string>("wait");
+  const [trialDays, setTrialDays] = useState(15);
 
-  // Every page needs an active plan (the 15-day trial counts); otherwise Shopify's plan page opens.
+  // Every page needs an active plan (the 15-day trial counts); otherwise the plans page shows.
   useEffect(() => {
-    api<{ subscribed: boolean; pricingUrl: string }>("/api/boot")
+    api<{ subscribed: boolean; trialDays: number }>("/api/boot")
       .then((b) => {
-        if (b.subscribed) setReady("ok");
-        else window.open(b.pricingUrl, "_top");
+        setTrialDays(b.trialDays);
+        setReady(b.subscribed ? "ok" : "plans");
       })
       .catch((e: Error) => setReady(e.message));
   }, []);
 
   if (ready === "wait") return <s-page><s-section><s-spinner accessibilityLabel="Loading" /></s-section></s-page>;
+  if (ready === "plans") return <Plans trialDays={trialDays} />;
   if (ready !== "ok") return <s-page><s-banner tone="critical">{ready}</s-banner></s-page>;
 
   const view = new URLSearchParams(location.search).get("view") || "pending";

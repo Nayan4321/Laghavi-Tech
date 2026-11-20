@@ -72,7 +72,7 @@ try {
         $s = sarala_admin();
         $name = substr($path, 5);
         $handlers = [
-            'boot' => 'api_boot', 'home' => 'api_home', 'fields' => 'api_fields', 'access' => 'api_access',
+            'boot' => 'api_boot', 'subscribe' => 'api_subscribe', 'home' => 'api_home', 'fields' => 'api_fields', 'access' => 'api_access',
             'account' => 'api_account', 'customers' => 'api_customers',
         ];
         if (!isset($handlers[$name])) sarala_json(['error' => 'Not found'], 404);
