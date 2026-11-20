@@ -34,7 +34,9 @@ html:not(.mnhp-js) .mnhp-has-panel:hover>.mnhp-panel,html:not(.mnhp-js) .mnhp-ha
 /* Arrow after the label, and the button that opens the panel on phones. */
 .mnhp-caret{display:inline-block;width:.42em;height:.42em;margin-inline-start:.4em;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-.2em) rotate(45deg);transition:transform .2s;vertical-align:middle}
 .mnhp-open>a .mnhp-caret{transform:translateY(0) rotate(-135deg)}
-.mnhp-panel-toggle{display:none}
+.mnhp-has-panel>button.mnhp-panel-toggle.mnhp-panel-toggle{display:none!important}
+/* The theme's own dropdown arrows and toggles: the mega menu has its own. */
+.mnhp-has-panel>:is(.dropdown-btn,.dropdown-toggle,.sub-menu-toggle,.submenu-toggle,.ast-menu-toggle,.menu-toggle-icon){display:none!important}
 .screen-reader-text{border:0;clip:rect(1px,1px,1px,1px);clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute!important;width:1px;word-wrap:normal!important}
 
 /* Phones and tablets: the panel opens inside the menu, under its item. */
@@ -45,9 +47,27 @@ html.mnhp-mobile .mnhp-panel .wp-block-columns{flex-wrap:wrap!important}
 html.mnhp-mobile .mnhp-panel .wp-block-column{flex-basis:100%!important}
 html.mnhp-mobile .mnhp-panel .mnhp-starter{padding:18px!important}
 html.mnhp-mobile .mnhp-has-panel>a .mnhp-caret{display:none}
-html.mnhp-mobile .mnhp-has-panel>button.mnhp-panel-toggle.mnhp-panel-toggle{display:inline-flex;align-items:center;justify-content:center;position:absolute;top:0;inset-inline-end:0;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;cursor:pointer}
+html.mnhp-mobile .mnhp-has-panel>button.mnhp-panel-toggle.mnhp-panel-toggle{display:inline-flex!important;align-items:center;justify-content:center;position:absolute;top:0;inset-inline-end:0;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;cursor:pointer}
 html.mnhp-mobile .mnhp-panel-toggle::after{content:"";width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
 html.mnhp-mobile .mnhp-open>.mnhp-panel-toggle::after{transform:translateY(2px) rotate(-135deg)}
+
+/*
+ * Core block layout inside mega menus, for sites that do not load WordPress's block styles
+ * (some themes and optimisation plugins remove them).
+ */
+.mnhp-panel-body .wp-block-columns{display:flex;flex-wrap:wrap;align-items:normal;gap:24px;box-sizing:border-box}
+@media (min-width:782px){.mnhp-panel-body .wp-block-columns{flex-wrap:nowrap}}
+.mnhp-panel-body .wp-block-column{flex-grow:1;flex-basis:0;min-width:0;box-sizing:border-box;overflow-wrap:break-word}
+.mnhp-panel-body .wp-block-column[style*="flex-basis"]{flex-grow:0}
+.mnhp-panel-body .is-layout-flex{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mnhp-panel-body .is-content-justification-space-between{justify-content:space-between}
+.mnhp-panel-body .is-layout-flow>*+*{margin-block-start:var(--mnhp-flow-gap,10px)}
+.mnhp-panel-body .wp-block-buttons{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mnhp-panel-body .wp-block-button__link{display:inline-block;box-sizing:border-box;text-align:center;text-decoration:none;cursor:pointer;word-break:break-word}
+.mnhp-panel-body .wp-block-button.is-style-outline>.wp-block-button__link{border:2px solid currentColor;background:transparent}
+.mnhp-panel-body .wp-block-separator{border:0;border-top:1px solid currentColor;opacity:.5}
+.mnhp-panel-body .wp-block-separator.has-background{border-top:0;height:1px;opacity:1}
+.mnhp-panel-body .wp-block-image img{display:block;max-width:100%;height:auto}
 
 /* Starters (block content). */
 .mnhp-starter{box-sizing:border-box;max-width:none!important}

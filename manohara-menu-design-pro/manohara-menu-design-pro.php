@@ -3,7 +3,7 @@
  * Plugin Name:       Manohara Menu Design Pro
  * Plugin URI:        https://laghavi.site/manohara-menu-design/
  * Description:       Pro add-on for Manohara Menu Design: mega menus with 19 ready designs, tabs, a drag-and-drop grid builder and block editor or Elementor templates, icons, images and badges on menu items, WooCommerce cart, products and categories, sticky, shrinking and hide-on-scroll headers, menu button styles, mobile logos, swipe to close, tap to open, and hiding theme elements per device. Works with multilingual sites.
- * Version:           1.1.0
+ * Version:           1.1.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Requires Plugins:  manohara-menu-design
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MNHP_VERSION', '1.1.0' );
+define( 'MNHP_VERSION', '1.1.1' );
 define( 'MNHP_FILE', __FILE__ );
 define( 'MNHP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MNHP_URL', plugin_dir_url( __FILE__ ) );

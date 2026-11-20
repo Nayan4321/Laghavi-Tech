@@ -150,10 +150,17 @@ class Manohara_Frontend {
 	 * @return string|null
 	 */
 	public static function takeover( $output, $args ) {
-		if ( null !== $output || self::$bypass || empty( $args->theme_location ) ) {
+		if ( null !== $output || self::$bypass ) {
 			return $output;
 		}
-		$design = Manohara_Store::design_for_location( $args->theme_location );
+		if ( ! empty( $args->theme_location ) ) {
+			$design = Manohara_Store::design_for_location( $args->theme_location );
+		} elseif ( ! empty( $args->menu ) ) {
+			// A header widget or custom header printing the design's menu by name.
+			$design = Manohara_Store::design_for_menu( $args->menu );
+		} else {
+			$design = null;
+		}
 		if ( ! $design ) {
 			return $output;
 		}

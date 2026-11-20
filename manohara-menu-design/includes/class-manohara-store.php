@@ -228,6 +228,32 @@ class Manohara_Store {
 	}
 
 	/**
+	 * The design for a menu printed without a location (page builder header widgets, custom headers):
+	 * a design with a location whose menu is this one, unless it is limited to its location.
+	 *
+	 * @param mixed $menu Menu ID, slug, name or object, as passed to wp_nav_menu().
+	 * @return array|null
+	 */
+	public static function design_for_menu( $menu ) {
+		$obj = $menu ? wp_get_nav_menu_object( $menu ) : false;
+		if ( ! $obj ) {
+			return null;
+		}
+		$id        = (int) $obj->term_id;
+		$locations = get_nav_menu_locations();
+		foreach ( self::designs() as $design ) {
+			if ( '' === $design['location'] || empty( $design['everywhere'] ) ) {
+				continue;
+			}
+			$at = isset( $locations[ $design['location'] ] ) ? (int) $locations[ $design['location'] ] : 0;
+			if ( $id === (int) $design['menu'] || $id === $at || $id === Manohara_I18n::menu( $at ) ) {
+				return $design;
+			}
+		}
+		return null;
+	}
+
+	/**
 	 * Fill in missing keys.
 	 *
 	 * @param array $design Design.
@@ -239,10 +265,11 @@ class Manohara_Store {
 			array(
 				'name'     => '',
 				'location' => '',
-				'menu'     => 0,
-				'style'    => array(),
-				'social'   => array(),
-				'devices'  => array(),
+				'menu'       => 0,
+				'everywhere' => 1,
+				'style'      => array(),
+				'social'     => array(),
+				'devices'    => array(),
 			),
 			$design
 		);

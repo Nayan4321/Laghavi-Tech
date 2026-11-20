@@ -710,6 +710,7 @@ class MNHP_Panels {
 		$s = Manohara_Store::settings();
 		wp_add_inline_script( 'mnhp-panels', 'window.mnhpPanels=' . wp_json_encode( array( 'mobile' => max( 480, (int) $s['tablet_max'] ) ) ) . ';', 'before' );
 		if ( get_option( self::IN_USE ) ) {
+			wp_enqueue_style( 'wp-block-library' );
 			wp_enqueue_style( 'mnhp-panels' );
 			wp_enqueue_script( 'mnhp-panels' );
 		}
@@ -720,6 +721,10 @@ class MNHP_Panels {
 	 */
 	public static function late_assets() {
 		if ( self::$used ) {
+			// Block styles for the panels' blocks, also when a theme removed them earlier.
+			if ( ! wp_style_is( 'wp-block-library', 'done' ) ) {
+				wp_enqueue_style( 'wp-block-library' );
+			}
 			wp_enqueue_style( 'mnhp-panels' );
 			wp_enqueue_script( 'mnhp-panels' );
 		}

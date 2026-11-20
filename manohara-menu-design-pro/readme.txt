@@ -4,7 +4,7 @@ Tags: mega menu, menu, navigation, sticky header, woocommerce
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -70,6 +70,10 @@ Works with Vacanam Language Switcher, Polylang, WPML and TranslatePress, and wit
 The license key is checked with Laghavi Digital's license server at laghavi.site, when you activate it and once a day, to switch Pro features on and to offer updates. Sent: the license key, this site's address and the plugin name. Nothing about your visitors is sent. You can remove sites from My Account › Licenses on laghavi.site.
 
 == Changelog ==
+
+= 1.1.1 =
+* Fixed: mega menu columns on sites that remove WordPress's block styles.
+* Fixed: the phone menu button showing on desktop, and duplicate dropdown arrows, with some themes (for example Nioland).
 
 = 1.1.0 =
 * New: Appearance › Mega Menus. Build each mega menu like a page, in the block editor or with Elementor, starting from a design with a live preview.

@@ -4,7 +4,7 @@ Tags: mobile menu, menu design, responsive menu, elementor menu, hamburger menu
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -114,6 +114,9 @@ No. The plugin does not connect to any external service and does not load fonts 
 5. The list of designs, each with its design per device.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: a design also replaces its menu where the theme or a page builder header prints it without a menu location (for example header menu widgets of themes such as Nioland). Can be turned off per design.
 
 = 1.1.0 =
 * Multilingual: menus follow the visitor's language with Vacanam Language Switcher, Polylang and WPML; button text, button links and logo images can be translated; the logo leads to the home page of the current language.

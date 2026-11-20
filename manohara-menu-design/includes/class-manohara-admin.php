@@ -348,6 +348,7 @@ class Manohara_Admin {
 						<?php endforeach; ?>
 					</select>
 					<p class="description"><?php esc_html_e( 'The design replaces your theme\'s menu at this location, on the devices you give a design. Devices set to "theme design" keep the theme\'s menu.', 'manohara-menu-design' ); ?></p>
+					<label class="mnh-check"><input type="checkbox" name="everywhere" value="1" <?php checked( ! empty( $design['everywhere'] ) ); ?> /> <?php esc_html_e( 'Also replace this menu where the theme or a page builder header shows it without a location (for example a header menu widget)', 'manohara-menu-design' ); ?></label>
 				</div>
 			</div>
 			<div class="mnh-field">
@@ -821,7 +822,8 @@ class Manohara_Admin {
 			'id'       => isset( $in['id'] ) ? absint( $in['id'] ) : 0,
 			'name'     => isset( $in['name'] ) ? sanitize_text_field( $in['name'] ) : '',
 			'location' => isset( $in['location'] ) && isset( $locations[ $in['location'] ] ) ? sanitize_key( $in['location'] ) : '',
-			'menu'     => isset( $in['menu'] ) ? absint( $in['menu'] ) : 0,
+			'menu'       => isset( $in['menu'] ) ? absint( $in['menu'] ) : 0,
+			'everywhere' => empty( $in['everywhere'] ) ? 0 : 1,
 			'style'    => self::clean_style( isset( $in['style'] ) ? $in['style'] : array() ),
 			'social'   => array(),
 			'devices'  => array(),
