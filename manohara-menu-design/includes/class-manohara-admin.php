@@ -675,6 +675,8 @@ class Manohara_Admin {
 			'secondary_bg'   => __( 'Extra links background', 'manohara-menu-design' ),
 			'secondary_text' => __( 'Extra links text', 'manohara-menu-design' ),
 			'backdrop'       => __( 'Dimmed page behind drawers', 'manohara-menu-design' ),
+			'arrow_color'    => __( 'Dropdown arrow (empty: like the text)', 'manohara-menu-design' ),
+			'arrow_bg'       => __( 'Dropdown arrow background (circle, square)', 'manohara-menu-design' ),
 		);
 		echo '<div class="mnh-colours">';
 		foreach ( $fields as $key => $label ) {
@@ -706,10 +708,21 @@ class Manohara_Admin {
 			'letter_spacing' => array( __( 'Letter spacing (px)', 'manohara-menu-design' ), -2, 10, 0.1 ),
 			'item_gap'       => array( __( 'Space between items (px)', 'manohara-menu-design' ), 0, 80, 1 ),
 			'radius'         => array( __( 'Roundness (px, 999 = pill)', 'manohara-menu-design' ), 0, 999, 1 ),
+			'arrow_size'     => array( __( 'Dropdown arrow size (px)', 'manohara-menu-design' ), 8, 30, 1 ),
 		);
 		foreach ( $numbers as $key => $n ) {
 			echo '<label><span>' . esc_html( $n[0] ) . '</span><input type="number" name="' . esc_attr( $prefix . '[' . $key . ']' ) . '" value="' . esc_attr( $style[ $key ] ) . '" min="' . esc_attr( $n[1] ) . '" max="' . esc_attr( $n[2] ) . '" step="' . esc_attr( $n[3] ) . '" data-key="' . esc_attr( $key ) . '" data-preview="1" /></label>';
 		}
+		echo '<label><span>' . esc_html__( 'Dropdown arrow', 'manohara-menu-design' ) . '</span><select name="' . esc_attr( $prefix . '[arrow_style]' ) . '" data-key="arrow_style" data-preview="1">';
+		foreach ( array(
+			'plain'  => __( 'Arrow', 'manohara-menu-design' ),
+			'circle' => __( 'Arrow in a circle', 'manohara-menu-design' ),
+			'square' => __( 'Arrow in a rounded square', 'manohara-menu-design' ),
+			'none'   => __( 'Hidden in the bar (submenus open on hover)', 'manohara-menu-design' ),
+		) as $key => $label ) {
+			echo '<option value="' . esc_attr( $key ) . '" ' . selected( isset( $style['arrow_style'] ) ? $style['arrow_style'] : 'plain', $key, false ) . '>' . esc_html( $label ) . '</option>';
+		}
+		echo '</select></label>';
 		echo '<label><span>' . esc_html__( 'Letters', 'manohara-menu-design' ) . '</span><select name="' . esc_attr( $prefix . '[text_transform]' ) . '" data-key="text_transform" data-preview="1">';
 		foreach ( array(
 			'none'       => __( 'As written', 'manohara-menu-design' ),
@@ -762,7 +775,7 @@ class Manohara_Admin {
 				continue;
 			}
 			$value = is_scalar( $in[ $key ] ) ? (string) $in[ $key ] : '';
-			if ( in_array( $key, array( 'font_size', 'sub_font_size', 'font_weight', 'item_gap', 'radius', 'duration' ), true ) ) {
+			if ( in_array( $key, array( 'font_size', 'sub_font_size', 'font_weight', 'item_gap', 'radius', 'duration', 'arrow_size' ), true ) ) {
 				$out[ $key ] = (int) $value;
 			} elseif ( 'letter_spacing' === $key ) {
 				$out[ $key ] = round( (float) $value, 2 );
@@ -772,6 +785,8 @@ class Manohara_Admin {
 				$out[ $key ] = preg_replace( '/[^A-Za-z0-9 \-]/', '', $value );
 			} elseif ( 'text_transform' === $key ) {
 				$out[ $key ] = in_array( $value, array( 'none', 'uppercase', 'capitalize', 'lowercase' ), true ) ? $value : 'none';
+			} elseif ( 'arrow_style' === $key ) {
+				$out[ $key ] = in_array( $value, array( 'plain', 'circle', 'square', 'none' ), true ) ? $value : 'plain';
 			} elseif ( 'easing' === $key ) {
 				$out[ $key ] = in_array( $value, array( 'smooth', 'spring', 'ease', 'linear' ), true ) ? $value : 'smooth';
 			} else {
@@ -819,14 +834,14 @@ class Manohara_Admin {
 	public static function design_from_form( $in ) {
 		$locations = get_registered_nav_menus();
 		$design    = array(
-			'id'       => isset( $in['id'] ) ? absint( $in['id'] ) : 0,
-			'name'     => isset( $in['name'] ) ? sanitize_text_field( $in['name'] ) : '',
-			'location' => isset( $in['location'] ) && isset( $locations[ $in['location'] ] ) ? sanitize_key( $in['location'] ) : '',
+			'id'         => isset( $in['id'] ) ? absint( $in['id'] ) : 0,
+			'name'       => isset( $in['name'] ) ? sanitize_text_field( $in['name'] ) : '',
+			'location'   => isset( $in['location'] ) && isset( $locations[ $in['location'] ] ) ? sanitize_key( $in['location'] ) : '',
 			'menu'       => isset( $in['menu'] ) ? absint( $in['menu'] ) : 0,
 			'everywhere' => empty( $in['everywhere'] ) ? 0 : 1,
-			'style'    => self::clean_style( isset( $in['style'] ) ? $in['style'] : array() ),
-			'social'   => array(),
-			'devices'  => array(),
+			'style'      => self::clean_style( isset( $in['style'] ) ? $in['style'] : array() ),
+			'social'     => array(),
+			'devices'    => array(),
 		);
 		foreach ( array_keys( Manohara_Store::social_networks() ) as $key ) {
 			$value = isset( $in['social'][ $key ] ) && is_scalar( $in['social'][ $key ] ) ? self::clean_link( (string) $in['social'][ $key ], $key ) : '';

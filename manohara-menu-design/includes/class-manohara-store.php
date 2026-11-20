@@ -103,6 +103,10 @@ class Manohara_Store {
 			'radius'         => 999,
 			'duration'       => 350,
 			'easing'         => 'smooth',
+			'arrow_style'    => 'plain',
+			'arrow_size'     => 12,
+			'arrow_color'    => '',
+			'arrow_bg'       => '',
 		);
 	}
 

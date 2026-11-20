@@ -307,7 +307,7 @@ class Manohara_Render {
 			'linear' => 'linear',
 		);
 		$out     = '';
-		foreach ( array( 'bar_bg', 'bar_text', 'panel_bg', 'text', 'text_hover', 'accent', 'accent_text', 'bubble', 'divider', 'secondary_bg', 'secondary_text', 'backdrop' ) as $key ) {
+		foreach ( array( 'bar_bg', 'bar_text', 'panel_bg', 'text', 'text_hover', 'accent', 'accent_text', 'bubble', 'divider', 'secondary_bg', 'secondary_text', 'backdrop', 'arrow_color', 'arrow_bg' ) as $key ) {
 			$color = self::color( isset( $style[ $key ] ) ? $style[ $key ] : '' );
 			if ( '' !== $color ) {
 				$out .= '--mnh-' . str_replace( '_', '-', $key ) . ':' . $color . ';';
@@ -323,6 +323,22 @@ class Manohara_Render {
 		$out .= '--mnh-radius:' . max( 0, min( 999, (int) $style['radius'] ) ) . 'px;';
 		$out .= '--mnh-dur:' . max( 0, min( 2000, (int) $style['duration'] ) ) . 'ms;';
 		$out .= '--mnh-ease:' . ( isset( $easings[ $style['easing'] ] ) ? $easings[ $style['easing'] ] : $easings['smooth'] ) . ';';
+		$out .= '--mnh-arrow-size:' . max( 8, min( 30, isset( $style['arrow_size'] ) ? (int) $style['arrow_size'] : 12 ) ) . 'px;';
+		return $out;
+	}
+
+	/**
+	 * Classes for the dropdown arrow's look.
+	 *
+	 * @param array $style Style.
+	 * @return string[]
+	 */
+	public static function arrow_classes( $style ) {
+		$kind = isset( $style['arrow_style'] ) && in_array( $style['arrow_style'], array( 'plain', 'circle', 'square', 'none' ), true ) ? $style['arrow_style'] : 'plain';
+		$out  = array( 'mnh-arrow-' . $kind );
+		if ( '' !== self::color( isset( $style['arrow_color'] ) ? $style['arrow_color'] : '' ) ) {
+			$out[] = 'mnh-arrow-colored';
+		}
 		return $out;
 	}
 
@@ -387,6 +403,7 @@ class Manohara_Render {
 		 * @param string   $device  Device.
 		 * @param string   $context location, bar or embed.
 		 */
+		$classes = array_merge( $classes, self::arrow_classes( $style ) );
 		$classes = (array) apply_filters( 'manohara_nav_classes', $classes, $design, $device, $context );
 		$label   = '' !== $design['name'] ? $design['name'] : __( 'Menu', 'manohara-menu-design' );
 		$html    = '<nav class="' . esc_attr( implode( ' ', $classes ) ) . '" style="' . esc_attr( self::vars( $style ) ) . '" aria-label="' . esc_attr( $label ) . '" data-mnh="' . esc_attr( $key ) . '">';

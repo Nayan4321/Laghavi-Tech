@@ -126,3 +126,11 @@ html[dir=rtl] .mnh-kind-bar:not(.mnh-t-vertical) .mnh-sub .mnh-sub-toggle .mnh-i
 
 .mnh-missing{padding:8px 12px;border:1px dashed #c3c4c7;color:#646970;font-size:13px}
 @media (prefers-reduced-motion:reduce){.mnh *,.mnh{transition-duration:1ms!important;transition-delay:0s!important;animation:none!important}}
+/* Dropdown arrow (design setting). Theme button borders and shadows never reach it. */
+.mnh.mnh .mnh-sub-toggle{border:0!important;box-shadow:none!important;outline-color:var(--mnh-accent)}
+.mnh .mnh-sub-toggle .mnh-icon{width:var(--mnh-arrow-size,12px);height:var(--mnh-arrow-size,12px);font-size:var(--mnh-arrow-size,12px)}
+.mnh.mnh-arrow-colored .mnh-sub-toggle{--mnh-b-color:var(--mnh-arrow-color)}
+.mnh.mnh-arrow-circle .mnh-sub-toggle,.mnh.mnh-arrow-square .mnh-sub-toggle{--mnh-b-bg:var(--mnh-arrow-bg,var(--mnh-bubble));width:calc(var(--mnh-arrow-size,12px) + 12px)!important;height:calc(var(--mnh-arrow-size,12px) + 12px)!important;margin-inline-start:4px!important}
+.mnh.mnh-arrow-circle .mnh-sub-toggle{border-radius:50%!important}
+.mnh.mnh-arrow-square .mnh-sub-toggle{border-radius:6px!important}
+.mnh-kind-bar.mnh-arrow-none:not(.mnh-t-vertical) .mnh-list>li>.mnh-row>.mnh-sub-toggle{display:none}
