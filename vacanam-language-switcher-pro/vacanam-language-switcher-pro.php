@@ -3,7 +3,7 @@
  * Plugin Name:       Vacanam Language Switcher Pro
  * Plugin URI:        https://laghavi.site/vacanam-language-switcher/
  * Description:       Pro add-on for Vacanam Language Switcher: translated or shared addresses, a domain or sub-domain per language, AI and DeepL translation, WooCommerce in every language with a currency per language, country targeting and more.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Requires Plugins:  vacanam-language-switcher
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'VACANAMPRO_VERSION', '1.0.0' );
+define( 'VACANAMPRO_VERSION', '1.1.0' );
 define( 'VACANAMPRO_FILE', __FILE__ );
 define( 'VACANAMPRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'VACANAMPRO_URL', plugin_dir_url( __FILE__ ) );

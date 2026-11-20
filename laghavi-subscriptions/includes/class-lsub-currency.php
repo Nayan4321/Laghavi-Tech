@@ -61,6 +61,9 @@ class LSUB_Currency {
 		}
 
 		add_action( 'init', array( __CLASS__, 'pick_currency' ), 5 );
+		// LiteSpeed Cache keeps one copy of each page per chosen currency.
+		add_filter( 'litespeed_vary_cookies', array( __CLASS__, 'vary_cookie' ) );
+		add_filter( 'litespeed_vary_curr_cookies', array( __CLASS__, 'vary_cookie' ) );
 		add_filter( 'woocommerce_currency', array( __CLASS__, 'filter_currency' ), 999 );
 		add_filter( 'wc_get_price_decimals', array( __CLASS__, 'filter_decimals' ), 999 );
 
@@ -236,6 +239,18 @@ class LSUB_Currency {
 	}
 
 	// ---------------------------------------------------------------- Choosing a currency.
+
+	/**
+	 * Page caches vary on the currency cookie.
+	 *
+	 * @param string[] $cookies Vary cookies.
+	 * @return string[]
+	 */
+	public static function vary_cookie( $cookies ) {
+		$cookies   = (array) $cookies;
+		$cookies[] = self::COOKIE;
+		return array_values( array_unique( $cookies ) );
+	}
 
 	/**
 	 * Read the visitor's choice (link, cookie, or country), and remember it.

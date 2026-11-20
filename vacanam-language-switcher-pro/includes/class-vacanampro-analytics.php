@@ -202,7 +202,7 @@ class VACANAMPRO_Analytics {
 		$out   = array();
 		$page  = 1;
 		$base  = (string) get_option( 'woocommerce_currency' );
-		$rinno = class_exists( 'RINNOVO_Currency' );
+		$rinno = class_exists( 'VACANAMPRO_Currency' ) && '' !== VACANAMPRO_Currency::switcher();
 		do {
 			$orders = wc_get_orders(
 				array(
@@ -222,7 +222,8 @@ class VACANAMPRO_Analytics {
 				$total = (float) $order->get_total();
 				if ( $order->get_currency() !== $base ) {
 					if ( $rinno ) {
-						$total = (float) RINNOVO_Currency::to_base( $total, $order->get_currency() );
+						$conv  = VACANAMPRO_Currency::switcher_to_base( $total, $order->get_currency() );
+						$total = null !== $conv ? $conv : $total;
 					} else {
 						$row   = VACANAMPRO_Currency::for_language( $lang );
 						$total = $row['rate'] > 0 && $row['code'] === $order->get_currency() ? $total / $row['rate'] : $total;

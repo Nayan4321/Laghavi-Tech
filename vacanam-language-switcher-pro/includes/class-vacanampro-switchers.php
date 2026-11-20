@@ -86,7 +86,7 @@ class VACANAMPRO_Switchers {
 		}
 		$list = array();
 		if ( 'rinnovo' === VACANAMPRO_Currency::mode() ) {
-			foreach ( RINNOVO_Currency::codes() as $code ) {
+			foreach ( VACANAMPRO_Currency::switcher_codes() as $code ) {
 				$list[ $code ] = add_query_arg( 'currency', $code );
 			}
 		}

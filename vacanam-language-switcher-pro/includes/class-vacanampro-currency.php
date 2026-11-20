@@ -1,6 +1,6 @@
 <?php
 /**
- * A currency per language (off by default). With Rinnovo Subscriptions & Licenses Pro's currency
+ * A currency per language (off by default). With Rinnovo Subscriptions & Licenses Pro's or Laghavi Subscriptions' currency
  * switcher active, Vacanam picks its currency when the language changes and Rinnovo does the
  * converting; without it, Vacanam converts prices itself at the rates set here.
  *
@@ -37,6 +37,8 @@ class VACANAMPRO_Currency {
 		if ( 'rinnovo' === $mode ) {
 			// Before Rinnovo reads its cookie (init, priority 5).
 			add_action( 'init', array( __CLASS__, 'rinnovo_bridge' ), 4 );
+			add_filter( 'litespeed_vary_cookies', array( __CLASS__, 'vary_cookies' ) );
+			add_filter( 'litespeed_vary_curr_cookies', array( __CLASS__, 'vary_cookies' ) );
 		} elseif ( 'own' === $mode ) {
 			self::own_filters();
 		}
@@ -60,7 +62,60 @@ class VACANAMPRO_Currency {
 	 * @return bool
 	 */
 	public static function has_rinnovo() {
-		return class_exists( 'RINNOVO_Currency' );
+		return '' !== self::switcher();
+	}
+
+	/**
+	 * The currency switcher on the site: Rinnovo Subscriptions & Licenses Pro or Laghavi Subscriptions
+	 * (same interface: a cookie and the list of offered currencies). '' when neither is active.
+	 *
+	 * @return string Class name.
+	 */
+	public static function switcher() {
+		foreach ( array( 'RINNOVO_Currency', 'LSUB_Currency' ) as $class ) {
+			if ( class_exists( $class ) && defined( $class . '::COOKIE' ) && is_callable( array( $class, 'codes' ) ) ) {
+				return $class;
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Currencies offered by the switcher.
+	 *
+	 * @return string[]
+	 */
+	public static function switcher_codes() {
+		$class = self::switcher();
+		return '' !== $class ? (array) call_user_func( array( $class, 'codes' ) ) : array();
+	}
+
+	/**
+	 * An amount in the store currency (for reports).
+	 *
+	 * @param float  $amount Amount.
+	 * @param string $code   Currency.
+	 * @return float|null Null when the switcher cannot convert.
+	 */
+	public static function switcher_to_base( $amount, $code ) {
+		$class = self::switcher();
+		return '' !== $class && is_callable( array( $class, 'to_base' ) ) ? (float) call_user_func( array( $class, 'to_base' ), $amount, $code ) : null;
+	}
+
+	/**
+	 * Page caches keep one copy per currency and per "language seen" (LiteSpeed Cache).
+	 *
+	 * @param string[] $cookies Vary cookies.
+	 * @return string[]
+	 */
+	public static function vary_cookies( $cookies ) {
+		$cookies   = (array) $cookies;
+		$cookies[] = self::COOKIE;
+		$class     = self::switcher();
+		if ( '' !== $class ) {
+			$cookies[] = constant( $class . '::COOKIE' );
+		}
+		return array_values( array_unique( $cookies ) );
 	}
 
 	/**
@@ -133,7 +188,7 @@ class VACANAMPRO_Currency {
 			return;
 		}
 		self::cookie( self::COOKIE, $lang );
-		$codes = RINNOVO_Currency::codes();
+		$codes = self::switcher_codes();
 		$code  = self::for_language( $lang )['code'];
 		// "Store currency" (or one Rinnovo does not offer): the store's own, listed first by Rinnovo.
 		if ( '' === $code || ! in_array( $code, $codes, true ) ) {
@@ -142,7 +197,7 @@ class VACANAMPRO_Currency {
 		if ( '' === $code ) {
 			return;
 		}
-		self::cookie( RINNOVO_Currency::COOKIE, $code );
+		self::cookie( constant( self::switcher() . '::COOKIE' ), $code );
 	}
 
 	/**
@@ -349,7 +404,7 @@ class VACANAMPRO_Currency {
 		echo '<div class="vacanam-card"><h2>' . esc_html__( 'A currency per language', 'vacanam-language-switcher-pro' ) . '</h2><table class="form-table" role="presentation"><tr><th scope="row">' . esc_html__( 'Currency', 'vacanam-language-switcher-pro' ) . '</th><td>';
 		echo '<label><input type="radio" name="vacanampro_currency_mode" value=""' . checked( '', $mode, false ) . ' /> ' . esc_html( sprintf( /* translators: %s: currency code */ __( 'Off: every language uses %s', 'vacanam-language-switcher-pro' ), $base ) ) . '</label><br />';
 		if ( self::has_rinnovo() ) {
-			echo '<label><input type="radio" name="vacanampro_currency_mode" value="rinnovo"' . checked( 'rinnovo', $mode, false ) . ' /> ' . esc_html__( 'Use the currencies of Rinnovo\'s currency switcher: the language chooses one, the visitor can still pick another (recommended)', 'vacanam-language-switcher-pro' ) . '</label><br />';
+			echo '<label><input type="radio" name="vacanampro_currency_mode" value="rinnovo"' . checked( 'rinnovo', $mode, false ) . ' /> ' . esc_html__( 'Use the currencies of the site\'s currency switcher (Rinnovo or Laghavi Subscriptions): the language chooses one, the visitor can still pick another (recommended)', 'vacanam-language-switcher-pro' ) . '</label><br />';
 		}
 		echo '<label><input type="radio" name="vacanampro_currency_mode" value="own"' . checked( 'own', $mode, false ) . ' /> ' . esc_html__( 'Vacanam converts prices at the rates below', 'vacanam-language-switcher-pro' ) . '</label>';
 		if ( ! self::has_rinnovo() ) {
