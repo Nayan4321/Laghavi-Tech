@@ -375,6 +375,7 @@ class MNHP_Panels {
 				'width_px' => 1200,
 				'align'    => 'center',
 				'shadow'   => 1,
+				'mobile'   => 0,
 			),
 			$s
 		);
@@ -405,6 +406,7 @@ class MNHP_Panels {
 		<p><label for="mnhp-width-px"><?php esc_html_e( 'Maximum width (px)', 'manohara-menu-design-pro' ); ?></label>
 			<input id="mnhp-width-px" type="number" min="240" max="2400" step="10" name="mnhp_panel[width_px]" value="<?php echo (int) $s['width_px']; ?>" class="small-text" /></p>
 		<p><label><input type="checkbox" name="mnhp_panel[shadow]" value="1" <?php checked( $s['shadow'] ); ?> /> <?php esc_html_e( 'Shadow under the panel', 'manohara-menu-design-pro' ); ?></label></p>
+		<p><label><input type="checkbox" name="mnhp_panel[mobile]" value="1" <?php checked( $s['mobile'] ); ?> /> <?php esc_html_e( 'Also on phones and tablets', 'manohara-menu-design-pro' ); ?></label><br /><span class="description"><?php esc_html_e( 'Off: on phones and tablets the item shows its normal submenu (its sub-items in Appearance › Menus).', 'manohara-menu-design-pro' ); ?></span></p>
 		<?php
 		$used = MNHP_Items::items_using( $post->ID );
 		echo '<p><strong>' . esc_html__( 'Shown on', 'manohara-menu-design-pro' ) . '</strong><br />';
@@ -439,6 +441,7 @@ class MNHP_Panels {
 				'width_px' => isset( $in['width_px'] ) ? max( 240, min( 2400, absint( $in['width_px'] ) ) ) : 1200,
 				'align'    => 'center',
 				'shadow'   => empty( $in['shadow'] ) ? 0 : 1,
+				'mobile'   => empty( $in['mobile'] ) ? 0 : 1,
 			)
 		);
 	}
@@ -641,6 +644,10 @@ class MNHP_Panels {
 		$id = self::item_panel_id( $item, $depth );
 		if ( $id && '' !== self::content( $id ) ) {
 			$classes[] = 'mnhp-has-panel';
+			$ps        = self::TYPE === get_post_type( $id ) ? self::settings( $id ) : self::settings( 0 );
+			if ( empty( $ps['mobile'] ) ) {
+				$classes[] = 'mnhp-desktop-only';
+			}
 		}
 		return $classes;
 	}

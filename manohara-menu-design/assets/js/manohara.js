@@ -7,6 +7,43 @@
 	function closest( el, sel ) {
 		return el && el.closest ? el.closest( sel ) : null;
 	}
+	// A menu button inside a header with a transform (sticky headers, page builders) would trap the
+	// fixed panel inside the header; such panels live at the end of the page, linked to their button.
+	function box( nav ) {
+		return nav && nav.mnhPortal ? nav.mnhPortal : nav;
+	}
+	function origin( el ) {
+		return el && el.mnhNav ? el.mnhNav : el;
+	}
+	function portals() {
+		Array.prototype.forEach.call( document.querySelectorAll( 'nav.mnh.mnh-kind-toggle:not(.mnh-with-bar)' ), function ( nav ) {
+			if ( nav.mnhPortal || closest( nav, '[data-mnh-screen]' ) ) {
+				return;
+			}
+			var panel = nav.querySelector( ':scope > .mnh-panel' );
+			if ( ! panel ) {
+				return;
+			}
+			var wrap = document.createElement( 'div' );
+			wrap.className = nav.className + ' mnh-portal';
+			wrap.setAttribute( 'style', nav.getAttribute( 'style' ) || '' );
+			wrap.setAttribute( 'role', 'navigation' );
+			wrap.setAttribute( 'aria-label', nav.getAttribute( 'aria-label' ) || '' );
+			wrap.appendChild( panel );
+			var backdrop = nav.querySelector( ':scope > .mnh-backdrop' );
+			if ( backdrop ) {
+				wrap.appendChild( backdrop );
+			}
+			document.body.appendChild( wrap );
+			nav.mnhPortal = wrap;
+			wrap.mnhNav = nav;
+		} );
+	}
+	if ( 'loading' === document.readyState ) {
+		document.addEventListener( 'DOMContentLoaded', portals );
+	} else {
+		portals();
+	}
 	function duration( nav ) {
 		var d = parseFloat( getComputedStyle( nav ).getPropertyValue( '--mnh-dur' ) );
 		return isNaN( d ) ? 350 : d;
@@ -15,11 +52,11 @@
 		return nav.classList.contains( 'mnh-t-overlay' ) || nav.classList.contains( 'mnh-t-drawer' );
 	}
 	function place( nav ) {
-		var ref = nav.querySelector( '.mnh-bar' ) || nav.querySelector( '.mnh-toggle' );
+		var ref = nav.querySelector( '.mnh-bar' ) || origin( nav ).querySelector( '.mnh-toggle' );
 		if ( ref ) {
 			var bottom = ref.getBoundingClientRect().bottom;
 			// Inside a scaled preview screen (the admin), fixed panels sit in that screen.
-			var screen = closest( nav, '[data-mnh-screen]' );
+			var screen = closest( origin( nav ), '[data-mnh-screen]' );
 			if ( screen ) {
 				var s = screen.getBoundingClientRect();
 				bottom = ( bottom - s.top ) / ( s.width / screen.offsetWidth || 1 );
@@ -37,7 +74,8 @@
 		} );
 	}
 	function setOpen( nav, open ) {
-		var toggle = nav.querySelector( '.mnh-toggle' );
+		nav = box( nav );
+		var toggle = origin( nav ).querySelector( '.mnh-toggle' );
 		var backdrop = nav.querySelector( '.mnh-backdrop' );
 		if ( open ) {
 			if ( current && current !== nav ) {
@@ -112,7 +150,7 @@
 		var t = e.target;
 		var el;
 		if ( ( el = closest( t, '.mnh-toggle' ) ) ) {
-			var nav = closest( el, '.mnh' );
+			var nav = box( closest( el, '.mnh' ) );
 			setOpen( nav, ! nav.classList.contains( 'mnh-open' ) );
 			return;
 		}
@@ -184,7 +222,7 @@
 			if ( current ) {
 				var nav = current;
 				setOpen( nav, false );
-				var t = nav.querySelector( '.mnh-toggle' );
+				var t = origin( nav ).querySelector( '.mnh-toggle' );
 				if ( t ) {
 					t.focus();
 				}

@@ -110,7 +110,13 @@
 			t.setAttribute( 'aria-expanded', on ? 'true' : 'false' );
 		}
 	}
+	function off( li ) {
+		return isMobile() && li.classList.contains( 'mnhp-desktop-only' );
+	}
 	function open( li ) {
+		if ( off( li ) ) {
+			return;
+		}
 		if ( openLi && openLi !== li ) {
 			close( openLi );
 		}
@@ -170,6 +176,9 @@
 		} );
 		if ( a ) {
 			a.addEventListener( 'click', function ( e ) {
+				if ( off( li ) ) {
+					return;
+				}
 				var href = a.getAttribute( 'href' );
 				var empty = ! href || '#' === href;
 				// A link with nowhere to go, or the first tap on a touch screen, opens the panel.

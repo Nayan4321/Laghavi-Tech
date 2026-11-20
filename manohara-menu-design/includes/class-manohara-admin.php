@@ -487,8 +487,8 @@ class Manohara_Admin {
 				<div class="mnh-field" data-kind="toggle">
 					<span class="mnh-label"><?php esc_html_e( 'Where the menu button goes', 'manohara-menu-design' ); ?></span>
 					<div>
-						<label class="mnh-radio"><input type="radio" name="<?php echo esc_attr( $p ); ?>[placement]" value="bar" <?php checked( $set['placement'], 'bar' ); ?> data-preview="1" /> <?php esc_html_e( 'Its own header bar with your logo (the theme\'s header is hidden on this device)', 'manohara-menu-design' ); ?></label>
-						<label class="mnh-radio"><input type="radio" name="<?php echo esc_attr( $p ); ?>[placement]" value="location" <?php checked( $set['placement'], 'location' ); ?> data-preview="1" /> <?php esc_html_e( 'In the theme\'s header, where its menu is', 'manohara-menu-design' ); ?></label>
+						<label class="mnh-radio"><input type="radio" name="<?php echo esc_attr( $p ); ?>[placement]" value="location" <?php checked( $set['placement'], 'location' ); ?> data-preview="1" /> <strong><?php esc_html_e( 'Only the menu button, in your header where the menu is', 'manohara-menu-design' ); ?></strong> – <?php esc_html_e( 'your theme or Elementor header stays as it is, with its own logo. No extra bar.', 'manohara-menu-design' ); ?></label>
+						<label class="mnh-radio"><input type="radio" name="<?php echo esc_attr( $p ); ?>[placement]" value="bar" <?php checked( $set['placement'], 'bar' ); ?> data-preview="1" /> <strong><?php esc_html_e( 'A new header bar from Manohara', 'manohara-menu-design' ); ?></strong> – <?php esc_html_e( 'with a logo (or none), optional button and search, sticky if you want; the theme\'s header is hidden on this device.', 'manohara-menu-design' ); ?></label>
 					</div>
 				</div>
 
@@ -578,7 +578,7 @@ class Manohara_Admin {
 					</div>
 				</div>
 				<div class="mnh-field" data-group="bar">
-					<span class="mnh-label"><?php esc_html_e( 'Header bar', 'manohara-menu-design' ); ?></span>
+					<span class="mnh-label"><?php esc_html_e( 'Manohara header bar', 'manohara-menu-design' ); ?></span>
 					<div>
 						<select name="<?php echo esc_attr( $o_name ); ?>[logo]" class="mnh-logo-mode" data-preview="1">
 							<option value="site" <?php selected( $o['logo'], 'site' ); ?>><?php esc_html_e( 'Site logo (or site title)', 'manohara-menu-design' ); ?></option>

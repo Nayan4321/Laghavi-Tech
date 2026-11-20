@@ -74,6 +74,7 @@ The license key is checked with Laghavi Digital's license server at laghavi.site
 = 1.1.1 =
 * Fixed: mega menu columns on sites that remove WordPress's block styles.
 * Fixed: the phone menu button showing on desktop, and duplicate dropdown arrows, with some themes (for example Nioland).
+* New: "Also on phones and tablets" per mega menu. Off by default: on phones and tablets the item shows its normal submenu, in theme menus and in menus drawn by Manohara.
 
 = 1.1.0 =
 * New: Appearance › Mega Menus. Build each mega menu like a page, in the block editor or with Elementor, starting from a design with a live preview.

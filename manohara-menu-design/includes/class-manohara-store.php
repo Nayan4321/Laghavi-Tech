@@ -121,7 +121,7 @@ class Manohara_Store {
 			'template'       => '',
 			'menu'           => 0,
 			'menu2'          => 0,
-			'placement'      => 'bar',
+			'placement'      => 'location',
 			'opts'           => array(),
 			'style_override' => 0,
 			'style'          => array(),

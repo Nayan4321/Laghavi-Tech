@@ -134,3 +134,7 @@ html[dir=rtl] .mnh-kind-bar:not(.mnh-t-vertical) .mnh-sub .mnh-sub-toggle .mnh-i
 .mnh.mnh-arrow-circle .mnh-sub-toggle{border-radius:50%!important}
 .mnh.mnh-arrow-square .mnh-sub-toggle{border-radius:6px!important}
 .mnh-kind-bar.mnh-arrow-none:not(.mnh-t-vertical) .mnh-list>li>.mnh-row>.mnh-sub-toggle{display:none}
+/* The menu button: theme button borders, outlines and shadows never reach it. */
+.mnh.mnh .mnh-toggle,.mnh.mnh .mnh-close,.mnh.mnh .mnh-search-toggle{border:0!important;box-shadow:none!important}
+/* Panel moved to the end of the page (see manohara.js): takes no room itself. */
+.mnh.mnh-portal{position:absolute!important;top:0;left:0;width:0;height:0;margin:0;padding:0;border:0;overflow:visible}
