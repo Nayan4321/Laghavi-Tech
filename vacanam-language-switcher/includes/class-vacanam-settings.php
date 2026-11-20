@@ -35,7 +35,7 @@ class Vacanam_Settings {
 			'media'        => 'no',
 			'post_types'   => array(),
 			'taxonomies'   => array(),
-			'sync'         => array( 'taxonomies', 'featured', 'parent', 'template', 'order', 'comment_status', 'sticky', 'format' ),
+			'sync'         => array( 'taxonomies', 'featured', 'parent', 'template', 'order', 'comment_status', 'sticky', 'format', 'woocommerce' ),
 			'hreflang'     => 'yes',
 			'xdefault'     => 'default',
 			'redirect'     => 'yes',

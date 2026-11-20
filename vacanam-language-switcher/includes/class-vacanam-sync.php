@@ -45,6 +45,7 @@ class Vacanam_Sync {
 			'format'         => __( 'Post format', 'vacanam-language-switcher' ),
 			'date'           => __( 'Published date', 'vacanam-language-switcher' ),
 			'meta'           => __( 'Custom fields (except page-builder designs and SEO texts)', 'vacanam-language-switcher' ),
+			'woocommerce'    => __( 'WooCommerce prices, sale dates, stock, tax, shipping and product settings (also variations and subscription prices). Names, descriptions and SKUs stay per language.', 'vacanam-language-switcher' ),
 		);
 	}
 

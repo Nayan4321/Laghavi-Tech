@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.3
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,6 +163,9 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 7. Settings: addresses, SEO, synchronization.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: WooCommerce synchronization (Settings › Synchronization). Saving a product or variation in one language copies its prices, sale dates, stock, tax, shipping and product settings, and subscription prices, to its translations, through WooCommerce so sorting and price filters stay right. Names, descriptions, slugs and SKUs stay per language.
 
 = 1.1.3 =
 * Developers: vacanam_menu_item_copied action, so menu plugins can copy their item settings into menu translations.
