@@ -54,6 +54,7 @@ The license key and site address are checked with laghavi.site for updates. Anal
 * A currency per language now also works with Laghavi Subscriptions' currency switcher (not only Rinnovo's).
 * LiteSpeed Cache keeps separate copies per currency and language, so the language's currency shows on cached pages too.
 * Fixed: the phone-only language button showing on desktop (in the theme's button colour) with themes that style every button.
+* Changed: the phone language button is not added while the free plugin's floating switcher is shown on phones, so there is one switcher in the corner. It stays optional (Settings › Phones).
 
 = 1.0.0 =
 * First release.

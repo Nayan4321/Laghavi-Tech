@@ -102,7 +102,7 @@ class VACANAMPRO_Switchers {
 	 * @return bool
 	 */
 	private static function needed() {
-		return '' !== VACANAMPRO_Settings::get( 'first_visit' ) || VACANAMPRO_Settings::on( 'bottom_sheet' ) || VACANAMPRO_Settings::on( 'dynamic' ) || VACANAMPRO_Settings::on( 'analytics' ) || self::$chooser;
+		return '' !== VACANAMPRO_Settings::get( 'first_visit' ) || self::show_sheet() || VACANAMPRO_Settings::on( 'dynamic' ) || VACANAMPRO_Settings::on( 'analytics' ) || self::$chooser;
 	}
 
 	/**
@@ -181,6 +181,25 @@ class VACANAMPRO_Switchers {
 	}
 
 	/**
+	 * The phone button and bottom sheet: when switched on, and only when the free plugin's floating
+	 * switcher is not already shown on phones (one switcher in the corner, not two).
+	 *
+	 * @return bool
+	 */
+	public static function show_sheet() {
+		if ( ! VACANAMPRO_Settings::on( 'bottom_sheet' ) ) {
+			return false;
+		}
+		if ( class_exists( 'Vacanam_Switcher' ) && is_callable( array( 'Vacanam_Switcher', 'floating_settings' ) ) ) {
+			$f = Vacanam_Switcher::floating_settings();
+			if ( ! empty( $f['enabled'] ) && ! empty( $f['mobile'] ) ) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
 	 * Footer: bottom sheet, chooser and suggestion.
 	 */
 	public static function footer() {
@@ -192,7 +211,7 @@ class VACANAMPRO_Switchers {
 		if ( self::$chooser || 'chooser' === VACANAMPRO_Settings::get( 'first_visit' ) ) {
 			echo '<div class="vacanampro-chooser" role="dialog" aria-modal="true" aria-labelledby="vacanampro-chooser-title" hidden><div class="vacanampro-chooser-inner"><button type="button" class="vacanampro-close" aria-label="' . esc_attr__( 'Close', 'vacanam-language-switcher-pro' ) . '">&times;</button><h2 id="vacanampro-chooser-title">' . $title . '</h2>' . self::list_html( 'vacanampro-grid' ) . self::currency_html() . '</div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from escaped parts.
 		}
-		if ( VACANAMPRO_Settings::on( 'bottom_sheet' ) ) {
+		if ( self::show_sheet() ) {
 			echo '<button type="button" class="vacanampro-fab" aria-haspopup="dialog" aria-label="' . esc_attr__( 'Language', 'vacanam-language-switcher-pro' ) . '"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm6.9 6h-2.9a15.7 15.7 0 0 0-1.4-3.6A8 8 0 0 1 18.9 8ZM12 4c.8 1.2 1.5 2.5 1.9 4h-3.8c.4-1.5 1.1-2.8 1.9-4ZM4.3 14a8.2 8.2 0 0 1 0-4h3.4a16.5 16.5 0 0 0 0 4H4.3Zm.8 2H8a15.7 15.7 0 0 0 1.4 3.6A8 8 0 0 1 5.1 16ZM8 8H5.1a8 8 0 0 1 4.3-3.6C8.8 5.5 8.3 6.7 8 8Zm4 12c-.8-1.2-1.5-2.5-1.9-4h3.8c-.4 1.5-1.1 2.8-1.9 4Zm2.3-6H9.7a14.7 14.7 0 0 1 0-4h4.6a14.7 14.7 0 0 1 0 4Zm.3 5.6c.6-1.1 1.1-2.3 1.4-3.6h2.9a8 8 0 0 1-4.3 3.6Zm1.8-5.6a16.5 16.5 0 0 0 0-4h3.4a8.2 8.2 0 0 1 0 4h-3.4Z"/></svg><span>' . esc_html( $current ? strtoupper( strtok( $current['slug'], '-' ) ) : '' ) . '</span></button>';
 			echo '<div class="vacanampro-sheet" role="dialog" aria-modal="true" aria-label="' . esc_attr__( 'Language', 'vacanam-language-switcher-pro' ) . '" hidden><div class="vacanampro-sheet-panel"><span class="vacanampro-handle" aria-hidden="true"></span><h2>' . $title . '</h2>' . self::list_html( 'vacanampro-sheet-list' ) . self::currency_html() . '</div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from escaped parts.
 		}
@@ -270,7 +289,7 @@ class VACANAMPRO_Switchers {
 			echo '<label><input type="radio" name="vacanampro_first_visit" value="' . esc_attr( $value ) . '"' . checked( $first, $value, false ) . ' /> ' . esc_html( $label ) . '</label><br />';
 		}
 		echo '<p class="description">' . esc_html__( 'Shown once; it works with page caches because the browser decides.', 'vacanam-language-switcher-pro' ) . '</p></td></tr>';
-		echo '<tr><th scope="row">' . esc_html__( 'Phones', 'vacanam-language-switcher-pro' ) . '</th><td><label><input type="checkbox" name="vacanampro_bottom_sheet" value="1"' . checked( VACANAMPRO_Settings::on( 'bottom_sheet' ), true, false ) . ' /> ' . esc_html__( 'A floating language button that opens a bottom sheet (with currencies when visitors can pick one)', 'vacanam-language-switcher-pro' ) . '</label></td></tr>';
+		echo '<tr><th scope="row">' . esc_html__( 'Phones', 'vacanam-language-switcher-pro' ) . '</th><td><label><input type="checkbox" name="vacanampro_bottom_sheet" value="1"' . checked( VACANAMPRO_Settings::on( 'bottom_sheet' ), true, false ) . ' /> ' . esc_html__( 'A floating language button that opens a bottom sheet (with currencies when visitors can pick one). Optional: not shown while the floating switcher is on for phones, so there is one switcher in the corner.', 'vacanam-language-switcher-pro' ) . '</label></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Shortcodes', 'vacanam-language-switcher-pro' ) . '</th><td><p class="description"><code>[vacanam_chooser label="Language"]</code> ' . esc_html__( 'a button that opens the full-screen chooser', 'vacanam-language-switcher-pro' ) . '<br /><code>[vacanam_language_currency]</code> ' . esc_html__( 'language and currency side by side', 'vacanam-language-switcher-pro' ) . '</p></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Dynamic content', 'vacanam-language-switcher-pro' ) . '</th><td><label><input type="checkbox" name="vacanampro_dynamic" value="1"' . checked( VACANAMPRO_Settings::on( 'dynamic' ), true, false ) . ' /> ' . esc_html__( 'Keep the language in content loaded by scripts: AJAX filters and searches, load-more buttons, popups, quick views, mini-carts', 'vacanam-language-switcher-pro' ) . '</label></td></tr>';
 		echo '<tr><th scope="row">' . esc_html__( 'Analytics', 'vacanam-language-switcher-pro' ) . '</th><td><label><input type="checkbox" name="vacanampro_analytics" value="1"' . checked( VACANAMPRO_Settings::on( 'analytics' ), true, false ) . ' /> ' . esc_html__( 'Count page views per language, language changes, redirects and visitors who leave right after changing language (no cookies, no personal data)', 'vacanam-language-switcher-pro' ) . '</label> <a href="' . esc_url( admin_url( 'admin.php?page=' . VACANAMPRO_Analytics::PAGE ) ) . '">' . esc_html__( 'Open Analytics', 'vacanam-language-switcher-pro' ) . '</a></td></tr>';
