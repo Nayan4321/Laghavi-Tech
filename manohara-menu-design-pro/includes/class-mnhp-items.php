@@ -1,8 +1,7 @@
 <?php
 /**
- * Menu item settings in Appearance > Menus: icon, image, badge, description, hiding per device, and
- * for top-level items the mega menu (template, width, intro, promo card, footer strip, grid builder,
- * or a block / Elementor template as the panel). Settings are copied with menu translations.
+ * Menu item settings in Appearance > Menus: for top-level items the mega menu to show, and for every
+ * item an icon, image, badge, description and hiding per device. Copied with menu translations.
  *
  * @package ManoharaMenuDesignPro
  */
@@ -26,6 +25,7 @@ class MNHP_Items {
 		add_filter( 'manohara_link_inner', array( __CLASS__, 'link_inner' ), 10, 3 );
 		add_filter( 'manohara_item_classes', array( __CLASS__, 'classes' ), 10, 2 );
 		add_action( 'vacanam_menu_item_copied', array( __CLASS__, 'copy' ), 10, 2 );
+		add_action( 'wp_update_nav_menu', array( 'MNHP_Panels', 'refresh_in_use' ) );
 	}
 
 	/**
@@ -41,31 +41,7 @@ class MNHP_Items {
 			'badge_color' => '#ef4444',
 			'show_desc'   => 0,
 			'hide'        => array(),
-			'mega'        => array(
-				'on'          => 0,
-				'template'    => 'icon-cards',
-				'source'      => 'menu',
-				'width'       => 'container',
-				'width_px'    => 960,
-				'columns'     => 0,
-				'intro_title' => '',
-				'intro_text'  => '',
-				'btn1_text'   => '',
-				'btn1_url'    => '',
-				'btn2_text'   => '',
-				'btn2_url'    => '',
-				'promo_image' => 0,
-				'promo_title' => '',
-				'promo_text'  => '',
-				'promo_price' => '',
-				'promo_btn'   => '',
-				'promo_url'   => '',
-				'foot_text'   => '',
-				'foot_btn'    => '',
-				'foot_url'    => '',
-				'template_id' => 0,
-				'builder'     => '',
-			),
+			'panel'       => 0,
 		);
 	}
 
@@ -76,12 +52,12 @@ class MNHP_Items {
 	 * @return array
 	 */
 	public static function get( $id ) {
-		$saved = get_post_meta( (int) $id, self::META, true );
-		$saved = is_array( $saved ) ? $saved : array();
-		$d     = self::defaults();
-		$out   = array_merge( $d, $saved );
-		$out['mega'] = array_merge( $d['mega'], isset( $saved['mega'] ) && is_array( $saved['mega'] ) ? $saved['mega'] : array() );
-		$out['hide'] = array_values( array_intersect( (array) $out['hide'], array( 'desktop', 'tablet', 'mobile' ) ) );
+		$saved        = get_post_meta( (int) $id, self::META, true );
+		$saved        = is_array( $saved ) ? $saved : array();
+		$d            = self::defaults();
+		$out          = array_merge( $d, $saved );
+		$out['panel'] = absint( $out['panel'] );
+		$out['hide']  = array_values( array_intersect( (array) $out['hide'], array( 'desktop', 'tablet', 'mobile' ) ) );
 		return $out;
 	}
 
@@ -105,39 +81,12 @@ class MNHP_Items {
 			'mnhp-items',
 			'mnhpItems',
 			array(
-				'icons'     => array_keys( MNHP_Icons::set() ),
-				'svgs'      => MNHP_Icons::set(),
-				'templates' => MNHP_Mega::templates_for_js(),
-				'blocks'    => MNHP_Mega::block_types(),
-				'menus'     => wp_list_pluck( wp_get_nav_menus(), 'name', 'term_id' ),
-				'saved'     => MNHP_Mega::saved_templates(),
-				'i18n'      => array(
-					'choose'   => __( 'Choose image', 'manohara-menu-design-pro' ),
-					'use'      => __( 'Use this image', 'manohara-menu-design-pro' ),
-					'remove'   => __( 'Remove', 'manohara-menu-design-pro' ),
-					'row'      => __( 'Add row', 'manohara-menu-design-pro' ),
-					'column'   => __( 'Add column', 'manohara-menu-design-pro' ),
-					'block'    => __( 'Add block', 'manohara-menu-design-pro' ),
-					'span'     => __( 'Width', 'manohara-menu-design-pro' ),
-					'drag'     => __( 'Drag to move', 'manohara-menu-design-pro' ),
-					'delete'   => __( 'Delete', 'manohara-menu-design-pro' ),
-					'empty'    => __( 'Add a row, then columns and blocks. Drag rows and blocks to reorder them.', 'manohara-menu-design-pro' ),
-					'fields'   => array(
-						'text'     => __( 'Text', 'manohara-menu-design-pro' ),
-						'url'      => __( 'Link', 'manohara-menu-design-pro' ),
-						'lines'    => __( 'Lines', 'manohara-menu-design-pro' ),
-						'menu'     => __( 'Menu', 'manohara-menu-design-pro' ),
-						'image'    => __( 'Image', 'manohara-menu-design-pro' ),
-						'caption'  => __( 'Caption', 'manohara-menu-design-pro' ),
-						'style'    => __( 'Style', 'manohara-menu-design-pro' ),
-						'title'    => __( 'Title', 'manohara-menu-design-pro' ),
-						'button'   => __( 'Button text', 'manohara-menu-design-pro' ),
-						'count'    => __( 'How many', 'manohara-menu-design-pro' ),
-						'category' => __( 'Category (slug)', 'manohara-menu-design-pro' ),
-						'parent'   => __( 'Parent category (slug)', 'manohara-menu-design-pro' ),
-						'orderby'  => __( 'Order', 'manohara-menu-design-pro' ),
-						'id'       => __( 'Template', 'manohara-menu-design-pro' ),
-					),
+				'icons' => array_keys( MNHP_Icons::set() ),
+				'svgs'  => MNHP_Icons::set(),
+				'i18n'  => array(
+					'choose' => __( 'Choose image', 'manohara-menu-design-pro' ),
+					'use'    => __( 'Use this image', 'manohara-menu-design-pro' ),
+					'remove' => __( 'Remove', 'manohara-menu-design-pro' ),
 				),
 			)
 		);
@@ -152,102 +101,167 @@ class MNHP_Items {
 	 * @param object  $args  Arguments.
 	 */
 	public static function fields( $id, $item, $depth, $args ) {
-		unset( $item, $args );
-		$s = self::get( $id );
-		$m = $s['mega'];
-		$n = static function ( $key ) use ( $id ) {
+		unset( $item, $args, $depth );
+		$s            = self::get( $id );
+		$n            = static function ( $key ) use ( $id ) {
 			return 'mnhp[' . (int) $id . '][' . $key . ']';
-		};
-		$mn = static function ( $key ) use ( $id ) {
-			return 'mnhp[' . (int) $id . '][mega][' . $key . ']';
 		};
 		static $nonce = false;
 		if ( ! $nonce ) {
 			$nonce = true;
 			wp_nonce_field( 'mnhp_items', 'mnhp_items_nonce', false );
 		}
-		unset( $depth );
+		$choices = self::panel_choices();
+		$current = (int) $s['panel'];
+		$edit    = '';
+		foreach ( $choices as $group ) {
+			if ( isset( $group['items'][ $current ] ) ) {
+				$edit = $group['items'][ $current ]['edit'];
+			}
+		}
+		$new = admin_url( 'options.php?page=' . MNHP_Panels::PICKER . '&item=' . (int) $id );
 		?>
 		<div class="mnhp-fields description-wide">
 			<input type="hidden" name="<?php echo esc_attr( $n( 'sent' ) ); ?>" value="1" />
-			<p class="mnhp-title"><?php esc_html_e( 'Manohara Pro', 'manohara-menu-design-pro' ); ?></p>
-			<div class="mnhp-grid">
-				<label><?php esc_html_e( 'Icon', 'manohara-menu-design-pro' ); ?>
-					<span class="mnhp-icon-pick"><input type="text" class="mnhp-icon-value widefat code" name="<?php echo esc_attr( $n( 'icon' ) ); ?>" value="<?php echo esc_attr( $s['icon'] ); ?>" placeholder="svg:star, dashicons-cart, fa-solid fa-truck" /><button type="button" class="button mnhp-icon-open"><?php esc_html_e( 'Choose', 'manohara-menu-design-pro' ); ?></button></span>
-				</label>
-				<label><?php esc_html_e( 'Image (cards, carousels)', 'manohara-menu-design-pro' ); ?>
-					<span class="mnhp-media" data-target="<?php echo esc_attr( $n( 'image' ) ); ?>"><input type="hidden" name="<?php echo esc_attr( $n( 'image' ) ); ?>" value="<?php echo (int) $s['image']; ?>" /><span class="mnhp-thumb"><?php echo $s['image'] ? wp_get_attachment_image( (int) $s['image'], array( 48, 48 ) ) : ''; ?></span><button type="button" class="button mnhp-media-open"><?php esc_html_e( 'Choose', 'manohara-menu-design-pro' ); ?></button> <button type="button" class="button-link mnhp-media-clear"><?php esc_html_e( 'Remove', 'manohara-menu-design-pro' ); ?></button></span>
-				</label>
-				<label><?php esc_html_e( 'Badge', 'manohara-menu-design-pro' ); ?>
-					<span class="mnhp-inline"><input type="text" class="widefat" name="<?php echo esc_attr( $n( 'badge' ) ); ?>" value="<?php echo esc_attr( $s['badge'] ); ?>" placeholder="<?php esc_attr_e( 'New, Popular, -20%', 'manohara-menu-design-pro' ); ?>" /><input type="color" name="<?php echo esc_attr( $n( 'badge_color' ) ); ?>" value="<?php echo esc_attr( $s['badge_color'] ); ?>" /></span>
-				</label>
-				<div><span class="mnhp-label"><?php esc_html_e( 'Show', 'manohara-menu-design-pro' ); ?></span>
-					<label class="mnhp-check"><input type="checkbox" name="<?php echo esc_attr( $n( 'show_desc' ) ); ?>" value="1" <?php checked( $s['show_desc'] ); ?> /> <?php esc_html_e( 'Description under the label', 'manohara-menu-design-pro' ); ?></label>
-					<span class="mnhp-label"><?php esc_html_e( 'Hide on', 'manohara-menu-design-pro' ); ?></span>
-					<?php foreach ( array( 'desktop' => __( 'Desktop', 'manohara-menu-design-pro' ), 'tablet' => __( 'Tablet', 'manohara-menu-design-pro' ), 'mobile' => __( 'Mobile', 'manohara-menu-design-pro' ) ) as $dev => $label ) : ?>
-						<label class="mnhp-check"><input type="checkbox" name="<?php echo esc_attr( $n( 'hide' ) . '[' . $dev . ']' ); ?>" value="1" <?php checked( in_array( $dev, $s['hide'], true ) ); ?> /> <?php echo esc_html( $label ); ?></label>
+			<input type="hidden" name="<?php echo esc_attr( $n( 'panel_was' ) ); ?>" value="<?php echo (int) $current; ?>" />
+			<div class="mnhp-mega-line">
+				<label class="mnhp-mega-label" for="mnhp-panel-<?php echo (int) $id; ?>"><?php esc_html_e( 'Mega menu', 'manohara-menu-design-pro' ); ?></label>
+				<select id="mnhp-panel-<?php echo (int) $id; ?>" class="mnhp-panel-select" name="<?php echo esc_attr( $n( 'panel' ) ); ?>">
+					<option value="0" data-edit=""><?php esc_html_e( 'None (normal dropdown)', 'manohara-menu-design-pro' ); ?></option>
+					<?php foreach ( $choices as $group ) : ?>
+						<?php if ( $group['items'] ) : ?>
+							<optgroup label="<?php echo esc_attr( $group['label'] ); ?>">
+								<?php foreach ( $group['items'] as $pid => $p ) : ?>
+									<option value="<?php echo (int) $pid; ?>" data-edit="<?php echo esc_url( $p['edit'] ); ?>" <?php selected( $current, (int) $pid ); ?>><?php echo esc_html( $p['label'] ); ?></option>
+								<?php endforeach; ?>
+							</optgroup>
+						<?php endif; ?>
 					<?php endforeach; ?>
-				</div>
+				</select>
+				<a class="button mnhp-panel-edit" href="<?php echo esc_url( $edit ); ?>" target="_blank" rel="noopener"<?php echo '' === $edit ? ' hidden' : ''; ?>><?php esc_html_e( 'Edit', 'manohara-menu-design-pro' ); ?></a>
+				<a class="button mnhp-panel-new" href="<?php echo esc_url( $new ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'Create new', 'manohara-menu-design-pro' ); ?></a>
+				<p class="description"><?php esc_html_e( 'Opens a full panel instead of the normal dropdown. Build it in Appearance › Mega Menus. A new one made with “Create new” is linked here automatically.', 'manohara-menu-design-pro' ); ?></p>
 			</div>
-			<div class="mnhp-mega-box">
-				<label class="mnhp-check mnhp-mega-on"><input type="checkbox" name="<?php echo esc_attr( $mn( 'on' ) ); ?>" value="1" <?php checked( $m['on'] ); ?> /> <strong><?php esc_html_e( 'Mega menu', 'manohara-menu-design-pro' ); ?></strong> <span class="description"><?php esc_html_e( '(top-level items) Second-level items become columns, cards or tabs; third-level items their links.', 'manohara-menu-design-pro' ); ?></span></label>
-				<div class="mnhp-mega-fields">
-					<div class="mnhp-templates">
-						<?php foreach ( MNHP_Mega::templates() as $key => $t ) : ?>
-							<label class="mnhp-template"><input type="radio" name="<?php echo esc_attr( $mn( 'template' ) ); ?>" value="<?php echo esc_attr( $key ); ?>" <?php checked( $m['template'], $key ); ?> /><span class="mnhp-template-art mnhp-art-<?php echo esc_attr( $t['layout'] ); ?><?php echo ! empty( $t['dark'] ) ? ' is-dark' : ''; ?>" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="mnhp-template-name"><?php echo esc_html( $t['label'] ); ?></span></label>
+			<details class="mnhp-more">
+				<summary><?php esc_html_e( 'Icon, badge and visibility', 'manohara-menu-design-pro' ); ?></summary>
+				<div class="mnhp-grid">
+					<label><?php esc_html_e( 'Icon', 'manohara-menu-design-pro' ); ?>
+						<span class="mnhp-icon-pick"><input type="text" class="mnhp-icon-value widefat code" name="<?php echo esc_attr( $n( 'icon' ) ); ?>" value="<?php echo esc_attr( $s['icon'] ); ?>" placeholder="svg:star, dashicons-cart, fa-solid fa-truck" /><button type="button" class="button mnhp-icon-open"><?php esc_html_e( 'Choose', 'manohara-menu-design-pro' ); ?></button></span>
+					</label>
+					<label><?php esc_html_e( 'Image', 'manohara-menu-design-pro' ); ?>
+						<span class="mnhp-media"><input type="hidden" name="<?php echo esc_attr( $n( 'image' ) ); ?>" value="<?php echo (int) $s['image']; ?>" /><span class="mnhp-thumb"><?php echo $s['image'] ? wp_get_attachment_image( (int) $s['image'], array( 48, 48 ) ) : ''; ?></span><button type="button" class="button mnhp-media-open"><?php esc_html_e( 'Choose', 'manohara-menu-design-pro' ); ?></button> <button type="button" class="button-link mnhp-media-clear"><?php esc_html_e( 'Remove', 'manohara-menu-design-pro' ); ?></button></span>
+					</label>
+					<label><?php esc_html_e( 'Badge', 'manohara-menu-design-pro' ); ?>
+						<span class="mnhp-inline"><input type="text" class="widefat" name="<?php echo esc_attr( $n( 'badge' ) ); ?>" value="<?php echo esc_attr( $s['badge'] ); ?>" placeholder="<?php esc_attr_e( 'New, Popular, -20%', 'manohara-menu-design-pro' ); ?>" /><input type="color" name="<?php echo esc_attr( $n( 'badge_color' ) ); ?>" value="<?php echo esc_attr( $s['badge_color'] ); ?>" /></span>
+					</label>
+					<div>
+						<label class="mnhp-check"><input type="checkbox" name="<?php echo esc_attr( $n( 'show_desc' ) ); ?>" value="1" <?php checked( $s['show_desc'] ); ?> /> <?php esc_html_e( 'Show the description under the label', 'manohara-menu-design-pro' ); ?></label>
+						<span class="mnhp-label"><?php esc_html_e( 'Hide on', 'manohara-menu-design-pro' ); ?></span>
+						<?php
+						foreach ( array(
+							'desktop' => __( 'Desktop', 'manohara-menu-design-pro' ),
+							'tablet'  => __( 'Tablet', 'manohara-menu-design-pro' ),
+							'mobile'  => __( 'Mobile', 'manohara-menu-design-pro' ),
+						) as $dev => $label ) :
+							?>
+							<label class="mnhp-check"><input type="checkbox" name="<?php echo esc_attr( $n( 'hide' ) . '[' . $dev . ']' ); ?>" value="1" <?php checked( in_array( $dev, $s['hide'], true ) ); ?> /> <?php echo esc_html( $label ); ?></label>
 						<?php endforeach; ?>
 					</div>
-					<div class="mnhp-grid">
-						<label><?php esc_html_e( 'Content', 'manohara-menu-design-pro' ); ?>
-							<select name="<?php echo esc_attr( $mn( 'source' ) ); ?>" class="mnhp-source">
-								<option value="menu" <?php selected( $m['source'], 'menu' ); ?>><?php esc_html_e( 'This item\'s submenu, in the template above', 'manohara-menu-design-pro' ); ?></option>
-								<option value="builder" <?php selected( $m['source'], 'builder' ); ?>><?php esc_html_e( 'Grid builder (rows, columns, blocks)', 'manohara-menu-design-pro' ); ?></option>
-								<option value="block" <?php selected( $m['source'], 'block' ); ?>><?php esc_html_e( 'A synced pattern from the block editor', 'manohara-menu-design-pro' ); ?></option>
-								<option value="elementor" <?php selected( $m['source'], 'elementor' ); ?>><?php esc_html_e( 'An Elementor template', 'manohara-menu-design-pro' ); ?></option>
-							</select>
-						</label>
-						<label class="mnhp-src mnhp-src-block mnhp-src-elementor"><?php esc_html_e( 'Pattern or template', 'manohara-menu-design-pro' ); ?>
-							<select name="<?php echo esc_attr( $mn( 'template_id' ) ); ?>">
-								<option value="0">—</option>
-								<?php foreach ( MNHP_Mega::saved_templates() as $tid => $tlabel ) : ?>
-									<option value="<?php echo (int) $tid; ?>" <?php selected( (int) $m['template_id'], (int) $tid ); ?>><?php echo esc_html( $tlabel ); ?></option>
-								<?php endforeach; ?>
-							</select>
-						</label>
-						<label><?php esc_html_e( 'Panel width', 'manohara-menu-design-pro' ); ?>
-							<span class="mnhp-inline"><select name="<?php echo esc_attr( $mn( 'width' ) ); ?>">
-								<option value="container" <?php selected( $m['width'], 'container' ); ?>><?php esc_html_e( 'Content width', 'manohara-menu-design-pro' ); ?></option>
-								<option value="full" <?php selected( $m['width'], 'full' ); ?>><?php esc_html_e( 'Full screen width', 'manohara-menu-design-pro' ); ?></option>
-								<option value="custom" <?php selected( $m['width'], 'custom' ); ?>><?php esc_html_e( 'Fixed (px)', 'manohara-menu-design-pro' ); ?></option>
-							</select><input type="number" min="240" max="2400" class="small-text" name="<?php echo esc_attr( $mn( 'width_px' ) ); ?>" value="<?php echo (int) $m['width_px']; ?>" /></span>
-						</label>
-						<label><?php esc_html_e( 'Columns', 'manohara-menu-design-pro' ); ?>
-							<input type="number" min="0" max="6" class="small-text" name="<?php echo esc_attr( $mn( 'columns' ) ); ?>" value="<?php echo (int) $m['columns']; ?>" /> <span class="description"><?php esc_html_e( '0 = the design\'s own', 'manohara-menu-design-pro' ); ?></span>
-						</label>
-					</div>
-					<details class="mnhp-extra"><summary><?php esc_html_e( 'Intro, buttons, promo card and footer strip (templates that show them)', 'manohara-menu-design-pro' ); ?></summary>
-						<div class="mnhp-grid">
-							<label><?php esc_html_e( 'Intro title', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'intro_title' ) ); ?>" value="<?php echo esc_attr( $m['intro_title'] ); ?>" /></label>
-							<label><?php esc_html_e( 'Intro text', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'intro_text' ) ); ?>" value="<?php echo esc_attr( $m['intro_text'] ); ?>" /></label>
-							<label><?php esc_html_e( 'Button 1', 'manohara-menu-design-pro' ); ?><span class="mnhp-inline"><input type="text" placeholder="<?php esc_attr_e( 'Text', 'manohara-menu-design-pro' ); ?>" name="<?php echo esc_attr( $mn( 'btn1_text' ) ); ?>" value="<?php echo esc_attr( $m['btn1_text'] ); ?>" /><input type="text" placeholder="https://" name="<?php echo esc_attr( $mn( 'btn1_url' ) ); ?>" value="<?php echo esc_attr( $m['btn1_url'] ); ?>" /></span></label>
-							<label><?php esc_html_e( 'Button 2', 'manohara-menu-design-pro' ); ?><span class="mnhp-inline"><input type="text" placeholder="<?php esc_attr_e( 'Text', 'manohara-menu-design-pro' ); ?>" name="<?php echo esc_attr( $mn( 'btn2_text' ) ); ?>" value="<?php echo esc_attr( $m['btn2_text'] ); ?>" /><input type="text" placeholder="https://" name="<?php echo esc_attr( $mn( 'btn2_url' ) ); ?>" value="<?php echo esc_attr( $m['btn2_url'] ); ?>" /></span></label>
-							<label><?php esc_html_e( 'Promo image', 'manohara-menu-design-pro' ); ?><span class="mnhp-media"><input type="hidden" name="<?php echo esc_attr( $mn( 'promo_image' ) ); ?>" value="<?php echo (int) $m['promo_image']; ?>" /><span class="mnhp-thumb"><?php echo $m['promo_image'] ? wp_get_attachment_image( (int) $m['promo_image'], array( 48, 48 ) ) : ''; ?></span><button type="button" class="button mnhp-media-open"><?php esc_html_e( 'Choose', 'manohara-menu-design-pro' ); ?></button> <button type="button" class="button-link mnhp-media-clear"><?php esc_html_e( 'Remove', 'manohara-menu-design-pro' ); ?></button></span></label>
-							<label><?php esc_html_e( 'Promo title', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'promo_title' ) ); ?>" value="<?php echo esc_attr( $m['promo_title'] ); ?>" /></label>
-							<label><?php esc_html_e( 'Promo text', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'promo_text' ) ); ?>" value="<?php echo esc_attr( $m['promo_text'] ); ?>" /></label>
-							<label><?php esc_html_e( 'Promo price', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'promo_price' ) ); ?>" value="<?php echo esc_attr( $m['promo_price'] ); ?>" placeholder="<?php esc_attr_e( 'Starting at $11.99', 'manohara-menu-design-pro' ); ?>" /></label>
-							<label><?php esc_html_e( 'Promo button', 'manohara-menu-design-pro' ); ?><span class="mnhp-inline"><input type="text" placeholder="<?php esc_attr_e( 'Text', 'manohara-menu-design-pro' ); ?>" name="<?php echo esc_attr( $mn( 'promo_btn' ) ); ?>" value="<?php echo esc_attr( $m['promo_btn'] ); ?>" /><input type="text" placeholder="https://" name="<?php echo esc_attr( $mn( 'promo_url' ) ); ?>" value="<?php echo esc_attr( $m['promo_url'] ); ?>" /></span></label>
-							<label><?php esc_html_e( 'Footer strip', 'manohara-menu-design-pro' ); ?><input type="text" class="widefat" name="<?php echo esc_attr( $mn( 'foot_text' ) ); ?>" value="<?php echo esc_attr( $m['foot_text'] ); ?>" /></label>
-							<label><?php esc_html_e( 'Footer button', 'manohara-menu-design-pro' ); ?><span class="mnhp-inline"><input type="text" placeholder="<?php esc_attr_e( 'Text', 'manohara-menu-design-pro' ); ?>" name="<?php echo esc_attr( $mn( 'foot_btn' ) ); ?>" value="<?php echo esc_attr( $m['foot_btn'] ); ?>" /><input type="text" placeholder="https://" name="<?php echo esc_attr( $mn( 'foot_url' ) ); ?>" value="<?php echo esc_attr( $m['foot_url'] ); ?>" /></span></label>
-						</div>
-					</details>
-					<div class="mnhp-src mnhp-src-builder">
-						<textarea class="mnhp-builder-data" name="<?php echo esc_attr( $mn( 'builder' ) ); ?>" hidden><?php echo esc_textarea( (string) $m['builder'] ); ?></textarea>
-						<div class="mnhp-builder"></div>
-					</div>
 				</div>
-			</div>
+				<p class="description"><?php esc_html_e( 'Icons, badges and descriptions show in menus drawn by Manohara and in the “Menu links” block.', 'manohara-menu-design-pro' ); ?></p>
+			</details>
 		</div>
 		<?php
+	}
+
+	/**
+	 * What a menu item can open: mega menus, Elementor templates, synced patterns.
+	 *
+	 * @return array Groups: label, items (ID => label, edit).
+	 */
+	public static function panel_choices() {
+		static $out = null;
+		if ( null !== $out ) {
+			return $out;
+		}
+		$out   = array();
+		$types = array(
+			MNHP_Panels::TYPE => __( 'Mega menus', 'manohara-menu-design-pro' ),
+		);
+		if ( post_type_exists( 'elementor_library' ) ) {
+			$types['elementor_library'] = __( 'Elementor templates', 'manohara-menu-design-pro' );
+		}
+		$types['wp_block'] = __( 'Synced patterns', 'manohara-menu-design-pro' );
+		foreach ( $types as $type => $label ) {
+			$posts = get_posts(
+				array(
+					'post_type'      => $type,
+					'post_status'    => array( 'publish', 'draft', 'pending', 'future', 'private' ),
+					'posts_per_page' => 200,
+					'orderby'        => 'title',
+					'order'          => 'ASC',
+					'no_found_rows'  => true,
+				)
+			);
+			$items = array();
+			foreach ( $posts as $p ) {
+				$name = '' !== $p->post_title ? $p->post_title : '#' . $p->ID;
+				if ( 'publish' !== $p->post_status ) {
+					/* translators: %s: mega menu name. */
+					$name = sprintf( __( '%s (not published)', 'manohara-menu-design-pro' ), $name );
+				}
+				$elementor       = 'elementor_library' === $type || MNHP_Panels::built_with_elementor( $p->ID );
+				$items[ $p->ID ] = array(
+					'label' => $name,
+					'edit'  => admin_url( 'post.php?post=' . (int) $p->ID . '&action=' . ( $elementor ? 'elementor' : 'edit' ) ),
+				);
+			}
+			$out[] = array(
+				'label' => $label,
+				'items' => $items,
+			);
+		}
+		return $out;
+	}
+
+	/**
+	 * Link a mega menu to an item (from "Create new").
+	 *
+	 * @param int $item  Item.
+	 * @param int $panel Panel.
+	 */
+	public static function set_panel( $item, $panel ) {
+		$s          = get_post_meta( (int) $item, self::META, true );
+		$s          = is_array( $s ) ? $s : array();
+		$s['panel'] = (int) $panel;
+		update_post_meta( (int) $item, self::META, wp_slash( $s ) );
+		MNHP_Panels::refresh_in_use();
+	}
+
+	/**
+	 * Names of the menu items that show a mega menu.
+	 *
+	 * @param int $panel Panel.
+	 * @return string[]
+	 */
+	public static function items_using( $panel ) {
+		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Admin screens only.
+		$rows = $wpdb->get_results( $wpdb->prepare( "SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s", self::META ) );
+		$out  = array();
+		foreach ( $rows as $r ) {
+			$v = maybe_unserialize( $r->meta_value );
+			if ( is_array( $v ) && ! empty( $v['panel'] ) && (int) $v['panel'] === (int) $panel && 'nav_menu_item' === get_post_type( (int) $r->post_id ) ) {
+				$title = get_the_title( (int) $r->post_id );
+				if ( '' === $title ) {
+					$item  = wp_setup_nav_menu_item( get_post( (int) $r->post_id ) );
+					$title = $item ? $item->title : '#' . $r->post_id;
+				}
+				$menus = wp_get_object_terms( (int) $r->post_id, 'nav_menu', array( 'fields' => 'names' ) );
+				$out[] = $title . ( $menus && ! is_wp_error( $menus ) ? ' (' . $menus[0] . ')' : '' );
+			}
+		}
+		return $out;
 	}
 
 	/**
@@ -264,35 +278,28 @@ class MNHP_Items {
 		if ( empty( $_POST['mnhp'][ $id ]['sent'] ) ) {
 			return;
 		}
-		$in   = wp_unslash( $_POST['mnhp'][ $id ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value cleaned below.
-		$d    = self::defaults();
-		$mega = isset( $in['mega'] ) && is_array( $in['mega'] ) ? $in['mega'] : array();
-		$out  = array(
+		$in    = wp_unslash( $_POST['mnhp'][ $id ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Each value cleaned below.
+		$d     = self::defaults();
+		$old   = self::get( $id );
+		$panel = isset( $in['panel'] ) ? absint( $in['panel'] ) : 0;
+		$was   = isset( $in['panel_was'] ) ? absint( $in['panel_was'] ) : 0;
+		if ( $panel === $was ) {
+			// Unchanged here: keep a mega menu linked meanwhile with "Create new" in another tab.
+			$panel = (int) $old['panel'];
+		}
+		if ( $panel && ! in_array( get_post_type( $panel ), array( MNHP_Panels::TYPE, 'elementor_library', 'wp_block' ), true ) ) {
+			$panel = 0;
+		}
+		$out = array(
 			'icon'        => self::clean_icon( isset( $in['icon'] ) ? $in['icon'] : '' ),
 			'image'       => isset( $in['image'] ) ? absint( $in['image'] ) : 0,
 			'badge'       => isset( $in['badge'] ) ? substr( sanitize_text_field( $in['badge'] ), 0, 30 ) : '',
 			'badge_color' => isset( $in['badge_color'] ) && sanitize_hex_color( $in['badge_color'] ) ? sanitize_hex_color( $in['badge_color'] ) : $d['badge_color'],
 			'show_desc'   => empty( $in['show_desc'] ) ? 0 : 1,
 			'hide'        => array_values( array_intersect( isset( $in['hide'] ) && is_array( $in['hide'] ) ? array_keys( array_filter( $in['hide'] ) ) : array(), array( 'desktop', 'tablet', 'mobile' ) ) ),
-			'mega'        => array(
-				'on'          => empty( $mega['on'] ) ? 0 : 1,
-				'template'    => isset( $mega['template'] ) && isset( MNHP_Mega::templates()[ $mega['template'] ] ) ? $mega['template'] : $d['mega']['template'],
-				'source'      => isset( $mega['source'] ) && in_array( $mega['source'], array( 'menu', 'builder', 'block', 'elementor' ), true ) ? $mega['source'] : 'menu',
-				'width'       => isset( $mega['width'] ) && in_array( $mega['width'], array( 'container', 'full', 'custom' ), true ) ? $mega['width'] : 'container',
-				'width_px'    => isset( $mega['width_px'] ) ? max( 240, min( 2400, absint( $mega['width_px'] ) ) ) : 960,
-				'columns'     => isset( $mega['columns'] ) ? min( 6, absint( $mega['columns'] ) ) : 0,
-				'promo_image' => isset( $mega['promo_image'] ) ? absint( $mega['promo_image'] ) : 0,
-				'template_id' => isset( $mega['template_id'] ) ? absint( $mega['template_id'] ) : 0,
-				'builder'     => isset( $mega['builder'] ) ? MNHP_Mega::clean_builder( (string) $mega['builder'] ) : '',
-			),
+			'panel'       => $panel,
 		);
-		foreach ( array( 'intro_title', 'intro_text', 'btn1_text', 'btn2_text', 'promo_title', 'promo_text', 'promo_price', 'promo_btn', 'foot_text', 'foot_btn' ) as $k ) {
-			$out['mega'][ $k ] = isset( $mega[ $k ] ) ? sanitize_text_field( $mega[ $k ] ) : '';
-		}
-		foreach ( array( 'btn1_url', 'btn2_url', 'promo_url', 'foot_url' ) as $k ) {
-			$out['mega'][ $k ] = isset( $mega[ $k ] ) ? esc_url_raw( trim( (string) $mega[ $k ] ) ) : '';
-		}
-		update_post_meta( (int) $id, self::META, wp_slash( $out ) ); // Meta functions strip slashes; the builder JSON keeps its own.
+		update_post_meta( (int) $id, self::META, wp_slash( $out ) );
 	}
 
 	/**

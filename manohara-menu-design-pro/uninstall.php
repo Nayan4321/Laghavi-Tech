@@ -12,3 +12,5 @@ delete_option( 'mnhp_license' );
 delete_transient( 'mnhp_update_info' );
 wp_clear_scheduled_hook( 'mnhp_daily' );
 delete_post_meta_by_key( '_mnhp_item' );
+delete_option( 'mnhp_panels_in_use' );
+// Mega menus are the site owner's content (like pages) and stay; delete them in Appearance › Mega Menus first if wanted.

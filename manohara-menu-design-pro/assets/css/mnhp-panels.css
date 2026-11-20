@@ -1,0 +1,99 @@
+/* Manohara Menu Design Pro – mega menus in any theme's menu, the "Tabs" group style and the "Menu links" block. */
+
+/* Panel inside a theme menu item. Hidden until opened; the script places it under the header. */
+.mnhp-has-panel{position:relative}
+.mnhp-has-panel>.sub-menu,.mnhp-has-panel>.dropdown-menu,.mnhp-has-panel>ul.children{display:none!important}
+.mnhp-panel{display:none;position:absolute;top:100%;left:0;z-index:99990;box-sizing:border-box;width:min(var(--mnhp-pmax,1200px),100vw);max-width:100vw;text-align:start;line-height:1.5;color:#111827;white-space:normal;font-weight:400;letter-spacing:normal;text-transform:none}
+.mnhp-panel-body{background:#fff;border-radius:0 0 12px 12px;overflow:hidden}
+.mnhp-panel.mnhp-shadow .mnhp-panel-body{box-shadow:0 18px 40px -12px rgba(15,23,42,.25),0 2px 6px rgba(15,23,42,.06)}
+.mnhp-panel.mnhp-pw-full .mnhp-panel-body{border-radius:0}
+.mnhp-panel::before{content:"";position:absolute;left:0;right:0;bottom:100%;height:var(--mnhp-bridge,0px)}
+.mnhp-has-panel.mnhp-open>.mnhp-panel{display:block;animation:mnhp-in .16s ease-out}
+@keyframes mnhp-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.mnhp-has-panel.mnhp-open>.mnhp-panel{animation:none}}
+/* Without the script: open on hover and keyboard focus. */
+html:not(.mnhp-js) .mnhp-has-panel:hover>.mnhp-panel,html:not(.mnhp-js) .mnhp-has-panel:focus-within>.mnhp-panel{display:block}
+/*
+ * Themes style everything inside their menu (links, list items, buttons). Inside a mega menu those
+ * styles are undone, so the panel looks as it does in the editor.
+ */
+.mnhp-panel.mnhp-panel .mnhp-panel-body :where(a:not(.wp-block-button__link),li,ul,ol,button,span:not(.mnhp-ml-ico)){all:revert}
+.mnhp-panel.mnhp-panel .mnhp-panel-body :where(a:not(.wp-block-button__link)){color:inherit;text-decoration:none;font:inherit}
+.mnhp-panel.mnhp-panel .mnhp-panel-body :where(a:not(.wp-block-button__link)):hover{text-decoration:underline}
+.mnhp-panel.mnhp-panel .mnhp-panel-body .wp-block-button__link:hover{text-decoration:none;filter:brightness(1.08)}
+.mnhp-panel.mnhp-panel .mnhp-panel-body :is(ul,ol){margin-top:0}
+.mnhp-panel.mnhp-panel .mnhp-panel-body :is(h1,h2,h3,h4,h5,h6,p){position:static;float:none;transform:none}
+.mnhp-panel.mnhp-panel .mnhp-panel-body :is(.is-layout-constrained,.wp-block-group__inner-container,.mnhp-starter)>*{max-width:none!important;margin-left:0!important;margin-right:0!important}
+.mnhp-panel .wp-block-columns{margin-bottom:0}
+.mnhp-panel img{max-width:100%;height:auto}
+
+/* Inside menus drawn by Manohara, which place and style the dropdown themselves. */
+.mnhp-panel.mnhp-panel-inline{display:block;position:static;width:auto;max-width:none;animation:none}
+.mnhp-panel-inline>.mnhp-panel-body{background:transparent;border-radius:0;box-shadow:none!important}
+
+/* Arrow after the label, and the button that opens the panel on phones. */
+.mnhp-caret{display:inline-block;width:.42em;height:.42em;margin-inline-start:.4em;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-.2em) rotate(45deg);transition:transform .2s;vertical-align:middle}
+.mnhp-open>a .mnhp-caret{transform:translateY(0) rotate(-135deg)}
+.mnhp-panel-toggle{display:none}
+.screen-reader-text{border:0;clip:rect(1px,1px,1px,1px);clip-path:inset(50%);height:1px;margin:-1px;overflow:hidden;padding:0;position:absolute!important;width:1px;word-wrap:normal!important}
+
+/* Phones and tablets: the panel opens inside the menu, under its item. */
+html.mnhp-mobile .mnhp-panel{position:static!important;width:auto!important;max-width:none;transform:none!important;left:auto!important;top:auto!important}
+html.mnhp-mobile .mnhp-panel::before{display:none}
+html.mnhp-mobile .mnhp-panel-body{border-radius:10px;box-shadow:none!important;margin:6px 0 10px}
+html.mnhp-mobile .mnhp-panel .wp-block-columns{flex-wrap:wrap!important}
+html.mnhp-mobile .mnhp-panel .wp-block-column{flex-basis:100%!important}
+html.mnhp-mobile .mnhp-panel .mnhp-starter{padding:18px!important}
+html.mnhp-mobile .mnhp-has-panel>a .mnhp-caret{display:none}
+html.mnhp-mobile .mnhp-has-panel>button.mnhp-panel-toggle.mnhp-panel-toggle{display:inline-flex;align-items:center;justify-content:center;position:absolute;top:0;inset-inline-end:0;width:44px;height:44px;margin:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none;color:inherit;cursor:pointer}
+html.mnhp-mobile .mnhp-panel-toggle::after{content:"";width:9px;height:9px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s}
+html.mnhp-mobile .mnhp-open>.mnhp-panel-toggle::after{transform:translateY(2px) rotate(-135deg)}
+
+/* Starters (block content). */
+.mnhp-starter{box-sizing:border-box;max-width:none!important}
+.mnhp-starter .wp-block-group{box-sizing:border-box}
+.mnhp-starter .wp-block-heading{line-height:1.3}
+.mnhp-starter .wp-block-heading a,.mnhp-s-links a{color:inherit}
+.mnhp-panel.mnhp-panel .mnhp-s-links,.mnhp-s-links{list-style:none;padding-left:0!important;margin:0}
+.mnhp-panel.mnhp-panel .mnhp-s-links li,.mnhp-s-links li{margin:0;list-style:none}
+.mnhp-starter .wp-block-buttons{gap:8px}
+
+/* "Tabs (mega menu)" group style: each inner group is a tab, its first heading the tab name. */
+.mnhp-tabs-ready{display:grid!important;grid-template-columns:minmax(150px,220px) 1fr;gap:24px;align-items:start}
+.mnhp-tabs-list{display:flex;flex-direction:column;gap:4px;margin:0;padding:0 16px 0 0;border-right:1px solid #e5e7eb}
+.mnhp-panel.mnhp-panel.mnhp-panel .mnhp-tabs-list button.mnhp-tab-btn,.mnhp-tabs-list button.mnhp-tab-btn{all:unset;background:transparent;--mnh-b-bg:transparent;--mnh-b-color:#374151;box-sizing:border-box;display:block;width:100%;padding:9px 12px;border-radius:8px;font-size:14px;font-weight:600;color:#374151;cursor:pointer}
+.mnhp-panel.mnhp-panel.mnhp-panel .mnhp-tabs-list button.mnhp-tab-btn:hover,.mnhp-tabs-list button.mnhp-tab-btn:hover{--mnh-b-bg:#f3f4f6;background:#f3f4f6}
+.mnhp-panel.mnhp-panel.mnhp-panel .mnhp-tabs-list button.mnhp-tab-btn[aria-selected="true"],.mnhp-tabs-list button.mnhp-tab-btn[aria-selected="true"]{--mnh-b-bg:#eff6ff;--mnh-b-color:#1d4ed8;background:#eff6ff;color:#1d4ed8}
+.mnhp-tabs-list button.mnhp-tab-btn:focus-visible{outline:2px solid #2563eb;outline-offset:1px}
+.mnhp-tabs-ready>.mnhp-tab-pane{margin:0!important;grid-column:2;grid-row:1}
+.mnhp-tabs-ready>.mnhp-tab-pane[hidden]{display:none!important}
+.mnhp-tab-pane .mnhp-tab-label{display:none}
+html.mnhp-mobile .mnhp-tabs-ready{grid-template-columns:1fr}
+html.mnhp-mobile .mnhp-tabs-list{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid #e5e7eb;padding:0 0 8px}
+html.mnhp-mobile .mnhp-tabs-ready>.mnhp-tab-pane{grid-column:1;grid-row:2}
+
+/* "Menu links" block. */
+.mnhp-ml{display:grid;grid-template-columns:repeat(var(--mnhp-ml-cols,4),minmax(0,1fr));gap:22px 28px}
+.mnhp-ml-group{min-width:0}
+.mnhp-panel.mnhp-panel .mnhp-ml-head,.mnhp-ml-head{display:flex;align-items:center;gap:8px;font-weight:600;font-size:15px;color:inherit;margin-bottom:6px}
+.mnhp-ml-desc{margin:0 0 8px;font-size:13px;color:#6b7280}
+.mnhp-panel.mnhp-panel .mnhp-ml-links,.mnhp-ml-links{list-style:none;margin:0;padding:0}
+.mnhp-panel.mnhp-panel .mnhp-ml-links a,.mnhp-ml-links a{display:flex;align-items:center;gap:8px;padding:5px 0;font-size:14px;color:inherit}
+.mnhp-ml-ico{display:inline-flex;width:18px;height:18px;flex:none}
+.mnhp-ml-ico svg,.mnhp-ml-ico img{width:100%;height:100%}
+.mnhp-ml-cards .mnhp-ml-group{padding:16px;border-radius:12px;background:#f8fafc}
+.mnhp-ml-cards .mnhp-ml-ico{width:22px;height:22px}
+.mnhp-ml-list .mnhp-panel.mnhp-panel .mnhp-ml-head,.mnhp-ml-head{font-size:13px;text-transform:uppercase;letter-spacing:.05em;color:#6b7280}
+html.mnhp-mobile .mnhp-ml{grid-template-columns:1fr 1fr}
+@media (max-width:480px){.mnhp-ml{grid-template-columns:1fr}}
+
+/* Preview page for editors. */
+body.mnhp-view{background:#e5e7eb;margin:0}
+.mnhp-view-note{margin:0;padding:10px 20px;background:#111827;color:#fff;font:14px/1.4 system-ui,sans-serif}
+.mnhp-view-stage{padding:0 0 60px;display:flex;justify-content:center}
+.mnhp-panel.mnhp-static{display:block;position:static;margin:0 auto}
+
+/* Block editor of a mega menu: full width, as on the site. */
+.editor-styles-wrapper .is-root-container>.mnhp-starter,.editor-styles-wrapper .mnhp-starter :is(.is-layout-constrained,.wp-block-group__inner-container)>*{max-width:none!important;margin-left:0!important;margin-right:0!important}
+.editor-styles-wrapper .is-root-container>*{max-width:none}
+.editor-styles-wrapper .mnhp-starter a:not(.wp-block-button__link){text-decoration:none;color:inherit}

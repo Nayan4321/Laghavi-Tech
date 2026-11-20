@@ -276,3 +276,6 @@ html[dir=rtl] .mnhp-burger-short .mnh-burger i:nth-child(3){right:0;left:11px}
 .mnh-device-logo img,.mnhp-device-logo img{max-height:44px;width:auto}
 
 @media (prefers-reduced-motion:reduce){.mnhp-pane{animation:none}.mnhp-reveal{transition:none}}
+
+/* Mega menus from Appearance › Mega Menus bring their own spacing and colours. */
+.mnhp-mega.mnhp-tpl-saved{padding:0;background:transparent}

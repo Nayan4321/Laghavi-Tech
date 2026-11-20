@@ -3,7 +3,7 @@
  * Plugin Name:       Manohara Menu Design Pro
  * Plugin URI:        https://laghavi.site/manohara-menu-design/
  * Description:       Pro add-on for Manohara Menu Design: mega menus with 19 ready designs, tabs, a drag-and-drop grid builder and block editor or Elementor templates, icons, images and badges on menu items, WooCommerce cart, products and categories, sticky, shrinking and hide-on-scroll headers, menu button styles, mobile logos, swipe to close, tap to open, and hiding theme elements per device. Works with multilingual sites.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Requires Plugins:  manohara-menu-design
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MNHP_VERSION', '1.0.0' );
+define( 'MNHP_VERSION', '1.1.0' );
 define( 'MNHP_FILE', __FILE__ );
 define( 'MNHP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MNHP_URL', plugin_dir_url( __FILE__ ) );
@@ -34,6 +34,7 @@ require_once MNHP_DIR . 'includes/class-mnhp-license.php';
 require_once MNHP_DIR . 'includes/class-mnhp-icons.php';
 require_once MNHP_DIR . 'includes/class-mnhp-i18n.php';
 require_once MNHP_DIR . 'includes/class-mnhp-items.php';
+require_once MNHP_DIR . 'includes/class-mnhp-panels.php';
 require_once MNHP_DIR . 'includes/class-mnhp-mega.php';
 require_once MNHP_DIR . 'includes/class-mnhp-features.php';
 require_once MNHP_DIR . 'includes/class-mnhp-woo.php';
@@ -55,6 +56,7 @@ add_action(
 		}
 
 		MNHP_Items::init();
+		MNHP_Panels::init();
 		MNHP_Mega::init();
 		MNHP_Features::init();
 		MNHP_Woo::init();

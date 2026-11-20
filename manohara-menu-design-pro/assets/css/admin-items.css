@@ -1,53 +1,23 @@
-/* Manohara Menu Design Pro – menu item settings and the grid builder. */
-.mnhp-fields{clear:both;margin:10px 0 6px;padding:12px;border:1px solid #dcdcde;border-radius:6px;background:#fbfbfc;box-sizing:border-box}
-.mnhp-title{margin:0 0 10px!important;font-weight:600;color:#1d2327}
-.mnhp-grid,.mnhp-device-fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px 14px;margin-bottom:10px}
-.mnhp-grid label,.mnhp-device-fields label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:#50575e}
-.mnhp-device-fields .mnhp-wide{grid-column:1/-1}
-.mnhp-grid label.mnhp-check,.mnhp-device-fields label.mnh-check,.mnhp-fields .mnhp-check{flex-direction:row;align-items:center;gap:6px;margin:2px 0;color:#1d2327}
-.mnhp-label{display:block;font-size:12px;color:#50575e;margin:2px 0}
-.mnhp-inline,.mnhp-icon-pick,.mnhp-media{display:flex;align-items:center;gap:6px}
-.mnhp-inline input[type=text],.mnhp-inline input[type=url]{flex:1;min-width:0}
-.mnhp-thumb img{display:block;width:32px;height:32px;object-fit:cover;border-radius:4px}
-.mnhp-icon-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));gap:4px;max-height:200px;overflow:auto;margin:6px 0 10px;padding:8px;border:1px solid #dcdcde;border-radius:6px;background:#fff}
-.mnhp-icon-btn{display:flex;align-items:center;justify-content:center;height:36px;border:1px solid #e0e0e0;border-radius:6px;background:#fff;cursor:pointer;color:#1d2327}
-.mnhp-icon-btn:hover{border-color:#2271b1;color:#2271b1}
-.mnhp-icon-btn svg{pointer-events:none}
-.mnhp-icon-img,.mnhp-icon-none{grid-column:span 3;font-size:12px}
-.mnhp-mega-box{margin-top:6px;padding-top:10px;border-top:1px solid #e0e0e0}
-.menu-item:not(.menu-item-depth-0) .mnhp-mega-box{display:none}
-.mnhp-mega-on{margin-bottom:10px!important;flex-wrap:wrap}
-.mnhp-templates{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin-bottom:12px}
-.mnhp-template{position:relative;display:flex;flex-direction:column;gap:4px;padding:6px;border:1px solid #dcdcde;border-radius:6px;background:#fff;cursor:pointer;font-size:11px;line-height:1.3}
-.mnhp-template input{position:absolute;opacity:0}
-.mnhp-template:has(input:checked){border-color:#2271b1;box-shadow:0 0 0 1px #2271b1}
-.mnhp-template-art{display:grid;gap:3px;height:44px;padding:4px;border-radius:4px;background:#f0f0f1}
-.mnhp-template-art i{display:block;border-radius:2px;background:#c3c4c7}
-.mnhp-art-columns{grid-template-columns:repeat(4,1fr)}
-.mnhp-art-cards{grid-template-columns:repeat(2,1fr);grid-template-rows:1fr 1fr}
-.mnhp-art-cards i{background:#a7aaad}
-.mnhp-art-tabs{grid-template-columns:1fr 3fr;grid-template-rows:repeat(3,1fr)}
-.mnhp-art-tabs i:first-child{grid-row:span 3;background:#8c8f94}
-.mnhp-art-tabs i:nth-child(4){display:none}
-.mnhp-template-art.is-dark{background:#1d2327}
-.mnhp-template-art.is-dark i{background:#50575e}
-.mnhp-extra{margin:6px 0 10px}
-.mnhp-extra summary{cursor:pointer;font-size:12px;color:#2271b1;margin-bottom:8px}
-
-/* Grid builder. */
-.mnhp-builder{display:flex;flex-direction:column;gap:8px}
-.mnhp-b-row{padding:8px;border:1px dashed #8c8f94;border-radius:6px;background:#fff}
-.mnhp-b-row.is-dragging,.mnhp-b-block.is-dragging{opacity:.45}
-.mnhp-b-row-head,.mnhp-b-col-head,.mnhp-b-block-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.mnhp-b-row-head .mnhp-b-del-row,.mnhp-b-col-head .mnhp-b-del-col,.mnhp-b-block-head .mnhp-b-del{margin-inline-start:auto;font-size:18px;line-height:1;color:#b32d2e;text-decoration:none}
-.mnhp-b-drag{cursor:grab;color:#8c8f94;letter-spacing:-2px;user-select:none}
-.mnhp-b-cols{display:flex;gap:8px;align-items:flex-start}
-.mnhp-b-col{flex:3 1 0;min-width:120px;padding:6px;border:1px solid #dcdcde;border-radius:4px;background:#f6f7f7}
-.mnhp-b-blocks{display:flex;flex-direction:column;gap:6px;min-height:28px;margin-bottom:6px}
-.mnhp-b-block{padding:6px;border:1px solid #c3c4c7;border-radius:4px;background:#fff}
-.mnhp-b-block-head strong{font-size:12px}
-.mnhp-b-fields{display:flex;flex-direction:column;gap:4px}
-.mnhp-b-fields label{display:flex;flex-direction:column;gap:2px;font-size:11px;color:#50575e}
-.mnhp-b-fields input,.mnhp-b-fields select,.mnhp-b-fields textarea{width:100%;font-size:12px}
-.mnhp-b-add-block{width:100%;font-size:12px}
-.mnhp-b-tools{margin:8px 0 0}
+/* Manohara Pro settings under each item in Appearance › Menus. */
+.mnhp-fields{margin:10px 0 6px;padding:10px 12px;border:1px solid #dcdcde;border-radius:6px;background:#f6f7f7;box-sizing:border-box}
+.mnhp-mega-line{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.mnhp-mega-label{font-weight:600}
+.mnhp-panel-select{max-width:260px}
+.mnhp-mega-line .description{flex-basis:100%;margin:2px 0 0}
+.menu-item:not(.menu-item-depth-0) .mnhp-mega-line{display:none}
+.menu-item:not(.menu-item-depth-0) .mnhp-more{margin-top:0}
+.mnhp-more{margin-top:10px}
+.mnhp-more summary{cursor:pointer;font-weight:600;color:#2271b1}
+.mnhp-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px}
+.mnhp-grid label{display:flex;flex-direction:column;gap:4px}
+.mnhp-grid label.mnhp-check{flex-direction:row;align-items:center;gap:6px;margin:3px 10px 3px 0;display:inline-flex}
+.mnhp-label{display:block;font-weight:600;margin-top:6px}
+.mnhp-inline{display:flex;gap:6px;align-items:center}
+.mnhp-icon-pick{display:flex;gap:6px}
+.mnhp-media{display:flex;gap:6px;align-items:center}
+.mnhp-thumb img{width:32px;height:32px;object-fit:cover;border-radius:4px;display:block}
+.mnhp-icon-grid{display:grid;grid-template-columns:repeat(auto-fill,36px);gap:4px;margin-top:8px;max-height:180px;overflow:auto;padding:6px;background:#fff;border:1px solid #dcdcde;border-radius:4px}
+.mnhp-icon-btn{width:36px;height:36px;padding:6px;border:1px solid transparent;border-radius:4px;background:none;cursor:pointer}
+.mnhp-icon-btn:hover{border-color:#2271b1}
+.mnhp-icon-btn svg{width:22px;height:22px}
+@media (max-width:782px){.mnhp-grid{grid-template-columns:1fr}}
