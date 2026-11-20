@@ -171,17 +171,17 @@ class Vacanam_Woo_Sync {
 	 * same position (variations are copied in order when a product is translated).
 	 *
 	 * @param WC_Product_Variation $variation Variation.
-	 * @param int                  $parent    Translated parent product.
+	 * @param int                  $parent_id    Translated parent product.
 	 * @param string               $lang      Language.
 	 * @return int
 	 */
-	private static function counterpart( $variation, $parent, $lang ) {
+	private static function counterpart( $variation, $parent_id, $lang ) {
 		$linked = (int) Vacanam_Model::post_translation( $variation->get_id(), $lang );
-		if ( $linked && (int) wp_get_post_parent_id( $linked ) === (int) $parent ) {
+		if ( $linked && (int) wp_get_post_parent_id( $linked ) === (int) $parent_id ) {
 			return $linked;
 		}
 		$source   = wc_get_product( $variation->get_parent_id() );
-		$target   = wc_get_product( $parent );
+		$target   = wc_get_product( $parent_id );
 		$siblings = $source ? array_values( $source->get_children() ) : array();
 		$theirs   = $target ? array_values( $target->get_children() ) : array();
 		$index    = array_search( $variation->get_id(), $siblings, true );
@@ -206,17 +206,17 @@ class Vacanam_Woo_Sync {
 			return;
 		}
 		self::$running = true;
-		foreach ( $group as $lang => $parent ) {
-			if ( (int) $parent === (int) $from->get_parent_id() ) {
+		foreach ( $group as $lang => $parent_id ) {
+			if ( (int) $parent_id === (int) $from->get_parent_id() ) {
 				continue;
 			}
-			$other = self::counterpart( $from, $parent, $lang );
+			$other = self::counterpart( $from, $parent_id, $lang );
 			$to    = $other ? wc_get_product( $other ) : null;
 			if ( $to ) {
 				self::copy( $from, $to );
 				$to->save();
 				if ( class_exists( 'WC_Product_Variable' ) ) {
-					WC_Product_Variable::sync( $parent );
+					WC_Product_Variable::sync( $parent_id );
 				}
 			}
 		}
