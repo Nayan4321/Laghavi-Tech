@@ -1,6 +1,6 @@
 # Sarala User Access – Shopify app configuration.
 # client_id comes from your app in the Partner Dashboard (Apps > Sarala User Access > Client credentials).
-client_id = "PASTE_CLIENT_ID_HERE"
+client_id = "097c19467fb41a3e2edd5f70e1668599"
 name = "Sarala User Access"
 handle = "sarala-user-access"
 application_url = "https://sarala.laghavi.site"
