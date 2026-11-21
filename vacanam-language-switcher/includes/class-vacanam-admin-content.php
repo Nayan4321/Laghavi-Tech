@@ -634,8 +634,7 @@ class Vacanam_Admin_Content {
 				'post_type'      => $type,
 				'post_status'    => array( 'publish', 'draft', 'pending', 'private', 'future' ),
 				's'              => $search,
-				'posts_per_page' => 15,
-				'post__not_in'   => $exclude ? array( $exclude ) : array(),
+				'posts_per_page' => 16,
 				'lang'           => $lang,
 				'tax_query'      => array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_tax_query -- Search in one language.
 					Vacanam_Frontend::language_clause( $lang ),
@@ -645,6 +644,10 @@ class Vacanam_Admin_Content {
 		);
 		$out = array();
 		foreach ( $query->posts as $p ) {
+			// The post being edited is left out here rather than in the query.
+			if ( (int) $p->ID === (int) $exclude || count( $out ) >= 15 ) {
+				continue;
+			}
 			$out[] = array(
 				'id'    => $p->ID,
 				'title' => '' !== $p->post_title ? $p->post_title : sprintf( '#%d', $p->ID ),
@@ -712,12 +715,14 @@ class Vacanam_Admin_Content {
 					'taxonomy'   => $taxonomy,
 					'hide_empty' => false,
 					'lang'       => $slug,
-					'exclude'    => array( $term->term_id ),
-					'number'     => 500,
+					'number'     => 501,
 				)
 			);
 			echo '<tr><td>' . Vacanam_Admin::flag( $info ) . ' ' . esc_html( $info['name'] ) . '</td><td><select name="vacanam_tr[' . esc_attr( $slug ) . ']"><option value="">' . esc_html__( '— None —', 'vacanam-language-switcher' ) . '</option>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in flag().
 			foreach ( is_wp_error( $terms ) ? array() : $terms as $other ) {
+				if ( (int) $other->term_id === (int) $term->term_id ) {
+					continue; // The term being edited.
+				}
 				echo '<option value="' . esc_attr( $other->term_id ) . '" ' . selected( isset( $group[ $slug ] ) ? $group[ $slug ] : 0, $other->term_id, false ) . '>' . esc_html( $other->name ) . '</option>';
 			}
 			echo '</select> ';

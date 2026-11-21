@@ -395,7 +395,7 @@ class Vacanam_Frontend {
 			);
 		$meta = isset( $args['meta_query'] ) && is_array( $args['meta_query'] ) ? $args['meta_query'] : array();
 		if ( $meta ) {
-			$args['meta_query'] = array(
+			$args['meta_query'] = array( // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query -- Term language is stored as term meta; limited to term lists of translated taxonomies.
 				'relation' => 'AND',
 				$meta,
 				$clause,
