@@ -170,15 +170,15 @@
   <section class="ar-hero">
     <div class="ar-hero__grid">
       <div>
-        <span class="ar-badge">Free WordPress plugin · Pro available</span>
+        <span class="ar-badge">New on WordPress.org · Free · Pro available</span>
         <h1>Know which ad sent every lead</h1>
-        <p>Aarye Marketing Addon for Forms shows the ad network, campaign, ad and keyword behind every form entry, from Meta, Google, TikTok, LinkedIn and 20 more. One dashboard for all your forms, with every field and attachment.</p>
+        <p>Aarye Marketing Addon shows the ad network, campaign, ad and keyword behind every form entry, from Meta, Google, TikTok, LinkedIn and 20 more, and tells you whether the lead is real. One dashboard for all your forms, with every field and attachment.</p>
         <div class="ar-hero__ctas">
-          <a class="ar-btn ar-btn--white" href="https://laghavi.site/wp-content/uploads/aarye-marketing-addon-for-forms.zip" download><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Download free plugin</a>
+          <a class="ar-btn ar-btn--white" href="https://wordpress.org/plugins/aarye-marketing-addon/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>Get it free on WordPress.org</a>
           <a class="ar-btn ar-btn--ghost" href="#pro">See Pro plans</a>
         </div>
         <div class="ar-stats">
-          <div><b>10</b><span>form plugins</span></div>
+          <div><b>10+</b><span>form plugins, plus theme forms</span></div>
           <div><b>24</b><span>ad networks recognised</span></div>
           <div><b>8</b><span>CRMs and tools in Pro</span></div>
           <div><b>0</b><span>changes to your forms</span></div>
@@ -199,9 +199,9 @@
   <!-- Works with -->
   <section>
     <h2>Works with the forms you already use</h2>
-    <p class="lead">Nothing to change in your forms. Install Aarye and every new entry is saved with where it came from, even from form plugins that keep no entries of their own.</p>
+    <p class="lead">Nothing to change in your forms. Install Aarye and every new entry is saved with where it came from, even from form plugins that keep no entries of their own. Theme forms and hand-made forms are saved too.</p>
     <div class="ar-chips">
-      <span class="ar-chip"><i></i>Contact Form 7</span><span class="ar-chip"><i></i>WPForms</span><span class="ar-chip"><i></i>Elementor Pro Forms</span><span class="ar-chip"><i></i>Fluent Forms</span><span class="ar-chip"><i></i>Gravity Forms</span><span class="ar-chip"><i></i>Forminator</span><span class="ar-chip"><i></i>Ninja Forms</span><span class="ar-chip"><i></i>Formidable Forms</span><span class="ar-chip"><i></i>JetFormBuilder</span><span class="ar-chip"><i></i>MetForm</span><span class="ar-chip"><i></i>Zoho Forms (Pro)</span>
+      <span class="ar-chip"><i></i>Contact Form 7</span><span class="ar-chip"><i></i>WPForms</span><span class="ar-chip"><i></i>Elementor Pro Forms</span><span class="ar-chip"><i></i>Fluent Forms</span><span class="ar-chip"><i></i>Gravity Forms</span><span class="ar-chip"><i></i>Forminator</span><span class="ar-chip"><i></i>Ninja Forms</span><span class="ar-chip"><i></i>Formidable Forms</span><span class="ar-chip"><i></i>JetFormBuilder</span><span class="ar-chip"><i></i>MetForm</span><span class="ar-chip"><i></i>Theme &amp; custom forms</span><span class="ar-chip"><i></i>Zoho Forms (Pro)</span>
     </div>
   </section>
 
@@ -224,7 +224,7 @@
     <div class="ar-steps">
       <div class="ar-step"><span class="ar-step__n">1</span><h3>A visitor arrives</h3><p>Ad platforms add a click ID to every ad click (gclid for Google, fbclid for Meta, ttclid for TikTok, msclkid for Microsoft…). Aarye reads it, plus any UTM tags and the website the visitor came from.</p></div>
       <div class="ar-step"><span class="ar-step__n">2</span><h3>Aarye remembers it</h3><p>A small first-party cookie on your own site keeps the first and latest source for 90 days, so a visitor can click an ad today and fill in your form next week.</p></div>
-      <div class="ar-step"><span class="ar-step__n">3</span><h3>They send a form</h3><p>Any form of the 10 supported plugins. The entry is saved with its source: ad network, campaign, ad, keyword, landing page, device and language.</p></div>
+      <div class="ar-step"><span class="ar-step__n">3</span><h3>They send a form</h3><p>Any form on your site: the 10 supported plugins, theme forms or hand-made forms. The entry is saved with its source: ad network, campaign, ad, keyword, landing page, device and language.</p></div>
     </div>
     <div class="ar-cols">
       <div class="ar-box">
@@ -279,11 +279,35 @@
     </div>
   </section>
 
+  <!-- Real leads, never lost -->
+  <section id="real-leads">
+    <h2>Real leads, and none of them lost</h2>
+    <p class="lead">Know which leads to call first, and stop worrying about the ones that never reached your inbox.</p>
+    <div class="ar-cols">
+      <div class="ar-box">
+        <h3>Is the lead real?</h3>
+        <ul class="ar-list">
+          <li><b>Source proof</b> on every lead: confirmed by the ad click ID, confirmed by the browser, or only claimed by UTM tags (which anyone can add to a link)</li>
+          <li><b>Spam check</b> with a score and the reasons in plain words: posted by a bot, no mouse or touch on the page, sent within seconds, automation software, links and sales-pitch words, repeats</li>
+          <li>It explains, it never deletes: filter by it, or mark spam yourself</li>
+        </ul>
+      </div>
+      <div class="ar-box">
+        <h3>Never miss a lead</h3>
+        <ul class="ar-list">
+          <li><b>Contact form email failed to send?</b> Don't worry: Aarye saves every lead on your own website the moment the form is sent, so it is waiting in your dashboard</li>
+          <li><b>Attachments are kept</b>: images and PDFs as a private copy only admins can download</li>
+          <li><b>Past entries</b>: bring in enquiries your form plugins saved before you installed Aarye, with their original dates</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
   <!-- Install -->
   <section class="ar-install">
     <h2>Up and running in minutes</h2>
     <div class="ar-steps">
-      <div class="ar-step"><span class="ar-step__n">1</span><h3>Install</h3><p>Download the free plugin, then in WordPress go to Plugins → Add New → Upload Plugin and choose the zip. New entries now show their source.</p></div>
+      <div class="ar-step"><span class="ar-step__n">1</span><h3>Install</h3><p>In WordPress go to Plugins → Add New, search for “Aarye Marketing Addon”, then Install and Activate. New entries now show their source.</p></div>
       <div class="ar-step"><span class="ar-step__n">2</span><h3>Connect your ads</h3><p>Open Aarye Leads → Connect your ads and paste the tracking template into each ad account, once. Campaign and ad names then appear too.</p></div>
       <div class="ar-step"><span class="ar-step__n">3</span><h3>See what works</h3><p>Open the dashboard: leads by ad network, campaign and ad. Spend more on the ads that bring real leads.</p></div>
     </div>
@@ -325,18 +349,21 @@
       <table class="ar-table">
         <thead><tr><th>Feature</th><th>Free plugin</th><th>Pro</th></tr></thead>
         <tbody>
-          <tr><td>10 form plugins, one dashboard</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>10 form plugins plus theme and custom forms, one dashboard</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Ad network, campaign, ad and keyword on every entry</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Organic sources: search, social, AI assistants, email</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>All fields, custom fields and attachments</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Connect your ads guide and link tester</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Source proof and spam check with reasons</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Lead kept even if the notification email fails</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Import past entries</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Google Sheets and CSV export</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Multilingual forms</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
           <tr><td>Instant sending to CRMs and tools</td><td class="ar-no">—</td><td>Laghavi Ads Hub, Zoho CRM, Zoho Forms, HubSpot, Airtable, Notion, own database, webhook</td></tr>
           <tr><td>Form analytics</td><td class="ar-no">—</td><td>Views, starts, abandons by field, conversion by source</td></tr>
           <tr><td>Pages viewed and IP address</td><td class="ar-no">—</td><td>On every entry</td></tr>
           <tr><td>Automations</td><td class="ar-no">—</td><td>Status, email and routing rules</td></tr>
-          <tr><td>Spam and bot protection</td><td>Bots flagged</td><td>Disposable emails, links, blocked words, emails and IPs</td></tr>
+          <tr><td>Spam and bot protection</td><td>Spam score with reasons</td><td>Disposable emails, links, blocked words, emails and IPs</td></tr>
           <tr><td>Updates &amp; support</td><td>Free updates</td><td>Automatic updates and email support</td></tr>
         </tbody>
       </table>
@@ -368,7 +395,7 @@
         <a class="ar-btn ar-btn--line" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=Unlimited+sites">Buy Agency</a>
       </div>
     </div>
-    <p class="ar-price__fine">Prices in US dollars. Pro needs the free Aarye Marketing Addon for Forms plugin installed.</p>
+    <p class="ar-price__fine">Prices in US dollars. Pro needs the free Aarye Marketing Addon plugin from WordPress.org installed.</p>
   </section>
 
   <!-- FAQ -->
@@ -379,7 +406,8 @@
       <details><summary>Do I have to connect my ad accounts?</summary><p>No. Aarye reads the click IDs and tags that ad platforms already add to every ad click, on your own website. Pasting the tracking template from “Connect your ads” once per ad account only adds the campaign, ad set and ad names.</p></details>
       <details><summary>Does it track Facebook Instant Forms?</summary><p>No: those forms are filled in inside Facebook and never reach your website. Aarye tracks every visitor who comes to your site, including from ads that open your landing page.</p></details>
       <details><summary>Do I need UTM tags?</summary><p>Not to see the ad network: Google, Meta, Microsoft, TikTok, LinkedIn and others add a click ID to every ad click, and Aarye recognises it. To also see campaign, ad set and ad names, paste the tracking template from “Connect your ads” into your ad account once.</p></details>
-      <details><summary>Will it show leads from before I installed it?</summary><p>No, only new ones: the source of a visit can only be read while the visitor is on your site.</p></details>
+      <details><summary>Will it show leads from before I installed it?</summary><p>Yes, when your form plugin saved them: open Aarye Leads → Import past entries. They keep their original dates. Their source is known only when the saved page address carries ad tags (gclid, fbclid, utm_…).</p></details>
+      <details><summary>What if my contact form email fails to send?</summary><p>The lead is still safe. Aarye saves each entry on your own website the moment the form is sent, whether or not the notification email goes out, so a broken mail setup never costs you a lead. Open Aarye Leads to see it.</p></details>
       <details><summary>Does it slow my site down?</summary><p>No. The tracking script is a few kilobytes and only reads the page address and referrer. Pro sends leads to your CRM in the background, so forms answer straight away.</p></details>
       <details><summary>Does it work with caching and multilingual sites?</summary><p>Yes. The source is kept in a first-party cookie, so cached pages work, and the language of each lead is saved from WPML, Polylang, TranslatePress, Weglot or the page itself.</p></details>
       <details><summary>Is personal data sent anywhere?</summary><p>The free plugin sends nothing to us. Pro sends leads only to the services you connect. Laghavi Ads Hub receives only the source of each lead, never names, emails, phone numbers or messages.</p></details>
@@ -392,7 +420,7 @@
     <h2>Who makes it</h2>
     <div class="ar-maker">
       <div class="ar-avatar">NS</div>
-      <p><b>Nayan Shirodkar</b>, creator of Aarye Marketing Addon for Forms<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+      <p><b>Nayan Shirodkar</b>, creator of Aarye Marketing Addon<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>Questions, bugs or ideas: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
     </div>
   </section>
 
@@ -401,7 +429,7 @@
     <h2>Find out which ads really bring leads</h2>
     <p>Install the free plugin and see the source of your next form entry. Upgrade to Pro to send every lead to your CRM and fix the forms that lose people.</p>
     <div class="ar-hero__ctas">
-      <a class="ar-btn ar-btn--white" href="https://laghavi.site/wp-content/uploads/aarye-marketing-addon-for-forms.zip" download>Download free plugin</a>
+      <a class="ar-btn ar-btn--white" href="https://wordpress.org/plugins/aarye-marketing-addon/" target="_blank" rel="noopener">Get it free on WordPress.org</a>
       <a class="ar-btn ar-btn--ghost" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/">Buy Pro</a>
     </div>
   </section>

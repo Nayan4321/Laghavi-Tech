@@ -1,0 +1,437 @@
+<style>
+#aar-lp{--ink:#0f172a;--muted:#5b6476;--line:#e6e8f0;--soft:#f6f7fb;--brand:#4f46e5;--brand2:#0891b2;--navy:#0b1430;color:var(--ink);font-family:inherit;line-height:1.55;max-width:1080px;margin:0 auto;padding:24px 16px 48px;box-sizing:border-box}
+#aar-lp *,#aar-lp *::before,#aar-lp *::after{box-sizing:border-box}
+#aar-lp h1,#aar-lp h2,#aar-lp h3,#aar-lp p{margin:0}
+#aar-lp a{text-decoration:none}
+#aar-lp section{margin-top:56px}
+#aar-lp h2{font-size:clamp(24px,3vw,30px);font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+#aar-lp .lead{color:var(--muted);margin-top:8px;max-width:640px}
+#aar-lp .ar-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:10px;font-weight:600;font-size:15px;line-height:1.2;transition:transform .15s,box-shadow .15s,background .15s;cursor:pointer}
+#aar-lp .ar-btn:hover{transform:translateY(-1px)}
+#aar-lp .ar-btn svg{width:18px;height:18px;flex:none}
+#aar-lp .ar-btn--white{background:#fff;color:var(--navy)!important;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+#aar-lp .ar-btn--ghost{border:1.5px solid rgba(255,255,255,.55);color:#fff!important}
+#aar-lp .ar-btn--ghost:hover{background:rgba(255,255,255,.1)}
+#aar-lp .ar-btn--brand{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff!important;box-shadow:0 8px 22px rgba(79,70,229,.3)}
+#aar-lp .ar-btn--line{border:1.5px solid var(--line);color:var(--ink)!important;background:#fff}
+#aar-lp .ar-btn--line:hover{border-color:var(--brand);color:var(--brand)!important}
+
+/* Hero */
+#aar-lp .ar-hero{margin-top:0!important;border-radius:22px;padding:clamp(28px,5vw,48px);color:#fff;background:radial-gradient(700px 380px at 95% 0%,rgba(6,182,212,.45),transparent 60%),radial-gradient(600px 400px at 0% 120%,rgba(79,70,229,.4),transparent 60%),linear-gradient(135deg,#0b1430,#14295c);overflow:hidden}
+#aar-lp .ar-hero__grid{display:grid;grid-template-columns:1.25fr .9fr;gap:36px;align-items:center}
+#aar-lp .ar-badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+#aar-lp .ar-hero h1{font-size:clamp(32px,5vw,48px);font-weight:800;letter-spacing:-.02em;line-height:1.08;margin-top:16px;color:#fff}
+#aar-lp .ar-hero p{color:#d3def5;margin-top:14px;font-size:16px;max-width:560px}
+#aar-lp .ar-hero__ctas{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px}
+#aar-lp .ar-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px;padding-top:24px;border-top:1px solid rgba(255,255,255,.15)}
+#aar-lp .ar-stats b{display:block;font-size:26px;font-weight:800;color:#fff}
+#aar-lp .ar-stats span{font-size:12.5px;color:#b4c3e6}
+
+/* Cards */
+#aar-lp .ar-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#aar-lp .ar-card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(15,23,42,.04)}
+#aar-lp .ar-card__head{display:flex;gap:12px;align-items:center}
+#aar-lp .ar-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:13px;flex:none}
+#aar-lp .ar-icon svg{width:20px;height:20px}
+#aar-lp .ar-card h3{font-size:16px;font-weight:700}
+#aar-lp .ar-card small{display:block;font-size:12px;color:var(--muted)}
+#aar-lp .ar-card ul{margin:14px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#aar-lp .ar-card li{margin:4px 0}
+
+/* Install steps */
+#aar-lp .ar-install{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,32px)}
+#aar-lp .ar-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+#aar-lp .ar-step{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px}
+#aar-lp .ar-step__n{width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;font-weight:700;font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+#aar-lp .ar-step h3{font-size:15px;font-weight:700;margin-top:10px}
+#aar-lp .ar-step p{font-size:13.5px;color:var(--muted);margin-top:4px}
+#aar-lp .ar-note{font-size:12.5px;color:var(--muted);margin-top:16px}
+
+/* Compare table */
+#aar-lp .ar-table-wrap{margin-top:24px;border:1px solid var(--line);border-radius:16px;overflow:auto;background:#fff}
+#aar-lp .ar-table{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+#aar-lp .ar-table th{background:var(--soft);font-size:11.5px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);text-align:left;padding:14px 16px;font-weight:700}
+#aar-lp .ar-table td{padding:13px 16px;border-top:1px solid var(--line);vertical-align:top;color:var(--muted)}
+#aar-lp .ar-table td:first-child{color:var(--ink);font-weight:600;width:30%}
+#aar-lp .ar-table th:last-child,#aar-lp .ar-table td:last-child{background:rgba(79,70,229,.05)}
+#aar-lp .ar-table td.ar-yes{color:#16a34a;font-weight:700;font-size:16px}
+#aar-lp .ar-table td.ar-no{color:#c0c4d0}
+
+/* Pricing */
+#aar-lp .ar-prices{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+#aar-lp .ar-price{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;display:flex;flex-direction:column}
+#aar-lp .ar-price--pop{border:2px solid var(--brand);box-shadow:0 14px 34px rgba(79,70,229,.15)}
+#aar-lp .ar-price__tag{position:absolute;top:-12px;left:24px;background:var(--brand);color:#fff;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:4px 10px;border-radius:999px}
+#aar-lp .ar-price h3{font-size:17px;font-weight:700}
+#aar-lp .ar-price__sites{font-size:13px;color:var(--muted)}
+#aar-lp .ar-price__amt{font-size:38px;font-weight:800;margin-top:14px;letter-spacing:-.02em}
+#aar-lp .ar-price__amt span{font-size:15px;font-weight:600;color:var(--muted)}
+#aar-lp .ar-price ul{list-style:none;padding:0;margin:14px 0 20px;font-size:14px;color:var(--muted);flex:1}
+#aar-lp .ar-price li{padding:4px 0 4px 24px;position:relative}
+#aar-lp .ar-price li::before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:700}
+#aar-lp .ar-price .ar-btn{justify-content:center}
+#aar-lp .ar-price__fine{font-size:12.5px;color:var(--muted);margin-top:14px;text-align:center}
+
+/* FAQ */
+#aar-lp .ar-faq{margin-top:20px;display:grid;gap:10px}
+#aar-lp .ar-faq details{background:#fff;border:1px solid var(--line);border-radius:12px;padding:0 18px}
+#aar-lp .ar-faq summary{cursor:pointer;list-style:none;padding:15px 0;font-weight:600;font-size:15px;display:flex;justify-content:space-between;gap:12px}
+#aar-lp .ar-faq summary::-webkit-details-marker{display:none}
+#aar-lp .ar-faq summary::after{content:"+";color:var(--brand);font-size:20px;line-height:1}
+#aar-lp .ar-faq details[open] summary::after{content:"–"}
+#aar-lp .ar-faq details p{color:var(--muted);font-size:14.5px;padding:0 0 16px}
+
+/* Maker + CTA */
+#aar-lp .ar-maker{display:flex;gap:16px;align-items:center;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-top:20px}
+#aar-lp .ar-avatar{width:52px;height:52px;border-radius:14px;background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;flex:none}
+#aar-lp .ar-maker p{font-size:14px;color:var(--muted)}
+#aar-lp .ar-maker b{color:var(--ink)}
+#aar-lp .ar-maker a{color:var(--brand)}
+#aar-lp .ar-cta{text-align:center;border-radius:22px;padding:clamp(28px,5vw,44px);color:#fff;background:linear-gradient(120deg,#ea580c,#db2777 60%,#9333ea)}
+#aar-lp .ar-cta h2{color:#fff}
+#aar-lp .ar-cta p{color:#fff1f2;margin:10px auto 0;max-width:560px}
+#aar-lp .ar-cta .ar-hero__ctas{justify-content:center}
+
+@media (max-width:900px){
+ #aar-lp .ar-hero__grid{grid-template-columns:1fr}
+ #aar-lp .ar-cards,#aar-lp .ar-prices{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:640px){
+ #aar-lp .ar-cards,#aar-lp .ar-steps,#aar-lp .ar-prices{grid-template-columns:1fr}
+ #aar-lp .ar-stats{grid-template-columns:repeat(2,1fr)}
+ #aar-lp .ar-hero__ctas .ar-btn{flex:1 1 100%;justify-content:center}
+ #aar-lp .ar-table{min-width:0;font-size:13px}
+ #aar-lp .ar-table th,#aar-lp .ar-table td{padding:11px 10px}
+ #aar-lp .ar-table td:first-child{width:34%}
+}
+
+/* Shield the page from theme and Elementor global styles (headings, links, lists, tables, buttons). */
+#aar-lp h1,#aar-lp h2,#aar-lp h3{font-family:inherit;text-transform:none;line-height:1.2;padding:0;border:0;background:none}
+#aar-lp h2,#aar-lp h3{color:var(--ink)}
+#aar-lp .ar-hero h1,#aar-lp .ar-cta h2{color:#fff}
+#aar-lp p,#aar-lp li,#aar-lp td,#aar-lp th{font-family:inherit;letter-spacing:normal;text-transform:none}
+#aar-lp a{box-shadow:none;border-bottom:0}
+#aar-lp a:not(.ar-btn){color:var(--brand)}
+#aar-lp a.ar-btn{text-decoration:none!important}
+#aar-lp ul{margin-left:0;margin-right:0}
+#aar-lp .ar-card ul{list-style:disc}
+#aar-lp table,#aar-lp th,#aar-lp td{border-left:0;border-right:0;border-bottom:0;background:transparent}
+#aar-lp th{border-top:0}
+#aar-lp table{margin:0;border:0;background:#fff}
+#aar-lp tr{background:none}
+#aar-lp details{margin:0}
+#aar-lp summary{color:var(--ink);background:none;border:0}
+#aar-lp section{display:block;padding:0}
+
+/* Aarye: hero entries mock-up */
+#aar-lp .ar-hero__grid>*{min-width:0}
+#aar-lp .ar-mock{background:#fff;border-radius:18px;padding:8px 0;color:var(--ink);box-shadow:0 30px 60px rgba(0,0,0,.35);max-width:380px;justify-self:end;width:100%}
+#aar-lp .ar-mock__title{display:flex;justify-content:space-between;align-items:center;padding:10px 16px 8px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+#aar-lp .ar-mock__row{display:flex;gap:10px;align-items:flex-start;padding:11px 16px;border-top:1px solid var(--line)}
+#aar-lp .ar-mock__av{width:30px;height:30px;border-radius:50%;background:var(--soft);color:var(--muted);font-weight:700;font-size:12px;display:flex;align-items:center;justify-content:center;flex:none}
+#aar-lp .ar-mock__who{flex:1;min-width:0}
+#aar-lp .ar-mock__who b{display:block;font-size:13.5px}
+#aar-lp .ar-mock__who small{display:block;font-size:11.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#aar-lp .ar-tag{display:inline-block;font-size:11px;font-weight:700;padding:3px 8px;border-radius:999px;white-space:nowrap;line-height:1.4}
+#aar-lp .ar-tag--meta{background:#e7efff;color:#1d4ed8}
+#aar-lp .ar-tag--google{background:#e8f5e9;color:#15803d}
+#aar-lp .ar-tag--tiktok{background:#fdecf3;color:#be185d}
+#aar-lp .ar-tag--ai{background:#f1ecff;color:#6d28d9}
+#aar-lp .ar-tag--seo{background:#ecfeff;color:#0e7490}
+#aar-lp .ar-mock__foot{padding:10px 16px 6px;font-size:11.5px;color:var(--muted);border-top:1px solid var(--line)}
+/* Chips */
+#aar-lp .ar-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+#aar-lp .ar-chip{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:13.5px;font-weight:600;color:var(--ink)}
+#aar-lp .ar-chip i{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block}
+#aar-lp .ar-chip--muted{font-weight:500;color:var(--muted);background:var(--soft)}
+#aar-lp .ar-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+#aar-lp .ar-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px}
+#aar-lp .ar-box h3{font-size:16px;font-weight:700}
+#aar-lp .ar-box p{font-size:14px;color:var(--muted);margin-top:6px}
+#aar-lp .ar-pro{background:linear-gradient(180deg,#f5f6ff,#fff);border:1px solid #dfe2fb;border-radius:22px;padding:clamp(20px,4vw,32px)}
+#aar-lp .ar-pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:5px 11px;border-radius:999px;background:var(--brand);color:#fff}
+#aar-lp .ar-hub{display:grid;grid-template-columns:1.2fr 1fr;gap:20px;align-items:center;margin-top:24px;background:#0b1430;color:#fff;border-radius:18px;padding:clamp(20px,4vw,28px)}
+#aar-lp .ar-hub h3{font-size:19px;font-weight:700;color:#fff}
+#aar-lp .ar-hub p{color:#b4c3e6;font-size:14.5px;margin-top:8px}
+#aar-lp .ar-hub__table{background:#fff;color:var(--ink);border-radius:14px;padding:6px 14px;font-size:13px}
+#aar-lp .ar-hub__table div{display:grid;grid-template-columns:1.3fr .8fr .8fr .9fr;gap:6px;padding:8px 0;border-top:1px solid var(--line)}
+#aar-lp .ar-hub__table div:first-child{border-top:0;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700}
+#aar-lp .ar-hub__table b{color:#16a34a}
+#aar-lp .ar-list{margin:10px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+#aar-lp .ar-list li{margin:5px 0}
+#aar-lp .ar-list b{color:var(--ink)}
+#aar-lp .ar-install .ar-box{background:#fff}
+@media (max-width:900px){#aar-lp .ar-cols,#aar-lp .ar-hub{grid-template-columns:1fr}#aar-lp .ar-mock{justify-self:stretch;max-width:none}}
+</style>
+
+<div id="aar-lp" class="ar-lp">
+
+  <!-- Hero -->
+  <section class="ar-hero">
+    <div class="ar-hero__grid">
+      <div>
+        <span class="ar-badge">अब WordPress.org पर · मुफ़्त · Pro उपलब्ध</span>
+        <h1>जानें कि हर लीड किस विज्ञापन से आई</h1>
+        <p>आर्ये मार्केटिंग ऐडऑन आपको हर फॉर्म एंट्री के पीछे मौजूद विज्ञापन नेटवर्क, कैंपेन, विज्ञापन और कीवर्ड की जानकारी देता है। इसमें Meta, Google, TikTok, LinkedIn और 20 से अधिक अन्य नेटवर्क शामिल हैं, और यह भी बताता है कि लीड असली है या नहीं। आपके सभी फॉर्म के लिए एक डैशबोर्ड, जिसमें हर फ़ील्ड और अटैचमेंट की जानकारी मिलती है।</p>
+        <div class="ar-hero__ctas">
+          <a class="ar-btn ar-btn--white" href="https://wordpress.org/plugins/aarye-marketing-addon/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0-5-5m5 5 5-5M4 19h16"/></svg>WordPress.org से मुफ़्त पाएँ</a>
+          <a class="ar-btn ar-btn--ghost" href="#pro">प्रो प्लान देखें</a>
+        </div>
+        <div class="ar-stats">
+          <div><b>10+</b><span>फॉर्म प्लगइन, साथ में थीम फॉर्म</span></div>
+          <div><b>24</b><span>पहचाने जाने वाले विज्ञापन नेटवर्क</span></div>
+          <div><b>8</b><span>Pro में CRM और टूल</span></div>
+          <div><b>0</b><span>आपके फॉर्म में कोई बदलाव नहीं</span></div>
+        </div>
+      </div>
+      <div class="ar-mock" aria-hidden="true">
+        <div class="ar-mock__title"><span>नई लीड्स</span><span>आज</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">SA</span><div class="ar-mock__who"><b>Sara Ali</b><small>समर सेल › UAE 25-45 › वीडियो विज्ञापन 1</small></div><span class="ar-tag ar-tag--meta">★ Meta Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">OK</span><div class="ar-mock__who"><b>Omar Khan</b><small>ब्रांड सर्च · “plumber dubai”</small></div><span class="ar-tag ar-tag--google">★ Google Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">LH</span><div class="ar-mock__who"><b>Layla Haddad</b><small>स्प्रिंग लॉन्च › क्लिप 3</small></div><span class="ar-tag ar-tag--tiktok">★ TikTok Ads</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">JM</span><div class="ar-mock__who"><b>John Miller</b><small>“best CRM consultant” के बारे में पूछा</small></div><span class="ar-tag ar-tag--ai">ChatGPT</span></div>
+        <div class="ar-mock__row"><span class="ar-mock__av">PR</span><div class="ar-mock__who"><b>Priya Rao</b><small>लैंडिंग पेज: /pricing/</small></div><span class="ar-tag ar-tag--seo">Google</span></div>
+        <div class="ar-mock__foot">इस सप्ताह 5 में से 4 लीड्स विज्ञापनों से आईं</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Works with -->
+  <section>
+    <h2>आपके मौजूदा फॉर्म के साथ काम करता है</h2>
+    <p class="lead">अपने फॉर्म में कुछ भी बदलने की ज़रूरत नहीं। आर्ये इंस्टॉल करें और हर नई एंट्री के साथ उसका स्रोत भी सेव होगा। यह उन फॉर्म प्लगइन की एंट्री भी सेव करता है जिनमें अपनी एंट्री स्टोर करने की सुविधा नहीं होती। थीम के फॉर्म और खुद बनाए गए फॉर्म भी सेव होते हैं।</p>
+    <div class="ar-chips">
+      <span class="ar-chip"><i></i>Contact Form 7</span><span class="ar-chip"><i></i>WPForms</span><span class="ar-chip"><i></i>Elementor Pro Forms</span><span class="ar-chip"><i></i>Fluent Forms</span><span class="ar-chip"><i></i>Gravity Forms</span><span class="ar-chip"><i></i>Forminator</span><span class="ar-chip"><i></i>Ninja Forms</span><span class="ar-chip"><i></i>Formidable Forms</span><span class="ar-chip"><i></i>JetFormBuilder</span><span class="ar-chip"><i></i>MetForm</span><span class="ar-chip"><i></i>थीम और कस्टम फॉर्म</span><span class="ar-chip"><i></i>Zoho Forms (Pro)</span>
+    </div>
+  </section>
+
+  <!-- Ad networks -->
+  <section>
+    <h2>हर विज्ञापन नेटवर्क जो आपकी वेबसाइट पर ट्रैफिक भेज सकता है</h2>
+    <p class="lead">क्लिक ID और विज्ञापन टैग के ज़रिए नेटवर्क की पहचान होती है। साथ ही कैंपेन, ऐड सेट, विज्ञापन और कीवर्ड की जानकारी भी मिलती है। विज्ञापन से नहीं आने वाले विज़िटर के स्रोत भी अलग-अलग पहचाने जाते हैं।</p>
+    <div class="ar-chips">
+      <span class="ar-chip">Google Ads</span><span class="ar-chip">Performance Max</span><span class="ar-chip">YouTube Ads</span><span class="ar-chip">Meta Ads</span><span class="ar-chip">Instagram</span><span class="ar-chip">WhatsApp विज्ञापन</span><span class="ar-chip">Microsoft Advertising</span><span class="ar-chip">TikTok Ads</span><span class="ar-chip">LinkedIn Ads</span><span class="ar-chip">X Ads</span><span class="ar-chip">Snapchat Ads</span><span class="ar-chip">Pinterest Ads</span><span class="ar-chip">Reddit Ads</span><span class="ar-chip">Quora Ads</span><span class="ar-chip">Amazon Ads</span><span class="ar-chip">Apple Search Ads</span><span class="ar-chip">Spotify Ads</span><span class="ar-chip">Yandex Direct</span><span class="ar-chip">Display &amp; Video 360</span><span class="ar-chip">Taboola</span><span class="ar-chip">Outbrain</span><span class="ar-chip">Criteo</span><span class="ar-chip">AdRoll</span><span class="ar-chip">StackAdapt</span><span class="ar-chip">The Trade Desk</span><span class="ar-chip">Baidu</span><span class="ar-chip">Naver</span>
+    </div>
+    <div class="ar-chips">
+      <span class="ar-chip ar-chip--muted">सर्च इंजन</span><span class="ar-chip ar-chip--muted">सोशल मीडिया</span><span class="ar-chip ar-chip--muted">ChatGPT, Perplexity, Gemini, Copilot, Claude</span><span class="ar-chip ar-chip--muted">ईमेल</span><span class="ar-chip ar-chip--muted">अन्य वेबसाइट</span><span class="ar-chip ar-chip--muted">डायरेक्ट</span>
+    </div>
+  </section>
+
+  <!-- How it works -->
+  <section id="how-it-works" class="ar-install">
+    <h2>आर्ये कैसे पता लगाता है कि हर लीड कहाँ से आई</h2>
+    <p class="lead">आपके विज्ञापन अकाउंट से कनेक्शन की ज़रूरत नहीं है। आर्ये आपकी अपनी वेबसाइट पर हर विज़िट के साथ पहले से मौजूद जानकारी को पढ़ता है।</p>
+    <div class="ar-steps">
+      <div class="ar-step"><span class="ar-step__n">1</span><h3>विज़िटर आपकी वेबसाइट पर आता है</h3><p>विज्ञापन प्लेटफ़ॉर्म हर विज्ञापन क्लिक के साथ एक क्लिक ID जोड़ते हैं (Google के लिए gclid, Meta के लिए fbclid, TikTok के लिए ttclid, Microsoft के लिए msclkid…)। आर्ये इसे पढ़ता है। साथ ही UTM टैग और उस वेबसाइट की जानकारी भी लेता है जहाँ से विज़िटर आया है।</p></div>
+      <div class="ar-step"><span class="ar-step__n">2</span><h3>आर्ये इस जानकारी को याद रखता है</h3><p>आपकी अपनी वेबसाइट पर एक छोटा first-party cookie 90 दिनों तक विज़िटर का पहला और सबसे हाल का स्रोत सेव रखता है। इससे कोई विज़िटर आज विज्ञापन पर क्लिक करके अगले सप्ताह आपका फॉर्म भर सकता है।</p></div>
+      <div class="ar-step"><span class="ar-step__n">3</span><h3>विज़िटर फॉर्म सबमिट करता है</h3><p>आपकी साइट के किसी भी फॉर्म से (समर्थित 10 प्लगइन, थीम फॉर्म या खुद बनाए गए फॉर्म) एंट्री आने पर उसका स्रोत भी सेव होता है: विज्ञापन नेटवर्क, कैंपेन, विज्ञापन, कीवर्ड, लैंडिंग पेज, डिवाइस और भाषा।</p></div>
+    </div>
+    <div class="ar-cols">
+      <div class="ar-box">
+        <h3>इंस्टॉल करते ही उपलब्ध जानकारी</h3>
+        <ul class="ar-list">
+          <li><b>विज्ञापन:</b> Google, Meta, TikTok, Microsoft, LinkedIn, Snapchat और 18 अन्य नेटवर्क, उनकी क्लिक ID के ज़रिए</li>
+          <li><b>सर्च इंजन:</b> Google, Bing, DuckDuckGo, Yandex…</li>
+          <li><b>सोशल मीडिया</b> पोस्ट, ChatGPT और Perplexity जैसे <b>AI असिस्टेंट</b>, <b>ईमेल</b>, <b>अन्य वेबसाइट</b> और <b>डायरेक्ट</b> विज़िट</li>
+        </ul>
+      </div>
+      <div class="ar-box">
+        <h3>हर विज्ञापन अकाउंट के लिए 2 मिनट का सेटअप करने के बाद</h3>
+        <ul class="ar-list">
+          <li>हर लीड के साथ <b>कैंपेन, ऐड सेट, विज्ञापन और कीवर्ड के नाम</b></li>
+          <li>Meta की लीड्स की सही पहचान विज्ञापन से आई लीड के रूप में होती है (Facebook सामान्य पोस्ट पर भी fbclid जोड़ता है)</li>
+          <li><b>आर्ये लीड्स → अपने विज्ञापन कनेक्ट करें</b> से tracking template कॉपी करके हर विज्ञापन अकाउंट में एक बार पेस्ट करें। इसके बाद विज्ञापन की जाँच के लिए <b>लिंक टेस्ट करें</b> का उपयोग करें।</li>
+        </ul>
+      </div>
+    </div>
+    <p class="ar-note">ध्यान देने योग्य बात: Google Ads की auto-tagging चालू रखें। Meta Instant Forms (Facebook के अंदर भरे जाने वाले लीड फॉर्म) आपकी वेबसाइट तक नहीं पहुँचते, इसलिए केवल वे विज्ञापन ट्रैक होते हैं जो लोगों को आपकी वेबसाइट पर भेजते हैं। Cookies ब्लॉक करने वाले विज़िटर Direct के रूप में दिखाई देते हैं।</p>
+  </section>
+
+  <!-- Free features -->
+  <section id="whats-inside">
+    <h2>मुफ़्त में आपको क्या मिलता है</h2>
+    <p class="lead">यह जानने के लिए ज़रूरी सभी सुविधाएँ कि कौन-से विज्ञापन लीड ला रहे हैं, बिना किसी कीमत के।</p>
+    <div class="ar-cards">
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#4f46e5"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1"/></svg></span><div><h3>हर एंट्री के साथ स्रोत की जानकारी</h3><small>विज्ञापन, कैंपेन, ऐड सेट, कीवर्ड</small></div></div>
+        <ul><li>फॉर्म सबमिट होने से पहले की पहली और आखिरी विज़िट</li><li>लैंडिंग पेज, रेफरर, डिवाइस और भाषा</li><li>कितनी विज़िट हुईं और कन्वर्ज़न में कितने दिन लगे</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#0891b2"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg></span><div><h3>एक ही डैशबोर्ड</h3><small>सभी फॉर्म की सभी एंट्री एक जगह</small></div></div>
+        <ul><li>स्रोत, विज्ञापन नेटवर्क, कैंपेन और विज्ञापन के अनुसार लीड्स</li><li>हर फॉर्म को खोजता है और उसका पेज दिखाता है, Elementor फॉर्म भी शामिल हैं</li><li>तारीख, फॉर्म, स्रोत और भाषा के अनुसार फ़िल्टर करें और CSV एक्सपोर्ट करें</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#0f766e"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 11-8.6 8.6a5 5 0 0 1-7-7L14 4a3.3 3.3 0 0 1 4.7 4.7l-8.6 8.6a1.7 1.7 0 0 1-2.3-2.3L16 7"/></svg></span><div><h3>हर फ़ील्ड और फ़ाइल</h3><small>कस्टम फ़ील्ड और अटैचमेंट</small></div></div>
+        <ul><li>अपलोड की गई फ़ाइलों की निजी कॉपी, भले ही फॉर्म प्लगइन उन्हें डिलीट कर दे</li><li>लीड का स्टेटस: नई, संपर्क किया, योग्य, सफल, असफल</li><li>किसी भी भाषा में नाम, ईमेल और फ़ोन नंबर की पहचान</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#db2777"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/></svg></span><div><h3>विज्ञापन कनेक्ट करने की गाइड</h3><small>WordPress के अंदर चरण-दर-चरण निर्देश</small></div></div>
+        <ul><li>Google, Meta, TikTok और अन्य के लिए कॉपी करने योग्य tracking templates</li><li>कैंपेन और विज्ञापन के नाम अपने आप दिखाई देते हैं</li><li>“लिंक टेस्ट करें” से पता चलता है कि लीड की जानकारी कैसी दिखाई देगी</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#16a34a"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M4 9h16M4 15h16M10 3v18"/></svg></span><div><h3>Google Sheets</h3><small>हर लीड एक अलग रो में</small></div></div>
+        <ul><li>स्रोत, कैंपेन और विज्ञापन के लिए अलग-अलग कॉलम</li><li>हर फॉर्म फ़ील्ड के लिए अपना कॉलम</li><li>WordPress में कोई Google पासवर्ड सेव नहीं होता</li></ul>
+      </div>
+      <div class="ar-card">
+        <div class="ar-card__head"><span class="ar-icon" style="background:#f59e0b"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span><div><h3>बहुभाषी और निजी</h3><small>WPML, Polylang, TranslatePress, Weglot</small></div></div>
+        <ul><li>हर लीड की भाषा, फ़िल्टर करने की सुविधा के साथ</li><li>केवल first-party cookies, cookie consent सपोर्ट</li><li>कोई भी जानकारी हमें नहीं भेजी जाती</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Real leads, never lost -->
+  <section id="real-leads">
+    <h2>असली लीड्स, और एक भी लीड न छूटे</h2>
+    <p class="lead">जानें कि पहले किस लीड को कॉल करना है, और उन लीड्स की चिंता छोड़ें जो कभी आपके इनबॉक्स तक नहीं पहुँचीं।</p>
+    <div class="ar-cols">
+      <div class="ar-box">
+        <h3>क्या लीड असली है?</h3>
+        <ul class="ar-list">
+          <li>हर लीड पर <b>स्रोत का प्रमाण</b>: विज्ञापन क्लिक ID से पुष्टि, ब्राउज़र से पुष्टि, या सिर्फ़ UTM टैग का दावा (जिसे कोई भी लिंक में जोड़ सकता है)</li>
+          <li><b>स्पैम जाँच</b>, स्कोर और आसान शब्दों में कारण के साथ: बॉट द्वारा भेजा गया, पेज पर माउस या टच नहीं, कुछ सेकंड में भेजा गया, ऑटोमेशन सॉफ़्टवेयर, लिंक और सेल्स वाले शब्द, दोहराई गई लीड</li>
+          <li>यह सिर्फ़ बताता है, कुछ डिलीट नहीं करता: इसके अनुसार फ़िल्टर करें या खुद स्पैम मार्क करें</li>
+        </ul>
+      </div>
+      <div class="ar-box">
+        <h3>कोई लीड न छूटे</h3>
+        <ul class="ar-list">
+          <li><b>कॉन्टैक्ट फॉर्म का ईमेल नहीं गया?</b> चिंता न करें: फॉर्म भेजते ही आर्ये हर लीड को आपकी अपनी वेबसाइट पर सेव कर लेता है, इसलिए वह आपके डैशबोर्ड में मौजूद रहती है</li>
+          <li><b>अटैचमेंट सुरक्षित रहते हैं</b>: इमेज और PDF की निजी कॉपी, जिसे सिर्फ़ एडमिन डाउनलोड कर सकते हैं</li>
+          <li><b>पुरानी एंट्री</b>: आर्ये इंस्टॉल करने से पहले फॉर्म प्लगइन में सेव हुई एंट्री उनकी असली तारीख़ के साथ लाएँ</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- Install -->
+  <section class="ar-install">
+    <h2>कुछ ही मिनटों में इस्तेमाल शुरू करें</h2>
+    <div class="ar-steps">
+      <div class="ar-step"><span class="ar-step__n">1</span><h3>इंस्टॉल करें</h3><p>WordPress में Plugins → Add New पर जाएँ, “Aarye Marketing Addon” खोजें, फिर Install और Activate करें। अब नई एंट्री के साथ उसका स्रोत भी दिखाई देगा।</p></div>
+      <div class="ar-step"><span class="ar-step__n">2</span><h3>अपने विज्ञापन कनेक्ट करें</h3><p>Aarye Leads → Connect your ads खोलें और tracking template को हर विज्ञापन अकाउंट में एक बार पेस्ट करें। इसके बाद कैंपेन और विज्ञापन के नाम भी दिखाई देने लगेंगे।</p></div>
+      <div class="ar-step"><span class="ar-step__n">3</span><h3>देखें क्या काम कर रहा है</h3><p>डैशबोर्ड खोलें और विज्ञापन नेटवर्क, कैंपेन और विज्ञापन के अनुसार लीड्स देखें। उन विज्ञापनों पर ज़्यादा खर्च करें जो वास्तविक लीड्स लाते हैं।</p></div>
+    </div>
+  </section>
+
+  <!-- Pro -->
+  <section class="ar-pro">
+    <span class="ar-pill">Pro</span>
+    <h2 style="margin-top:12px">हर लीड को अपने काम के टूल तक पहुँचाएँ और जानें कि फॉर्म में लोग कहाँ रुक जाते हैं</h2>
+    <p class="lead">आर्ये Pro हर एंट्री को उसके विज्ञापन स्रोत की जानकारी के साथ फॉर्म सबमिट होने के कुछ सेकंड बाद आपके CRM में भेजता है। यदि कोई सर्विस बंद हो, तो यह 7 दिनों तक दोबारा भेजने की कोशिश करता है।</p>
+    <div class="ar-chips">
+      <span class="ar-chip"><i></i>Laghavi Ads Hub</span><span class="ar-chip"><i></i>Zoho CRM</span><span class="ar-chip"><i></i>Zoho Forms</span><span class="ar-chip"><i></i>HubSpot</span><span class="ar-chip"><i></i>Airtable</span><span class="ar-chip"><i></i>Notion</span><span class="ar-chip"><i></i>आपका अपना MySQL डेटाबेस</span><span class="ar-chip"><i></i>Webhook / API के ज़रिए कोई भी CRM</span>
+    </div>
+    <div class="ar-cols">
+      <div class="ar-box"><h3>फॉर्म एनालिटिक्स</h3><p>हर फॉर्म के व्यू, शुरू किए गए फॉर्म, सबमिशन और अधूरे छोड़े गए फॉर्म की जानकारी। कन्वर्ज़न और पूरा करने की दर के साथ स्रोत के अनुसार कन्वर्ज़न भी देखें। जानें कि लोग किस फ़ील्ड पर फॉर्म छोड़ते हैं, ताकि पता चले कि कौन-सा सवाल आपकी लीड्स कम कर रहा है।</p></div>
+      <div class="ar-box"><h3>देखे गए पेज और IP एड्रेस</h3><p>हर एंट्री के साथ उन पेजों की जानकारी देखें जिन्हें विज़िटर ने फॉर्म भेजने से पहले पढ़ा, हर पेज पर बिताया गया समय और उनका IP एड्रेस।</p></div>
+      <div class="ar-box"><h3>ऑटोमेशन</h3><p>ऐसे नियम बनाएँ: “जब लीड Meta Ads से आई हो और बजट 5k+ हो, तो उसे Qualified मार्क करें, sales@ पर ईमेल करें और HubSpot में भेजें।” स्रोत, कैंपेन, विज्ञापन, फॉर्म या किसी भी फ़ील्ड के आधार पर शर्तें तय करें।</p></div>
+      <div class="ar-box"><h3>स्पैम और बॉट से सुरक्षा</h3><p>बॉट्स, अस्थायी ईमेल, लिंक स्पैम, ब्लॉक किए गए शब्द, ईमेल और IP एड्रेस तथा बार-बार फॉर्म भेजने वालों को स्पैम के रूप में रखा जाता है। उन्हें आपके CRM में नहीं भेजा जाता और न ही लीड्स में गिना जाता है।</p></div>
+    </div>
+    <div class="ar-hub">
+      <div>
+        <h3>Laghavi Ads Hub में वास्तविक लीड्स</h3>
+        <p>विज्ञापन प्लेटफ़ॉर्म अपने तरीके से “लीड्स” गिनते हैं। आर्ये Pro को Laghavi Ads Hub से कनेक्ट करें और हर नेटवर्क की रिपोर्ट की तुलना आपको मिली वास्तविक फॉर्म लीड्स से करें। हर कैंपेन और विज्ञापन के लिए वास्तविक लीड की लागत भी देखें। केवल लीड का स्रोत भेजा जाता है, नाम, ईमेल या संदेश कभी नहीं।</p>
+      </div>
+      <div class="ar-hub__table" aria-hidden="true">
+        <div><span>नेटवर्क</span><span>रिपोर्ट की गई</span><span>वास्तविक</span><span>प्रति लीड लागत</span></div>
+        <div><span>Meta Ads</span><span>64</span><b>41</b><span>$18.20</span></div>
+        <div><span>Google Ads</span><span>38</span><b>35</b><span>$24.70</span></div>
+        <div><span>TikTok Ads</span><span>52</span><b>19</b><span>$31.60</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Free vs Pro -->
+  <section>
+    <h2>मुफ़्त प्लगइन बनाम आर्ये प्रो </h2>
+    <p class="lead">मुफ़्त प्लगइन आपको बताता है कि हर लीड कहाँ से आई। Pro उन लीड्स को आपके काम में इस्तेमाल करने में मदद करता है।</p>
+    <div class="ar-table-wrap">
+      <table class="ar-table">
+        <thead><tr><th>सुविधा</th><th>मुफ़्त प्लगइन</th><th>प्रो</th></tr></thead>
+        <tbody>
+          <tr><td>10 फॉर्म प्लगइन के साथ थीम और कस्टम फॉर्म, एक डैशबोर्ड</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>हर एंट्री के साथ विज्ञापन नेटवर्क, कैंपेन, विज्ञापन और कीवर्ड</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>ऑर्गेनिक स्रोत: सर्च, सोशल, AI असिस्टेंट, ईमेल</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>सभी फ़ील्ड, कस्टम फ़ील्ड और अटैचमेंट</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>विज्ञापन कनेक्ट करने की गाइड और लिंक टेस्टर</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>स्रोत का प्रमाण और कारण के साथ स्पैम जाँच</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>नोटिफ़िकेशन ईमेल न जाने पर भी लीड सुरक्षित</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>पुरानी एंट्री इम्पोर्ट करें</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>Google Sheets और CSV एक्सपोर्ट</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>बहुभाषी फॉर्म</td><td class="ar-yes">✓</td><td class="ar-yes">✓</td></tr>
+          <tr><td>CRM और टूल में तुरंत डेटा भेजना</td><td class="ar-no">—</td><td>Laghavi Ads Hub, Zoho CRM, Zoho Forms, HubSpot, Airtable, Notion, अपना डेटाबेस, webhook</td></tr>
+          <tr><td>फॉर्म एनालिटिक्स</td><td class="ar-no">—</td><td>व्यू, शुरू किए गए फॉर्म, फ़ील्ड के अनुसार अधूरे फॉर्म, स्रोत के अनुसार कन्वर्ज़न</td></tr>
+          <tr><td>देखे गए पेज और IP एड्रेस</td><td class="ar-no">—</td><td>हर एंट्री के साथ</td></tr>
+          <tr><td>ऑटोमेशन</td><td class="ar-no">—</td><td>स्टेटस, ईमेल और रूटिंग के नियम</td></tr>
+          <tr><td>स्पैम और बॉट से सुरक्षा</td><td>कारण के साथ स्पैम स्कोर</td><td>अस्थायी ईमेल, लिंक, ब्लॉक किए गए शब्द, ईमेल और IP</td></tr>
+          <tr><td>अपडेट और सपोर्ट</td><td>मुफ़्त अपडेट</td><td>ऑटोमैटिक अपडेट और ईमेल सपोर्ट</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Pro pricing -->
+  <section id="pro">
+    <h2>आर्ये प्रो प्राप्त करें</h2>
+    <p class="lead">अपडेट और सपोर्ट के साथ वार्षिक लाइसेंस। आप कभी भी रद्द कर सकते हैं और आपका लाइसेंस भुगतान किए गए वर्ष के अंत तक काम करता रहेगा।</p>
+    <div class="ar-prices">
+      <div class="ar-price">
+        <h3>व्यक्तिगत</h3><div class="ar-price__sites">1 वेबसाइट</div>
+        <div class="ar-price__amt">$59<span> / वर्ष</span></div>
+        <ul><li>सभी प्रो सुविधाएँ</li><li>सभी 8 कनेक्शन</li><li>ईमेल सपोर्ट</li></ul>
+        <a class="ar-btn ar-btn--line" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=1+site">व्यक्तिगत खरीदें</a>
+      </div>
+      <div class="ar-price ar-price--pop">
+        <span class="ar-price__tag">सबसे लोकप्रिय</span>
+        <h3>व्यवसाय</h3><div class="ar-price__sites">अधिकतम 5 वेबसाइट</div>
+        <div class="ar-price__amt">$129<span> / वर्ष</span></div>
+        <ul><li>सभी प्रो सुविधाएँ</li><li>सभी 8 कनेक्शन</li><li>ईमेल सपोर्ट</li></ul>
+        <a class="ar-btn ar-btn--brand" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=5+sites">व्यवसाय खरीदें</a>
+      </div>
+      <div class="ar-price">
+        <h3>एजेंसी</h3><div class="ar-price__sites">असीमित वेबसाइट</div>
+        <div class="ar-price__amt">$249<span> / वर्ष</span></div>
+        <ul><li>सभी Pro सुविधाएँ</li><li>हर क्लाइंट की वेबसाइट पर इस्तेमाल करें</li><li>ईमेल सपोर्ट</li></ul>
+        <a class="ar-btn ar-btn--line" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/?attribute_sites=Unlimited+sites">एजेंसी खरीदें</a>
+      </div>
+    </div>
+    <p class="ar-price__fine">कीमतें अमेरिकी डॉलर में हैं। Pro इस्तेमाल करने के लिए WordPress.org से आर्ये मार्केटिंग ऐडऑन का मुफ़्त प्लगइन इंस्टॉल होना ज़रूरी है।</p>
+  </section>
+
+  <!-- FAQ -->
+  <section>
+    <h2>अक्सर पूछे जाने वाले सवाल</h2>
+    <div class="ar-faq">
+      <details><summary>क्या मुझे अपने फॉर्म में बदलाव करना होगा?</summary><p>नहीं। आर्ये हर फॉर्म प्लगइन के अपने “फॉर्म सबमिट” स्टेप को पहचानता है। आपके फॉर्म, ईमेल और फॉर्म प्लगइन की अपनी एंट्री बिल्कुल पहले जैसी ही रहती हैं।</p></details>
+      <details><summary>क्या मुझे अपने विज्ञापन अकाउंट कनेक्ट करने होंगे?</summary><p>नहीं। आर्ये उन क्लिक ID और टैग को पढ़ता है जिन्हें विज्ञापन प्लेटफ़ॉर्म आपकी अपनी वेबसाइट पर हर विज्ञापन क्लिक के साथ पहले से जोड़ते हैं। हर विज्ञापन अकाउंट में “Connect your ads” से tracking template एक बार पेस्ट करने पर कैंपेन, ऐड सेट और विज्ञापन के नाम भी दिखाई देने लगते हैं।</p></details>
+      <details><summary>क्या यह Facebook Instant Forms को ट्रैक करता है?</summary><p>नहीं। ये फॉर्म Facebook के अंदर भरे जाते हैं और आपकी वेबसाइट तक नहीं पहुँचते। आर्ये आपकी वेबसाइट पर आने वाले हर विज़िटर को ट्रैक करता है, जिसमें आपके लैंडिंग पेज पर आने वाले विज्ञापन विज़िटर भी शामिल हैं।</p></details>
+      <details><summary>क्या मुझे UTM टैग की ज़रूरत है?</summary><p>विज्ञापन नेटवर्क देखने के लिए नहीं। Google, Meta, Microsoft, TikTok, LinkedIn और अन्य नेटवर्क हर विज्ञापन क्लिक के साथ क्लिक ID जोड़ते हैं, जिसे आर्ये पहचानता है। कैंपेन, ऐड सेट और विज्ञापन के नाम देखने के लिए अपने विज्ञापन अकाउंट में “Connect your ads” से tracking template एक बार पेस्ट करें।</p></details>
+      <details><summary>क्या इंस्टॉल करने से पहले आई लीड्स भी दिखाई देंगी?</summary><p>हाँ, अगर आपके फॉर्म प्लगइन ने उन्हें सेव किया था: Aarye Leads → Import past entries खोलें। वे अपनी असली तारीख़ के साथ आती हैं। उनका स्रोत तभी पता चलता है जब सेव किए गए पेज एड्रेस में विज्ञापन टैग (gclid, fbclid, utm_…) हों।</p></details>
+      <details><summary>अगर मेरे कॉन्टैक्ट फॉर्म का ईमेल नहीं जाता तो?</summary><p>आपकी लीड फिर भी सुरक्षित है। फॉर्म भेजते ही आर्ये हर एंट्री को आपकी अपनी वेबसाइट पर सेव कर लेता है, चाहे नोटिफ़िकेशन ईमेल जाए या न जाए। इसलिए मेल सेटअप खराब होने पर भी कोई लीड नहीं छूटती। उसे देखने के लिए Aarye Leads खोलें।</p></details>
+      <details><summary>क्या इससे मेरी वेबसाइट धीमी हो जाएगी?</summary><p>नहीं। ट्रैकिंग स्क्रिप्ट कुछ किलोबाइट की है और केवल पेज एड्रेस तथा रेफरर पढ़ती है। Pro बैकग्राउंड में आपके CRM को लीड्स भेजता है, इसलिए फॉर्म तुरंत काम करता है।</p></details>
+      <details><summary>क्या यह caching और बहुभाषी वेबसाइट के साथ काम करता है?</summary><p>हाँ। स्रोत first-party cookie में सेव होता है, इसलिए cached pages पर भी काम करता है। हर लीड की भाषा WPML, Polylang, TranslatePress, Weglot या पेज से सेव की जाती है।</p></details>
+      <details><summary>क्या व्यक्तिगत डेटा कहीं भेजा जाता है?</summary><p>मुफ़्त प्लगइन हमें कोई जानकारी नहीं भेजता। Pro लीड्स को केवल उन सेवाओं में भेजता है जिन्हें आप कनेक्ट करते हैं। Laghavi Ads Hub को केवल हर लीड का स्रोत मिलता है, नाम, ईमेल, फ़ोन नंबर या संदेश नहीं।</p></details>
+      <details><summary>क्या मैं Pro रद्द कर सकता हूँ?</summary><p>हाँ, आप My Account से कभी भी रद्द कर सकते हैं। आपकी सदस्यता आगे रिन्यू नहीं होगी और Pro उस वर्ष के अंत तक काम करता रहेगा जिसके लिए आपने भुगतान किया है।</p></details>
+    </div>
+  </section>
+
+  <!-- Maker -->
+  <section>
+    <h2>इसे किसने बनाया है</h2>
+    <div class="ar-maker">
+      <div class="ar-avatar">NS</div>
+      <p><b>Nayan Shirodkar</b>, आर्ये मार्केटिंग ऐडऑन के निर्माता<br>Laghavi Digital · Laghavi FZE LLC, UAE<br>सवाल, बग या सुझाव: <a href="mailto:info@laghavi.site">info@laghavi.site</a></p>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="ar-cta">
+    <h2>जानें कि कौन-से विज्ञापन वास्तव में लीड्स ला रहे हैं</h2>
+    <p>मुफ़्त प्लगइन इंस्टॉल करें और अपनी अगली फॉर्म एंट्री का स्रोत जानें। हर लीड को अपने CRM में भेजने और उन फॉर्म को बेहतर बनाने के लिए Pro लें जिनकी वजह से लोग फॉर्म अधूरा छोड़ देते हैं।</p>
+    <div class="ar-hero__ctas">
+      <a class="ar-btn ar-btn--white" href="https://wordpress.org/plugins/aarye-marketing-addon/" target="_blank" rel="noopener">WordPress.org से मुफ़्त पाएँ</a>
+      <a class="ar-btn ar-btn--ghost" href="https://laghavi.site/product/aarye-marketing-addon-for-forms-pro/">Pro खरीदें</a>
+    </div>
+  </section>
+
+</div>
