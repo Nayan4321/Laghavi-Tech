@@ -169,6 +169,7 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 * A page or product whose text is in another language's writing system (for example Hindi text on an English product) is flagged in its language box and is not copied into other languages, so the wrong text does not spread.
 * Copies of WooCommerce products keep their product type, and variable products get all their variations and prices.
 * The language chosen in the editor only applies to the item being edited, never to its translations saved at the same time.
+* SEO: the shop and other lists shared by all languages (blog, date and author archives) now have a canonical and og:url in the language shown, with Yoast SEO and Rank Math, matching their hreflang links.
 
 = 1.2.0 =
 * New: WooCommerce synchronization (Settings › Synchronization). Saving a product or variation in one language copies its prices, sale dates, stock, tax, shipping and product settings, and subscription prices, to its translations, through WooCommerce so sorting and price filters stay right. Names, descriptions, slugs and SKUs stay per language.

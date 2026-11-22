@@ -30,6 +30,27 @@ class Vacanam_SEO {
 		add_filter( 'rank_math/opengraph/facebook/og_locale', array( __CLASS__, 'og_locale' ) );
 		add_filter( 'wpseo_frontend_presenters', array( __CLASS__, 'yoast_presenters' ) );
 		add_action( 'rank_math/opengraph/facebook', array( __CLASS__, 'rank_math_alternates' ), 20 );
+		// Lists shared by all languages (shop, blog, date and author archives) get one SEO record in
+		// Yoast and Rank Math, made in the main language: their canonical needs the current language.
+		add_filter( 'wpseo_canonical', array( __CLASS__, 'canonical' ), 20 );
+		add_filter( 'wpseo_opengraph_url', array( __CLASS__, 'canonical' ), 20 );
+		add_filter( 'rank_math/frontend/canonical', array( __CLASS__, 'canonical' ), 20 );
+		add_filter( 'rank_math/opengraph/url', array( __CLASS__, 'canonical' ), 20 );
+	}
+
+	/**
+	 * Canonical and og:url of lists shared by all languages: the address in the current language.
+	 * Single pages, posts and products already have their own address in each language.
+	 *
+	 * @param string|false $url Address.
+	 * @return string|false
+	 */
+	public static function canonical( $url ) {
+		if ( ! is_string( $url ) || '' === $url || is_admin() || is_singular() ) {
+			return $url;
+		}
+		$lang = vacanam_current_language();
+		return '' === $lang ? $url : Vacanam_Router::url_for( $url, $lang );
 	}
 
 	/**
