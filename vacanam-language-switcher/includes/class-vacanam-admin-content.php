@@ -546,6 +546,12 @@ class Vacanam_Admin_Content {
 			return;
 		}
 		$posted = isset( $_POST['vacanam_post_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['vacanam_post_nonce'] ) ), 'vacanam_save_post' );
+		// The language box belongs to the post being edited only. Other posts saved in the same request
+		// (translations updated by a sync, products saved by WooCommerce) keep their own language.
+		$edited = isset( $_POST['post_ID'] ) ? absint( wp_unslash( $_POST['post_ID'] ) ) : 0;
+		if ( $posted && $edited && $edited !== (int) $id ) {
+			return;
+		}
 		if ( ! $posted || ! current_user_can( 'edit_post', $id ) ) {
 			if ( '' === Vacanam_Model::post_lang( $id ) && 'auto-draft' !== $post->post_status ) {
 				$lang = vacanam_current_language();
