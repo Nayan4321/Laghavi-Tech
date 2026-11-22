@@ -29,6 +29,100 @@ class Vacanam_Woo_Sync {
 		add_action( 'woocommerce_update_product', array( __CLASS__, 'product_saved' ), 20 );
 		add_action( 'woocommerce_new_product', array( __CLASS__, 'product_saved' ), 20 );
 		add_action( 'woocommerce_update_product_variation', array( __CLASS__, 'variation_saved' ), 20 );
+		add_action( 'vacanam_post_duplicated', array( __CLASS__, 'product_copied' ), 50, 3 );
+	}
+
+	/**
+	 * A product was copied into a language: give the copy the same product type and, for variable
+	 * products, the same variations (prices, options), unless an add-on already copied them.
+	 *
+	 * @param int    $copy Copy.
+	 * @param int    $orig Original.
+	 * @param string $lang Language of the copy.
+	 */
+	public static function product_copied( $copy, $orig, $lang ) {
+		if ( 'product' !== get_post_type( $orig ) || ! function_exists( 'wc_get_product' ) ) {
+			return;
+		}
+		$types = wp_get_object_terms( $orig, 'product_type', array( 'fields' => 'slugs' ) );
+		if ( $types && ! is_wp_error( $types ) ) {
+			wp_set_object_terms( $copy, $types, 'product_type' );
+		}
+		self::forget( $copy );
+		$from = wc_get_product( $orig );
+		$to   = wc_get_product( $copy );
+		if ( ! $from || ! $to || ! $from->is_type( 'variable' ) ) {
+			return;
+		}
+		if ( ! $to->get_children() ) {
+			$running       = self::$running;
+			self::$running = true;
+			foreach ( $from->get_children() as $child ) {
+				$v = wc_get_product( $child );
+				if ( ! $v ) {
+					continue;
+				}
+				$n = new WC_Product_Variation();
+				$n->set_parent_id( $copy );
+				$n->set_props(
+					array(
+						'attributes'        => $v->get_attributes( 'edit' ),
+						'status'            => $v->get_status( 'edit' ),
+						'menu_order'        => $v->get_menu_order( 'edit' ),
+						'description'       => $v->get_description( 'edit' ),
+						'regular_price'     => $v->get_regular_price( 'edit' ),
+						'sale_price'        => $v->get_sale_price( 'edit' ),
+						'date_on_sale_from' => $v->get_date_on_sale_from( 'edit' ),
+						'date_on_sale_to'   => $v->get_date_on_sale_to( 'edit' ),
+						'tax_status'        => $v->get_tax_status( 'edit' ),
+						'tax_class'         => $v->get_tax_class( 'edit' ),
+						'manage_stock'      => $v->get_manage_stock( 'edit' ),
+						'stock_quantity'    => $v->get_stock_quantity( 'edit' ),
+						'stock_status'      => $v->get_stock_status( 'edit' ),
+						'backorders'        => $v->get_backorders( 'edit' ),
+						'virtual'           => $v->get_virtual( 'edit' ),
+						'downloadable'      => $v->get_downloadable( 'edit' ),
+						'downloads'         => $v->get_downloads( 'edit' ),
+						'download_limit'    => $v->get_download_limit( 'edit' ),
+						'download_expiry'   => $v->get_download_expiry( 'edit' ),
+						'weight'            => $v->get_weight( 'edit' ),
+						'length'            => $v->get_length( 'edit' ),
+						'width'             => $v->get_width( 'edit' ),
+						'height'            => $v->get_height( 'edit' ),
+						'shipping_class_id' => $v->get_shipping_class_id( 'edit' ),
+						'image_id'          => $v->get_image_id( 'edit' ),
+					)
+				);
+				foreach ( self::meta_keys() as $key ) {
+					if ( metadata_exists( 'post', $child, $key ) ) {
+						$n->update_meta_data( $key, get_post_meta( $child, $key, true ) );
+					}
+				}
+				// Lets Vacanam Pro keep the copies of a variation together later.
+				$n->update_meta_data( '_vacanampro_variation_source', (int) $child );
+				$n->save();
+			}
+			self::$running = $running;
+		}
+		if ( class_exists( 'WC_Product_Variable' ) ) {
+			WC_Product_Variable::sync( $copy );
+		}
+		self::forget( $copy );
+	}
+
+	/**
+	 * Drop WooCommerce's cached copy of a product (its type is cached too).
+	 *
+	 * @param int $id Product.
+	 */
+	private static function forget( $id ) {
+		clean_post_cache( $id );
+		if ( function_exists( 'wc_delete_product_transients' ) ) {
+			wc_delete_product_transients( $id );
+		}
+		if ( class_exists( 'WC_Cache_Helper' ) ) {
+			WC_Cache_Helper::invalidate_cache_group( 'product_' . $id );
+		}
 	}
 
 	/**

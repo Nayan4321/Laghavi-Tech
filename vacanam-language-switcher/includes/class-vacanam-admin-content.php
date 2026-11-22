@@ -507,6 +507,18 @@ class Vacanam_Admin_Content {
 			echo '<option value="' . esc_attr( $slug ) . '" ' . selected( $own, $slug, false ) . '>' . esc_html( $lang['name'] ) . '</option>';
 		}
 		echo '</select></p>';
+		$foreign = 'auto-draft' === $post->post_status ? '' : Vacanam_Model::foreign_script( $post->ID );
+		if ( '' !== $foreign ) {
+			$info = Vacanam_Languages::get( $own );
+			echo '<p style="background:#fcf0f1;border-left:4px solid #d63638;padding:6px 8px">' . esc_html(
+				sprintf(
+					/* translators: 1: language name, 2: writing system such as Devanagari. */
+					__( 'This is marked %1$s but its text is in %2$s. Put the text back in this language, or choose the right language above. Copies into other languages are blocked until then.', 'vacanam-language-switcher' ),
+					$info ? $info['name'] : $own,
+					$foreign
+				)
+			) . '</p>';
+		}
 		echo '<p><strong>' . esc_html__( 'Translations', 'vacanam-language-switcher' ) . '</strong></p><table class="vacanam-box">';
 		foreach ( Vacanam_Languages::all() as $slug => $lang ) {
 			if ( $slug === $own ) {

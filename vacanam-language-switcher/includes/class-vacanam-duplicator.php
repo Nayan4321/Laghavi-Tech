@@ -136,6 +136,37 @@ class Vacanam_Duplicator {
 		if ( $existing && get_post( $existing ) ) {
 			return $existing;
 		}
+		// New languages are copied from the main language (English → Spanish), not from whichever
+		// translation the copy was started on (Hindi → Spanish).
+		$main = Vacanam_Languages::default_slug();
+		/**
+		 * Copy new translations from the main-language version when there is one.
+		 *
+		 * @param bool    $from_main Default true.
+		 * @param WP_Post $post      Post the copy was started on.
+		 * @param string  $lang      Language of the copy.
+		 */
+		if ( $from_lang !== $main && $lang !== $main && 'attachment' !== $post->post_type && apply_filters( 'vacanam_copy_from_main_language', true, $post, $lang ) ) {
+			$original = Vacanam_Model::post_translation( $post->ID, $main );
+			if ( $original && get_post( $original ) && $original !== $post->ID ) {
+				$post      = get_post( $original );
+				$from_lang = $main;
+			}
+		}
+		$foreign = Vacanam_Model::foreign_script( $post->ID );
+		if ( '' !== $foreign ) {
+			$info = Vacanam_Languages::get( $from_lang );
+			return new WP_Error(
+				'vacanam_foreign_text',
+				sprintf(
+					/* translators: 1: title, 2: language name, 3: writing system such as Devanagari. */
+					__( '"%1$s" is marked as %2$s but its text is in %3$s. It was not copied, so the wrong text does not spread to other languages. Fix its text or its language, then copy it again.', 'vacanam-language-switcher' ),
+					wp_strip_all_tags( $post->post_title ),
+					$info ? $info['name'] : $from_lang,
+					$foreign
+				)
+			);
+		}
 
 		++self::$running;
 		$previous   = self::$lang;

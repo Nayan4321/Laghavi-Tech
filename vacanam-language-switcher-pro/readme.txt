@@ -4,7 +4,7 @@ Tags: multilingual, translation, ai translation, woocommerce, language switcher
 Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,9 @@ The license key and site address are checked with laghavi.site for updates. Anal
 4. Choose your options in Languages > Pro.
 
 == Changelog ==
+
+= 1.1.1 =
+* AI translation never writes into a main-language original, and never translates from an original whose text is in another language.
 
 = 1.1.0 =
 * A currency per language now also works with Laghavi Subscriptions' currency switcher (not only Rinnovo's).

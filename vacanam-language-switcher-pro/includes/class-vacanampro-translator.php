@@ -462,6 +462,22 @@ class VACANAMPRO_Translator {
 		if ( ! $post || ! $source || '' === $to || '' === $from ) {
 			return new WP_Error( 'vacanampro_source', __( 'This page has no original in another language to translate from.', 'vacanam-language-switcher-pro' ) );
 		}
+		/**
+		 * Allow translating into a main-language original (it would replace the original's own text).
+		 *
+		 * @param bool    $allow Default false.
+		 * @param WP_Post $post  Post to fill.
+		 */
+		if ( Vacanam_Languages::default_slug() === $to && ! apply_filters( 'vacanampro_translate_main_language', false, $post ) ) {
+			return new WP_Error( 'vacanampro_main', __( 'This is the original in the main language: translating it would replace its own text. Translate its copies in the other languages instead.', 'vacanam-language-switcher-pro' ) );
+		}
+		if ( method_exists( 'Vacanam_Model', 'foreign_script' ) && '' !== Vacanam_Model::foreign_script( $source->ID ) ) {
+			return new WP_Error(
+				'vacanampro_foreign',
+				/* translators: %s: title. */
+				sprintf( __( 'The original "%s" is not written in its own language, so it was not used for translation. Fix the original first.', 'vacanam-language-switcher-pro' ), wp_strip_all_tags( $source->post_title ) )
+			);
+		}
 		$parts    = self::post_parts( $source );
 		$segments = self::collect( $parts );
 		$result   = self::translate_segments( $segments, $from, $to, $requests );

@@ -4,7 +4,7 @@ Tags: multilingual, language switcher, translation, rtl, arabic
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -163,6 +163,12 @@ Flags: [flag-icons](https://github.com/lipis/flag-icons) by Panayiotis Lipiridis
 7. Settings: addresses, SEO, synchronization.
 
 == Changelog ==
+
+= 1.2.1 =
+* New translations are copied from the main-language version, even when the copy is started on another translation (English → Spanish, not Hindi → Spanish).
+* A page or product whose text is in another language's writing system (for example Hindi text on an English product) is flagged in its language box and is not copied into other languages, so the wrong text does not spread.
+* Copies of WooCommerce products keep their product type, and variable products get all their variations and prices.
+* The language chosen in the editor only applies to the item being edited, never to its translations saved at the same time.
 
 = 1.2.0 =
 * New: WooCommerce synchronization (Settings › Synchronization). Saving a product or variation in one language copies its prices, sale dates, stock, tax, shipping and product settings, and subscription prices, to its translations, through WooCommerce so sorting and price filters stay right. Names, descriptions, slugs and SKUs stay per language.

@@ -547,6 +547,90 @@ class Vacanam_Model {
 	}
 
 	/**
+	 * Writing systems that belong to a language (by the language part of its locale). Languages not listed
+	 * are written in the Latin alphabet.
+	 *
+	 * @param string $slug Language.
+	 * @return string[]
+	 */
+	public static function scripts_of( $slug ) {
+		$lang   = Vacanam_Languages::get( $slug );
+		$code   = strtolower( strtok( (string) ( $lang ? $lang['locale'] : $slug ), '_-' ) );
+		$map    = array(
+			'Devanagari' => array( 'hi', 'mr', 'ne', 'sa', 'mai', 'bho', 'kok', 'doi' ),
+			'Arabic'     => array( 'ar', 'arq', 'ary', 'fa', 'ur', 'ps', 'ug', 'ckb', 'sd', 'azb', 'haz' ),
+			'Hebrew'     => array( 'he', 'yi' ),
+			'Cyrillic'   => array( 'ru', 'uk', 'bg', 'sr', 'mk', 'be', 'kk', 'ky', 'mn', 'tg', 'tt', 'ba', 'sah' ),
+			'Greek'      => array( 'el' ),
+			'Thai'       => array( 'th' ),
+			'Lao'        => array( 'lo' ),
+			'Han'        => array( 'zh', 'ja', 'ko' ),
+			'Hiragana'   => array( 'ja' ),
+			'Katakana'   => array( 'ja' ),
+			'Hangul'     => array( 'ko' ),
+			'Bengali'    => array( 'bn', 'as' ),
+			'Tamil'      => array( 'ta' ),
+			'Telugu'     => array( 'te' ),
+			'Gujarati'   => array( 'gu' ),
+			'Gurmukhi'   => array( 'pa' ),
+			'Kannada'    => array( 'kn' ),
+			'Malayalam'  => array( 'ml' ),
+			'Oriya'      => array( 'or' ),
+			'Sinhala'    => array( 'si' ),
+			'Georgian'   => array( 'ka' ),
+			'Armenian'   => array( 'hy' ),
+			'Khmer'      => array( 'km' ),
+			'Myanmar'    => array( 'my' ),
+			'Ethiopic'   => array( 'am', 'ti' ),
+			'Tibetan'    => array( 'bo', 'dz' ),
+		);
+		$out = array();
+		foreach ( $map as $script => $codes ) {
+			if ( in_array( $code, $codes, true ) ) {
+				$out[] = $script;
+			}
+		}
+		/**
+		 * Writing systems of a language.
+		 *
+		 * @param string[] $out  Unicode script names; empty means the Latin alphabet.
+		 * @param string   $slug Language.
+		 */
+		return (array) apply_filters( 'vacanam_language_scripts', $out, $slug );
+	}
+
+	/**
+	 * Is a post written in the writing system of another language? For example an English page whose text
+	 * is Hindi. Text still in the Latin alphabet (a copy not translated yet) is never flagged.
+	 *
+	 * @param int $id Post ID.
+	 * @return string Name of the foreign writing system, '' when the text fits the language.
+	 */
+	public static function foreign_script( $id ) {
+		$post = get_post( $id );
+		$lang = $post ? self::post_lang( $post ) : '';
+		if ( ! $post || '' === $lang || 'attachment' === $post->post_type ) {
+			return '';
+		}
+		$text = $post->post_title . ' ' . $post->post_excerpt . ' ' . mb_substr( wp_strip_all_tags( strip_shortcodes( $post->post_content ) ), 0, 3000 );
+		$best = '';
+		$most = (int) preg_match_all( '/\p{Latin}/u', $text );
+		foreach ( array( 'Devanagari', 'Arabic', 'Hebrew', 'Cyrillic', 'Greek', 'Thai', 'Lao', 'Han', 'Hiragana', 'Katakana', 'Hangul', 'Bengali', 'Tamil', 'Telugu', 'Gujarati', 'Gurmukhi', 'Kannada', 'Malayalam', 'Oriya', 'Sinhala', 'Georgian', 'Armenian', 'Khmer', 'Myanmar', 'Ethiopic', 'Tibetan' ) as $script ) {
+			$n = (int) preg_match_all( '/\p{' . $script . '}/u', $text );
+			if ( $n > $most ) {
+				$most = $n;
+				$best = $script;
+			}
+		}
+		if ( '' === $best || $most < 3 ) {
+			return '';
+		}
+		$own = self::scripts_of( $lang );
+		// Japanese mixes Han with kana, Korean may use Han: any script of the language counts.
+		return in_array( $best, $own, true ) ? '' : $best;
+	}
+
+	/**
 	 * Give every post and term with no language this language.
 	 *
 	 * @param string $slug Language.
