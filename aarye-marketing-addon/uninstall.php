@@ -20,6 +20,7 @@ function aarye_uninstall_site() {
 	delete_option( 'aarye_rescore' );
 	delete_transient( 'aarye_sheets_lock' );
 	delete_transient( 'aarye_form_places' );
+	delete_option( 'aarye_installed' );
 
 	if ( ! is_array( $settings ) || ! isset( $settings['delete_on_remove'] ) || 'yes' !== $settings['delete_on_remove'] ) {
 		return;
@@ -49,3 +50,6 @@ if ( is_multisite() ) {
 } else {
 	aarye_uninstall_site();
 }
+
+// Review request answers (user meta is shared by all sites of a network).
+delete_metadata( 'user', 0, 'aarye_review', '', true );

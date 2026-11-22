@@ -1,102 +1,178 @@
-=== Aarye Marketing Addon ===
+=== Aarye Marketing Addon – UTM & Lead Source Tracking for Forms ===
 Contributors: nayan4321
-Tags: utm, lead tracking, marketing attribution, google ads, google sheets
+Tags: utm tracking, lead tracking, lead source, contact form 7, marketing attribution
 Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.1.2
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-A helper for your marketing team: see which ad, campaign, keyword or website brought every lead, and whether the lead is real.
+See which ad, campaign or keyword brought every lead from Contact Form 7, WPForms, Elementor and more, and whether the lead is real. No fields to add.
 
 == Description ==
 
-You pay for ads on Google, Meta, TikTok or LinkedIn, and leads arrive on your website. But which ad sent them? Aarye Marketing Addon puts the answer next to every lead: **Meta Ads · Summer Sale › UAE 25-45 › Video Ad 1**, **Google Ads · Brand Search · "plumber dubai"**, **ChatGPT**, **Google (organic)** or **Direct**.
+**Running ads on Google, Meta, Instagram and TikTok, but not sure which one brought you that lead?**
 
-Install it and every new enquiry sent from your website is saved with its source, in one dashboard. Nothing else to install or set up.
+Aarye Marketing Addon answers that for every enquiry sent from your WordPress site. Each lead is saved in one dashboard with the ad that brought it:
 
-= Knows where each lead came from =
+* **Meta Ads** · Summer Sale › UAE 25-45 › Video Ad 1
+* **Google Ads** · Brand Search · "plumber dubai"
+* **ChatGPT**, **Google (organic)**, **Instagram post**, **newsletter** or **Direct**
 
-* **Ads**, recognised by their click IDs and ad tags: Google Ads (gclid, gbraid, wbraid, Performance Max), Meta Ads (Facebook, Instagram, Messenger, WhatsApp), Microsoft Advertising (Bing), TikTok Ads, LinkedIn Ads, X (Twitter) Ads, Snapchat Ads, Pinterest Ads, Reddit Ads, Quora Ads, Yandex Direct, Google Display & Video 360, Amazon Ads, Apple Search Ads, Spotify Ads, Taboola, Outbrain, Criteo, AdRoll, StackAdapt, The Trade Desk, Baidu, Naver and any other network that uses UTM tags.
-* **Campaign, ad set / ad group, ad and keyword** for every ad lead.
+Install it and the next form entry shows its source. There are no hidden fields to add, no UTM fields to set up in your forms, no account to create and nothing sent to us.
+
+= Who it is for =
+
+* Business owners who pay for ads and want to know which ones bring enquiries, not just clicks.
+* Marketing agencies that need proof of which campaign produced which lead.
+* Anyone whose contact form plugin does not keep its entries (Contact Form 7, WPForms Lite).
+
+= What you see for every lead =
+
+* **Ad network, campaign, ad set / ad group, ad and keyword**, recognised from click IDs and UTM tags.
 * **Search engines** (Google, Bing, Yahoo, DuckDuckGo, Yandex, Baidu, Ecosia…), **social networks**, **AI assistants** (ChatGPT, Perplexity, Gemini, Copilot, Claude…), **email**, **other websites** and **direct** visits.
-* **First and last touch**: the first visit that brought the person, and the latest one before they got in touch, with the number of visits and days in between.
-* **Landing page, referrer, the page the lead was sent from, device, browser and language.**
+* **First and last touch**: the visit that first brought the person and the latest one before they got in touch (remembered for 90 days), with the number of visits and days in between.
+* **Landing page, referrer, the page the form was sent from, device, browser and language.**
+* **Every field and attachment** the visitor sent, and a lead status: New, Contacted, Qualified, Won, Lost or Spam.
+
+= 24+ ad networks recognised =
+
+Google Ads (gclid, gbraid, wbraid, Performance Max, YouTube), Meta Ads (Facebook, Instagram, Messenger, WhatsApp), Microsoft Advertising (Bing), TikTok Ads, LinkedIn Ads, X (Twitter) Ads, Snapchat Ads, Pinterest Ads, Reddit Ads, Quora Ads, Amazon Ads, Apple Search Ads, Spotify Ads, Yandex Direct, Google Display & Video 360, Taboola, Outbrain, Criteo, AdRoll, StackAdapt, The Trade Desk, Baidu, Naver and any other network that uses UTM tags.
 
 = Is the lead real? =
 
-* **Source proof**: confirmed by an ad click ID, confirmed by the browser (the website it really came from), or only claimed by the tags in the link (utm_source), which anyone can add.
-* **Spam check** with a score and the reasons in plain words: the page script never ran (posted directly by a bot), no mouse, touch or keys on the page, sent within seconds, browser controlled by automation software, not sent from your website, links and sales-pitch words in the message, repeated leads. It explains, it never deletes: filter by it or mark spam yourself.
+* **Source proof**: confirmed by an ad click ID, confirmed by the browser (the website the visitor really came from), or only claimed by UTM tags, which anyone can add to a link.
+* **Spam check** with a score and the reasons in plain words: posted directly by a bot, no mouse, touch or keys on the page, sent within seconds, browser controlled by automation software, not sent from your website, links and sales-pitch words, repeated leads. It explains, it never deletes: filter by it or mark spam yourself.
 
-= One dashboard for every lead =
+= Never lose a lead =
+
+* **Every entry is saved in WordPress**, even from form plugins that keep none of their own, such as Contact Form 7 and WPForms Lite.
+* **Contact form email failed to send?** The lead is still saved in Aarye, whether or not the notification email goes out.
+* **Attachments are kept**: images and PDF files as a private copy only administrators can download.
+* **Past leads**: bring in enquiries your form plugins saved before Aarye was installed, with their original dates.
+
+= Works with your forms =
+
+Contact Form 7, WPForms (Lite and Pro), Elementor Pro Forms, Fluent Forms, Gravity Forms, Forminator, Ninja Forms, Formidable Forms, JetFormBuilder and MetForm, plus theme forms and hand-made HTML forms. Nothing to change in your forms.
+
+= One dashboard =
 
 * **Overview**: leads by source, ad network, campaign, ad, website, language and device, with a date range and filters.
-* **All leads**: search, filter by source, ad network, campaign or language, and export to CSV (opens correctly in Excel, in any language).
-* **Lead details**: every detail the visitor sent, attachments to download, and all tracking parameters.
-* **Lead status**: New, Contacted, Qualified, Won, Lost or Spam.
-* **Attachments are kept**: images and PDF files as a private copy that only administrators can download; other files as their address, shown as text.
-* **Past leads**: bring in enquiries your site saved before Aarye was installed, with their original dates.
+* **All leads**: search, filter by source, ad network, campaign, spam check or language, and export to CSV (opens correctly in Excel, in any language), with the click ID of every ad lead.
+* **Google Sheets**: every new lead as a row in your own spreadsheet, with its source and every field in its own column. No Google password or API key is stored in WordPress.
 
 = Connect your ads: built-in guide =
 
-A step-by-step guide for Google Ads, Meta Ads, Microsoft Advertising, TikTok, LinkedIn, X, Snapchat, Pinterest, Reddit and any other network, with the tracking template to copy for each one (using each network's own placeholders, so campaign and ad names fill in by themselves). Paste the address of an ad in **Test a link** to see how its leads will be shown.
-
-= Google Sheets =
-
-Every new lead can be added as a row to your own Google Sheet, with its source, campaign and ad, and every detail in its own column. It uses a small script in your spreadsheet: no Google login, password or API key is stored in WordPress. Rows are sent in the background, so your site stays fast, and are tried again if Google is unavailable.
+Step-by-step instructions for Google Ads, Meta Ads, Microsoft Advertising, TikTok, LinkedIn, X, Snapchat, Pinterest, Reddit and any other network, with the tracking template to copy for each one, so campaign and ad names fill in by themselves. Paste an ad's address in **Test a link** to see how its leads will look.
 
 = Multilingual =
 
-* The language of each lead is saved, from WPML, Polylang, TranslatePress, Weglot or the page itself, and you can filter by it.
-* Name, email and phone are recognised in any language.
-* The plugin is translation-ready.
+The language of each lead is saved (WPML, Polylang, TranslatePress, Weglot or the page itself) and you can filter by it. Name, email and phone are recognised in any language, and the plugin is translation-ready.
 
 = Privacy =
 
-* Tracking uses two first-party cookies on your own domain. Nothing is sent to us.
-* Leads are sent to a third party only if you connect Google Sheets: each new lead (its fields and tracking details) is then sent to Google, to the spreadsheet you own. See "External services" below.
-* Only images (JPG, PNG, GIF, WebP) and PDF files are copied, after checking their real contents. Copies are kept in a private folder under uploads, with random names and no file extension, so web servers never run or show them; admins download them from the lead's page. Archives, documents and other files are never copied.
+* Two first-party cookies on your own domain. Nothing is sent to us.
+* Leads go to a third party only if you connect Google Sheets (see "External services").
 * Optional: wait for cookie consent (works with the WP Consent API).
 * Visitor IP addresses are not stored unless you turn it on.
-* Suggested text for your privacy policy, and support for WordPress's personal data export and erase tools.
+* Suggested privacy policy text, and support for WordPress's personal data export and erase tools.
+
+= Aarye Pro =
+
+[Aarye Pro](https://laghavi.site/aarye-marketing-addon/) puts your leads to work:
+
+* Send every lead with its ad source to **HubSpot, Zoho CRM, Airtable, Notion, your own database or any webhook** (Zapier, Make, n8n).
+* **WhatsApp, call, SMS and email button clicks** saved with the ad that brought the visitor.
+* **Form analytics**: views, starts, abandons and the field where people give up, by source.
+* **Pages viewed** before each lead, **automations**, **spam and bot blocking**, and the **cost per real lead** with Laghavi Ads Hub.
+
+The free plugin keeps working on its own, with no limits on leads.
 
 == Installation ==
 
-1. Install and activate the plugin from Plugins > Add New, or upload the folder to `/wp-content/plugins/`.
-2. Open **Aarye Leads** in the admin menu. New leads appear there with their source.
-3. Open **Aarye Leads > Connect your ads** and add the tracking template to each ad account, so campaign and ad names are shown too.
-4. Optional: **Aarye Leads > Google Sheets** to send leads to a spreadsheet.
+1. In WordPress go to **Plugins > Add New**, search for "Aarye Marketing Addon", then click **Install** and **Activate**.
+2. Open **Aarye Leads** in the admin menu. Every new enquiry now appears there with its source.
+3. Optional: open **Aarye Leads > Connect your ads** and add the tracking template to each ad account (about 2 minutes each), so campaign, ad set and ad names are shown too.
+4. Optional: **Aarye Leads > Google Sheets** to send each lead to a spreadsheet, and **Import past entries** to bring in older enquiries.
 
 == Frequently Asked Questions ==
 
-= Do I need to install anything else? =
+= How do I know which ad a lead came from in WordPress? =
 
-No. Aarye saves the enquiries visitors send from your website as they are, with no changes to your pages and nothing else to install.
+Install Aarye. Every enquiry sent from your site is saved in **Aarye Leads** with the ad network, campaign, ad and keyword that brought the visitor, or the website, search engine or AI assistant they came from.
 
-= Will it show leads that arrived before I installed it? =
+= How do I track UTM parameters in Contact Form 7? =
 
-Yes, when your site saved them: open Aarye Leads > Import past entries. They keep their original dates; their source is known only when the saved page address carries ad tags (gclid, fbclid, utm_…).
+You don't need to add hidden UTM fields. Aarye reads the UTM tags and click IDs when the visitor arrives, remembers them while they browse, and saves them with the Contact Form 7 entry. The same works for WPForms, Gravity Forms, Elementor Pro Forms and the other supported form plugins.
 
-= Can I ignore some enquiries, such as a newsletter signup? =
+= How do I capture the Google Ads GCLID with a WordPress form? =
 
-Yes. Add its CSS selector in Aarye Leads > Settings. Logins, searches, carts, checkouts, comments and payment pages are never saved.
+Keep auto-tagging on in Google Ads. Aarye saves the gclid (and gbraid/wbraid) with every lead from an ad, shows it in the lead details and includes it in the CSV export and Google Sheets, ready for offline conversion imports.
+
+= How do I track leads from Facebook and Instagram ads? =
+
+Meta adds an fbclid to ad clicks, and Aarye recognises it. Add the Meta tracking template from **Connect your ads** once, and each lead also shows the campaign, ad set, ad and placement (Facebook, Instagram, Messenger…). Without it, Facebook's fbclid alone cannot tell an ad from a normal post.
+
+= Where can I see Contact Form 7 entries? =
+
+Contact Form 7 does not save entries; it only sends an email. With Aarye, every Contact Form 7 entry is saved in **Aarye Leads > All entries**, with its source, fields and attachments, and can be exported to CSV.
+
+= Contact Form 7 says "There was an error trying to send your message". Will I lose the lead? =
+
+No. Aarye saves the entry on your own website when the form is sent, whether or not the notification email goes out, so a broken mail setup never costs you the lead. Fix your email settings separately (for example with an SMTP plugin).
+
+= Does it work with WPForms Lite? =
+
+Yes. WPForms Lite does not keep entries, and Aarye saves them for you with their source.
+
+= Does it work with Elementor forms? =
+
+Yes, with the Form widget of Elementor Pro. Forms built into themes and hand-made HTML forms are saved too.
+
+= How do I know if a form submission is spam or from a bot? =
+
+Every lead gets a spam check with a score and the reasons in plain words, such as "page script never ran", "controlled by software" or "sent almost the moment the page opened: faster than anyone can read and type". Filter the list by it, or mark spam yourself. Nothing is deleted automatically.
 
 = Do I need UTM tags? =
 
-Not for the ad network itself: Google, Meta, Microsoft, TikTok, LinkedIn and others add a click ID to every ad click, and Aarye recognises it. To also see the campaign, ad set and ad name, add the tracking template from **Connect your ads** once per ad account.
+Not for the ad network itself: Google, Meta, Microsoft, TikTok, LinkedIn and others add a click ID to every ad click, and Aarye recognises it. To also see campaign, ad set and ad names, add the tracking template from **Connect your ads** once per ad account.
+
+= Can it show leads that came from ChatGPT or other AI assistants? =
+
+Yes. Visits from ChatGPT, Perplexity, Gemini, Copilot, Claude and other AI assistants are shown as their own sources.
+
+= Does it use first-touch or last-touch attribution? =
+
+Both. Each lead shows the visit that first brought the person and the latest one before they got in touch, remembered for 90 days, with the number of visits and days in between. A visitor can click an ad today and fill in your form next week.
 
 = Why does a lead from an Instagram ad show "Meta Ads", not Instagram? =
 
 Instagram, Facebook, Messenger and WhatsApp ads are all bought in Meta Ads Manager. With the Meta tracking template, the placement (Instagram, Facebook…) is saved too and shown in the lead details.
 
-= Does it slow down my site? =
+= Does it track Facebook Lead Ads (Instant Forms)? =
 
-No. The tracking script is a few kilobytes, loads deferred and only reads the address and referrer of a visit. Nothing is sent to other servers when someone browses.
+No. Those forms are filled in inside Facebook and never reach your website. Aarye tracks every ad that sends people to your site.
 
-= Does it work with page caching? =
+= Will it show leads that arrived before I installed it? =
 
-Yes. The source is stored in a cookie by the browser, so cached pages work.
+Yes, when your form plugin saved them: open **Aarye Leads > Import past entries**. They keep their original dates; their source is known only when the saved page address carries ad tags (gclid, fbclid, utm_…).
+
+= Can I send leads to Google Sheets or Excel? =
+
+Yes. Connect your own Google Sheet in **Aarye Leads > Google Sheets**, or export any filtered list to CSV, which opens correctly in Excel.
+
+= Can I ignore some forms, such as a newsletter signup? =
+
+Yes. Add its CSS selector in **Aarye Leads > Settings**. Logins, searches, carts, checkouts, comments and payment pages are never saved.
+
+= Does it slow down my site or break page caching? =
+
+No. The tracking script is a few kilobytes, loads deferred and only reads the address and referrer of a visit. The source is stored in a cookie by the browser, so cached pages work.
+
+= Is it GDPR friendly? =
+
+Aarye uses two first-party cookies, stores leads only in your own WordPress database and sends nothing to us. You can make it wait for cookie consent (WP Consent API), keep IP addresses off, and use WordPress's personal data export and erase tools.
 
 = Who can see the leads? =
 
@@ -104,7 +180,11 @@ Administrators (users with the "manage_options" capability). Developers can chan
 
 = What happens to my data if I delete the plugin? =
 
-Leads and files are kept unless you tick "Also delete all saved entries and files" in Aarye Leads > Settings before deleting.
+Leads and files are kept unless you tick "Also delete all saved entries and files" in **Aarye Leads > Settings** before deleting.
+
+= What does Aarye Pro add? =
+
+Sending leads to your CRM, WhatsApp and call click tracking, form analytics, pages viewed before each lead, automations, spam blocking and the cost per real lead. See [Aarye Pro](https://laghavi.site/aarye-marketing-addon/).
 
 == External services ==
 
@@ -124,6 +204,11 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 5. Google Sheets: each lead as a row with its source.
 
 == Changelog ==
+
+= 1.2.0 =
+* New: Upgrade to Pro screen under Aarye Leads, with what Aarye Pro adds and its plans (hidden once Pro is installed).
+* New: a short request for a review on WordPress.org, 7 days after install, on the Dashboard, Plugins and Aarye screens. "Maybe later" asks again 7 days later; "Rate Aarye" or "I already did" hide it for good.
+* Readme: answers to the questions people ask most about lead source tracking.
 
 = 1.1.2 =
 * Private copies are made only of images and PDF files whose contents are checked; archives and all other files keep their link to the form plugin's file.

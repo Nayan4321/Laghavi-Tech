@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       Aarye Marketing Addon
+ * Plugin Name:       Aarye Marketing Addon – UTM & Lead Source Tracking for Forms
  * Description:       A helper for your marketing team: see which ad, campaign, keyword or website brought every lead, check whether each lead is real, keep every lead in one dashboard, and send them to Google Sheets.
- * Version:           1.1.2
+ * Version:           1.2.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYE_VERSION', '1.1.2' );
+define( 'AARYE_VERSION', '1.2.0' );
 define( 'AARYE_FILE', __FILE__ );
 define( 'AARYE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYE_URL', plugin_dir_url( __FILE__ ) );
@@ -45,6 +45,8 @@ require_once AARYE_DIR . 'includes/class-aarye-async.php';
 require_once AARYE_DIR . 'includes/class-aarye-sheets.php';
 require_once AARYE_DIR . 'includes/class-aarye-guide.php';
 require_once AARYE_DIR . 'includes/class-aarye-admin.php';
+require_once AARYE_DIR . 'includes/class-aarye-upgrade.php';
+require_once AARYE_DIR . 'includes/class-aarye-review.php';
 require_once AARYE_DIR . 'includes/class-aarye-privacy.php';
 
 add_action(
@@ -63,6 +65,8 @@ add_action(
 		AARYE_Privacy::init();
 		if ( is_admin() ) {
 			AARYE_Admin::init();
+			AARYE_Upgrade::init();
+			AARYE_Review::init();
 			if ( get_option( 'aarye_rescore' ) ) {
 				add_action( 'admin_init', array( 'AARYE_Entries', 'score_unchecked' ) );
 			}
