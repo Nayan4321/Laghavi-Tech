@@ -39,21 +39,52 @@ app.get('/api/status', (req, res) => {
   res.json({ status, downloaded, total, error });
 });
 
+const photoOptions = (body) => ({
+  method: body.method === 'fill' ? 'fill' : 'smart',
+  sensitivity: Math.min(3, Math.max(0.3, Number(body.sensitivity) || 1)),
+});
+
+const photoFiles = (req, res) => {
+  const image = req.files?.image?.[0];
+  const mask = req.files?.mask?.[0];
+  if (!image || !mask) {
+    res.status(400).json({ error: 'Upload a JPG, PNG or WebP photo and mark the watermark.' });
+    return null;
+  }
+  return { image, mask };
+};
+
 app.post('/api/remove', upload.fields([{ name: 'image' }, { name: 'mask' }]), async (req, res) => {
   if (req.body.rights !== 'yes') {
     return res.status(400).json({ error: 'Please confirm you own these photos or have permission to edit them.' });
   }
-  const image = req.files?.image?.[0];
-  const mask = req.files?.mask?.[0];
-  if (!image || !mask) return res.status(400).json({ error: 'Upload a JPG, PNG or WebP photo and mark the watermark.' });
+  const files = photoFiles(req, res);
+  if (!files) return;
 
   try {
-    const result = await lama.inpaint(image.buffer, mask.buffer);
+    const result = await lama.inpaint(files.image.buffer, files.mask.buffer, photoOptions(req.body));
     res.set('Content-Type', result.type);
     res.set('X-Processing-Ms', String(result.ms));
+    res.set('X-Method', result.method);
+    if (result.stats) res.set('X-Detect', JSON.stringify(result.stats));
     res.send(result.buffer);
   } catch (err) {
     console.error('[remove]', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Shows which pixels smart mode would change, without changing anything.
+app.post('/api/detect', upload.fields([{ name: 'image' }, { name: 'mask' }]), async (req, res) => {
+  const files = photoFiles(req, res);
+  if (!files) return;
+  try {
+    const result = await lama.preview(files.image.buffer, files.mask.buffer, photoOptions(req.body));
+    res.set('Content-Type', 'image/png');
+    res.set('X-Detect', JSON.stringify(result.stats));
+    res.send(result.buffer);
+  } catch (err) {
+    console.error('[detect]', err);
     res.status(500).json({ error: err.message });
   }
 });

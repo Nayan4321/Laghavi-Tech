@@ -11,14 +11,35 @@ Live at: **https://photo.femmehaven.net**
 
 ## How it works
 
-### Photos — LaMa AI
+### Photos — smart detection + LaMa AI
 - The browser sends the photo + a black/white mask of what you painted.
-- The server crops just the area around the mask, runs the **LaMa** AI
-  model on it at 512×512, and pastes the result back into the full-size
-  photo. LaMa fills in matching floor, wall, sky, etc.
-- Photos are processed in memory and never saved on the server.
+- **Smart mode (default)** finds the watermark itself inside the painted
+  area, so objects behind or between its letters are kept:
+  - Watermark strokes are thin, evenly see-through, and one colour (white,
+    grey or black). The server compares every painted pixel with the
+    picture around it and keeps only pixels that fit that pattern; coloured
+    objects, furniture edges, a white window frame etc. don't fit and are
+    left untouched.
+  - For see-through watermarks it works out the exact opacity and colour,
+    then undoes them: `picture = (pixel − opacity × colour) / (1 − opacity)`.
+    The object under the watermark comes back instead of being replaced.
+  - Only pixels that can't be recovered (solid parts, or picture blown out to
+    pure white under the mark) go to the LaMa AI fill — just those thin
+    strokes, not the whole painted area.
+  - **Show detection** paints what was found on the photo before removing:
+    green = restored, orange = AI fill. Raise **Detection sensitivity** if a
+    faint watermark is only partly found.
+  - If no watermark shape is found it falls back to AI fill.
+- **AI fill mode** (the old behaviour): LaMa replaces the whole painted area.
+  Use it for solid logos/stickers where there is nothing behind to keep.
+- LaMa runs on the server CPU on just the area around what it fills, pasted
+  back into the full-size photo. Photos are processed in memory and never
+  saved on the server.
 - On first start the server downloads the AI model (~200 MB) into
   `models/`. The page shows the download progress.
+- Limits: a solid white watermark looks the same as a white object, so in
+  that case white objects inside the painted area may be filled too — paint
+  tightly. Very faint marks on near-white areas may leave a faint trace.
 
 ### Videos — ffmpeg
 Running AI on every frame is far too slow for 2–5 minute videos on

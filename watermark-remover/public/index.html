@@ -21,6 +21,8 @@
   .stage { position:relative; margin-top:12px; touch-action:none; display:none; }
   .stage canvas { width:100%; height:auto; display:block; border-radius:8px; }
   .stage canvas.mask { position:absolute; inset:0; opacity:.5; cursor:crosshair; }
+  .stage img.detect { position:absolute; inset:0; width:100%; height:100%; pointer-events:none; }
+  .legend { display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:middle; }
   .tools { margin-top:12px; display:none; }
   .status { font-size:14px; color:var(--muted); }
   .error { color:var(--danger); font-size:14px; min-height:1em; }
@@ -54,7 +56,7 @@
         <input type="file" id="p-file" accept="image/jpeg,image/png,image/webp">
         <span class="status" id="p-status">Checking AI model…</span>
       </div>
-      <div class="stage" id="p-stage"><canvas id="p-photo"></canvas><canvas class="mask" id="p-mask"></canvas></div>
+      <div class="stage" id="p-stage"><canvas id="p-photo"></canvas><canvas class="mask" id="p-mask"></canvas><img class="detect" id="p-detect" alt="" hidden></div>
       <div class="row tools" id="p-tools">
         <label>Brush <input type="range" id="p-brush" min="5" max="150" value="40"></label>
         <button id="p-undo">Undo</button>
@@ -64,9 +66,20 @@
     </div>
     <div class="card">
       <div class="row">
+        <label>Method
+          <select id="p-method">
+            <option value="smart">Smart — detect the watermark, keep objects behind it</option>
+            <option value="fill">AI fill — replace the whole painted area</option>
+          </select>
+        </label>
+        <label id="p-sens-label">Detection sensitivity <input type="range" id="p-sens" min="0.5" max="2" step="0.1" value="1"></label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button id="p-show" disabled>Show detection</button>
         <button class="primary" id="p-go" disabled>Remove watermark</button>
         <span class="error" id="p-error"></span>
       </div>
+      <p class="hint" id="p-detect-note" style="margin:8px 0 0">Smart mode finds the watermark's letters/lines inside the painted area. <span class="legend" style="background:#00c85a"></span> restored (objects behind it come back) · <span class="legend" style="background:#ff8c00"></span> filled by AI (solid parts). Everything else you painted is left untouched. If it misses parts of a faint watermark, raise the sensitivity.</p>
     </div>
     <div class="card result" id="p-result">
       <div class="row" style="margin-bottom:12px">
@@ -219,11 +232,57 @@ for (const name of ['photo', 'video']) {
 
 // ---------- photo ----------
 let sourceBlob = null, originalUrl = null, resultBlob = null;
-const pBrush = makeBrush('p', updatePhotoButton);
+const pBrush = makeBrush('p', () => { hideDetection(); updatePhotoButton(); });
 
 function updatePhotoButton() {
-  $('p-go').disabled = !(sourceBlob && pBrush.hasStrokes() && $('rights').checked);
+  const ready = sourceBlob && pBrush.hasStrokes();
+  $('p-go').disabled = !(ready && $('rights').checked);
+  $('p-show').disabled = !(ready && $('p-method').value === 'smart');
 }
+
+function hideDetection() {
+  $('p-detect').hidden = true;
+}
+
+$('p-method').onchange = () => {
+  $('p-sens-label').hidden = $('p-detect-note').hidden = $('p-method').value !== 'smart';
+  hideDetection();
+  updatePhotoButton();
+};
+$('p-sens').oninput = hideDetection;
+
+function photoForm(mask) {
+  const fd = new FormData();
+  fd.append('method', $('p-method').value);
+  fd.append('sensitivity', $('p-sens').value);
+  fd.append('image', sourceBlob, sourceBlob.name || 'photo.png');
+  fd.append('mask', mask, 'mask.png');
+  return fd;
+}
+
+function detectionText(json) {
+  if (!json) return '';
+  const d = JSON.parse(json);
+  if (!d) return 'No watermark shape found in the painted area.';
+  return 'Watermark found: ' + d.opacity + '% opaque, ' + d.marked.toLocaleString() + ' px changed of ' + d.painted.toLocaleString() + ' painted'
+    + (d.fill ? ' (' + d.fill.toLocaleString() + ' px AI-filled)' : '') + '.';
+}
+
+$('p-show').onclick = async () => {
+  $('p-show').disabled = true;
+  $('p-error').textContent = 'Detecting…';
+  try {
+    const res = await fetch('api/detect', { method: 'POST', body: photoForm(await pBrush.maskBlob()) });
+    if (!res.ok) throw new Error(await errorText(res));
+    $('p-detect').src = URL.createObjectURL(await res.blob());
+    $('p-detect').hidden = false;
+    $('p-error').textContent = detectionText(res.headers.get('X-Detect')) || 'No watermark shape found in the painted area — Remove will AI-fill the painted area instead.';
+  } catch (err) {
+    $('p-error').textContent = err.message;
+  } finally {
+    updatePhotoButton();
+  }
+};
 
 async function pollModel() {
   try {
@@ -249,6 +308,7 @@ $('p-file').addEventListener('change', async (e) => {
   const f = e.target.files[0];
   if (!f) return;
   originalUrl = URL.createObjectURL(f);
+  hideDetection();
   $('p-result').style.display = 'none';
   $('p-error').textContent = '';
   await setPhoto(f);
@@ -259,10 +319,8 @@ $('p-go').onclick = async () => {
   $('p-error').textContent = 'Working… this can take up to a minute.';
   const started = Date.now();
   try {
-    const fd = new FormData();
+    const fd = photoForm(await pBrush.maskBlob());
     fd.append('rights', 'yes');
-    fd.append('image', sourceBlob, sourceBlob.name || 'photo.png');
-    fd.append('mask', await pBrush.maskBlob(), 'mask.png');
     const res = await fetch('api/remove', { method: 'POST', body: fd });
     if (!res.ok) throw new Error(await errorText(res));
     resultBlob = await res.blob();
@@ -271,7 +329,10 @@ $('p-go').onclick = async () => {
     $('p-download').href = url;
     $('p-download').download = 'clean-photo.' + (resultBlob.type === 'image/png' ? 'png' : 'jpg');
     const serverMs = Number(res.headers.get('X-Processing-Ms'));
-    $('p-timing').textContent = 'Processed in ' + (serverMs / 1000).toFixed(1) + 's on the server (' + ((Date.now() - started) / 1000).toFixed(1) + 's total)';
+    const method = res.headers.get('X-Method');
+    $('p-timing').textContent = 'Processed in ' + (serverMs / 1000).toFixed(1) + 's on the server (' + ((Date.now() - started) / 1000).toFixed(1) + 's total). '
+      + (method === 'smart' ? detectionText(res.headers.get('X-Detect'))
+        : method === 'fill-fallback' ? 'No watermark shape found, so the painted area was AI-filled.' : '');
     $('p-result').style.display = 'block';
     $('p-error').textContent = '';
     $('p-result').scrollIntoView({ behavior: 'smooth' });
