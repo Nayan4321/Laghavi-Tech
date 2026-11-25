@@ -22,7 +22,7 @@ class Vacanam_Admin {
 		add_action( 'admin_enqueue_scripts', array( __CLASS__, 'assets' ) );
 		add_action( 'admin_notices', array( __CLASS__, 'notices' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( VACANAM_FILE ), array( __CLASS__, 'action_links' ) );
-		foreach ( array( 'add_language', 'edit_language', 'delete_language', 'default_language', 'move_language', 'assign_all', 'save_settings', 'save_switcher', 'save_strings', 'save_menus', 'copy_menu' ) as $action ) {
+		foreach ( array( 'add_language', 'edit_language', 'delete_language', 'default_language', 'move_language', 'assign_all', 'save_settings', 'save_switcher', 'save_strings', 'save_menus', 'copy_menu', 'dismiss_setup' ) as $action ) {
 			add_action( 'admin_post_vacanam_' . $action, array( __CLASS__, 'handle_' . $action ) );
 		}
 	}
@@ -124,12 +124,17 @@ class Vacanam_Admin {
 		if ( ! current_user_can( self::cap() ) ) {
 			return;
 		}
+		$screen = get_current_screen();
+		$ours   = $screen && ( 'plugins' === $screen->id || false !== strpos( $screen->id, 'vacanam' ) );
+		if ( ! $ours ) {
+			return;
+		}
 		if ( defined( 'POLYLANG_VERSION' ) || defined( 'ICL_SITEPRESS_VERSION' ) || defined( 'TRP_PLUGIN_VERSION' ) || defined( 'WEGLOT_VERSION' ) ) {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'Vacanam Language Switcher: another translation plugin is active (Polylang, WPML, TranslatePress or Weglot). Use only one translation plugin at a time.', 'vacanam-language-switcher' ) . ' <a href="' . esc_url( admin_url( 'admin.php?page=vacanam-import' ) ) . '">' . esc_html__( 'Move its languages and translations to Vacanam', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
-		$screen = get_current_screen();
-		if ( ! Vacanam_Languages::all() && $screen && false === strpos( $screen->id, 'vacanam-setup' ) && ( in_array( $screen->id, array( 'dashboard', 'plugins' ), true ) || false !== strpos( $screen->id, 'vacanam' ) ) ) {
-			echo '<div class="notice notice-info"><p><strong>' . esc_html__( 'Vacanam Language Switcher', 'vacanam-language-switcher' ) . '</strong> – ' . esc_html__( 'Add your languages in a few steps.', 'vacanam-language-switcher' ) . ' <a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup' ) ) . '">' . esc_html__( 'Start the setup', 'vacanam-language-switcher' ) . '</a></p></div>';
+		if ( ! Vacanam_Languages::all() && false === strpos( $screen->id, 'vacanam-setup' ) && ! get_user_meta( get_current_user_id(), 'vacanam_setup_dismissed', true ) ) {
+			$dismiss = wp_nonce_url( admin_url( 'admin-post.php?action=vacanam_dismiss_setup' ), 'vacanam_dismiss_setup' );
+			echo '<div class="notice notice-info"><p><strong>' . esc_html__( 'Vacanam Language Switcher', 'vacanam-language-switcher' ) . '</strong> – ' . esc_html__( 'Add your languages in a few steps.', 'vacanam-language-switcher' ) . ' <a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=vacanam-setup' ) ) . '">' . esc_html__( 'Start the setup', 'vacanam-language-switcher' ) . '</a> <a href="' . esc_url( $dismiss ) . '">' . esc_html__( 'Dismiss', 'vacanam-language-switcher' ) . '</a></p></div>';
 		}
 		$flash = get_transient( 'vacanam_notice_' . get_current_user_id() );
 		if ( is_array( $flash ) ) {
@@ -151,6 +156,16 @@ class Vacanam_Admin {
 		if ( '' !== $err ) {
 			echo '<div class="notice notice-error is-dismissible"><p>' . esc_html( $err ) . '</p></div>';
 		}
+	}
+
+	/**
+	 * Hide the setup reminder for this user.
+	 */
+	public static function handle_dismiss_setup() {
+		self::check( 'vacanam_dismiss_setup' );
+		update_user_meta( get_current_user_id(), 'vacanam_setup_dismissed', 1 );
+		wp_safe_redirect( wp_get_referer() ? wp_get_referer() : admin_url( 'plugins.php' ) );
+		exit;
 	}
 
 	/**

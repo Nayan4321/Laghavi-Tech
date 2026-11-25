@@ -235,7 +235,9 @@ class Vacanam_Fonts {
 		if ( ! preg_match_all( '#url\((https://fonts\.gstatic\.com/[^)\s]+\.woff2)\)#', $css, $files ) ) {
 			return new WP_Error( 'vacanam_font', __( 'The font files could not be found.', 'vacanam-language-switcher' ) );
 		}
-		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		if ( ! WP_Filesystem() ) {
 			return new WP_Error( 'vacanam_font', __( 'WordPress cannot write files on this server.', 'vacanam-language-switcher' ) );
 		}
@@ -275,7 +277,9 @@ class Vacanam_Fonts {
 		}
 		unset( $saved['google'][ $family ] );
 		update_option( self::OPTION, $saved, false );
-		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if ( ! function_exists( 'WP_Filesystem' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		if ( WP_Filesystem() ) {
 			$wp_filesystem->delete( self::dir() . self::family_slug( $family ), true );
 		}

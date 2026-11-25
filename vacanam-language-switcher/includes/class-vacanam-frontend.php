@@ -524,7 +524,7 @@ class Vacanam_Frontend {
 	 */
 	public static function remember() {
 		$lang = Vacanam_Router::current();
-		if ( headers_sent() || '' === $lang || ( isset( $_COOKIE[ self::COOKIE ] ) && $_COOKIE[ self::COOKIE ] === $lang ) || self::is_bot() ) {
+		if ( headers_sent() || '' === $lang || ( isset( $_COOKIE[ self::COOKIE ] ) && sanitize_key( wp_unslash( $_COOKIE[ self::COOKIE ] ) ) === $lang ) || self::is_bot() ) {
 			return;
 		}
 		/**

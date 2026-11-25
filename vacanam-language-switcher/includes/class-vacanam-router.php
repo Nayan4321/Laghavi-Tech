@@ -282,7 +282,7 @@ class Vacanam_Router {
 			self::$parsing = true;
 			return $parse;
 		}
-		$uri                = $_SERVER['REQUEST_URI']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Restored as it was.
+		$uri                = esc_url_raw( wp_unslash( $_SERVER['REQUEST_URI'] ) );
 		self::$original_uri = $uri;
 		$home               = self::home_path();
 		$slug               = preg_quote( self::$from_url, '#' );
@@ -298,7 +298,7 @@ class Vacanam_Router {
 		 */
 		$_SERVER['REQUEST_URI'] = apply_filters( 'vacanam_request_uri', $stripped, self::$from_url );
 		if ( ! empty( $_SERVER['PATH_INFO'] ) ) {
-			$info                     = $_SERVER['PATH_INFO']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- Restored as it was.
+			$info                     = esc_url_raw( wp_unslash( $_SERVER['PATH_INFO'] ) );
 			self::$original_path_info = $info;
 			$info                     = preg_replace( '#^(' . preg_quote( $home, '#' ) . ')?/' . $slug . '(?=/|$)#i', '$1', $info, 1 );
 			$_SERVER['PATH_INFO']     = '' === $info ? '/' : (string) wp_parse_url( apply_filters( 'vacanam_request_uri', $info, self::$from_url ), PHP_URL_PATH ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.DynamicHooknameFound -- Documented above.

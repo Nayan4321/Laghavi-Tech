@@ -415,8 +415,12 @@ class Vacanam_Languages {
 		if ( 'en_US' === $locale || ! current_user_can( 'install_languages' ) || wp_installing() ) {
 			return;
 		}
-		require_once ABSPATH . 'wp-admin/includes/translation-install.php';
-		require_once ABSPATH . 'wp-admin/includes/file.php';
+		if ( ! function_exists( 'wp_download_language_pack' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/translation-install.php';
+		}
+		if ( ! function_exists( 'get_filesystem_method' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+		}
 		if ( in_array( $locale, get_available_languages(), true ) || 'direct' !== get_filesystem_method() ) {
 			return;
 		}

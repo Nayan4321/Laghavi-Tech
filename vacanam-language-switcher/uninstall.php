@@ -21,6 +21,7 @@ delete_metadata( 'post', 0, '_vacanam_tr', '', true );
 delete_metadata( 'post', 0, '_vacanam_switcher', '', true );
 delete_metadata( 'term', 0, '_vacanam_tr', '', true );
 delete_metadata( 'term', 0, '_vacanam_lang', '', true );
+delete_metadata( 'user', 0, 'vacanam_setup_dismissed', '', true );
 delete_metadata( 'user', 0, 'vacanam_filter_lang', '', true );
 
 // Language terms and their links to posts.
@@ -48,7 +49,9 @@ if ( is_array( $vacanam_locations ) ) {
 }
 
 // Fonts downloaded from Google Fonts.
-require_once ABSPATH . 'wp-admin/includes/file.php';
+if ( ! function_exists( 'WP_Filesystem' ) ) {
+	require_once ABSPATH . 'wp-admin/includes/file.php';
+}
 $vacanam_uploads = wp_upload_dir( null, false );
 if ( WP_Filesystem() ) {
 	global $wp_filesystem;
