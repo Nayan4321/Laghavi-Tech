@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Tags: utm tracking, lead tracking, lead source, contact form 7, marketing attribution
 Requires at least: 6.3
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
 Stable tag: 1.2.0
 License: GPLv2 or later

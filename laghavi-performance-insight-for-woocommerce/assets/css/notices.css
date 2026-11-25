@@ -1,0 +1,18 @@
+.lgpi-review-actions .button-link{margin-left:6px;vertical-align:middle}
+body.lgpi-deact-open{overflow:hidden}
+.lgpi-deact{position:fixed;inset:0;z-index:100100;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:16px}
+.lgpi-deact[hidden]{display:none}
+.lgpi-deact-box{background:#fff;width:100%;max-width:600px;max-height:calc(100vh - 32px);overflow:auto;border-radius:4px;box-shadow:0 10px 40px rgba(0,0,0,.3)}
+.lgpi-deact-head{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid #dcdcde}
+.lgpi-deact-head h2{margin:0;font-size:18px}
+.lgpi-deact-x{background:none;border:0;font-size:26px;line-height:1;cursor:pointer;color:#50575e;padding:0 4px}
+.lgpi-deact-body{padding:8px 20px 4px}
+.lgpi-deact-body ul{margin:8px 0 12px}
+.lgpi-deact-body li{margin:0 0 8px}
+.lgpi-deact-body textarea{display:block;width:100%;margin:6px 0 0 24px;max-width:calc(100% - 24px)}
+.lgpi-deact-body textarea[hidden],.lgpi-deact-tip[hidden]{display:none}
+.lgpi-deact-tip{margin:6px 0 0 24px;padding:8px 10px;background:#f0f6fc;border-left:3px solid #2271b1;font-size:13px}
+.lgpi-deact-body input[type=email]{width:100%;max-width:340px;margin-top:4px}
+.lgpi-deact-privacy{color:#646970;font-size:12px}
+.lgpi-deact-foot{display:flex;gap:8px;align-items:center;padding:14px 20px;border-top:1px solid #dcdcde;background:#f6f7f7}
+.lgpi-deact-foot .button-link{margin-left:auto}

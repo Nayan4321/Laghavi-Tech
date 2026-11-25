@@ -1,0 +1,3298 @@
+# Copyright (C) 2026 Laghavi Digital
+# This file is distributed under the GPLv2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: Performance Insight – Cookieless Analytics & SEO for WooCommerce 1.6.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/laghavi-performance-insight-for-woocommerce\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2026-11-19T18:46:06+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 3.0.0-alpha\n"
+"X-Domain: laghavi-performance-insight-for-woocommerce\n"
+
+#. Plugin Name of the plugin
+#: laghavi-performance-insight-for-woocommerce.php:3
+msgid "Performance Insight – Cookieless Analytics & SEO for WooCommerce"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: laghavi-performance-insight-for-woocommerce.php:4
+msgid "https://laghavi.site/performance-insight/"
+msgstr ""
+
+#. Description of the plugin
+#: laghavi-performance-insight-for-woocommerce.php:5
+msgid "Privacy-friendly WooCommerce analytics inside your WooCommerce menu: customer journeys (where each buyer came from and what they viewed), visitors, real time, traffic sources (including ChatGPT and other AI assistants), the store funnel, best-selling products, coupons and an SEO score for every page. No cookies, no Google Analytics needed."
+msgstr ""
+
+#. Author of the plugin
+#: laghavi-performance-insight-for-woocommerce.php:10
+msgid "Laghavi Digital"
+msgstr ""
+
+#. Author URI of the plugin
+#: laghavi-performance-insight-for-woocommerce.php:11
+msgid "https://laghavi.site/"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:111
+#: includes/class-lgpi-admin.php:188
+msgid "Performance Insight"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:112
+#: includes/class-lgpi-admin.php:286
+#: includes/class-lgpi-admin.php:1572
+msgid "Laghavi Ads Hub"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:112
+msgid "Insight Pro"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:114
+#: includes/class-lgpi-admin.php:263
+#: includes/class-lgpi-admin.php:460
+#: includes/class-lgpi-admin.php:611
+#: includes/class-lgpi-admin.php:626
+#: includes/class-lgpi-admin.php:628
+#: includes/class-lgpi-admin.php:636
+#: includes/class-lgpi-admin.php:677
+#: includes/class-lgpi-admin.php:1067
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-admin.php:1303
+#: includes/class-lgpi-admin.php:1389
+#: includes/class-lgpi-report.php:112
+#: includes/class-lgpi-report.php:162
+#: includes/class-lgpi-report.php:256
+#: includes/class-lgpi-woo.php:110
+#: includes/class-lgpi-woo.php:115
+#: includes/class-lgpi-woo.php:186
+msgid "Visitors"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:115
+#: includes/class-lgpi-admin.php:676
+msgid "Traffic sources"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:116
+#: includes/class-lgpi-admin.php:265
+#: includes/class-lgpi-admin.php:1017
+msgid "Pages & posts"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:117
+#: includes/class-lgpi-admin.php:284
+#: includes/class-lgpi-admin.php:1525
+msgid "SEO scores"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:118
+#: includes/class-lgpi-admin.php:287
+#: includes/class-lgpi-admin.php:2076
+msgid "Settings"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:121
+#: includes/class-lgpi-admin.php:269
+#: includes/class-lgpi-admin.php:1102
+#: includes/class-lgpi-admin.php:1105
+msgid "Products"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:122
+#: includes/class-lgpi-admin.php:270
+#: includes/class-lgpi-admin.php:1168
+msgid "Coupons"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:123
+#: includes/class-lgpi-admin.php:271
+#: includes/class-lgpi-admin.php:1250
+#: includes/class-lgpi-admin.php:1475
+msgid "Stock"
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-admin.php:124
+#: includes/class-lgpi-admin.php:814
+#: includes/class-lgpi-notices.php:145
+#: includes/class-lgpi-report.php:278
+msgid "Customer journeys"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:132
+#: includes/class-lgpi-admin.php:278
+#: includes/class-lgpi-admin.php:658
+#: includes/class-lgpi-family-view.php:218
+#: includes/class-lgpi-family-view.php:220
+#: includes/class-lgpi-family-view.php:316
+msgid "Languages"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:135
+#: includes/class-lgpi-admin.php:281
+#: includes/class-lgpi-family-view.php:231
+#: includes/class-lgpi-family-view.php:324
+msgid "Logins"
+msgstr ""
+
+#. translators: %s: screen name, e.g. Visitors
+#: includes/class-lgpi-admin.php:139
+#, php-format
+msgid "Performance Insight: %s"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:197
+#: includes/class-lgpi-admin.php:251
+msgid "Performance Insight by Laghavi Digital"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:262
+#: includes/class-lgpi-admin.php:1602
+msgid "Dashboard"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:264
+msgid "Sources"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:268
+#: includes/class-lgpi-admin.php:933
+msgid "Journeys"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:300
+#: includes/class-lgpi-admin.php:576
+#: includes/class-lgpi-admin.php:1000
+#: includes/class-lgpi-admin.php:1438
+msgid "Open your full dashboard"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:302
+msgid "Get the full dashboard"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:367
+#: includes/class-lgpi-admin.php:705
+msgid "Search engines"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:368
+msgid "Social media"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:369
+#: includes/class-lgpi-admin.php:707
+msgid "AI assistants"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:370
+msgid "Paid ads"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:371
+msgid "Direct"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:372
+msgid "Other websites"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:373
+msgid "Email"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:384
+#: includes/class-lgpi-admin.php:1409
+msgid "Mobile"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:385
+#: includes/class-lgpi-admin.php:1410
+msgid "Tablet"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:386
+#: includes/class-lgpi-admin.php:1411
+msgid "Desktop"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:409
+msgid "Week of"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:413
+msgid "One bar per week."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:424
+msgid "Right now"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:425
+msgid "visitors in the last 30 minutes"
+msgstr ""
+
+#. translators: %s: page views
+#. translators: %s: views
+#: includes/class-lgpi-admin.php:425
+#: includes/class-lgpi-admin.php:1389
+#, php-format
+msgid "%s page views"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:427
+msgid "Nobody on the site at the moment."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:436
+msgid "now"
+msgstr ""
+
+#. translators: %d: minutes
+#: includes/class-lgpi-admin.php:436
+#, php-format
+msgid "%d min"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:457
+msgid "Your site and store at a glance. Numbers count each visitor once a day, without cookies."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:461
+msgid "Page views"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:462
+#: includes/class-lgpi-admin.php:629
+#: includes/class-lgpi-admin.php:636
+#: includes/class-lgpi-admin.php:1029
+#: includes/class-lgpi-admin.php:1033
+msgid "Visits"
+msgstr ""
+
+#. translators: %s: pages
+#: includes/class-lgpi-admin.php:462
+#, php-format
+msgid "%s pages per visit"
+msgstr ""
+
+#. translators: %s: pages
+#: includes/class-lgpi-admin.php:463
+#: includes/class-lgpi-admin.php:631
+#: includes/class-lgpi-admin.php:636
+msgid "Bounce rate"
+msgstr ""
+
+#. translators: %s: pages
+#: includes/class-lgpi-admin.php:463
+msgid "visits that saw one page"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:464
+#: includes/class-lgpi-admin.php:632
+#: includes/class-lgpi-admin.php:636
+msgid "Time per visit"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:464
+msgid "average"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:466
+#: includes/class-lgpi-admin.php:677
+#: includes/class-lgpi-admin.php:862
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-family-view.php:227
+#: includes/class-lgpi-report.php:115
+#: includes/class-lgpi-report.php:162
+#: includes/class-lgpi-report.php:258
+#: includes/class-lgpi-woo.php:188
+msgid "Orders"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:467
+#: includes/class-lgpi-admin.php:677
+#: includes/class-lgpi-admin.php:862
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-admin.php:1175
+#: includes/class-lgpi-admin.php:1398
+#: includes/class-lgpi-report.php:116
+#: includes/class-lgpi-report.php:162
+#: includes/class-lgpi-report.php:259
+#: includes/class-lgpi-woo.php:189
+msgid "Sales"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-admin.php:467
+#, php-format
+msgid "avg. order %s"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:470
+#: includes/class-lgpi-report.php:117
+msgid "Conversion rate"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:470
+msgid "orders ÷ visitors"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:472
+#: includes/class-lgpi-admin.php:1401
+msgid "Visitors per day"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:478
+#: includes/class-lgpi-admin.php:1403
+msgid "Where visitors came from"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:480
+msgid "Search engines, social networks, AI assistants and campaigns"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:480
+#: includes/class-lgpi-admin.php:650
+#: includes/class-lgpi-admin.php:1405
+msgid "Devices"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:482
+#: includes/class-lgpi-admin.php:1175
+msgid "Top countries"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:493
+msgid "Countries appear with the next visits."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:495
+msgid "All countries, browsers and screens"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:496
+msgid "Top 5 pages"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:500
+msgid "visitors"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:503
+#: includes/class-lgpi-admin.php:1079
+#: includes/class-lgpi-admin.php:1489
+msgid "No visits yet."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:505
+msgid "All pages, entry and exit pages, site search"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:507
+msgid "Top 5 products"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:510
+msgid "sold"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:513
+#: includes/class-lgpi-admin.php:1113
+msgid "No sales or visits yet."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:515
+msgid "All products and your store funnel"
+msgstr ""
+
+#. translators: %s: date
+#: includes/class-lgpi-admin.php:550
+#, php-format
+msgid "Orders, sales, products, discount codes, stock and the journeys of past orders already include your store’s history from WooCommerce. Visits, page views and time per page are counted from %s — WordPress keeps no record of visits from before the plugin was active."
+msgstr ""
+
+#. translators: %s: date
+#: includes/class-lgpi-admin.php:552
+#, php-format
+msgid "Visits are counted from %s — WordPress keeps no record of visits from before the plugin was active."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:561
+msgid "Profit per product"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:561
+msgid "Sales minus product cost, discounts, returns and the ad spend behind each product."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:562
+msgid "Stock vs ads"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:562
+msgid "Stop paying for ads on products that are about to sell out; reorder in time."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:563
+msgid "What to fix for SEO"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:563
+msgid "The exact fixes for each page, plus its Google searches and positions."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:564
+msgid "AI product-page review"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:564
+msgid "Why visitors don’t buy, with new text, photo and video ideas."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:565
+msgid "Customer value"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:565
+msgid "What a customer costs and earns over time, who is about to stop buying, and ready-made segments."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:566
+#: includes/class-lgpi-admin.php:827
+#: includes/class-lgpi-admin.php:862
+msgid "Abandoned carts"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:566
+msgid "Carts left behind over time, the products in them and their value."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:567
+msgid "AI action plan"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:567
+msgid "One prioritised list of what to do this week, with the money at stake."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:568
+msgid "Sales next to your ads"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:568
+msgid "Meta, Google, TikTok and more — which ads really sell."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:570
+msgid "See everything in Laghavi Ads Hub"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:571
+msgid "This plugin shows what happens on your site. Laghavi Ads Hub adds your ads, costs and profit — and tells you what to do. Connect your store and up to 90 days of history appear straight away."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:576
+#: includes/class-lgpi-admin.php:1000
+msgid "Get Laghavi Ads Hub"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:608
+msgid "Nothing yet for this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:611
+msgid "Times"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:611
+#: includes/class-lgpi-admin.php:1067
+#: includes/class-lgpi-family-view.php:138
+#: includes/class-lgpi-family-view.php:227
+msgid "Views"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:626
+#, php-format
+msgid "Who visited — %s: where they are, what they use, and how long they stay. Countries come from the visitor’s time zone — no IP lookup."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:630
+#: includes/class-lgpi-admin.php:636
+msgid "Pages per visit"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:636
+msgid "Visits per day"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:636
+msgid "Day"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:640
+msgid "A visit ends after 30 minutes without a new page. Visits are counted from version 1.2.0 on."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:649
+msgid "Countries"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:649
+msgid "Country"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:653
+msgid "Browsers"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:653
+msgid "Browser"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:654
+msgid "Operating systems"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:654
+msgid "System"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:655
+msgid "Screen sizes"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:655
+msgid "Screen"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:659
+#: includes/class-lgpi-family-view.php:227
+msgid "Language"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:676
+#, php-format
+msgid "Where your visitors came from — %s. A visitor counts once a day, for the source of their first visit."
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:677
+msgid "Channels"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:677
+msgid "Channel"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:677
+msgid "Change"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:677
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-family-view.php:85
+#: includes/class-lgpi-family-view.php:91
+#: includes/class-lgpi-family-view.php:227
+#: includes/class-lgpi-report.php:260
+#: includes/class-lgpi-woo.php:111
+#: includes/class-lgpi-woo.php:116
+#: includes/class-lgpi-woo.php:190
+msgid "Conversion"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:696
+msgid "Orders by the source WooCommerce recorded with each order (order attribution)."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:705
+msgid "Search engine"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:706
+msgid "Social networks"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:706
+msgid "Network"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:707
+msgid "Assistant"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:707
+msgid "No visits from ChatGPT, Perplexity, Gemini, Copilot or other AI assistants yet in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:708
+msgid "Websites"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:708
+msgid "Website"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:709
+msgid "Campaigns"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:709
+msgid "Campaign (utm_campaign)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:709
+msgid "No visits with a utm_campaign tag yet. Add ?utm_campaign=… to the links in your ads, emails and posts to see them here."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:710
+msgid "Source / medium"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:710
+msgid "utm_source / utm_medium"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:710
+msgid "No visits with utm_source or utm_medium tags yet."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:725
+msgid "Home page"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:739
+msgid "No page views were seen for this visit (for example a cached page or an ad blocker)."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:780
+#: includes/class-lgpi-admin.php:1145
+msgid "Ordered"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:781
+msgid "Abandoned cart"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:782
+msgid "In cart now"
+msgstr ""
+
+#. translators: 1: pages, 2: time
+#: includes/class-lgpi-admin.php:783
+#: includes/class-lgpi-woo.php:243
+msgid "Created an account"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:814
+#, php-format
+msgid "Every visit that ended in an order, a cart or a new account — where it came from, each page and product looked at, and the time spent on each. %s."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:816
+msgid "Bringing in the journeys of your past orders and unfinished checkouts from WooCommerce — refresh in a minute."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:826
+msgid "Journeys to an order"
+msgstr ""
+
+#. translators: %d: minutes
+#: includes/class-lgpi-admin.php:827
+#, php-format
+msgid "no order within %d minutes"
+msgstr ""
+
+#. translators: %d: minutes
+#: includes/class-lgpi-admin.php:828
+msgid "Accounts created"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:830
+#: includes/class-lgpi-admin.php:862
+msgid "Cart → order"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:830
+msgid "of visits that added to cart"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:831
+#: includes/class-lgpi-admin.php:862
+msgid "Time before buying"
+msgstr ""
+
+#. translators: %s: pages
+#: includes/class-lgpi-admin.php:831
+#, php-format
+msgid "%s pages on average"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:834
+msgid "No journeys yet in this period. As soon as a visitor adds something to the cart, places an order or creates an account, their path appears here — with the source, every page and the time on each."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:834
+msgid "Journeys are anonymous: no name, email or IP address is stored. An order is linked only by its order number."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:862
+msgid "Where buyers and abandoners came from"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:862
+msgid "Source"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:862
+msgid "Accounts"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:862
+msgid "Pages before buying"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Products looked at before buying — and before leaving"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "A product many people study and then leave in the cart usually needs a clearer price, photos, delivery time or reviews."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-admin.php:1303
+#: includes/class-lgpi-admin.php:1990
+#: includes/class-lgpi-family-view.php:57
+#: includes/class-lgpi-family-view.php:58
+#: includes/class-lgpi-family-view.php:75
+#: includes/class-lgpi-family-view.php:91
+#: includes/class-lgpi-report.php:162
+msgid "Product"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Seen by buyers"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Their time on it"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Bought"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Seen by abandoners"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:909
+msgid "Left in cart"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:934
+#: includes/class-lgpi-admin.php:1527
+msgid "All"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:943
+msgid "No journeys match this filter."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:950
+msgid "Imported from WooCommerce’s order attribution: the source, landing page, number of pages and time before the order. Time per page is only known for visits counted by this plugin."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:950
+msgid "from WooCommerce’s order record"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:953
+msgid "+ account"
+msgstr ""
+
+#. translators: %s: order number
+#: includes/class-lgpi-admin.php:958
+#, php-format
+msgid "Order #%s"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:961
+#: includes/class-lgpi-woo.php:243
+msgid "Came from"
+msgstr ""
+
+#. translators: 1: pages, 2: time
+#: includes/class-lgpi-admin.php:961
+#, php-format
+msgid "%1$s page · %2$s"
+msgid_plural "%1$s pages · %2$s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-admin.php:970
+msgid "The newest 100 journeys are shown here. Laghavi Ads Hub keeps them all, next to your ad spend per source."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:972
+msgid "Journeys are anonymous: no name, email or IP address is stored, and an order is linked only by its order number. The time on the last page is counted until the order, cart or sign-up."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:987
+msgid "AI crawlers & search bots"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:987
+msgid "Which AI companies (ChatGPT, Claude, Perplexity, Gemini…) and search engines read your pages — the pages they read are the ones they can recommend. Bots are never counted as visitors."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:988
+msgid "AI crawlers"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:988
+#: includes/class-lgpi-admin.php:989
+msgid "Crawler"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:988
+msgid "No AI crawler visits yet in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:988
+#: includes/class-lgpi-admin.php:989
+msgid "Pages read"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:989
+msgid "Search engine crawlers"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:989
+msgid "No search engine crawler visits yet in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:991
+msgid "Pages AI crawlers read most"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:991
+#: includes/class-lgpi-admin.php:1029
+#: includes/class-lgpi-admin.php:1033
+#: includes/class-lgpi-admin.php:1067
+#: includes/class-lgpi-admin.php:1531
+#: includes/class-lgpi-admin.php:1988
+msgid "Page"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:991
+msgid "No pages read by AI crawlers yet in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:991
+msgid "Reads"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1010
+#: includes/class-lgpi-admin.php:1067
+msgid "Most visited"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1011
+msgid "Entry pages"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1012
+msgid "Exit pages"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1013
+msgid "Site search"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1014
+msgid "Pages not found"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:1017
+#, php-format
+msgid "%s. Click a page for its visitors by day, sources and SEO problems."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1029
+msgid "Entry pages — where visits start"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1029
+msgid "Entry pages appear from tomorrow: each day is worked out once it is over."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1033
+msgid "Exit pages — where visits end"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1033
+msgid "Exit pages appear from tomorrow: each day is worked out once it is over."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1039
+msgid "What visitors searched for on your site"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1040
+#: includes/class-lgpi-admin.php:1997
+msgid "Search"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1045
+msgid "No searches on your site in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1047
+msgid "Searches"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1054
+msgid "Addresses that showed “page not found”"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1055
+msgid "Address"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1060
+msgid "No “page not found” errors in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1063
+msgid "Redirect the ones that get visits to the right page (for example with a redirect plugin) so visitors and Google don’t hit a dead end."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1067
+#: includes/class-lgpi-admin.php:1105
+#: includes/class-lgpi-admin.php:1531
+msgid "Type"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1067
+msgid "From search"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1067
+#: includes/class-lgpi-admin.php:1360
+#: includes/class-lgpi-admin.php:1531
+msgid "SEO score"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1082
+msgid "What to fix on each page, the Google searches it appears for and which ads bring buyers to it — in Laghavi Ads Hub."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1096
+msgid "Physical"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1097
+msgid "Digital"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1098
+#: includes/class-lgpi-family-view.php:57
+#: includes/class-lgpi-family-view.php:58
+#: includes/class-lgpi-family-view.php:214
+msgid "Subscription"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1099
+msgid "External"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1100
+msgid "Grouped"
+msgstr ""
+
+#. translators: %s: period
+#: includes/class-lgpi-admin.php:1102
+#, php-format
+msgid "%s: how shoppers move from product page to order, and each product’s visitors, orders, units, sales and conversion. Click one for its details."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1105
+msgid "Units"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1116
+msgid "Profit per product after ad spend, abandoned carts, stock vs ads and an AI review of each product page — in Laghavi Ads Hub."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1142
+msgid "Viewed a product"
+msgstr ""
+
+#. translators: 1: orders, 2: units
+#: includes/class-lgpi-admin.php:1143
+#: includes/class-lgpi-admin.php:1399
+#: includes/class-lgpi-woo.php:187
+msgid "Added to cart"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1144
+msgid "Reached checkout"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1148
+msgid "Store funnel"
+msgstr ""
+
+#. translators: %s: percent
+#: includes/class-lgpi-admin.php:1152
+#, php-format
+msgid "−%s%% left"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1155
+msgid "Product viewers and checkout visitors are counted once a day; add-to-carts and orders are all of them. The biggest drop is the step to work on first."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1155
+msgid "Product views start on the day the plugin was activated; orders include your store’s history."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1168
+msgid "How your coupon codes did in this period: the sales they brought, the discount they cost, and whether new or returning customers used them."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1170
+msgid "Codes used"
+msgstr ""
+
+#. translators: %s: number of coupons
+#: includes/class-lgpi-admin.php:1170
+#, php-format
+msgid "of %s active coupons in your store"
+msgstr ""
+
+#. translators: %s: number of coupons
+#: includes/class-lgpi-admin.php:1171
+msgid "Orders with a coupon"
+msgstr ""
+
+#. translators: %s: number of coupons
+#: includes/class-lgpi-admin.php:1171
+msgid "no orders yet"
+msgstr ""
+
+#. translators: 1: percent, 2: orders
+#: includes/class-lgpi-admin.php:1171
+#, php-format
+msgid "%1$s%% of %2$s orders"
+msgstr ""
+
+#. translators: 1: percent, 2: orders
+#: includes/class-lgpi-admin.php:1172
+msgid "Sales with a coupon"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-admin.php:1172
+#, php-format
+msgid "discount given %s"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-admin.php:1173
+msgid "Average order"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-admin.php:1173
+#, php-format
+msgid "with a coupon · %s without"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+msgid "Top 10 coupon codes"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+#: includes/class-lgpi-admin.php:1198
+msgid "Code"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+#: includes/class-lgpi-family-view.php:157
+#: includes/class-lgpi-family-view.php:176
+msgid "Used"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+msgid "Discount given"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+msgid "Discount % of sales"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+msgid "Avg. order"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1175
+msgid "Customers"
+msgstr ""
+
+#. translators: %d: customers
+#: includes/class-lgpi-admin.php:1186
+#, php-format
+msgid "%d new"
+msgstr ""
+
+#. translators: %d: customers
+#: includes/class-lgpi-admin.php:1186
+#, php-format
+msgid "%d returning"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1190
+msgid "No coupon codes used in this period."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1193
+msgid "Every coupon over any period, a weekly timeline, which ads bring coupon buyers and abandoned carts — in Laghavi Ads Hub."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1196
+msgid "Active coupons nobody used in this period"
+msgstr ""
+
+#. translators: %d: coupons
+#: includes/class-lgpi-admin.php:1196
+#, php-format
+msgid "%d — showing 10"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1198
+msgid "Offer"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1198
+msgid "Used (all time)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1198
+#: includes/class-lgpi-family-view.php:58
+msgid "Ends"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1200
+msgid "No end date"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1202
+msgid "Coupons that stay unused are usually not seen: share them in your emails, on social media or in a site banner — or switch them off."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1204
+msgid "Every active coupon was used in this period."
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1224
+#, php-format
+msgid "%d out of stock"
+msgid_plural "%d out of stock"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1228
+#, php-format
+msgid "%d low on stock"
+msgid_plural "%d low on stock"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1232
+#, php-format
+msgid "%d runs out within a week"
+msgid_plural "%d run out within a week"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-admin.php:1234
+msgid "Stock alerts"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1234
+msgid "See the list →"
+msgstr ""
+
+#. translators: 1: time, 2: period
+#: includes/class-lgpi-admin.php:1250
+#, php-format
+msgid "Live from WooCommerce at %1$s. Sales pace = units sold in the last 30 days; visitors = %2$s."
+msgstr ""
+
+#. translators: 1: time, 2: period
+#: includes/class-lgpi-admin.php:1250
+msgid "Refresh"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1252
+msgid "Tracked items"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1252
+msgid "products and variations with stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1253
+#: includes/class-lgpi-admin.php:1292
+#: includes/class-lgpi-stock.php:430
+msgid "Out of stock"
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1253
+#, php-format
+msgid "%d still getting visitors"
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1253
+msgid "none visited in the period"
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1254
+#: includes/class-lgpi-admin.php:1293
+#: includes/class-lgpi-stock.php:431
+msgid "Low stock"
+msgstr ""
+
+#. translators: %d: units
+#: includes/class-lgpi-admin.php:1254
+#, php-format
+msgid "at or under the low-stock level (store: %d)"
+msgstr ""
+
+#. translators: %d: units
+#: includes/class-lgpi-admin.php:1255
+msgid "Runs out within a week"
+msgstr ""
+
+#. translators: %d: units
+#: includes/class-lgpi-admin.php:1255
+msgid "at the current sales pace"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1256
+#: includes/class-lgpi-admin.php:1306
+msgid "Hidden automatically"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1256
+msgid "shown again when back in stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1256
+msgid "switched off"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1259
+msgid "Needs attention"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1259
+msgid "Nothing is out of stock, low or about to run out. 🎉"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1262
+#: includes/class-lgpi-admin.php:1296
+#: includes/class-lgpi-admin.php:1303
+#: includes/class-lgpi-family-view.php:114
+msgid "In stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1265
+msgid "Automatic actions"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1267
+msgid "Hide products from the shop and search while they are out of stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1267
+msgid "As soon as a product sells out it is hidden; when it is back in stock it is shown again exactly as before. Products you hid yourself are never touched, and the product page itself keeps working for links and search engines."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1268
+msgid "Email me a daily stock alert"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1268
+msgid "Once a day, only when something is out of stock, low or about to run out — with a link to edit each product."
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-admin.php:1269
+#, php-format
+msgid "The low-stock level comes from %s, or from each product’s own “Low stock threshold”."
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-admin.php:1269
+msgid "WooCommerce → Settings → Products → Inventory"
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-admin.php:1269
+#: includes/class-lgpi-admin.php:2109
+msgid "Save"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1272
+msgid "Recent automatic changes"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1274
+msgid "Hidden (sold out):"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1274
+msgid "Shown again (back in stock):"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1294
+#: includes/class-lgpi-stock.php:432
+msgid "Runs out soon"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1295
+msgid "On backorder"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1303
+#: includes/class-lgpi-admin.php:1474
+msgid "SKU"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1303
+msgid "Status"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1303
+msgid "Sold (30 days)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1303
+msgid "Days left"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1303
+msgid "In the shop"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1306
+msgid "Hidden"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1306
+msgid "Shown"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1307
+msgid "View in the shop"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1310
+msgid "Edit"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1321
+#: includes/class-lgpi-admin.php:2133
+#: includes/class-lgpi-admin.php:2245
+#: includes/class-lgpi-family-view.php:493
+#: includes/class-lgpi-report.php:85
+msgid "Not allowed."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1330
+#: includes/class-lgpi-admin.php:2266
+msgid "Saved."
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1335
+#, php-format
+msgid "Saved. %d sold-out product is now hidden from the shop."
+msgid_plural "Saved. %d sold-out products are now hidden from the shop."
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: products
+#: includes/class-lgpi-admin.php:1337
+#, php-format
+msgid "Saved. %d product is shown in the shop again."
+msgid_plural "Saved. %d products are shown in the shop again."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-admin.php:1354
+msgid "Back"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1356
+#: includes/class-lgpi-admin.php:1950
+msgid "Open the live page"
+msgstr ""
+
+#. translators: %s: views
+#: includes/class-lgpi-admin.php:1390
+msgid "From search engines"
+msgstr ""
+
+#. translators: %s: percent
+#: includes/class-lgpi-admin.php:1390
+#, php-format
+msgid "%s%% of visitors"
+msgstr ""
+
+#. translators: %s: percent
+#: includes/class-lgpi-admin.php:1391
+msgid "On mobile"
+msgstr ""
+
+#. translators: %s: visitors
+#: includes/class-lgpi-admin.php:1391
+#, php-format
+msgid "%s visitors"
+msgstr ""
+
+#. translators: 1: orders, 2: units
+#: includes/class-lgpi-admin.php:1398
+#, php-format
+msgid "%1$s orders · %2$s units"
+msgstr ""
+
+#. translators: %s: percent
+#: includes/class-lgpi-admin.php:1399
+#, php-format
+msgid "%s%% of visitors buy"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1417
+msgid "Important"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1418
+msgid "Should fix"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1419
+msgid "Nice to fix"
+msgstr ""
+
+#. translators: %d: number of problems
+#: includes/class-lgpi-admin.php:1422
+#, php-format
+msgid "Problems found (%d)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1430
+msgid "No problems found — well done."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1432
+msgid "What the check looked at"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1437
+msgid "Get the exact fix for this page"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1437
+msgid "Laghavi Ads Hub reads this product page and writes the changes for you: a new SEO title and meta description, alt text for each photo, a better product description and FAQs, photo and video ideas, why visitors don’t buy — and the Google searches this product appears for."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1437
+msgid "Laghavi Ads Hub reads this page and writes the changes for you: a new SEO title and meta description, alt text for each image, better headings and text — and the Google searches this page appears for."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1438
+#: includes/class-lgpi-admin.php:1526
+msgid "See Laghavi Ads Hub"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1452
+msgid "Category description"
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-admin.php:1452
+#: includes/class-lgpi-admin.php:1463
+#: includes/class-lgpi-admin.php:1471
+#, php-format
+msgid "%d words"
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-admin.php:1453
+msgid "Items in it"
+msgstr ""
+
+#. translators: %d: characters
+#: includes/class-lgpi-admin.php:1457
+#, php-format
+msgid "%d characters"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1460
+msgid "Can appear in Google"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1460
+msgid "hidden (noindex)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1460
+#: includes/class-lgpi-admin.php:1467
+#: includes/class-lgpi-admin.php:1473
+#: includes/class-lgpi-admin.php:1474
+msgid "yes"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1461
+msgid "SEO title"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1462
+msgid "Meta description"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1462
+#: includes/class-lgpi-admin.php:1474
+msgid "missing"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1463
+msgid "Product description"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1463
+msgid "Text on the page"
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-admin.php:1464
+msgid "Image alt text"
+msgstr ""
+
+#. translators: 1: with alt, 2: images
+#: includes/class-lgpi-admin.php:1464
+#, php-format
+msgid "%1$d of %2$d images"
+msgstr ""
+
+#. translators: 1: with alt, 2: images
+#: includes/class-lgpi-admin.php:1464
+msgid "no images in the text"
+msgstr ""
+
+#. translators: 1: with alt, 2: images
+#: includes/class-lgpi-admin.php:1465
+msgid "Main heading (H1)"
+msgstr ""
+
+#. translators: %d: headings
+#: includes/class-lgpi-admin.php:1465
+#, php-format
+msgid "%d in the content"
+msgstr ""
+
+#. translators: %d: headings
+#: includes/class-lgpi-admin.php:1465
+msgid "page title"
+msgstr ""
+
+#. translators: %d: headings
+#: includes/class-lgpi-admin.php:1466
+msgid "Links to your other pages"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1467
+msgid "Featured image"
+msgstr ""
+
+#. translators: %d: words
+#. translators: %d: number of problems
+#: includes/class-lgpi-admin.php:1467
+#: includes/class-lgpi-admin.php:1471
+#: includes/class-lgpi-admin.php:1473
+#: includes/class-lgpi-admin.php:1534
+msgid "none"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1470
+msgid "Product photos"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1471
+msgid "Short description"
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-admin.php:1472
+msgid "Reviews"
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-admin.php:1472
+msgid "none yet"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1473
+msgid "Video"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1475
+msgid "out of stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1475
+msgid "in stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1525
+msgid "Every page, post and product scored for what search engines and shoppers look for — weakest first. Click one to see its problems."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1526
+msgid "This plugin finds the problems. Laghavi Ads Hub writes the exact fix for each page — a new SEO title and description, alt text for every image, better product text — and shows the Google searches each page appears for."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1531
+msgid "Problems"
+msgstr ""
+
+#. translators: %d: number of problems
+#: includes/class-lgpi-admin.php:1534
+#, php-format
+msgid "%d to fix"
+msgid_plural "%d to fix"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-admin.php:1539
+msgid "Nothing published yet."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1561
+msgid "80+ is good, 55–79 needs work, under 55 needs attention."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1572
+msgid "The full dashboard for your store, by Laghavi Digital — a paid service."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1573
+msgid "How to connect"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1573
+msgid "Choose a Laghavi Ads Hub plan on laghavi.site."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1573
+msgid "Install the Performance Insight Pro add-on you receive with your plan (Plugins → Add New → Upload Plugin)."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1573
+msgid "Paste your Hub address and store key here — your store’s numbers appear in your dashboard within the hour."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1574
+msgid "See plans"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1604
+msgid "Go Pro"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1666
+#: includes/class-lgpi-admin.php:1734
+msgid "Today"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1670
+#: includes/class-lgpi-admin.php:1735
+msgid "Yesterday"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1673
+msgid "Last 30 days"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1676
+#: includes/class-lgpi-admin.php:1738
+msgid "This month"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1680
+#: includes/class-lgpi-admin.php:1739
+msgid "Last month"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1683
+#: includes/class-lgpi-admin.php:1740
+msgid "This year"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1699
+msgid "Last 7 days"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1736
+msgid "7 days"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1737
+msgid "30 days"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1764
+msgid "From"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1764
+msgid "to"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1764
+msgid "Show"
+msgstr ""
+
+#. translators: 1: period, 2: previous period
+#: includes/class-lgpi-admin.php:1765
+#, php-format
+msgid "%1$s · compared with %2$s"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1897
+msgid "CSV"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1964
+msgid "Home page (latest posts)"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1967
+msgid "Site search results"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1970
+msgid "Other archives"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1989
+msgid "Post"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1991
+msgid "Product category"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1992
+msgid "Product tag"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1993
+msgid "Category"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1994
+msgid "Tag"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1995
+msgid "Shop"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1996
+msgid "Home"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:1998
+msgid "Archive"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2066
+msgid "vs the previous period"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2078
+msgid "Don’t count these logged-in users"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2082
+msgid "Don’t count these IP addresses"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2082
+msgid "One per line, for example your office. End with * to skip a whole range."
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/class-lgpi-admin.php:2082
+#, php-format
+msgid "Your address now: %s"
+msgstr ""
+
+#. translators: %s: IP address
+#: includes/class-lgpi-admin.php:2083
+msgid "Who can see the reports"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2090
+msgid "Administrators always can. Others only see the reports, not these settings."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2090
+msgid "Do Not Track"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2090
+msgid "Don’t count browsers that ask not to be tracked"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2091
+msgid "Keep history for"
+msgstr ""
+
+#. translators: %d: days
+#: includes/class-lgpi-admin.php:2093
+#: includes/class-lgpi-admin.php:2099
+#, php-format
+msgid "%d days"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2097
+msgid "Keep customer journeys for"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2101
+msgid "Abandoned cart after"
+msgstr ""
+
+#. translators: %d: minutes
+#: includes/class-lgpi-admin.php:2103
+#, php-format
+msgid "%d minutes"
+msgstr ""
+
+#. translators: %d: hours
+#: includes/class-lgpi-admin.php:2103
+#, php-format
+msgid "%d hours"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2105
+msgid "A cart without an order after this time counts as abandoned."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2106
+msgid "Weekly store report"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2106
+msgid "Email me every Monday: visitors, orders, sales, conversion, best sources and products, abandoned carts and low stock"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2106
+msgid "Send one now"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2108
+msgid "Toolbar"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2108
+msgid "Show today’s visitors and orders in the admin toolbar"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2109
+msgid "Delete data when the plugin is deleted"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2109
+msgid "Yes, remove all Performance Insight tables and settings"
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2139
+msgid "Invalid dates."
+msgstr ""
+
+#: includes/class-lgpi-admin.php:2192
+msgid "Unknown report."
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:25
+#: includes/class-lgpi-family-view.php:27
+msgid "Subscriptions"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:28
+msgid "Active subscriptions"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:29
+msgid "New subscriptions"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:30
+#: includes/class-lgpi-family-view.php:123
+msgid "Cancellations"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:32
+#: includes/class-lgpi-family-view.php:227
+msgid "Revenue"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:33
+#: includes/class-lgpi-family-view.php:59
+msgid "MRR"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:34
+msgid "ARR"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:35
+#: includes/class-lgpi-family-view.php:59
+msgid "Churn"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:36
+msgid "Net revenue retention"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:38
+msgid "Renewals"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:39
+msgid "Successful renewals"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:40
+msgid "Failed renewals"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:41
+msgid "Recovered failed payments"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:42
+msgid "Recovered amount"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:44
+msgid "Trials"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:45
+msgid "Trials started"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:46
+msgid "Trial → paid"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:47
+msgid "Trial abuse blocked"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:48
+#: includes/class-lgpi-family-view.php:58
+msgid "Trials ending this week"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:50
+#: includes/class-lgpi-family-view.php:51
+msgid "Refunds"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:52
+msgid "Credit notes issued"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:55
+msgid "New subscriptions per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:57
+msgid "Failed renewals to follow up"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:57
+msgid "Amount"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:57
+msgid "Failed"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:57
+msgid "Retries"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:59
+msgid "Plans"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:59
+#: includes/class-lgpi-family-view.php:157
+msgid "Plan"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:59
+#: includes/class-lgpi-family-view.php:75
+msgid "Active"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:63
+#: includes/class-lgpi-family-view.php:65
+msgid "Licenses"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:66
+msgid "Active licenses"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:67
+#: includes/class-lgpi-family-view.php:75
+msgid "Activations"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:68
+msgid "Upgrades"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:69
+msgid "Downgrades"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:70
+msgid "Expired"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:73
+msgid "Activations per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:75
+msgid "Licenses by product"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:75
+msgid "Sites in use"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:79
+msgid "Ask for price"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:81
+msgid "Quote enquiries"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:82
+msgid "New enquiries"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:83
+#: includes/class-lgpi-family-view.php:91
+msgid "Won"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:84
+msgid "Lost"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:86
+msgid "Value won"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:89
+msgid "Enquiries per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:91
+msgid "Enquiries by product"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:91
+msgid "Enquiries"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:95
+msgid "Subscription boxes"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:97
+msgid "Boxes"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:98
+msgid "Active box subscribers"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:99
+msgid "Boxes shipped"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:100
+msgid "Skips"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:101
+msgid "Swaps"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:103
+msgid "Prepaid & gifts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:104
+msgid "Prepaid plans"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:105
+msgid "Gift plans"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:106
+msgid "Boxes remaining"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:107
+msgid "Upcoming deliveries"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:108
+msgid "Next shipping day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:111
+msgid "Boxes shipped per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:113
+msgid "Popular box items"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:113
+#: includes/class-lgpi-family-view.php:114
+#: includes/class-lgpi-family-view.php:214
+msgid "Item"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:113
+#: includes/class-lgpi-family-view.php:213
+msgid "Chosen"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:114
+msgid "Expected box quantities (next 30 days)"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:114
+msgid "Next shipment"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:114
+msgid "Next 30 days"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:118
+msgid "Membership content"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:120
+#: includes/class-lgpi-family-view.php:121
+#: includes/class-lgpi-family-view.php:137
+msgid "Members"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:122
+msgid "Joins"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:125
+msgid "Courses"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:126
+msgid "Course sales"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:127
+msgid "Enrolments"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:129
+msgid "Download credits"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:130
+#: includes/class-lgpi-family-view.php:189
+msgid "Credits used"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:131
+msgid "Credits available"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:132
+msgid "Top-up packs sold"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:135
+msgid "Joins per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:137
+msgid "Members by group and tier"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:137
+msgid "Group"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:137
+msgid "Tier"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:138
+msgid "Top content viewed"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:138
+msgid "Content"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:139
+msgid "Top downloads"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:139
+msgid "File"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:139
+msgid "Downloads"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:143
+msgid "Media archives"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:145
+#: includes/class-lgpi-family-view.php:156
+msgid "Plays"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:146
+msgid "Streams and plays"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:147
+msgid "Watch & listen time"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:149
+msgid "Access"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:150
+msgid "Active devices"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:151
+msgid "Security alerts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:154
+msgid "Plays per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:156
+msgid "Top media"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:156
+msgid "Media"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:156
+msgid "Time"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:157
+msgid "Quota usage per plan"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:157
+#: includes/class-lgpi-family-view.php:176
+msgid "Included"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:157
+#: includes/class-lgpi-family-view.php:176
+msgid "Used %"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:161
+msgid "Service contracts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:163
+msgid "Contracts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:164
+msgid "Active contracts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:165
+msgid "Contract MRR"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:166
+msgid "In minimum term"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:167
+msgid "Cancellations scheduled"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:169
+msgid "Requests"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:170
+msgid "Requests open"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:171
+msgid "Requests completed"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:174
+msgid "Requests completed per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:176
+msgid "Quota used vs included"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:176
+msgid "Contract"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:176
+msgid "Allowance"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:180
+msgid "Session membership"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:182
+#: includes/class-lgpi-family-view.php:183
+msgid "Bookings"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:184
+msgid "Attendance"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:185
+msgid "No-shows"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:186
+msgid "Late cancellations"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:188
+msgid "Credits"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:190
+msgid "Credits issued"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:191
+msgid "On waitlists"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:194
+msgid "Bookings per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+msgid "Class utilisation"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+msgid "Class"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+#: includes/class-lgpi-family-view.php:197
+msgid "Instructor"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+#: includes/class-lgpi-family-view.php:198
+msgid "Location"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+msgid "Booked"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+msgid "Capacity"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:196
+#: includes/class-lgpi-family-view.php:197
+#: includes/class-lgpi-family-view.php:198
+msgid "Full"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:197
+msgid "By instructor"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:197
+#: includes/class-lgpi-family-view.php:198
+msgid "Classes"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:198
+msgid "By location"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:202
+msgid "Bundles & variable subscriptions"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:204
+msgid "Bundles"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:205
+msgid "Bundle subscriptions"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:206
+msgid "Renewals held (out of stock)"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:207
+msgid "Plan upgrades"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:208
+msgid "Plan downgrades"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:211
+msgid "New bundle subscriptions per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:213
+msgid "Most-chosen components"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:213
+msgid "Component"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:214
+msgid "Renewals held for out-of-stock items"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:214
+msgid "Held since"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:221
+msgid "Language changes"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:222
+msgid "Country redirects"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:225
+msgid "Language changes per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:227
+msgid "By language"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:233
+#: includes/class-lgpi-family-view.php:234
+#: includes/class-lgpi-family-view.php:244
+msgid "Sign-ins"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:235
+#: includes/class-lgpi-family-view.php:244
+msgid "Sign-ups"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:237
+msgid "Security"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:238
+msgid "Failed logins"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:239
+msgid "Lockouts"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:242
+msgid "Sign-ins per day"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:244
+msgid "By provider"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:244
+msgid "Provider"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:294
+msgid "Subscriptions, licenses and the Rinnovo extensions installed on this store. Read-only — nothing in Rinnovo is changed here."
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:316
+msgid "Views, orders, revenue and conversion per language, from Vacanam Language Switcher."
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:324
+msgid "Sign-ins and sign-ups by provider, failed logins and lockouts, from Sarala Login Page."
+msgstr ""
+
+#. translators: %s: plugin name
+#: includes/class-lgpi-family-view.php:343
+#, php-format
+msgid "%s is active."
+msgstr ""
+
+#. translators: %s: plugin name
+#: includes/class-lgpi-family-view.php:343
+msgid "Its numbers will appear here as soon as the plugin shares its insights data (a Rinnovo, Vacanam or Sarala update). Nothing else is needed on your side."
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:352
+msgid "Open →"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:376
+msgid "By currency"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:376
+msgid "Currency"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:393
+msgid "Amounts in each currency as charged; columns ending in \"in store currency\" are converted."
+msgstr ""
+
+#. translators: %s: minutes
+#: includes/class-lgpi-family-view.php:468
+#, php-format
+msgid "Updated every %s minutes."
+msgstr ""
+
+#. translators: %s: minutes
+#: includes/class-lgpi-family-view.php:468
+msgid "Refresh now"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:484
+msgid "(in store currency)"
+msgstr ""
+
+#: includes/class-lgpi-family-view.php:516
+msgid "To do"
+msgstr ""
+
+#. translators: %d: contracts
+#: includes/class-lgpi-family.php:287
+#, php-format
+msgid "%d contract is at 90%% or more of its quota"
+msgid_plural "%d contracts are at 90%% or more of their quota"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: classes
+#: includes/class-lgpi-family.php:294
+#, php-format
+msgid "%d class is under 40%% full"
+msgid_plural "%d classes are under 40%% full"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %d: products
+#: includes/class-lgpi-family.php:301
+#, php-format
+msgid "%d box item may run out before the next shipping day"
+msgid_plural "%d box items may run out before the next shipping day"
+msgstr[0] ""
+msgstr[1] ""
+
+#. translators: %s: languages
+#: includes/class-lgpi-family.php:308
+#, php-format
+msgid "Traffic but low conversion in: %s — check the translations of key pages and checkout"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:78
+msgid "Enjoying Performance Insight?"
+msgstr ""
+
+#. translators: %d: number of days
+#: includes/class-lgpi-notices.php:82
+#, php-format
+msgid "You have been using it for %d day."
+msgid_plural "You have been using it for %d days."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-notices.php:86
+msgid "A short review on WordPress.org helps other store owners find it and keeps the plugin free. Thank you!"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:88
+msgid "Leave a review"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:89
+msgid "Maybe later"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:90
+msgid "I already did"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:91
+msgid "Don't ask again"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:145
+msgid "It shows no data or only zeros"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:145
+msgid "What did you expect to see?"
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-notices.php:145
+#, php-format
+msgid "Visits are counted from the moment the plugin is switched on, and past orders and unfinished checkouts are brought in from WooCommerce in the background — have a look at %s."
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-notices.php:146
+msgid "I couldn't find the feature I need"
+msgstr ""
+
+#. translators: %s: link
+#: includes/class-lgpi-notices.php:146
+msgid "Which feature were you looking for?"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:147
+msgid "It is hard to understand or use"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:147
+msgid "What was confusing?"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:148
+msgid "It slows down my site"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:148
+msgid "Which page felt slow?"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:149
+msgid "It conflicts with another plugin or my theme"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:149
+msgid "Which plugin or theme?"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:150
+msgid "I found a better plugin"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:150
+msgid "Which one? (helps us improve)"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:151
+msgid "It's a temporary deactivation — I'm troubleshooting"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:152
+msgid "Other"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:152
+msgid "Please tell us a little more"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:159
+msgid "Quick feedback"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:160
+msgid "Close"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:163
+msgid "If you have a moment, please let us know why you are deactivating Performance Insight:"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:178
+msgid "Your email (optional — only if you would like a reply):"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:181
+msgid "Include my site address"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:182
+msgid "“Submit & Deactivate” sends the reason, what you typed, your email and site address only if you gave them, and the plugin, WordPress, WooCommerce and PHP versions to Laghavi Digital. Nothing else, and nothing at all with “Skip & Deactivate”."
+msgstr ""
+
+#: includes/class-lgpi-notices.php:185
+msgid "Submit & Deactivate"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:186
+msgid "Skip & Deactivate"
+msgstr ""
+
+#: includes/class-lgpi-notices.php:187
+msgid "Cancel"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:86
+msgid "Customers buy the same products again"
+msgstr ""
+
+#. translators: 1: number of customers, 2: product name
+#: includes/class-lgpi-recommend.php:88
+#, php-format
+msgid "%1$d customer bought the same product more than once in the last year (%2$s). Offer it as a subscription so it renews automatically — with renewal reminders, failed-payment retries and a customer self-service area."
+msgid_plural "%1$d customers bought the same product more than once in the last year (most often: %2$s). Offer it as a subscription so it renews automatically — with renewal reminders, failed-payment retries and a customer self-service area."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-recommend.php:95
+msgid "Selling digital products?"
+msgstr ""
+
+#. translators: %d: products
+#: includes/class-lgpi-recommend.php:97
+#, php-format
+msgid "You have %d downloadable or virtual product. Rinnovo can issue license keys with activation limits, and sell updates or access as a yearly or monthly subscription."
+msgid_plural "You have %d downloadable or virtual products. Rinnovo can issue license keys with activation limits, and sell updates or access as a yearly or monthly subscription."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-recommend.php:106
+msgid "Make signing in at checkout one click"
+msgstr ""
+
+#. translators: %d: abandoned carts
+#: includes/class-lgpi-recommend.php:108
+#, php-format
+msgid "%d carts were abandoned in the last 30 days. Letting shoppers sign in or create an account with Google, Apple or Facebook at checkout removes a common reason to leave — and brings them straight back to their cart. It also adds a custom login address and blocks password-guessing bots."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:116
+msgid "Rinnovo Pro for international and VAT-registered stores"
+msgstr ""
+
+#. translators: %d: countries
+#: includes/class-lgpi-recommend.php:118
+#, php-format
+msgid "Visitors came from %d countries in the last 30 days. Rinnovo Pro adds a currency switcher with per-country currencies, tax invoices with your TRN or VAT number, VAT/GST reverse charge, card-free trials and \"Ask for price\" products."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:119
+msgid "See Rinnovo Pro"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:133
+msgid "More Rinnovo extensions"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:134
+msgid "Each one adds its own tab here as soon as it is installed."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:154
+msgid "Stop login bots before they try a password"
+msgstr ""
+
+#. translators: %d: failed logins and lockouts
+#: includes/class-lgpi-recommend.php:156
+#, php-format
+msgid "%d failed logins and lockouts in the last 30 days. Sarala Pro adds Cloudflare Turnstile, reCAPTCHA or hCaptcha, an activity log with CSV export, per-role redirects and branded login pages."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:157
+msgid "See Sarala Pro"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:171
+msgid "sell products and services as subscriptions with automatic renewals, free trials and failed-payment retries, and issue license keys for software and digital products."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:174
+msgid "one-click sign-in and sign-up with Google, Apple, Facebook and more on the login, My Account and checkout pages, plus a custom login address and protection against password-guessing bots."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:180
+msgid "More free plugins from Laghavi Digital"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:181
+msgid "From the makers of Performance Insight — free on WordPress.org, and their numbers appear right here once installed."
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:199
+msgid "Recommended for your store"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:218
+msgid "Not now"
+msgstr ""
+
+#. translators: %s: plugin name
+#: includes/class-lgpi-recommend.php:234
+#, php-format
+msgid "Install %s (free)"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:236
+msgid "View on WordPress.org"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:238
+msgid "Learn more"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:268
+msgid "subscription boxes, skips and swaps, prepaid and gift plans"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:269
+msgid "members-only content, courses and download credits"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:270
+msgid "streaming video and audio archives with quotas and device limits"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:271
+msgid "service retainers with monthly allowances and minimum terms"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:272
+msgid "class and session memberships with credits and waitlists"
+msgstr ""
+
+#: includes/class-lgpi-recommend.php:273
+msgid "build-your-own bundles and plan switching"
+msgstr ""
+
+#: includes/class-lgpi-report.php:57
+msgid "new"
+msgstr ""
+
+#: includes/class-lgpi-report.php:88
+msgid "The weekly report was sent."
+msgstr ""
+
+#: includes/class-lgpi-report.php:88
+msgid "The email could not be sent. Check that your site can send email (for example with an SMTP plugin)."
+msgstr ""
+
+#. translators: %s: site name
+#: includes/class-lgpi-report.php:120
+#, php-format
+msgid "Your week at %s"
+msgstr ""
+
+#. translators: %s: site name
+#: includes/class-lgpi-report.php:121
+msgid "compared with the week before"
+msgstr ""
+
+#. translators: 1: source, 2: orders, 3: sales
+#: includes/class-lgpi-report.php:135
+#, php-format
+msgid "Best source: %1$s — %2$s orders, %3$s."
+msgstr ""
+
+#. translators: 1: abandoned carts, 2: percent
+#: includes/class-lgpi-report.php:141
+#, php-format
+msgid "Abandoned carts: %1$s (%2$s of carts became an order)."
+msgstr ""
+
+#. translators: 1: out, 2: low, 3: soon
+#: includes/class-lgpi-report.php:145
+#, php-format
+msgid "Stock: %1$d out of stock, %2$d low, %3$d running out within a week."
+msgstr ""
+
+#. translators: %s: number
+#: includes/class-lgpi-report.php:150
+#, php-format
+msgid "AI crawlers (ChatGPT, Claude, Perplexity…) read %s of your pages."
+msgstr ""
+
+#: includes/class-lgpi-report.php:162
+msgid "Top products"
+msgstr ""
+
+#: includes/class-lgpi-report.php:169
+#: includes/class-lgpi-report.php:278
+msgid "Open Performance Insight"
+msgstr ""
+
+#: includes/class-lgpi-report.php:170
+msgid "Sent by Performance Insight on your own site. Turn it off in WooCommerce → Performance Insight → Settings."
+msgstr ""
+
+#. translators: %s: site name
+#: includes/class-lgpi-report.php:172
+#, php-format
+msgid "[%s] Your weekly store report"
+msgstr ""
+
+#. translators: %s: orders
+#: includes/class-lgpi-report.php:208
+#, php-format
+msgid "%s order"
+msgid_plural "%s orders"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-report.php:214
+msgid "Today: visitors and orders (Performance Insight)"
+msgstr ""
+
+#. translators: %s: visitors
+#: includes/class-lgpi-report.php:218
+#, php-format
+msgid "On the site now: %s"
+msgstr ""
+
+#. translators: %s: visitors
+#: includes/class-lgpi-report.php:219
+#, php-format
+msgid "Visitors today: %s"
+msgstr ""
+
+#. translators: %s: sales
+#: includes/class-lgpi-report.php:222
+#, php-format
+msgid "Sales today: %s"
+msgstr ""
+
+#. translators: %s: sales
+#: includes/class-lgpi-report.php:223
+msgid "Customer journeys →"
+msgstr ""
+
+#: includes/class-lgpi-report.php:242
+msgid "Performance Insight — last 7 days"
+msgstr ""
+
+#. translators: 1: visitors now, 2: visitors today
+#: includes/class-lgpi-report.php:266
+#, php-format
+msgid "%1$s on the site now · %2$s visitors today"
+msgstr ""
+
+#: includes/class-lgpi-report.php:271
+msgid "Latest customer journeys"
+msgstr ""
+
+#. translators: 1: pages, 2: time
+#: includes/class-lgpi-report.php:273
+#, php-format
+msgid "%1$s page, %2$s"
+msgid_plural "%1$s pages, %2$s"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-seo.php:241
+msgid "Hidden from search engines (noindex). Remove it if this page should get Google visitors."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:244
+msgid "The SEO title is very short — add the main keyword and a reason to click."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:246
+msgid "The SEO title is long — Google shows about 60 characters."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:249
+msgid "No meta description — Google will pick random text for the search result."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:251
+msgid "The meta description is long — keep it under about 155 characters."
+msgstr ""
+
+#. translators: %s: focus keyword
+#: includes/class-lgpi-seo.php:255
+#, php-format
+msgid "The focus keyword “%s” is not in the SEO title."
+msgstr ""
+
+#. translators: %s: focus keyword
+#: includes/class-lgpi-seo.php:259
+#, php-format
+msgid "Use “%s” in the first paragraph."
+msgstr ""
+
+#. translators: %d: number of images
+#: includes/class-lgpi-seo.php:263
+#, php-format
+msgid "%d image in the content has no alt text."
+msgid_plural "%d images in the content have no alt text."
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-seo.php:266
+msgid "More than one H1 heading in the content — the page title is usually the only H1."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:269
+msgid "No featured image — shared links and some themes look empty."
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-seo.php:274
+#, php-format
+msgid "Short product description (%d words). Explain who it is for, the benefits, sizes / specs and answer common questions."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:277
+msgid "No short description — the text next to the price that helps people decide."
+msgstr ""
+
+#. translators: %d: images
+#: includes/class-lgpi-seo.php:281
+#, php-format
+msgid "Only %d product image(s). Show the product from several angles, in use, and with size reference."
+msgstr ""
+
+#. translators: %d: images
+#: includes/class-lgpi-seo.php:285
+#, php-format
+msgid "%d product image(s) without alt text — describe them (helps Google Images)."
+msgstr ""
+
+#. translators: %d: images
+#: includes/class-lgpi-seo.php:290
+#, php-format
+msgid "%d product image(s) are over 400 KB — compress them or use WebP so the page loads faster."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:293
+msgid "No reviews yet — ask buyers for a review; reviews raise trust and conversion."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:296
+msgid "No video — a short video of the product in use often lifts sales."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:299
+msgid "No SKU — Google Shopping and Meta catalogs work better with one."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:302
+msgid "Out of stock — visitors can’t buy. Restock, or suggest alternatives on the page."
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-seo.php:306
+#, php-format
+msgid "Thin content (%d words). Pages that rank usually answer the visitor’s question fully."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:309
+msgid "No links to other pages of your site in the content."
+msgstr ""
+
+#. translators: %d: words
+#: includes/class-lgpi-seo.php:349
+#, php-format
+msgid "Category description is short (%d words). A helpful intro with the main keyword helps the category rank."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:352
+msgid "Empty category — hide it or add products."
+msgstr ""
+
+#: includes/class-lgpi-seo.php:355
+msgid "No category image."
+msgstr ""
+
+#. translators: 1: out of stock count, 2: low stock count, 3: runs out soon count
+#: includes/class-lgpi-stock.php:441
+#, php-format
+msgid "Stock today: %1$d out of stock, %2$d low, %3$d running out within a week."
+msgstr ""
+
+#. translators: %s: site name
+#: includes/class-lgpi-stock.php:447
+#, php-format
+msgid "[%s] Stock alert"
+msgstr ""
+
+#. translators: %s: percent
+#: includes/class-lgpi-store.php:607
+#, php-format
+msgid "%s%% off"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-store.php:611
+#, php-format
+msgid "%s off each product"
+msgstr ""
+
+#. translators: %s: amount
+#: includes/class-lgpi-store.php:615
+#, php-format
+msgid "%s off the cart"
+msgstr ""
+
+#: includes/class-lgpi-store.php:618
+msgid "free shipping"
+msgstr ""
+
+#: includes/class-lgpi-store.php:619
+msgid "Free shipping"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:110
+msgid "Visitors in the last 30 days (Performance Insight)"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:111
+msgid "Orders ÷ visitors in the last 30 days (Performance Insight)"
+msgstr ""
+
+#. translators: 1: views, 2: add to carts
+#: includes/class-lgpi-woo.php:137
+#, php-format
+msgid "%1$s views · %2$s added to cart"
+msgstr ""
+
+#. translators: %s: orders
+#: includes/class-lgpi-woo.php:146
+#, php-format
+msgid "%s orders in 30 days"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:156
+msgid "Performance Insight — last 30 days"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:159
+msgid "Customer journey"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:208
+msgid "Visitors came from"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:217
+msgid "Many visitors but no orders: check the price, photos, delivery details and reviews."
+msgstr ""
+
+#: includes/class-lgpi-woo.php:219
+msgid "Full product report →"
+msgstr ""
+
+#: includes/class-lgpi-woo.php:236
+msgid "No journey was recorded for this order (it was placed before Performance Insight 1.4, by staff, through the admin, or the visitor’s browser blocked the counter)."
+msgstr ""
+
+#. translators: 1: source type, 2: source
+#: includes/class-lgpi-woo.php:238
+#, php-format
+msgid "WooCommerce recorded the source as: %1$s %2$s"
+msgstr ""
+
+#. translators: 1: pages, 2: time
+#: includes/class-lgpi-woo.php:243
+#, php-format
+msgid "%1$s page in %2$s before ordering"
+msgid_plural "%1$s pages in %2$s before ordering"
+msgstr[0] ""
+msgstr[1] ""
+
+#: includes/class-lgpi-woo.php:245
+msgid "All customer journeys →"
+msgstr ""

@@ -1,0 +1,33 @@
+/* Performance Insight inside WooCommerce screens and the Dashboard widget */
+.lgpi-pill{display:inline-block;border-radius:10px;padding:1px 8px;font-size:12px;white-space:nowrap}
+.lgpi-steps{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:8px 0 4px}
+.lgpi-step{display:inline-flex;flex-direction:column;gap:1px;background:#f6f7f9;border:1px solid #e3e6ea;border-radius:8px;padding:5px 9px;text-decoration:none;color:#1d2327;max-width:220px;line-height:1.3}
+.lgpi-step b{font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lgpi-step i{font-style:normal;font-size:11px;color:#646970}
+.lgpi-step.p{background:#eef4fb;border-color:#c5d9ee}
+.lgpi-step.c{background:#f3f0fa;border-color:#ddd3f1}
+a.lgpi-step:hover{border-color:#2271b1}
+.lgpi-arrow{color:#a7aaad;font-size:12px}
+.lgpi-pill.jo-order{background:#e6f4ea;color:#1e7e34}
+.lgpi-pill.jo-abandoned{background:#fdecec;color:#b32d2e}
+.lgpi-pill.jo-open{background:#fff5e0;color:#8a5a00}
+.lgpi-pill.jo-account{background:#eef4fb;color:#2271b1}
+.lgpi-muted{color:#646970}
+.column-lgpi_views,.column-lgpi_conv{width:80px}
+.lgpi-c0{color:#a7aaad}
+.lgpi-cv.good{color:#1e7e34;font-weight:600}
+.lgpi-cv.bad{color:#b32d2e;font-weight:600}
+.lgpi-pbox{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 8px}
+.lgpi-pbox div{background:#f6f7f9;border-radius:6px;padding:6px 8px}
+.lgpi-pbox span{display:block;font-size:11px;color:#646970}
+.lgpi-pbox strong{font-size:15px}
+.lgpi-psrc{font-size:12px}
+.lgpi-pwarn{background:#fcf0dc;color:#7a4b00;border-radius:6px;padding:6px 8px;font-size:12px}
+.lgpi-ometa{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0}
+.lgpi-dw-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.lgpi-dw-kpis div{background:#f6f7f9;border-radius:6px;padding:8px 10px}
+.lgpi-dw-kpis span{display:block;font-size:11px;color:#646970}
+.lgpi-dw-kpis strong{display:block;font-size:18px}
+.lgpi-dw-kpis em{font-style:normal;font-size:11px}
+.lgpi-dw-kpis em.up{color:#1e7e34}.lgpi-dw-kpis em.down{color:#b32d2e}
+.lgpi-dw-j li{margin:0 0 6px}

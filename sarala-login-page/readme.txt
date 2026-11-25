@@ -2,7 +2,7 @@
 Contributors: nayan4321
 Tags: social login, google login, limit login attempts, hide login, woocommerce login
 Requires at least: 6.2
-Tested up to: 7.1
+Tested up to: 7.2
 Requires PHP: 7.4
 Stable tag: 1.2.1
 License: GPLv2 or later
