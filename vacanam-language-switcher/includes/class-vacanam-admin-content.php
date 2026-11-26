@@ -763,7 +763,7 @@ class Vacanam_Admin_Content {
 		if ( Vacanam_Duplicator::running() || ! Vacanam_Model::is_translated_tax( $taxonomy ) ) {
 			return;
 		}
-		$posted = isset( $_POST['vacanam_term_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['vacanam_term_nonce'] ) ), 'vacanam_save_term' );
+		$posted = isset( $_POST['vacanam_term_nonce'] ) && wp_verify_nonce( sanitize_key( wp_unslash( $_POST['vacanam_term_nonce'] ) ), 'vacanam_save_term' ) && current_user_can( 'edit_term', $term_id );
 		$lang   = $posted && isset( $_POST['vacanam_lang'] ) ? sanitize_key( wp_unslash( $_POST['vacanam_lang'] ) ) : '';
 		if ( ! Vacanam_Languages::exists( $lang ) ) {
 			if ( '' === Vacanam_Model::term_lang( $term_id ) ) {
@@ -780,7 +780,8 @@ class Vacanam_Admin_Content {
 			$slug  = sanitize_key( $slug );
 			$other = absint( $other );
 			$term  = $other ? get_term( $other, $taxonomy ) : null;
-			if ( $term instanceof WP_Term && $slug !== $lang && Vacanam_Languages::exists( $slug ) && in_array( Vacanam_Model::term_lang( $other ), array( '', $slug ), true ) ) {
+			// Only terms of the same taxonomy that this user may edit can be connected.
+			if ( $term instanceof WP_Term && $other !== (int) $term_id && current_user_can( 'edit_term', $other ) && $slug !== $lang && Vacanam_Languages::exists( $slug ) && in_array( Vacanam_Model::term_lang( $other ), array( '', $slug ), true ) ) {
 				Vacanam_Model::set_term_lang( $other, $slug );
 				$group[ $slug ] = $other;
 			}
