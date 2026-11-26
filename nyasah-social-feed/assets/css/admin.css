@@ -1,0 +1,72 @@
+/* Nyasah Social Feed – admin */
+.nyasah-admin { max-width: 1500px; }
+.nyasah-label { display: block; font-weight: 600; margin-block-end: 4px; }
+.nyasah-lead { font-size: 14px; max-width: 780px; }
+.nyasah-table { margin-block-start: 16px; }
+.nyasah-table__net svg { vertical-align: middle; }
+.nyasah-table__actions { text-align: end; white-space: nowrap; }
+.nyasah-delete { color: #b32d2e; }
+.nyasah-copy { cursor: pointer; user-select: all; }
+.nyasah-copy.is-copied { background: #d1fae5; }
+.nyasah-cache-form { margin-block-start: 16px; }
+
+.nyasah-empty { text-align: center; background: #fff; border: 1px solid #dcdcde; border-radius: 14px; padding: 48px 24px; margin-block-start: 20px; }
+.nyasah-empty__icons { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-block-end: 16px; }
+.nyasah-empty h2 { font-size: 22px; }
+.nyasah-empty p { max-width: 560px; margin: 8px auto 20px; font-size: 14px; color: #50575e; }
+
+/* Editor */
+.nyasah-editor { display: grid; grid-template-columns: 380px minmax(0, 1fr); gap: 20px; align-items: start; margin-block-start: 12px; }
+.nyasah-editor__side { background: #fff; border: 1px solid #dcdcde; border-radius: 12px; padding: 16px; position: sticky; inset-block-start: 46px; max-block-size: calc(100vh - 70px); overflow-y: auto; }
+.nyasah-editor__save { position: sticky; inset-block-end: -16px; background: #fff; padding-block: 12px; margin: 0; border-block-start: 1px solid #f0f0f1; }
+.nyasah-shortcode code { font-size: 13px; }
+.nyasah-section { border-block-start: 1px solid #f0f0f1; }
+.nyasah-section summary { cursor: pointer; font-weight: 700; font-size: 14px; padding-block: 12px; list-style: none; display: flex; justify-content: space-between; }
+.nyasah-section summary::after { content: "+"; color: #2271b1; font-size: 18px; line-height: 1; }
+.nyasah-section[open] summary::after { content: "–"; }
+.nyasah-section summary::-webkit-details-marker { display: none; }
+.nyasah-section__body { padding-block-end: 8px; }
+.nyasah-section__body p { margin-block: 0 12px; }
+.nyasah-check { margin-block-end: 6px !important; }
+.nyasah-row3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+.nyasah-row3 input[type="number"] { width: 100%; }
+.nyasah-networks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin-block-end: 12px; }
+.nyasah-network { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border: 1px solid #dcdcde; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.nyasah-network input { position: absolute; opacity: 0; }
+.nyasah-network:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; background: #f0f6fc; }
+.nyasah-network:has(input:focus-visible) { outline: 2px solid #2271b1; }
+.nyasah-source-help { margin-block-start: -6px !important; }
+.nyasah-layouts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-block-end: 12px; }
+.nyasah-layout { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border: 1px solid #dcdcde; border-radius: 8px; cursor: pointer; font-size: 12px; }
+.nyasah-layout input { position: absolute; opacity: 0; }
+.nyasah-layout:has(input:checked) { border-color: #2271b1; box-shadow: 0 0 0 1px #2271b1; background: #f0f6fc; }
+.nyasah-layout__pic { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; inline-size: 44px; block-size: 30px; }
+.nyasah-layout__pic i { background: #a7aaad; border-radius: 2px; }
+.nyasah-layout--list .nyasah-layout__pic { grid-template-columns: 1fr 2fr; }
+.nyasah-layout--list .nyasah-layout__pic i:nth-child(n+5) { display: none; }
+.nyasah-layout--masonry .nyasah-layout__pic i:nth-child(1), .nyasah-layout--masonry .nyasah-layout__pic i:nth-child(5) { grid-row: span 2; }
+.nyasah-layout--masonry .nyasah-layout__pic i:nth-child(6) { display: none; }
+.nyasah-layout--carousel .nyasah-layout__pic i:nth-child(n+4) { display: none; }
+.nyasah-layout--carousel .nyasah-layout__pic { grid-template-rows: 1fr; }
+.nyasah-color span { display: flex; align-items: center; gap: 6px; }
+.nyasah-color input[type="color"] { inline-size: 40px; block-size: 30px; padding: 0; border: 1px solid #dcdcde; border-radius: 4px; }
+
+.nyasah-editor__preview { min-inline-size: 0; }
+.nyasah-preview-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-block-end: 10px; }
+.nyasah-devices .button.is-on { background: #2271b1; color: #fff; border-color: #2271b1; }
+.nyasah-preview { background: #fff; border: 1px solid #dcdcde; border-radius: 12px; padding: 20px; min-block-size: 300px; margin-inline: auto; transition: max-inline-size .25s; }
+.nyasah-preview.is-loading { opacity: .5; }
+
+/* Accounts */
+.nyasah-accounts { display: grid; gap: 10px; max-width: 900px; }
+.nyasah-account { background: #fff; border: 1px solid #dcdcde; border-radius: 10px; }
+.nyasah-account summary { cursor: pointer; padding: 12px 16px; font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 10px; }
+.nyasah-account__body { padding: 0 16px 16px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+.nyasah-guide { margin-block: 0; margin-inline-start: 18px; color: #3c434a; }
+.nyasah-guide li { margin-block-end: 6px; }
+
+@media (max-width: 1100px) {
+	.nyasah-editor { grid-template-columns: minmax(0, 1fr); }
+	.nyasah-editor__side { position: static; max-block-size: none; }
+	.nyasah-account__body { grid-template-columns: minmax(0, 1fr); }
+}
