@@ -79,7 +79,34 @@ function zenoti_search_guest_raw($phone) {
     return $data['guests'][0] ?? null;
 }
 
+function zenoti_phone_cache_file($phone) {
+    $dir = __DIR__ . '/data/zenoti_cache';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0775, true);
+    }
+    $safe = preg_replace('/[^0-9]/', '', $phone);
+    return $dir . '/' . $safe . '.json';
+}
+
+// A single unanswered call fires this once per employee it cascades
+// through, all for the exact same phone number within seconds of each
+// other - previously each one hit Zenoti's Search Guest API independently.
+// Caching the result per phone number for a few minutes means the whole
+// cascade for one call only ever looks the guest up once, cutting repeat
+// API calls (both "found" and "not found" results are cached, so an
+// unmatched number doesn't get retried every branch either).
 function zenoti_search_guest_by_phone($phone) {
+    $cacheFile = zenoti_phone_cache_file($phone);
+    $cacheTtlMs = 3 * 60 * 1000;
+    $now = round(microtime(true) * 1000);
+
+    if (file_exists($cacheFile)) {
+        $cached = json_decode(file_get_contents($cacheFile), true);
+        if ($cached && ($now - ($cached['cachedAt'] ?? 0)) < $cacheTtlMs) {
+            return $cached['guest'];
+        }
+    }
+
     $raw = zenoti_search_guest_raw($phone);
 
     // CallGear's caller ID includes a country code prefix, but Zenoti guest
@@ -92,18 +119,21 @@ function zenoti_search_guest_by_phone($phone) {
         $raw = zenoti_search_guest_raw(substr($phone, $stripLen));
     }
 
-    if (!$raw) return null;
+    $guest = null;
+    if ($raw) {
+        $personal = $raw['personal_info'] ?? [];
+        $guest = [
+            'id' => $raw['id'] ?? null,
+            'firstName' => $personal['first_name'] ?? '',
+            'lastName' => $personal['last_name'] ?? '',
+            'phone' => $personal['mobile_phone']['number'] ?? $phone,
+            'email' => $personal['email'] ?? '',
+            'centerId' => $raw['center_id'] ?? null,
+        ];
+        $guest['profileUrl'] = zenoti_build_profile_url($guest);
+    }
 
-    $personal = $raw['personal_info'] ?? [];
-    $guest = [
-        'id' => $raw['id'] ?? null,
-        'firstName' => $personal['first_name'] ?? '',
-        'lastName' => $personal['last_name'] ?? '',
-        'phone' => $personal['mobile_phone']['number'] ?? $phone,
-        'email' => $personal['email'] ?? '',
-        'centerId' => $raw['center_id'] ?? null,
-    ];
-    $guest['profileUrl'] = zenoti_build_profile_url($guest);
+    file_put_contents($cacheFile, json_encode(['guest' => $guest, 'cachedAt' => $now]), LOCK_EX);
     return $guest;
 }
 
