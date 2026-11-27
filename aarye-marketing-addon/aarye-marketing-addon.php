@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Aarye Marketing Addon – UTM & Lead Source Tracking for Forms
  * Description:       A helper for your marketing team: see which ad, campaign, keyword or website brought every lead, check whether each lead is real, keep every lead in one dashboard, and send them to Google Sheets.
- * Version:           1.2.0
+ * Version:           1.3.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -16,7 +16,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYE_VERSION', '1.2.0' );
+define( 'AARYE_VERSION', '1.3.0' );
 define( 'AARYE_FILE', __FILE__ );
 define( 'AARYE_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYE_URL', plugin_dir_url( __FILE__ ) );
@@ -37,6 +37,8 @@ require_once AARYE_DIR . 'includes/class-aarye-sources.php';
 require_once AARYE_DIR . 'includes/class-aarye-tracker.php';
 require_once AARYE_DIR . 'includes/class-aarye-entries.php';
 require_once AARYE_DIR . 'includes/class-aarye-evidence.php';
+require_once AARYE_DIR . 'includes/class-aarye-protect.php';
+require_once AARYE_DIR . 'includes/class-aarye-protect-admin.php';
 require_once AARYE_DIR . 'includes/class-aarye-integrations.php';
 require_once AARYE_DIR . 'includes/class-aarye-placements.php';
 require_once AARYE_DIR . 'includes/class-aarye-import.php';
@@ -56,6 +58,7 @@ add_action(
 			AARYE_Entries::install();
 		}
 		AARYE_Tracker::init();
+		AARYE_Protect::init();
 		AARYE_Integrations::init();
 		AARYE_Placements::init();
 		AARYE_Import::init();
@@ -65,6 +68,8 @@ add_action(
 		AARYE_Privacy::init();
 		if ( is_admin() ) {
 			AARYE_Admin::init();
+			AARYE_Protect_Admin::init();
+			add_action( 'admin_init', array( 'AARYE_Protect', 'upgrade' ) );
 			AARYE_Upgrade::init();
 			AARYE_Review::init();
 			if ( get_option( 'aarye_rescore' ) ) {

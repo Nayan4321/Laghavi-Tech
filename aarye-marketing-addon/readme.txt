@@ -4,7 +4,7 @@ Tags: utm tracking, lead tracking, lead source, contact form 7, marketing attrib
 Requires at least: 6.3
 Tested up to: 7.2
 Requires PHP: 7.4
-Stable tag: 1.2.0
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -44,6 +44,21 @@ Google Ads (gclid, gbraid, wbraid, Performance Max, YouTube), Meta Ads (Facebook
 
 * **Source proof**: confirmed by an ad click ID, confirmed by the browser (the website the visitor really came from), or only claimed by UTM tags, which anyone can add to a link.
 * **Spam check** with a score and the reasons in plain words: posted directly by a bot, no mouse, touch or keys on the page, sent within seconds, browser controlled by automation software, not sent from your website, links and sales-pitch words, repeated leads. It explains, it never deletes: filter by it or mark spam yourself.
+
+= Stop spam before it reaches your inbox =
+
+* **Security question** right above the submit button ("What is 7 + 4?"), on every form or only the forms you choose. Scripts that post forms directly never get a question, so their messages are refused. Works with page caching.
+* **Block an IP address** on one form or on all forms with one click from the entry. The website stays open to them; only sending is stopped.
+* **Automated browsers** (Selenium, Puppeteer, Playwright) are refused.
+* A list of refused submissions shows what was stopped and why.
+
+= Customer journey =
+
+Every lead shows the way the visitor came: the ad or website that sent them, each page they opened, how long each page was open, and the form they sent.
+
+= Your team's tests are not leads =
+
+Entries from your team (logged-in editors, your company email domain, your office IP) and visits from ad previews (Meta Ads Manager, Events Manager "Test events", Google Ads previews) are kept under **Your team** instead of being counted as leads, as Facebook traffic or as spam.
 
 = Never lose a lead =
 
@@ -85,7 +100,7 @@ The language of each lead is saved (WPML, Polylang, TranslatePress, Weglot or th
 * Send every lead with its ad source to **HubSpot, Zoho CRM, Airtable, Notion, your own database or any webhook** (Zapier, Make, n8n).
 * **WhatsApp, call, SMS and email button clicks** saved with the ad that brought the visitor.
 * **Form analytics**: views, starts, abandons and the field where people give up, by source.
-* **Pages viewed** before each lead, **automations**, **spam and bot blocking**, and the **cost per real lead** with Laghavi Ads Hub.
+* **Full visitor history** (every page of every visit), **automations**, **reCAPTCHA**, blocked words and disposable emails, and the **cost per real lead** with Laghavi Ads Hub.
 
 The free plugin keeps working on its own, with no limits on leads.
 
@@ -129,6 +144,22 @@ Yes. WPForms Lite does not keep entries, and Aarye saves them for you with their
 = Does it work with Elementor forms? =
 
 Yes, with the Form widget of Elementor Pro. Forms built into themes and hand-made HTML forms are saved too.
+
+= How do I stop spam and bot submissions on Contact Form 7 or Elementor forms without reCAPTCHA? =
+
+Open **Aarye Leads > Spam protection** and turn on the security question for all forms or only the ones you choose. A short sum appears above the submit button; bots that post forms directly can't answer it. You can also block the IP address of a spammer on one form or all forms. Works with Elementor Pro, Contact Form 7, WPForms, Gravity Forms, Fluent Forms, Formidable Forms and Forminator.
+
+= Can I block someone from sending my form without blocking my website? =
+
+Yes. Open their entry and click **Block on this form** or **Block on all forms**. They can still read every page; only sending forms is refused. Ranges (203.0.113.0/24) work too.
+
+= Can I see which pages a lead visited before sending the form? =
+
+Yes. Every entry shows its customer journey: where the visitor came from, each page they opened with the time spent on it, and the form they sent.
+
+= Why do some Facebook leads say "Test / preview"? =
+
+They were opened from Meta Ads Manager or Events Manager (for example "Test events"), so they are your team's previews, not visitors from Facebook. They are kept under "Your team" and not counted as leads.
 
 = How do I know if a form submission is spam or from a bot? =
 
@@ -204,6 +235,16 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 5. Google Sheets: each lead as a row with its source.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: security question above the submit button, for all forms or chosen forms (Elementor Pro, Contact Form 7, WPForms, Gravity Forms, Fluent Forms, Formidable, Forminator).
+* New: block IP addresses or ranges on one form or all forms, from the entry or the new Spam protection screen; list of refused submissions.
+* New: forms sent by automated browsers are refused.
+* New: customer journey on every entry: where the visitor came from, the pages opened and the time on each, and the form sent.
+* New: your team's entries (logged-in editors, team email domains and IPs) and visits from ad managers and ad previews are kept under "Your team", not counted as leads, as Facebook traffic or as spam.
+* New: Google Ads campaign ID (gad_campaignid) shown when the ad has no tracking template.
+* Improved: fewer real people marked doubtful: a missing cookie on a form sent from your own pages and no mouse movement after browsing several pages now count as minor signs.
+* Saved entries are checked again with the new rules after updating.
 
 = 1.2.0 =
 * New: Upgrade to Pro screen under Aarye Leads, with what Aarye Pro adds and its plans (hidden once Pro is installed).

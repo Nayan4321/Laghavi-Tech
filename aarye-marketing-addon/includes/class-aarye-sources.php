@@ -27,6 +27,7 @@ class AARYE_Sources {
 			'email'          => __( 'Email', 'aarye-marketing-addon' ),
 			'referral'       => __( 'Other websites', 'aarye-marketing-addon' ),
 			'direct'         => __( 'Direct', 'aarye-marketing-addon' ),
+			'internal'       => __( 'Your team & ad previews', 'aarye-marketing-addon' ),
 			'unknown'        => __( 'Not tracked (imported)', 'aarye-marketing-addon' ),
 		);
 	}
@@ -42,7 +43,7 @@ class AARYE_Sources {
 		return array(
 			'google_ads'    => array(
 				'name'    => 'Google Ads',
-				'click'   => array( 'gclid', 'gbraid', 'wbraid', 'gad_source' ),
+				'click'   => array( 'gclid', 'gbraid', 'wbraid', 'gad_source', 'gad_campaignid' ),
 				'utm'     => array( 'google', 'googleads', 'google_ads', 'adwords', 'youtube', 'yt', 'pmax', 'gdn' ),
 				'domains' => array(),
 				'covers'  => 'Search, Display, YouTube, Shopping, Performance Max, Demand Gen',
@@ -319,7 +320,7 @@ class AARYE_Sources {
 		foreach ( self::ad_networks() as $network ) {
 			$params = array_merge( $params, $network['click'] );
 		}
-		return array_values( array_unique( array_merge( $params, array( 'fbclid', 'igshid', 'utm_id', 'utm_adgroup', 'campaign_id', 'campaign_name', 'adset_id', 'adset_name', 'adgroup_id', 'adgroup_name', 'ad_id', 'ad_name', 'creative', 'keyword', 'matchtype', 'network', 'device', 'placement', 'site_source_name' ) ) ) );
+		return array_values( array_unique( array_merge( $params, array( 'fbclid', 'igshid', 'utm_id', 'gad_campaignid', 'utm_adgroup', 'campaign_id', 'campaign_name', 'adset_id', 'adset_name', 'adgroup_id', 'adgroup_name', 'ad_id', 'ad_name', 'creative', 'keyword', 'matchtype', 'network', 'device', 'placement', 'site_source_name' ) ) ) );
 	}
 
 	/**
@@ -381,6 +382,62 @@ class AARYE_Sources {
 	}
 
 	/**
+	 * Websites of ad managers and tag testers. Visits from them are previews and tests by the site's
+	 * own team (for example "Test events" in Meta Events Manager opens the website), not visitors.
+	 *
+	 * @return array<string, string>
+	 */
+	public static function ad_tools() {
+		/**
+		 * Ad manager and testing tool hosts (host pattern => name).
+		 *
+		 * @param array $tools Tools.
+		 */
+		return (array) apply_filters(
+			'aarye_ad_tools',
+			array(
+				'adsmanager.facebook.com'   => 'Meta Ads Manager',
+				'eventsmanager.facebook.com' => 'Meta Events Manager',
+				'business.facebook.com'     => 'Meta Business Suite',
+				'developers.facebook.com'   => 'Meta for Developers',
+				'ads.google.com'            => 'Google Ads',
+				'tagassistant.google.com'   => 'Google Tag Assistant',
+				'tagmanager.google.com'     => 'Google Tag Manager',
+				'analytics.google.com'      => 'Google Analytics',
+				'search.google.com'         => 'Google Search Console',
+				'ads.tiktok.com'            => 'TikTok Ads Manager',
+				'business.tiktok.com'       => 'TikTok Business Center',
+				'campaignmanager.linkedin.com' => 'LinkedIn Campaign Manager',
+				'ads.snapchat.com'          => 'Snapchat Ads Manager',
+				'ads.pinterest.com'         => 'Pinterest Ads Manager',
+				'ui.ads.microsoft.com'      => 'Microsoft Advertising',
+				'ads.x.com'                 => 'X Ads',
+				'ads.twitter.com'           => 'X Ads',
+			)
+		);
+	}
+
+	/**
+	 * Whether link parameters still hold unfilled placeholders such as {{ad.name}}, {creative} or
+	 * fbclid=fbclid: the link was opened from an ad preview, not clicked in a real ad.
+	 *
+	 * @param array $p Parameters.
+	 * @return bool
+	 */
+	private static function placeholder_values( $p ) {
+		foreach ( $p as $key => $value ) {
+			$value = strtolower( trim( (string) $value ) );
+			if ( '' === $value ) {
+				continue;
+			}
+			if ( preg_match( '/^\{\{?[a-z0-9_.]+\}\}?$/', $value ) || ( in_array( $key, array( 'fbclid', 'gclid', 'ttclid', 'msclkid' ), true ) && $value === $key ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
 	 * Classify one visit ("touch").
 	 *
 	 * @param array $touch Keys: params (array of URL parameters), ref (referrer URL), url (landing URL).
@@ -398,6 +455,7 @@ class AARYE_Sources {
 			'source'      => 'direct',
 			'label'       => __( 'Direct', 'aarye-marketing-addon' ),
 			'campaign'    => self::first( $p, array( 'utm_campaign', 'campaign_name', 'campaign_id', 'utm_id' ) ),
+			'campaign_id' => self::first( $p, array( 'gad_campaignid', 'campaign_id', 'utm_id' ) ),
 			'ad_group'    => self::first( $p, array( 'utm_adgroup', 'adset_name', 'adgroup_name', 'adset_id', 'adgroup_id' ) ),
 			'ad'          => self::first( $p, array( 'utm_content', 'ad_name', 'ad_id', 'creative' ) ),
 			'keyword'     => self::first( $p, array( 'utm_term', 'keyword' ) ),
@@ -406,12 +464,36 @@ class AARYE_Sources {
 			'confirmed'   => true,
 		);
 
+		if ( '' === $out['campaign'] && '' !== $out['campaign_id'] ) {
+			/* translators: %s: campaign ID number. */
+			$out['campaign'] = sprintf( __( 'Campaign ID %s', 'aarye-marketing-addon' ), $out['campaign_id'] );
+		}
+
+		// 0. Opened from an ad manager (ad preview, Events Manager test) or a link whose {{placeholders}}
+		// were never filled in: your own team testing, not a visitor.
+		$tool = '' !== $host ? self::match_host( $host, self::ad_tools() ) : '';
+		if ( '' === $tool && self::placeholder_values( $p ) ) {
+			$tool = __( 'ad preview link', 'aarye-marketing-addon' );
+		}
+		if ( '' !== $tool ) {
+			return array_merge(
+				$out,
+				array(
+					'channel'   => 'internal',
+					'source'    => 'ad_tool',
+					/* translators: %s: tool name, e.g. Meta Events Manager. */
+					'label'     => sprintf( __( 'Test / preview: %s', 'aarye-marketing-addon' ), $tool ),
+					'confirmed' => true,
+				)
+			);
+		}
+
 		// 1. Auto-tagging click IDs: the ad network added them, so this is certainly a paid click.
 		foreach ( self::ad_networks() as $key => $network ) {
 			foreach ( $network['click'] as $param ) {
 				$param = strtolower( $param );
 				if ( isset( $p[ $param ] ) && '' !== $p[ $param ] ) {
-					if ( 'gad_source' === $param && ( isset( $p['gclid'] ) || isset( $p['gbraid'] ) || isset( $p['wbraid'] ) ) ) {
+					if ( in_array( $param, array( 'gad_source', 'gad_campaignid' ), true ) && ( isset( $p['gclid'] ) || isset( $p['gbraid'] ) || isset( $p['wbraid'] ) ) ) {
 						continue;
 					}
 					return array_merge(

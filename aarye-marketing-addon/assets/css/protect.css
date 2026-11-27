@@ -1,0 +1,29 @@
+.aarye-q {
+	margin-block: 0 12px;
+	inline-size: 100%;
+	flex-basis: 100%;
+	font-size: 0.95em;
+}
+.aarye-q__label {
+	display: block;
+	margin-block-end: 6px;
+}
+.aarye-q__text {
+	font-weight: 600;
+	unicode-bidi: isolate;
+}
+.aarye-q__row {
+	display: flex;
+	gap: 8px;
+	align-items: center;
+}
+.aarye-q__answer {
+	inline-size: 7em !important;
+	max-inline-size: 100%;
+}
+.aarye-q__new {
+	padding: 4px 10px !important;
+	min-height: 0 !important;
+	line-height: 1.4 !important;
+	cursor: pointer;
+}

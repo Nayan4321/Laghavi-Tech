@@ -77,7 +77,7 @@ class AARYE_Tracker {
 	/**
 	 * What the tracker remembered about the current visitor.
 	 *
-	 * @return array{first: array|null, last: array|null, visits: int, page: string, lang: string, extra: array, visitor: string}
+	 * @return array{first: array|null, last: array|null, visits: int, page: string, lang: string, extra: array, journey: array, visitor: string}
 	 */
 	public static function read() {
 		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON, every field is cleaned below.
@@ -99,8 +99,39 @@ class AARYE_Tracker {
 				'tz' => isset( $data['tz'] ) ? sanitize_text_field( (string) $data['tz'] ) : '',
 				'sc' => isset( $data['sc'] ) ? sanitize_text_field( (string) $data['sc'] ) : '',
 			),
+			'journey' => self::journey(),
 			'visitor' => isset( $_COOKIE['aarye_vid'] ) ? preg_replace( '/[^a-z0-9]/', '', strtolower( sanitize_text_field( wp_unslash( $_COOKIE['aarye_vid'] ) ) ) ) : '',
 		);
+	}
+
+	/**
+	 * The pages the visitor opened, oldest first (from the tracker's journey cookie).
+	 *
+	 * @return array<int, array{path: string, time: int, seconds: int, from: string}>
+	 */
+	public static function journey() {
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- JSON, every field is cleaned below.
+		$raw  = isset( $_COOKIE['aarye_j'] ) ? wp_unslash( $_COOKIE['aarye_j'] ) : '';
+		$list = json_decode( (string) $raw, true );
+		$out  = array();
+		$now  = time();
+		foreach ( is_array( $list ) ? array_slice( $list, -15 ) : array() as $step ) {
+			if ( ! is_array( $step ) || ! isset( $step[0], $step[1] ) ) {
+				continue;
+			}
+			$path = (string) $step[0];
+			$time = absint( $step[1] );
+			if ( '' === $path || '/' !== $path[0] || ! $time || $time > $now + 60 ) {
+				continue;
+			}
+			$out[] = array(
+				'path'    => mb_substr( sanitize_text_field( $path ), 0, 120 ),
+				'time'    => $time,
+				'seconds' => isset( $step[2] ) ? min( 86400, absint( $step[2] ) ) : 0,
+				'from'    => isset( $step[3] ) ? mb_substr( sanitize_text_field( (string) $step[3] ), 0, 90 ) : '',
+			);
+		}
+		return $out;
 	}
 
 	/**

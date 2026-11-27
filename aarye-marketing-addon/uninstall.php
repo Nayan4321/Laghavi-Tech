@@ -21,6 +21,8 @@ function aarye_uninstall_site() {
 	delete_transient( 'aarye_sheets_lock' );
 	delete_transient( 'aarye_form_places' );
 	delete_option( 'aarye_installed' );
+	delete_option( 'aarye_block_log' );
+	delete_option( 'aarye_protect_version' );
 
 	if ( ! is_array( $settings ) || ! isset( $settings['delete_on_remove'] ) || 'yes' !== $settings['delete_on_remove'] ) {
 		return;
@@ -28,6 +30,8 @@ function aarye_uninstall_site() {
 	$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'aarye_entries' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange -- Removing our own table on request.
 	delete_option( 'aarye_settings' );
 	delete_option( 'aarye_db_version' );
+	delete_option( 'aarye_blocks' );
+	delete_option( 'aarye_blocked_count' );
 
 	$upload = wp_upload_dir( null, false );
 	$dir    = trailingslashit( $upload['basedir'] ) . 'aarye-forms';

@@ -306,6 +306,8 @@ class AARYE_Entries {
 					'first_source' => $first,
 					'user_agent'   => mb_substr( $ua, 0, 300 ),
 					'imported'     => (bool) $args['imported'],
+					'journey'      => isset( $visit['journey'] ) && is_array( $visit['journey'] ) ? $visit['journey'] : array(),
+					'sent_at'      => time(),
 				)
 			),
 		);
@@ -324,6 +326,11 @@ class AARYE_Entries {
 		$check             = AARYE_Evidence::analyse( (object) $row );
 		$row['spam_score'] = $check['score'];
 		$row['quality']    = $check['verdict'];
+		if ( ! $args['imported'] && AARYE_Protect::is_team( $row['email'], self::ip() ) ) {
+			// Sent by the site's own team (logged in, a team email address or a team IP): a test, not a lead.
+			$row['quality']    = 'team';
+			$row['spam_score'] = 0;
+		}
 		$row               = (array) apply_filters( 'aarye_entry_before_save', $row, $args );
 		$wpdb->insert( self::table(), $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table.
 		$id                 = (int) $wpdb->insert_id;
@@ -405,6 +412,9 @@ class AARYE_Entries {
 			$name  = isset( $field['name'] ) ? sanitize_text_field( (string) $field['name'] ) : '';
 			$label = isset( $field['label'] ) && '' !== trim( (string) $field['label'] ) ? sanitize_text_field( (string) $field['label'] ) : self::humanize( $name );
 			$type  = isset( $field['type'] ) ? sanitize_key( (string) $field['type'] ) : '';
+			if ( 0 === strpos( $name, 'aarye_q_' ) || 0 === strpos( $name, 'g-recaptcha' ) || 0 === strpos( $name, 'cf-turnstile' ) ) {
+				continue; // Aarye's security question and captcha answers are not part of the lead.
+			}
 			if ( in_array( $type, array( 'submit', 'html', 'captcha', 'recaptcha', 'hcaptcha', 'turnstile', 'honeypot', 'divider', 'section', 'page', 'pagebreak', 'step' ), true ) ) {
 				continue;
 			}
@@ -605,9 +615,11 @@ class AARYE_Entries {
 		if ( empty( $f['bots'] ) ) {
 			$sql[] = 'is_bot = 0';
 		}
-		if ( ! empty( $f['quality'] ) && in_array( $f['quality'], array( 'ok', 'doubt', 'spam' ), true ) ) {
+		if ( ! empty( $f['quality'] ) && in_array( $f['quality'], array( 'ok', 'doubt', 'spam', 'team' ), true ) ) {
 			$sql[]  = 'quality = %s';
 			$args[] = (string) $f['quality'];
+		} elseif ( empty( $f['bots'] ) ) {
+			$sql[] = "quality <> 'team'"; // The team's own tests are kept but not counted as leads.
 		}
 		if ( ! empty( $f['status'] ) ) {
 			$sql[]  = 'status = %s';
@@ -673,10 +685,21 @@ class AARYE_Entries {
 	}
 
 	/**
-	 * Update an entry's lead status.
+	 * Mark an entry as the team's (or another spam check result).
+	 *
+	 * @param int    $id      Entry ID.
+	 * @param string $quality Result.
+	 */
+	public static function set_quality( $id, $quality ) {
+		global $wpdb;
+		$wpdb->update( self::table(), array( 'quality' => sanitize_key( $quality ), 'spam_score' => 0 ), array( 'id' => (int) $id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- Our own table.
+	}
+
+	/**
+	 * Change a lead's status.
 	 *
 	 * @param int    $id     Entry ID.
-	 * @param string $status Status key.
+	 * @param string $status Status.
 	 */
 	public static function set_status( $id, $status ) {
 		global $wpdb;

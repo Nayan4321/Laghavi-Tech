@@ -295,6 +295,10 @@ class AARYE_Evidence {
 			if ( empty( $ev['tracker'] ) ) {
 				if ( ! empty( $ev['consent'] ) ) {
 					$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'No cookie', 'aarye-marketing-addon' ), 'info', __( 'The visitor did not accept marketing cookies, so the visit was not recorded. Nothing can be said about where they came from.', 'aarye-marketing-addon' ) );
+				} elseif ( AARYE_Sources::is_own( (string) $ev['post_ref'] ) ) {
+					// Sent from a page of the site: a browser was used, only the cookie is missing (private
+					// mode, in-app browsers, cookie blockers, a cached page without the script).
+					$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'No cookie', 'aarye-marketing-addon' ), 'warn', __( 'The form was sent from a page of your website, but the browser kept no Aarye cookie. Private browsing, the Facebook and Instagram in-app browsers and cookie blockers do this; so do some bots.', 'aarye-marketing-addon' ) );
 				} else {
 					$add( 'script', __( 'Page script', 'aarye-marketing-addon' ), __( 'Never ran', 'aarye-marketing-addon' ), 'bad', __( 'The form was sent without the website ever running in a browser: no page of the site was opened before. This is how spam bots post forms directly. (A page cache serving an old page without the script can cause it too.)', 'aarye-marketing-addon' ) );
 				}
@@ -308,7 +312,10 @@ class AARYE_Evidence {
 				if ( $ev['interacted'] ) {
 					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon' ), __( 'Yes', 'aarye-marketing-addon' ), 'ok', __( 'The visitor moved the mouse, touched, scrolled or typed on the form page.', 'aarye-marketing-addon' ) );
 				} else {
-					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon' ), __( 'None', 'aarye-marketing-addon' ), 'bad', __( 'Nobody moved the mouse, touched the screen, scrolled or pressed a key on the form page before it was sent. A person filling a form always does.', 'aarye-marketing-addon' ) );
+					// Someone who browsed several pages and took their time is rarely a bot, even if this
+					// page saw no movement (form filled in another tab, autofill, keyboard navigation).
+					$calm = null !== $ev['pages'] && (int) $ev['pages'] > 1 && null !== $ev['seconds'] && (int) $ev['seconds'] >= 8;
+					$add( 'interaction', __( 'Mouse, touch or keys', 'aarye-marketing-addon' ), __( 'None', 'aarye-marketing-addon' ), $calm ? 'warn' : 'bad', __( 'Nobody moved the mouse, touched the screen, scrolled or pressed a key on the form page before it was sent. A person filling a form always does.', 'aarye-marketing-addon' ) );
 				}
 			}
 			if ( null !== $ev['seconds'] ) {
@@ -388,6 +395,10 @@ class AARYE_Evidence {
 		}
 		$score   = min( 100, $score );
 		$verdict = $score >= 60 ? 'spam' : ( $score >= 25 ? 'doubt' : 'ok' );
+		if ( 'team' === ( isset( $e->quality ) ? $e->quality : '' ) || 'internal' === $e->channel ) {
+			$verdict = 'team';
+			$score   = 0;
+		}
 		$labels  = self::verdicts();
 
 		$details = array();
@@ -432,6 +443,7 @@ class AARYE_Evidence {
 			'ok'    => __( 'Looks genuine', 'aarye-marketing-addon' ),
 			'doubt' => __( 'Some doubts', 'aarye-marketing-addon' ),
 			'spam'  => __( 'Likely spam', 'aarye-marketing-addon' ),
+			'team'  => __( 'Your team', 'aarye-marketing-addon' ),
 		);
 	}
 }

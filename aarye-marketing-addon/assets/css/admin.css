@@ -108,3 +108,22 @@
 .aarye-pro__fine { max-width: 960px; }
 @media (max-width: 1200px) { .aarye-pro__features { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 782px) { .aarye-pro__features, .aarye-pro__plans { grid-template-columns: 1fr; } .aarye-pro__hero { padding: 24px; } }
+
+/* 1.3: customer journey, protection. */
+.aarye-steps { margin: 0; padding: 0; list-style: none; }
+.aarye-step { position: relative; margin: 0; padding: 6px 0 6px 22px; border-left: 2px solid #dcdcde; margin-left: 8px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.aarye-step::before { content: ""; position: absolute; left: -6px; top: 12px; width: 10px; height: 10px; border-radius: 50%; background: #fff; border: 2px solid #8c8f94; }
+.aarye-step--from { color: #1d2327; font-weight: 600; }
+.aarye-step--from::before { border-color: #2271b1; background: #2271b1; }
+.aarye-step--sent { font-weight: 600; color: #00a32a; border-left-color: transparent; }
+.aarye-step--sent::before { border-color: #00a32a; background: #00a32a; }
+.aarye-step .dashicons { font-size: 16px; width: 16px; height: 16px; }
+.aarye-step__time { margin-left: auto; color: #50575e; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.aarye-form-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 4px 16px; margin: 0 0 8px 24px; }
+.aarye-form-choice { display: block; }
+.aarye-inline-form { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.aarye-spam--team { background: #f0f6fc; color: #2271b1; }
+.aarye-badge--internal { background: #f0f0f1; color: #50575e; }
+.rtl .aarye-step { padding: 6px 22px 6px 0; border-left: 0; border-right: 2px solid #dcdcde; margin-left: 0; margin-right: 8px; }
+.rtl .aarye-step::before { left: auto; right: -6px; }
+.rtl .aarye-step__time { margin-left: 0; margin-right: auto; }
