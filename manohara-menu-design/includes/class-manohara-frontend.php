@@ -35,6 +35,52 @@ class Manohara_Frontend {
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'assets' ), 20 );
 		add_action( 'init', array( __CLASS__, 'hooks' ) );
 		add_action( 'after_setup_theme', array( __CLASS__, 'menus_screen' ), 99 );
+		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'sticky' ), 25 );
+	}
+
+	/**
+	 * Sticky header: a small script keeps the header at the top on the chosen devices (also on sites
+	 * without a design).
+	 */
+	public static function sticky() {
+		$s       = Manohara_Store::settings();
+		$devices = array_values( array_intersect( (array) $s['sticky_header'], array_keys( Manohara_Store::devices() ) ) );
+		if ( ! $devices || is_admin() ) {
+			return;
+		}
+		$t     = max( 480, (int) $s['tablet_max'] );
+		$m     = max( 320, min( $t - 1, (int) $s['mobile_max'] ) );
+		$sels  = array();
+		foreach ( explode( ',', (string) $s['header_selectors'] ) as $sel ) {
+			$sel = trim( $sel );
+			if ( '' !== $sel && preg_match( '/^[A-Za-z0-9_\-\.\#\s>:\(\)\*]+$/', $sel ) ) {
+				$sels[] = $sel;
+			}
+		}
+		wp_register_style( 'manohara-sticky', MANOHARA_URL . 'assets/css/sticky.css', array(), manohara_asset_version( 'assets/css/sticky.css' ) );
+		wp_enqueue_style( 'manohara-sticky' );
+		wp_register_script(
+			'manohara-sticky',
+			MANOHARA_URL . 'assets/js/sticky.js',
+			array(),
+			manohara_asset_version( 'assets/js/sticky.js' ),
+			array(
+				'in_footer' => true,
+				'strategy'  => 'defer',
+			)
+		);
+		wp_enqueue_script( 'manohara-sticky' );
+		wp_localize_script(
+			'manohara-sticky',
+			'manoharaSticky',
+			array(
+				'devices'   => $devices,
+				'tablet'    => $t,
+				'mobile'    => $m,
+				'selectors' => implode( ',', $sels ),
+				'shadow'    => (int) $s['sticky_shadow'],
+			)
+		);
 	}
 
 	/**

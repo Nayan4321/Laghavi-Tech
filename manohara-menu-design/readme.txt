@@ -4,7 +4,7 @@ Tags: mobile menu, menu design, responsive menu, elementor menu, hamburger menu
 Requires at least: 6.2
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.2.1
+Stable tag: 1.3.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -41,6 +41,7 @@ Manohara Menu Design gives your site's menu a modern look without touching your 
 * Call-to-action buttons in the menu with your own text and link ("Contact us", "Call now", "WhatsApp us"), above or below the menu. Links can be web addresses, phone numbers, e-mail addresses or WhatsApp numbers.
 * Social icons (Facebook, Instagram, X, LinkedIn, YouTube, TikTok, Pinterest, WhatsApp, Telegram, e-mail, phone) right after the menu items or at the bottom of the menu.
 * A header bar with your logo (or another image), an optional button such as "Contact" or "Call", an optional search button, stays at the top when scrolling.
+* **Sticky header**: keep your theme's or page builder's header at the top while scrolling, on desktop, tablet and phone separately.
 * Live preview of desktop, tablet and mobile while you design.
 
 **Works everywhere**
@@ -54,7 +55,7 @@ Manohara Menu Design gives your site's menu a modern look without touching your 
 **Light and fast**
 
 * No jQuery and no libraries: one small script (about 7 KB) and only the styles of the templates you use.
-* Nothing is loaded on pages where no design shows.
+* Nothing is loaded on pages where no design shows (the sticky header, when switched on, adds one small script).
 * Smooth animations use CSS transforms; visitors who ask their device for less motion get instant menus.
 * Keyboard friendly: Esc closes, focus stays inside full-screen menus, ARIA labels on every button.
 * Works in right-to-left languages.
@@ -114,6 +115,9 @@ No. The plugin does not connect to any external service and does not load fonts 
 5. The list of designs, each with its design per device.
 
 == Changelog ==
+
+= 1.3.0 =
+* New: Sticky header. Keep your theme's or page builder's header (or the Manohara header bar) at the top of the screen while visitors scroll, separately for desktop, tablet and phone (Appearance > Manohara Menu > Sticky header). Boxed and transparent headers stay in place, get a background while stuck and an optional soft shadow; headers your theme already keeps at the top are left alone.
 
 = 1.2.1 =
 * New: with Vacanam Language Switcher, the header bar can show a different logo for each language (for example an Arabic logo on Arabic pages).

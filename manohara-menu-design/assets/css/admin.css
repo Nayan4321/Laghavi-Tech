@@ -157,3 +157,5 @@ body.admin-bar .mnh-preview-inner .mnh-t-overlay .mnh-panel,body.admin-bar .mnh-
 @media (max-width:600px){
 	.mnh-editor-top{position:relative;top:0}
 }
+
+.mnh-inline-check{display:inline-block;margin-inline-end:16px}

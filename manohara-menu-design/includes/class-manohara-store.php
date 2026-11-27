@@ -47,6 +47,8 @@ class Manohara_Store {
 			'mobile_max'       => 767,
 			'header_selectors' => '#masthead, .site-header, #site-header, header.wp-block-template-part, .elementor-location-header, #header, .main-header-bar-wrap, #main-header, .ast-mobile-header-wrap',
 			'delete_data'      => 0,
+			'sticky_header'    => array(),
+			'sticky_shadow'    => 1,
 		);
 	}
 

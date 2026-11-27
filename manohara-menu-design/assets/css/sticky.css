@@ -1,0 +1,12 @@
+.mnh-sticky-header.mnh-is-stuck {
+	position: fixed !important;
+	z-index: 9990;
+	margin-top: 0 !important;
+	transition: box-shadow 0.25s ease;
+}
+.mnh-sticky-shadow.mnh-is-stuck.mnh-sticky-scrolled {
+	box-shadow: 0 6px 18px -12px rgba(0, 0, 0, 0.45);
+}
+.mnh-sticky-spacer {
+	pointer-events: none;
+}

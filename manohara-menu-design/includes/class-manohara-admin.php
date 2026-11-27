@@ -226,6 +226,14 @@ class Manohara_Admin {
 				<h2><?php esc_html_e( 'Your theme\'s header', 'manohara-menu-design' ); ?></h2>
 				<p class="description"><?php esc_html_e( 'When a device shows a Manohara header bar, these parts of the theme are hidden on that device (comma-separated CSS selectors). The common themes are already covered.', 'manohara-menu-design' ); ?></p>
 				<p><textarea name="header_selectors" class="large-text code" rows="3"><?php echo esc_textarea( $s['header_selectors'] ); ?></textarea></p>
+				<h2><?php esc_html_e( 'Sticky header', 'manohara-menu-design' ); ?></h2>
+				<p class="description"><?php esc_html_e( 'Keep the header at the top of the screen while visitors scroll. Works with your theme\'s or page builder\'s header (found with the selectors above) and with Manohara header bars.', 'manohara-menu-design' ); ?></p>
+				<p>
+					<?php foreach ( Manohara_Store::devices() as $mnh_device => $mnh_label ) : ?>
+						<label class="mnh-inline-check"><input type="checkbox" name="sticky_header[]" value="<?php echo esc_attr( $mnh_device ); ?>" <?php checked( in_array( $mnh_device, (array) $s['sticky_header'], true ) ); ?> /> <?php echo esc_html( $mnh_label ); ?></label>
+					<?php endforeach; ?>
+				</p>
+				<p><label><input type="checkbox" name="sticky_shadow" value="1" <?php checked( $s['sticky_shadow'] ); ?> /> <?php esc_html_e( 'Soft shadow under the header once the page scrolls', 'manohara-menu-design' ); ?></label></p>
 				<p><label><input type="checkbox" name="delete_data" value="1" <?php checked( $s['delete_data'] ); ?> /> <?php esc_html_e( 'Delete my designs when the plugin is deleted', 'manohara-menu-design' ); ?></label></p>
 				<?php submit_button( __( 'Save settings', 'manohara-menu-design' ) ); ?>
 			</form>
@@ -1024,6 +1032,8 @@ class Manohara_Admin {
 				'mobile_max'       => $mobile,
 				'header_selectors' => isset( $_POST['header_selectors'] ) ? sanitize_textarea_field( wp_unslash( $_POST['header_selectors'] ) ) : '',
 				'delete_data'      => empty( $_POST['delete_data'] ) ? 0 : 1,
+				'sticky_header'    => isset( $_POST['sticky_header'] ) ? array_values( array_intersect( array_map( 'sanitize_key', (array) wp_unslash( $_POST['sticky_header'] ) ), array_keys( Manohara_Store::devices() ) ) ) : array(),
+				'sticky_shadow'    => empty( $_POST['sticky_shadow'] ) ? 0 : 1,
 			)
 		);
 		wp_safe_redirect( self::url( array( 'msg' => 'settings' ) ) );
