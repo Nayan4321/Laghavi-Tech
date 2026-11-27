@@ -249,6 +249,15 @@
 		}
 	} );
 
+	// "overflow-x: hidden" on <html> or <body> (common in themes and custom CSS) turns sticky header
+	// bars off. "clip" hides sideways overflow the same way and keeps them sticky.
+	if ( document.querySelector( '.mnh.mnh-sticky' ) && window.CSS && CSS.supports( 'overflow-x', 'clip' ) ) {
+		var root = document.documentElement;
+		if ( 'hidden' === getComputedStyle( root ).overflowX || 'hidden' === getComputedStyle( document.body ).overflowX ) {
+			root.classList.add( 'mnh-clip-x' );
+		}
+	}
+
 	// Screen resized past a breakpoint: close what is open there.
 	var timer;
 	window.addEventListener( 'resize', function () {

@@ -118,6 +118,7 @@ No. The plugin does not connect to any external service and does not load fonts 
 
 = 1.3.0 =
 * New: Sticky header. Keep your theme's or page builder's header (or the Manohara header bar) at the top of the screen while visitors scroll, separately for desktop, tablet and phone (Appearance > Manohara Menu > Sticky header). Boxed and transparent headers stay in place, get a background while stuck and an optional soft shadow; headers your theme already keeps at the top are left alone.
+* Fixed: the Manohara header bar did not stay at the top on sites whose CSS sets "overflow-x: hidden" on the page (common in themes and custom CSS).
 
 = 1.2.1 =
 * New: with Vacanam Language Switcher, the header bar can show a different logo for each language (for example an Arabic logo on Arabic pages).

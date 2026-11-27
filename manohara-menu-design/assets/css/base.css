@@ -49,6 +49,7 @@
 .mnh-with-bar{z-index:9990;width:100%}
 .mnh-kind-toggle.mnh-with-bar{display:block}
 .mnh-sticky{position:sticky;top:0}
+html.mnh-clip-x,html.mnh-clip-x body{overflow-x:clip!important}
 body.admin-bar .mnh-sticky{top:32px}
 @media (max-width:782px){body.admin-bar .mnh-sticky{top:46px}}
 @media (max-width:600px){body.admin-bar .mnh-sticky{top:0}}
