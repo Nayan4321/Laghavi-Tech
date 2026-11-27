@@ -29,9 +29,9 @@ YouTube, Instagram, Facebook, Threads, TikTok, X, Pinterest, LinkedIn, Snapchat 
 
 = Layouts and design =
 
-* **Grid, Masonry, List and Carousel** layouts.
+* **Grid** layout (Masonry, List and Carousel layouts come with Nyasah Pro).
 * Separate column numbers for desktop, tablet and phone. The feed adapts to the space it is in, so it also looks right in a sidebar.
-* Picture shape (square, portrait, landscape or original), spacing, rounded corners and colours.
+* **Picture shape that fits each network**: automatic (YouTube 16:9, TikTok and Snapchat 9:16, Instagram 4:5, Pinterest 2:3…) or your choice of square, 4:5, 3:4, 2:3, 9:16, 16:9, 4:3 or the original shape. Spacing, rounded corners and colours.
 * Text below the picture, or on the picture on hover.
 * Profile header with picture, name, followers and bio.
 * “Follow” and “Load more” buttons.
@@ -127,7 +127,7 @@ Nothing is sent to Laghavi Digital.
 
 1. A feed in the grid layout with the profile header.
 2. The feed editor with live preview.
-3. Masonry, list and carousel layouts.
+3. Picture shapes: automatic per network, or your choice.
 4. The popup viewer.
 5. The same feed in Arabic (right-to-left).
 6. Accounts screen with step-by-step guides.
@@ -135,4 +135,4 @@ Nothing is sent to Laghavi Digital.
 == Changelog ==
 
 = 1.0.0 =
-* First release: YouTube, Instagram, Facebook, Threads, TikTok, X, Pinterest, LinkedIn, Snapchat and Reddit feeds; grid, masonry, list and carousel layouts; popup viewer; block, Elementor widget, widget and shortcode; right-to-left support.
+* First release: YouTube, Instagram, Facebook, Threads, TikTok, X, Pinterest, LinkedIn, Snapchat and Reddit feeds; grid layout with a picture shape for each network; popup viewer; block, Elementor widget, widget and shortcode; right-to-left support.

@@ -50,7 +50,7 @@ class NYASAH_Feeds {
 			'cols_tablet'    => 2,
 			'cols_mobile'    => 1,
 			'gap'            => 14,
-			'ratio'          => 'square',
+			'ratio'          => 'auto',
 			'card'           => 'card',
 			'show_caption'   => 1,
 			'caption_length' => 120,
@@ -133,8 +133,8 @@ class NYASAH_Feeds {
 			$out[ $key ] = max( $range[0], min( $range[1], $value ) );
 		}
 		$choices = array(
-			'layout' => array( 'grid', 'masonry', 'list', 'carousel' ),
-			'ratio'  => array( 'square', 'portrait', 'landscape', 'original' ),
+			'layout' => self::layouts(),
+			'ratio'  => array_keys( self::ratios() ),
 			'card'   => array( 'card', 'overlay' ),
 			'click'  => array( 'popup', 'link' ),
 		);
@@ -198,5 +198,67 @@ class NYASAH_Feeds {
 				'order'          => 'DESC',
 			)
 		);
+	}
+
+	/**
+	 * Layouts that can be used. The free plugin has the grid; Nyasah Pro adds masonry, list and carousel.
+	 *
+	 * @return string[]
+	 */
+	public static function layouts() {
+		/**
+		 * Layouts that can be chosen.
+		 *
+		 * @param string[] $layouts Layout keys.
+		 */
+		$layouts = (array) apply_filters( 'nyasah_layouts', array( 'grid' ) );
+		return in_array( 'grid', $layouts, true ) ? $layouts : array_merge( array( 'grid' ), $layouts );
+	}
+
+	/**
+	 * Picture shapes, key => CSS aspect ratio ("auto" picks the usual shape of each network).
+	 *
+	 * @return array<string, string>
+	 */
+	public static function ratios() {
+		return array(
+			'auto'      => '',
+			'square'    => '1 / 1',
+			'portrait'  => '4 / 5',
+			'tall'      => '3 / 4',
+			'pin'       => '2 / 3',
+			'story'     => '9 / 16',
+			'landscape' => '16 / 9',
+			'classic'   => '4 / 3',
+			'original'  => 'auto',
+		);
+	}
+
+	/**
+	 * The usual picture shape of a network's posts.
+	 *
+	 * @param string $network Network.
+	 * @return string CSS aspect ratio.
+	 */
+	public static function network_ratio( $network ) {
+		$map = array(
+			'youtube'   => '16 / 9',
+			'twitter'   => '16 / 9',
+			'linkedin'  => '16 / 9',
+			'tiktok'    => '9 / 16',
+			'snapchat'  => '9 / 16',
+			'instagram' => '4 / 5',
+			'pinterest' => '2 / 3',
+			'reddit'    => '4 / 3',
+			'facebook'  => '1 / 1',
+			'threads'   => '1 / 1',
+		);
+		/**
+		 * Picture shape used by "Automatic" for a network.
+		 *
+		 * @param string $ratio   CSS aspect ratio.
+		 * @param string $network Network.
+		 */
+		return (string) apply_filters( 'nyasah_network_ratio', isset( $map[ $network ] ) ? $map[ $network ] : '1 / 1', $network );
 	}
 }

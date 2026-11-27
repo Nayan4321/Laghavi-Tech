@@ -35,6 +35,9 @@ class NYASAH_Render {
 			return $preview ? '<div class="nyasah-error">' . esc_html__( 'Nothing to show yet.', 'nyasah-social-feed' ) . '</div>' : '';
 		}
 
+		if ( ! in_array( $s['layout'], NYASAH_Feeds::layouts(), true ) ) {
+			$s['layout'] = 'grid'; // A Pro layout without Nyasah Pro.
+		}
 		$count  = 'carousel' === $s['layout'] ? max( (int) $s['count'], 3 ) : (int) $s['count'];
 		$net    = NYASAH_Networks::get( $s['network'] );
 		$accent = '' !== $s['accent'] ? $s['accent'] : $net['color'];
@@ -45,7 +48,7 @@ class NYASAH_Render {
 			'--ny-gap:' . (int) $s['gap'] . 'px',
 			'--ny-radius:' . (int) $s['radius'] . 'px',
 			'--ny-accent:' . $accent,
-			'--ny-ratio:' . self::ratio( 'masonry' === $s['layout'] ? 'original' : $s['ratio'] ),
+			'--ny-ratio:' . self::ratio( 'masonry' === $s['layout'] ? 'original' : $s['ratio'], $s['network'] ),
 		);
 		if ( '' !== $s['bg'] ) {
 			$style[] = '--ny-bg:' . $s['bg'];
@@ -118,17 +121,16 @@ class NYASAH_Render {
 	/**
 	 * CSS aspect ratio.
 	 *
-	 * @param string $ratio Setting.
+	 * @param string $ratio   Setting.
+	 * @param string $network Network (for "auto").
 	 * @return string
 	 */
-	private static function ratio( $ratio ) {
-		$map = array(
-			'square'    => '1 / 1',
-			'portrait'  => '4 / 5',
-			'landscape' => '16 / 9',
-			'original'  => 'auto',
-		);
-		return isset( $map[ $ratio ] ) ? $map[ $ratio ] : '1 / 1';
+	private static function ratio( $ratio, $network = '' ) {
+		$map = NYASAH_Feeds::ratios();
+		if ( 'auto' === $ratio || ! isset( $map[ $ratio ] ) ) {
+			return NYASAH_Feeds::network_ratio( $network );
+		}
+		return $map[ $ratio ];
 	}
 
 	/**

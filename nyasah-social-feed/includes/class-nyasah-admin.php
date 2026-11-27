@@ -243,10 +243,16 @@ class NYASAH_Admin {
 
 		self::section_open( __( 'Layout', 'nyasah-social-feed' ) );
 		echo '<div class="nyasah-layouts">';
+		$allowed = NYASAH_Feeds::layouts();
+		$current = in_array( $s['layout'], $allowed, true ) ? $s['layout'] : 'grid';
 		foreach ( self::layouts() as $key => $label ) {
-			echo '<label class="nyasah-layout nyasah-layout--' . esc_attr( $key ) . '"><input type="radio" name="s[layout]" value="' . esc_attr( $key ) . '" ' . checked( $s['layout'], $key, false ) . ' /><span class="nyasah-layout__pic" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span>' . esc_html( $label ) . '</span></label>';
+			$pro = ! in_array( $key, $allowed, true );
+			echo '<label class="nyasah-layout nyasah-layout--' . esc_attr( $key ) . ( $pro ? ' nyasah-layout--pro' : '' ) . '"' . ( $pro ? ' title="' . esc_attr__( 'Available in Nyasah Pro', 'nyasah-social-feed' ) . '"' : '' ) . '><input type="radio" name="s[layout]" value="' . esc_attr( $key ) . '" ' . checked( $current, $key, false ) . ( $pro ? ' disabled' : '' ) . ' /><span class="nyasah-layout__pic" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span>' . esc_html( $label ) . '</span>' . ( $pro ? '<span class="nyasah-pro-badge">' . esc_html__( 'Pro', 'nyasah-social-feed' ) . '</span>' : '' ) . '</label>';
 		}
 		echo '</div>';
+		if ( count( $allowed ) < count( self::layouts() ) ) {
+			echo '<p class="description nyasah-pro-note">' . esc_html__( 'Masonry, list and carousel layouts come with Nyasah Pro.', 'nyasah-social-feed' ) . ' <a href="' . esc_url( 'https://laghavi.site/nyasah-social-feed/' ) . '" target="_blank" rel="noopener">' . esc_html__( 'Learn more', 'nyasah-social-feed' ) . '</a></p>';
+		}
 		echo '<div class="nyasah-row3">';
 		self::number( 'cols', __( 'Columns', 'nyasah-social-feed' ), $s, 1, 8 );
 		self::number( 'cols_tablet', __( 'Tablet', 'nyasah-social-feed' ), $s, 1, 6 );
@@ -260,12 +266,18 @@ class NYASAH_Admin {
 			__( 'Picture shape', 'nyasah-social-feed' ),
 			$s,
 			array(
-				'square'    => __( 'Square', 'nyasah-social-feed' ),
+				'auto'      => __( 'Automatic (best for each network)', 'nyasah-social-feed' ),
+				'square'    => __( 'Square (1:1)', 'nyasah-social-feed' ),
 				'portrait'  => __( 'Portrait (4:5)', 'nyasah-social-feed' ),
-				'landscape' => __( 'Landscape (16:9)', 'nyasah-social-feed' ),
-				'original'  => __( 'Original', 'nyasah-social-feed' ),
+				'tall'      => __( 'Portrait (3:4)', 'nyasah-social-feed' ),
+				'pin'       => __( 'Tall (2:3), like Pinterest', 'nyasah-social-feed' ),
+				'story'     => __( 'Story / Reel / Short (9:16)', 'nyasah-social-feed' ),
+				'landscape' => __( 'Video (16:9), like YouTube', 'nyasah-social-feed' ),
+				'classic'   => __( 'Landscape (4:3)', 'nyasah-social-feed' ),
+				'original'  => __( 'Original shape of each picture', 'nyasah-social-feed' ),
 			)
 		);
+		echo '<p class="description">' . esc_html__( 'Automatic: YouTube, X and LinkedIn 16:9 · TikTok and Snapchat 9:16 · Instagram 4:5 · Pinterest 2:3 · Reddit 4:3 · Facebook and Threads square.', 'nyasah-social-feed' ) . '</p>';
 		self::select(
 			'card',
 			__( 'Text', 'nyasah-social-feed' ),

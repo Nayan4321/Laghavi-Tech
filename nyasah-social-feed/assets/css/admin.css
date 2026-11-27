@@ -70,3 +70,11 @@
 	.nyasah-editor__side { position: static; max-block-size: none; }
 	.nyasah-account__body { grid-template-columns: minmax(0, 1fr); }
 }
+
+.nyasah-layout { position: relative; }
+.nyasah-layout--pro { cursor: not-allowed; opacity: .6; }
+.nyasah-layout--pro:hover { opacity: .85; }
+.nyasah-pro-badge { padding: 0 6px; border-radius: 999px; background: #7c3aed; color: #fff; font-size: 10px; font-weight: 600; line-height: 16px; }
+.nyasah-editor select { max-inline-size: 100%; }
+.nyasah-pro-note { margin-block: -4px 12px; }
+.nyasah-layout input[type="radio"] { opacity: 0 !important; pointer-events: none; }
