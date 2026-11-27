@@ -3,7 +3,7 @@
  * Plugin Name:       Aarye Marketing Addon for Forms Pro
  * Plugin URI:        https://laghavi.site/aarye-marketing-addon-for-forms/
  * Description:       Pro add-on for Aarye Marketing Addon for Forms: send every entry instantly to Laghavi Ads Hub, Zoho CRM, Zoho Forms, HubSpot, Airtable, Notion, your own database or any CRM by webhook; form analytics with abandonment by field; the pages each visitor viewed; automations and spam rules.
- * Version:           1.0.3
+ * Version:           1.1.0
  * Requires at least: 6.3
  * Requires PHP:      7.4
  * Requires Plugins:  aarye-marketing-addon
@@ -19,7 +19,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AARYEPRO_VERSION', '1.0.3' );
+define( 'AARYEPRO_VERSION', '1.1.0' );
 define( 'AARYEPRO_FILE', __FILE__ );
 define( 'AARYEPRO_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AARYEPRO_URL', plugin_dir_url( __FILE__ ) );
@@ -45,6 +45,7 @@ require_once AARYEPRO_DIR . 'includes/class-aaryepro-analytics.php';
 require_once AARYEPRO_DIR . 'includes/class-aaryepro-journey.php';
 require_once AARYEPRO_DIR . 'includes/class-aaryepro-clicks.php';
 require_once AARYEPRO_DIR . 'includes/class-aaryepro-automations.php';
+require_once AARYEPRO_DIR . 'includes/class-aaryepro-captcha.php';
 
 /**
  * Version string for a CSS/JS file: changes whenever the file changes.
@@ -75,6 +76,9 @@ add_action(
 		AARYEPRO_Journey::init();
 		AARYEPRO_Clicks::init();
 		AARYEPRO_Automations::init();
+		if ( class_exists( 'AARYE_Protect' ) ) {
+			AARYEPRO_Captcha::init(); // Needs Aarye 1.3 or later.
+		}
 
 		/**
 		 * Aarye Pro is loaded.

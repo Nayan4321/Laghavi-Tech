@@ -489,14 +489,23 @@ class AARYE_Protect {
 				$message = __( 'Please answer the security question correctly.', 'aarye-marketing-addon' );
 			}
 		}
-		/**
-		 * Refuse a form submission: return a message for the visitor, or "" to let it through.
-		 *
-		 * @param string $message Message.
-		 * @param string $plugin  Form plugin.
-		 * @param string $form_id Form ID.
-		 */
-		$message = (string) apply_filters( 'aarye_refuse_submission', $message, $plugin, $form_id );
+		if ( '' === $message ) {
+			/**
+			 * Refuse a form submission: return a message for the visitor (or an array with "message" and
+			 * "reason" for the list of refused submissions), or "" to let it through.
+			 *
+			 * @param string $message Message.
+			 * @param string $plugin  Form plugin.
+			 * @param string $form_id Form ID.
+			 */
+			$result = apply_filters( 'aarye_refuse_submission', '', $plugin, $form_id );
+			if ( is_array( $result ) ) {
+				$message = isset( $result['message'] ) ? (string) $result['message'] : '';
+				$reason  = isset( $result['reason'] ) ? (string) $result['reason'] : '';
+			} else {
+				$message = (string) $result;
+			}
+		}
 		if ( '' !== $message ) {
 			self::log( $form, '' !== $reason ? $reason : __( 'Refused by an add-on', 'aarye-marketing-addon' ) );
 		}

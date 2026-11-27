@@ -5,7 +5,7 @@ Requires at least: 6.3
 Tested up to: 7.1
 Requires PHP: 7.4
 Requires Plugins: aarye-marketing-addon
-Stable tag: 1.0.3
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,7 +78,12 @@ No. The hub receives the lead's ID, date, status, form name, pages, device and i
 
 Pro connects only to the services you set up under Connections, and sends each new entry to them as described there: Laghavi Ads Hub (your hub address), Zoho (accounts.zoho.* and zohoapis.*), HubSpot (api.hubapi.com), Airtable (api.airtable.com), Notion (api.notion.com), your database server and your webhook address. License checks and updates use laghavi.site (license key, site address, plugin version).
 
+When you turn on reCAPTCHA or Turnstile under Aarye Leads > Spam protection, visitors' browsers load the check from Google (www.google.com/recaptcha, [terms](https://policies.google.com/terms), [privacy](https://policies.google.com/privacy)) or Cloudflare (challenges.cloudflare.com, [terms](https://www.cloudflare.com/website-terms/), [privacy](https://www.cloudflare.com/privacypolicy/)) on the forms you chose, and when a form is sent your website sends the visitor's answer token, your secret key and the visitor's IP address to the same service to verify it.
+
 == Changelog ==
+
+= 1.1.0 =
+* New: Google reCAPTCHA v2 or Cloudflare Turnstile above the submit button, on every form or only the forms you choose (Aarye Leads > Spam protection). Failed checks are refused before the form plugin sends anything. Needs Aarye 1.3.
 
 = 1.0.3 =
 * New: Contact clicks. Every click on a WhatsApp, call, SMS or email link or button is found automatically (also WhatsApp chat widgets) and saved with the time, IP address, page, button text and source, the pages viewed before it, and whether the same visitor also sent an enquiry. Filter by button and "enquired or clicked only", export to CSV, and see the clicks on each lead.
