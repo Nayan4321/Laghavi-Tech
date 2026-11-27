@@ -47,7 +47,7 @@ Google Ads (gclid, gbraid, wbraid, Performance Max, YouTube), Meta Ads (Facebook
 
 = Stop spam before it reaches your inbox =
 
-* **Security question** right above the submit button ("What is 7 + 4?"), on every form or only the forms you choose. Scripts that post forms directly never get a question, so their messages are refused. Works with page caching.
+* **Security question** right above the submit button ("What is 7 + 4?"), on every form or only the forms you choose. Scripts that post forms directly never get a question, so their messages are refused. The question is printed into the form by your website itself, so it shows even when other plugins delay or block scripts; it works with page caching, and answers in Arabic or Persian digits are accepted.
 * **Block an IP address** on one form or on all forms with one click from the entry. The website stays open to them; only sending is stopped.
 * **Automated browsers** (Selenium, Puppeteer, Playwright) are refused.
 * A list of refused submissions shows what was stopped and why.
@@ -237,7 +237,7 @@ The plugin also makes a background request to your own website (wp-admin/admin-p
 == Changelog ==
 
 = 1.3.0 =
-* New: security question above the submit button, for all forms or chosen forms (Elementor Pro, Contact Form 7, WPForms, Gravity Forms, Fluent Forms, Formidable, Forminator).
+* New: security question above the submit button, printed into the form by the website (shows even when scripts are delayed or blocked), for all forms or chosen forms (Elementor Pro, Contact Form 7, WPForms, Gravity Forms, Fluent Forms, Formidable, Forminator).
 * New: block IP addresses or ranges on one form or all forms, from the entry or the new Spam protection screen; list of refused submissions.
 * New: forms sent by automated browsers are refused.
 * New: customer journey on every entry: where the visitor came from, the pages opened and the time on each, and the form sent.

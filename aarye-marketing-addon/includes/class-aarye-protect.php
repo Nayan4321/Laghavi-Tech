@@ -37,6 +37,16 @@ class AARYE_Protect {
 		add_action( 'rest_api_init', array( __CLASS__, 'routes' ) );
 		add_action( 'wp_enqueue_scripts', array( __CLASS__, 'enqueue' ), 6 );
 
+		// The question is printed into the form's HTML by the server, so it shows even when scripts are
+		// delayed, blocked or broken by other plugins.
+		add_filter( 'wpcf7_form_elements', array( __CLASS__, 'render_cf7' ), 99 );
+		add_filter( 'elementor/widget/render_content', array( __CLASS__, 'render_elementor' ), 99, 2 );
+		add_action( 'wpforms_display_submit_before', array( __CLASS__, 'render_wpforms' ), 99 );
+		add_filter( 'gform_submit_button', array( __CLASS__, 'render_gravity' ), 99, 2 );
+		add_action( 'fluentform/render_item_submit_button', array( __CLASS__, 'render_fluentform' ), 1, 2 );
+		add_filter( 'frm_submit_button_html', array( __CLASS__, 'render_formidable' ), 99, 2 );
+		add_filter( 'forminator_render_button_markup', array( __CLASS__, 'render_forminator' ), 99 );
+
 		// Checked before the form plugin accepts the entry (no email, no saved entry when refused).
 		add_filter( 'wpcf7_spam', array( __CLASS__, 'cf7' ), 20, 2 );
 		add_filter( 'wpcf7_display_message', array( __CLASS__, 'cf7_message' ), 20, 2 );
@@ -349,48 +359,69 @@ class AARYE_Protect {
 	 * @param int    $sum  Answer.
 	 * @param int    $time When it was asked.
 	 * @param string $salt Random part.
+	 * @param string $kind "q" for a fresh one-time question, "p" for one printed in a (possibly cached) page.
 	 * @return string
 	 */
-	private static function sign( $sum, $time, $salt ) {
-		return substr( hash_hmac( 'sha256', 'aarye_q|' . $sum . '|' . $time . '|' . $salt, wp_salt( 'nonce' ) ), 0, 32 );
+	private static function sign( $sum, $time, $salt, $kind = 'q' ) {
+		return substr( hash_hmac( 'sha256', 'aarye_' . $kind . '|' . $sum . '|' . $time . '|' . $salt, wp_salt( 'nonce' ) ), 0, 32 );
 	}
 
 	/**
 	 * A new question and its signed token (nothing is stored until it is answered).
 	 *
+	 * @param bool $page For a page's HTML: valid for a week and more than once, so cached pages keep working.
 	 * @return array{text: string, token: string}
 	 */
-	public static function new_question() {
+	public static function new_question( $page = false ) {
 		$a    = random_int( 2, 12 );
 		$b    = random_int( 1, 9 );
 		$time = time();
 		$salt = wp_generate_password( 12, false );
+		$kind = $page ? 'p' : 'q';
 		return array(
 			/* translators: 1: first number, 2: second number. */
 			'text'  => sprintf( __( 'What is %1$d + %2$d?', 'aarye-marketing-addon' ), $a, $b ),
-			'token' => $time . '.' . $salt . '.' . self::sign( $a + $b, $time, $salt ),
+			'token' => ( $page ? 'p' : '' ) . $time . '.' . $salt . '.' . self::sign( $a + $b, $time, $salt, $kind ),
 		);
 	}
 
 	/**
-	 * Check an answer. Each question can be used once.
+	 * An answer as a plain number: Arabic-Indic and Persian digits become 0-9, spaces are ignored.
+	 *
+	 * @param string $answer Answer.
+	 * @return string
+	 */
+	private static function digits( $answer ) {
+		$answer = str_replace( array( '٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩' ), array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ), (string) $answer );
+		$answer = str_replace( array( '۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹' ), array( '0', '1', '2', '3', '4', '5', '6', '7', '8', '9' ), $answer );
+		return preg_replace( '/\s+/u', '', $answer );
+	}
+
+	/**
+	 * Check an answer. Fresh questions work once; questions printed in a page work for a week.
 	 *
 	 * @param string $token  Token.
 	 * @param string $answer Answer.
 	 * @return bool
 	 */
 	public static function verify( $token, $answer ) {
-		$parts = explode( '.', (string) $token );
+		$token = (string) $token;
+		$page  = 0 === strpos( $token, 'p' );
+		$parts = explode( '.', $page ? substr( $token, 1 ) : $token );
 		if ( 3 !== count( $parts ) || ! ctype_digit( $parts[0] ) || ! preg_match( '/^[A-Za-z0-9]{12}$/', $parts[1] ) ) {
 			return false;
 		}
 		$time   = (int) $parts[0];
-		$answer = trim( (string) $answer );
-		if ( $time > time() + MINUTE_IN_SECONDS || $time < time() - self::TTL || '' === $answer || ! ctype_digit( $answer ) ) {
+		$answer = self::digits( $answer );
+		$ttl    = $page ? WEEK_IN_SECONDS : self::TTL;
+		if ( $time > time() + MINUTE_IN_SECONDS || $time < time() - $ttl || '' === $answer || ! ctype_digit( $answer ) || strlen( $answer ) > 3 ) {
 			return false;
 		}
-		if ( ! hash_equals( self::sign( (int) $answer, $time, $parts[1] ), $parts[2] ) ) {
+		if ( ! hash_equals( self::sign( (int) $answer, $time, $parts[1], $page ? 'p' : 'q' ), $parts[2] ) ) {
 			return false;
+		}
+		if ( $page ) {
+			return true;
 		}
 		$used = 'aarye_q_' . $parts[1];
 		if ( get_transient( $used ) ) {
@@ -398,6 +429,155 @@ class AARYE_Protect {
 		}
 		set_transient( $used, 1, self::TTL );
 		return true;
+	}
+
+	/**
+	 * The question box, printed by the server inside the form right above its submit button. It works
+	 * without any script or style sheet; the script only swaps in a fresh question.
+	 *
+	 * @param string $form "plugin:id" ("" when the form plugin does not say which form it is).
+	 * @param string $tag  Wrapper tag: span inside paragraphs, div elsewhere.
+	 * @return string HTML, or "" when the form does not ask.
+	 */
+	public static function box( $form, $tag = 'div' ) {
+		if ( 'off' === AARYE_Settings::get( 'question' ) || ( '' !== $form && ! self::asks( $form ) ) || ( '' === $form && 'all' !== AARYE_Settings::get( 'question' ) ) || ! self::shown_to_user() ) {
+			return '';
+		}
+		static $n = 0;
+		++$n;
+		$q   = self::new_question( true );
+		$id  = 'aarye-q-s' . $n;
+		$tag = 'span' === $tag ? 'span' : 'div';
+		return '<' . $tag . ' class="aarye-q" data-aarye-q="server" style="display:block;clear:both;width:100%;flex-basis:100%;margin:0 0 12px">'
+			. '<label class="aarye-q__label" for="' . esc_attr( $id ) . '" style="display:block;margin:0 0 6px"><span class="aarye-q__title">' . esc_html__( 'Security question', 'aarye-marketing-addon' ) . ':</span> <span class="aarye-q__text" style="font-weight:600">' . esc_html( $q['text'] ) . '</span></label>'
+			. '<span class="aarye-q__row" style="display:flex;gap:8px;align-items:center">'
+			. '<input type="text" id="' . esc_attr( $id ) . '" name="aarye_q_answer" class="aarye-q__answer" inputmode="numeric" autocomplete="off" required aria-required="true" style="width:7em;max-width:100%" />'
+			. '<button type="button" class="aarye-q__new" aria-label="' . esc_attr__( 'New question', 'aarye-marketing-addon' ) . '" title="' . esc_attr__( 'New question', 'aarye-marketing-addon' ) . '" hidden>&#8635;</button>'
+			. '</span>'
+			. '<input type="hidden" name="aarye_q_token" value="' . esc_attr( $q['token'] ) . '" />'
+			. '</' . $tag . '>';
+	}
+
+	/**
+	 * Whether the current visitor gets the question (everyone, unless an add-on says otherwise).
+	 *
+	 * @return bool
+	 */
+	public static function shown_to_user() {
+		/**
+		 * Whether the current visitor gets the security question.
+		 *
+		 * @param bool $show Show it.
+		 */
+		return (bool) apply_filters( 'aarye_question_for_user', true );
+	}
+
+	/**
+	 * Put the box in front of the last submit button of some HTML.
+	 *
+	 * @param string $html Form HTML.
+	 * @param string $form "plugin:id".
+	 * @return string
+	 */
+	private static function before_submit( $html, $form ) {
+		if ( false !== strpos( $html, 'data-aarye-q=' ) ) {
+			return $html;
+		}
+		if ( ! preg_match_all( '/<(?:input|button)\b[^>]*type=["\']?submit["\']?[^>]*>/i', $html, $m, PREG_OFFSET_CAPTURE ) ) {
+			return $html;
+		}
+		$last = end( $m[0] );
+		$pos  = $last[1];
+		// Inside a paragraph a <div> would end it: use a <span> shown as a block.
+		$open  = strrpos( substr( $html, 0, $pos ), '<p' );
+		$close = strrpos( substr( $html, 0, $pos ), '</p>' );
+		$box   = self::box( $form, false !== $open && ( false === $close || $open > $close ) ? 'span' : 'div' );
+		return '' === $box ? $html : substr( $html, 0, $pos ) . $box . substr( $html, $pos );
+	}
+
+	/**
+	 * Contact Form 7: in the form's HTML.
+	 *
+	 * @param string $html Form elements.
+	 * @return string
+	 */
+	public static function render_cf7( $html ) {
+		$form = class_exists( 'WPCF7_ContactForm' ) && WPCF7_ContactForm::get_current() ? 'cf7:' . WPCF7_ContactForm::get_current()->id() : '';
+		return self::before_submit( $html, $form );
+	}
+
+	/**
+	 * Elementor Pro form widget.
+	 *
+	 * @param string $content Widget HTML.
+	 * @param object $widget  Widget.
+	 * @return string
+	 */
+	public static function render_elementor( $content, $widget ) {
+		if ( ! is_object( $widget ) || ! method_exists( $widget, 'get_name' ) || 'form' !== $widget->get_name() || false !== strpos( $content, 'data-aarye-q=' ) ) {
+			return $content;
+		}
+		$box = self::box( 'elementor:' . $widget->get_id() );
+		$pos = strpos( $content, 'elementor-field-type-submit' );
+		if ( '' === $box || false === $pos ) {
+			return '' === $box ? $content : self::before_submit( $content, 'elementor:' . $widget->get_id() );
+		}
+		$start = strrpos( substr( $content, 0, $pos ), '<div' );
+		$box   = str_replace( 'class="aarye-q"', 'class="aarye-q elementor-field-group elementor-column elementor-col-100"', $box );
+		return false === $start ? $content : substr( $content, 0, $start ) . $box . substr( $content, $start );
+	}
+
+	/**
+	 * WPForms: just before the submit button.
+	 *
+	 * @param array $form_data Form.
+	 */
+	public static function render_wpforms( $form_data ) {
+		echo self::box( 'wpforms:' . ( isset( $form_data['id'] ) ? $form_data['id'] : '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in box().
+	}
+
+	/**
+	 * Gravity Forms.
+	 *
+	 * @param string $button Button HTML.
+	 * @param array  $form   Form.
+	 * @return string
+	 */
+	public static function render_gravity( $button, $form ) {
+		return self::box( 'gravity:' . ( isset( $form['id'] ) ? $form['id'] : '' ) ) . $button;
+	}
+
+	/**
+	 * Fluent Forms (runs just before Fluent prints its submit button).
+	 *
+	 * @param array  $item Button.
+	 * @param object $form Form.
+	 */
+	public static function render_fluentform( $item, $form ) {
+		echo self::box( 'fluentform:' . ( is_object( $form ) && isset( $form->id ) ? $form->id : '' ) ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped in box().
+	}
+
+	/**
+	 * Formidable Forms.
+	 *
+	 * @param string $button Button HTML.
+	 * @param array  $args   Arguments.
+	 * @return string
+	 */
+	public static function render_formidable( $button, $args = array() ) {
+		$form = isset( $args['form'] ) && is_object( $args['form'] ) ? 'formidable:' . $args['form']->id : '';
+		return self::box( $form ) . $button;
+	}
+
+	/**
+	 * Forminator (the form is not named here: printed when the question is on for all forms, else the
+	 * script adds it).
+	 *
+	 * @param string $html Button HTML.
+	 * @return string
+	 */
+	public static function render_forminator( $html ) {
+		return self::box( '' ) . $html;
 	}
 
 	/**
@@ -423,7 +603,7 @@ class AARYE_Protect {
 	 * Script that adds the question above the submit button.
 	 */
 	public static function enqueue() {
-		if ( 'off' === AARYE_Settings::get( 'question' ) || ( is_user_logged_in() && current_user_can( 'edit_posts' ) && ! apply_filters( 'aarye_question_for_editors', false ) ) ) {
+		if ( 'off' === AARYE_Settings::get( 'question' ) || ! self::shown_to_user() ) {
 			return;
 		}
 		wp_enqueue_style( 'aarye-protect', AARYE_URL . 'assets/css/protect.css', array(), aarye_asset_version( 'assets/css/protect.css' ) );
@@ -479,7 +659,7 @@ class AARYE_Protect {
 				$message = __( 'Sorry, this form cannot be sent by automated browsers.', 'aarye-marketing-addon' );
 			}
 		}
-		if ( '' === $reason && self::asks( $form ) && ! ( is_user_logged_in() && current_user_can( 'edit_posts' ) ) ) {
+		if ( '' === $reason && self::asks( $form ) && self::shown_to_user() ) {
 			// phpcs:disable WordPress.Security.NonceVerification.Missing -- Public form; the signed one-time question is the check.
 			$token  = isset( $_POST['aarye_q_token'] ) ? sanitize_text_field( wp_unslash( $_POST['aarye_q_token'] ) ) : '';
 			$answer = isset( $_POST['aarye_q_answer'] ) ? sanitize_text_field( wp_unslash( $_POST['aarye_q_answer'] ) ) : '';

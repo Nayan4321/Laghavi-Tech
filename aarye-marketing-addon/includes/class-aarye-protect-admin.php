@@ -72,7 +72,7 @@ class AARYE_Protect_Admin {
 				<input type="hidden" name="todo" value="settings" />
 				<?php wp_nonce_field( 'aarye_protect' ); ?>
 				<h2><?php esc_html_e( 'Security question before sending', 'aarye-marketing-addon' ); ?></h2>
-				<p><?php esc_html_e( 'A short sum (for example "What is 7 + 4?") is shown right above the submit button. Scripts that post forms directly never get a question, so their messages are refused. Logged-in editors don\'t see it.', 'aarye-marketing-addon' ); ?></p>
+				<p><?php esc_html_e( 'A short sum (for example "What is 7 + 4?") is shown right above the submit button, to everyone, you included. It is printed into the form by your website itself, so it shows even when other plugins delay or block scripts, and it keeps working with page caching. Scripts that post forms directly never get a question, so their messages are refused.', 'aarye-marketing-addon' ); ?></p>
 				<p>
 					<label><input type="radio" name="question" value="off" <?php checked( $s['question'], 'off' ); ?> /> <?php esc_html_e( 'Off', 'aarye-marketing-addon' ); ?></label><br />
 					<label><input type="radio" name="question" value="all" <?php checked( $s['question'], 'all' ); ?> /> <?php esc_html_e( 'On every form', 'aarye-marketing-addon' ); ?></label><br />
