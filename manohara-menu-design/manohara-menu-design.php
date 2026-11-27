@@ -3,7 +3,7 @@
  * Plugin Name:       Manohara Menu Design
  * Plugin URI:        https://laghavi.site/manohara-menu-design/
  * Description:       Beautiful, animated menu designs for any theme and page builder. Give desktop, tablet and mobile their own menu and design (slide-down panel, full-screen overlay, dropdown, side drawer, classic, pills, vertical), with your colours and fonts. Elementor widget, block and shortcode included.
- * Version:           1.2.0
+ * Version:           1.2.1
  * Requires at least: 6.2
  * Requires PHP:      7.4
  * Author:            Laghavi Digital
@@ -17,7 +17,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'MANOHARA_VERSION', '1.2.0' );
+define( 'MANOHARA_VERSION', '1.2.1' );
 define( 'MANOHARA_FILE', __FILE__ );
 define( 'MANOHARA_DIR', plugin_dir_path( __FILE__ ) );
 define( 'MANOHARA_URL', plugin_dir_url( __FILE__ ) );

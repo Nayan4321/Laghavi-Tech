@@ -43,6 +43,31 @@ class Manohara_I18n {
 	}
 
 	/**
+	 * Vacanam's languages, slug => name (empty when Vacanam is not active).
+	 *
+	 * @return array
+	 */
+	public static function vacanam_languages() {
+		if ( 'vacanam' !== self::plugin() || ! class_exists( 'Vacanam_Languages' ) ) {
+			return array();
+		}
+		$out = array();
+		foreach ( Vacanam_Languages::all() as $slug => $lang ) {
+			$out[ $slug ] = isset( $lang['name'] ) && '' !== $lang['name'] ? $lang['name'] : $slug;
+		}
+		return $out;
+	}
+
+	/**
+	 * The visitor's Vacanam language ('' when Vacanam is not active).
+	 *
+	 * @return string
+	 */
+	public static function vacanam_current() {
+		return 'vacanam' === self::plugin() && ! is_admin() ? (string) vacanam_current_language() : '';
+	}
+
+	/**
 	 * The current language's copy of a menu.
 	 *
 	 * @param int $menu Menu ID.

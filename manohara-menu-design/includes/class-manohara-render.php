@@ -487,10 +487,14 @@ class Manohara_Render {
 			return '<span class="mnh-logo"></span>';
 		}
 		$home = Manohara_I18n::home();
+		$lang = Manohara_I18n::vacanam_current();
+		if ( '' !== $lang && ! empty( $opts['logo_lang'][ $lang ] ) ) {
+			return '<a class="mnh-logo" href="' . esc_url( $home ) . '"><img src="' . esc_url( $opts['logo_lang'][ $lang ] ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></a>';
+		}
 		if ( 'custom' === $logo && ! empty( $opts['logo_url'] ) ) {
 			return '<a class="mnh-logo" href="' . esc_url( $home ) . '"><img src="' . esc_url( $opts['logo_url'] ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></a>';
 		}
-		$id = (int) get_theme_mod( 'custom_logo' );
+		$id = (int) apply_filters( 'manohara_logo_id', (int) get_theme_mod( 'custom_logo' ) );
 		if ( $id ) {
 			$img = wp_get_attachment_image( $id, 'medium', false, array( 'alt' => get_bloginfo( 'name' ) ) );
 			if ( $img ) {

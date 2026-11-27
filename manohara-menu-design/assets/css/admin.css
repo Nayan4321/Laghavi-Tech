@@ -78,6 +78,7 @@
 .mnh-more{color:var(--mnh-a-muted);font-style:italic;margin-top:12px}
 .mnh-buttons-fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .mnh-logo-custom{display:flex;gap:6px;margin:8px 0}
+.mnh-logo-langs{display:block;margin:8px 0}.mnh-logo-langs[hidden]{display:none}.mnh-logo-lang{display:flex;gap:6px;align-items:center;margin:6px 0}.mnh-logo-lang-name{min-inline-size:90px;font-weight:600}
 .mnh-override-toggle{margin-bottom:12px}
 .mnh-override{border-inline-start:3px solid var(--mnh-a-accent);padding-inline-start:16px}
 

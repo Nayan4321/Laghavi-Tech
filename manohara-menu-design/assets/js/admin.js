@@ -132,6 +132,10 @@
 		} );
 		var logo = $( '.mnh-logo-mode', sec );
 		$( '.mnh-logo-custom', sec ).hidden = ! logo || 'custom' !== logo.value;
+		var langs = $( '.mnh-logo-langs', sec );
+		if ( langs ) {
+			langs.hidden = ! logo || 'none' === logo.value;
+		}
 		$( '.mnh-override', sec ).hidden = ! value( p + '[style_override]' );
 		each( $$( '.mnh-template', sec ), function ( card ) {
 			card.classList.toggle( 'is-selected', card.querySelector( 'input' ).checked );

@@ -435,6 +435,7 @@ class Manohara_Admin {
 				'cta_url'        => '',
 				'logo'           => 'site',
 				'logo_url'       => '',
+				'logo_lang'      => array(),
 				'search'         => 0,
 				'sticky'         => 1,
 				'shadow'         => 1,
@@ -589,6 +590,21 @@ class Manohara_Admin {
 							<input type="url" name="<?php echo esc_attr( $o_name ); ?>[logo_url]" value="<?php echo esc_attr( $o['logo_url'] ); ?>" class="regular-text mnh-logo-url" placeholder="https://" data-preview="1" />
 							<button type="button" class="button mnh-pick-logo"><?php esc_html_e( 'Choose image', 'manohara-menu-design' ); ?></button>
 						</span>
+						<?php
+						$mnh_langs = Manohara_I18n::vacanam_languages();
+						if ( count( $mnh_langs ) > 1 ) :
+							?>
+							<span class="mnh-logo-langs">
+								<span class="mnh-sub-label"><?php esc_html_e( 'A different logo for each language (Vacanam). Leave empty to use the logo above.', 'manohara-menu-design' ); ?></span>
+								<?php foreach ( $mnh_langs as $mnh_slug => $mnh_name ) : ?>
+									<span class="mnh-logo-lang">
+										<span class="mnh-logo-lang-name"><?php echo esc_html( $mnh_name ); ?></span>
+										<input type="url" name="<?php echo esc_attr( $o_name ); ?>[logo_lang][<?php echo esc_attr( $mnh_slug ); ?>]" value="<?php echo esc_attr( isset( $o['logo_lang'][ $mnh_slug ] ) ? $o['logo_lang'][ $mnh_slug ] : '' ); ?>" class="regular-text mnh-logo-url" placeholder="https://" />
+										<button type="button" class="button mnh-pick-logo"><?php esc_html_e( 'Choose image', 'manohara-menu-design' ); ?></button>
+									</span>
+								<?php endforeach; ?>
+							</span>
+						<?php endif; ?>
 						<span class="mnh-sub-label"><?php esc_html_e( 'A button in the bar (optional)', 'manohara-menu-design' ); ?></span>
 						<span class="mnh-cta-fields">
 							<input type="text" name="<?php echo esc_attr( $o_name ); ?>[cta_text]" value="<?php echo esc_attr( $o['cta_text'] ); ?>" placeholder="<?php esc_attr_e( 'Button in the bar, e.g. Contact us', 'manohara-menu-design' ); ?>" data-preview="1" />
@@ -876,6 +892,15 @@ class Manohara_Admin {
 						'social_pos'   => array( 'menu', 'bottom' ),
 					);
 					$opts[ $key ] = isset( $allowed[ $key ] ) && in_array( $value, $allowed[ $key ], true ) ? $value : $default;
+				}
+			}
+			$opts['logo_lang'] = array();
+			if ( isset( $opts_in['logo_lang'] ) && is_array( $opts_in['logo_lang'] ) ) {
+				foreach ( $opts_in['logo_lang'] as $lang => $url ) {
+					$url = is_scalar( $url ) ? esc_url_raw( (string) $url ) : '';
+					if ( '' !== $url ) {
+						$opts['logo_lang'][ sanitize_key( $lang ) ] = $url;
+					}
 				}
 			}
 			$design['devices'][ $device ] = array(
